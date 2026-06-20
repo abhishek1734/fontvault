@@ -971,14 +971,9 @@ function appendFontCard(font) {
   elements.fontGrid.appendChild(card);
 }
 
-// --- INFINITE SCROLL STATE ---
-let isLoadingMore = false;
-let infiniteScrollCounter = 0;
-
 // --- RENDER GRID ---
 function renderGrid() {
   elements.fontGrid.innerHTML = "";
-  infiniteScrollCounter = 0;
   
   const filteredFonts = getFilteredFonts();
   
@@ -992,40 +987,8 @@ function renderGrid() {
     return;
   }
   
-  // Render initial list (up to 9 items for faster load)
-  const initialBatch = filteredFonts.slice(0, 9);
-  initialBatch.forEach(font => appendFontCard(font));
-  infiniteScrollCounter = initialBatch.length;
-}
-
-// --- LOAD MORE FONTS (INFINITE SCROLL) ---
-function loadMoreFonts() {
-  if (isLoadingMore) return;
-  
-  const filteredFonts = getFilteredFonts();
-  if (filteredFonts.length === 0) return;
-  
-  isLoadingMore = true;
-  
-  setTimeout(() => {
-    for (let i = 0; i < 6; i++) {
-      const idx = (infiniteScrollCounter + i) % filteredFonts.length;
-      const baseFont = filteredFonts[idx];
-      
-      const variantSuffix = ["Condensed", "Wide", "Pro", "Display", "Text", "Variable", "SemiBold", "UltraBold", "Micro"][Math.floor((infiniteScrollCounter + i) / filteredFonts.length) % 9];
-      
-      const infiniteFontInstance = {
-        ...baseFont,
-        id: `${baseFont.id}-inf-${infiniteScrollCounter}`,
-        name: `${baseFont.name} ${variantSuffix}`
-      };
-      
-      appendFontCard(infiniteFontInstance);
-    }
-    
-    infiniteScrollCounter += 6;
-    isLoadingMore = false;
-  }, 250);
+  // Render all matching filtered fonts at once
+  filteredFonts.forEach(font => appendFontCard(font));
 }
 
 // --- OPEN DETAIL SHEET/PANEL ---
@@ -1146,10 +1109,6 @@ function setupEventListeners() {
       document.getElementById("navbar").classList.add("collapsed");
     } else {
       document.getElementById("navbar").classList.remove("collapsed");
-    }
-
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
-      loadMoreFonts();
     }
   });
 
