@@ -650,12 +650,9 @@ function getBadgeClass(availability) {
   }
 }
 
-// --- RENDER GRID ---
-function renderGrid() {
-  elements.fontGrid.innerHTML = "";
-  
-  // Filter fonts
-  const filteredFonts = fontsData.filter(font => {
+// --- GET FILTERED FONTS DATA ---
+function getFilteredFonts() {
+  return fontsData.filter(font => {
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -685,6 +682,59 @@ function renderGrid() {
     
     return true;
   });
+}
+
+// --- APPEND FONT CARD ---
+function appendFontCard(font) {
+  const isFree = font.availability === "Free" || font.availability === "Free for Personal";
+  const statusDotClass = isFree ? "green" : "grey";
+  const statusText = isFree ? "Free Download" : `${font.price} / Buy License`;
+  const btnLabel = isFree ? "⬇ Try Free" : "Buy →";
+  
+  const card = document.createElement("div");
+  card.className = "font-card";
+  card.setAttribute("aria-label", `${font.name}, ${font.style}, ${font.availability}`);
+  card.innerHTML = `
+    ${getMockupHTML(font)}
+    <div class="card-info">
+      <h3 class="card-font-name" style="font-family: '${font.name}', var(--font-display);">${font.name}</h3>
+      <p class="card-tags">${font.style} · ${font.mood} · ${font.useCase}</p>
+      <div class="card-footer">
+        <span class="card-status">
+          <span class="status-dot ${statusDotClass}"></span>
+          ${statusText}
+        </span>
+        <button class="card-btn" data-id="${font.id}">
+          ${btnLabel}
+        </button>
+      </div>
+    </div>
+  `;
+  
+  // Card clicks open details panel
+  card.addEventListener("click", (e) => {
+    if (e.target.closest("button")) return;
+    openDetailPanel(font);
+  });
+  
+  // Action button clicks
+  card.querySelector(".card-btn").addEventListener("click", () => {
+    openDetailPanel(font);
+  });
+  
+  elements.fontGrid.appendChild(card);
+}
+
+// --- INFINITE SCROLL STATE ---
+let isLoadingMore = false;
+let infiniteScrollCounter = 0;
+
+// --- RENDER GRID ---
+function renderGrid() {
+  elements.fontGrid.innerHTML = "";
+  infiniteScrollCounter = 0;
+  
+  const filteredFonts = getFilteredFonts();
   
   if (filteredFonts.length === 0) {
     elements.fontGrid.innerHTML = `
@@ -696,47 +746,44 @@ function renderGrid() {
     return;
   }
   
-  filteredFonts.forEach(font => {
-    const isFree = font.availability === "Free" || font.availability === "Free for Personal";
-    const statusDotClass = isFree ? "green" : "grey";
-    const statusText = isFree ? "Free Download" : `${font.price} / Buy License`;
-    const btnLabel = isFree ? "⬇ Try Free" : "Buy →";
-    
-    const card = document.createElement("div");
-    card.className = "font-card";
-    card.setAttribute("aria-label", `${font.name}, ${font.style}, ${font.availability}`);
-    card.innerHTML = `
-      ${getMockupHTML(font)}
-      <div class="card-info">
-        <h3 class="card-font-name" style="font-family: '${font.name}', var(--font-display);">${font.name}</h3>
-        <p class="card-tags">${font.style} · ${font.mood} · ${font.useCase}</p>
-        <div class="card-footer">
-          <span class="card-status">
-            <span class="status-dot ${statusDotClass}"></span>
-            ${statusText}
-          </span>
-          <button class="card-btn" data-id="${font.id}">
-            ${btnLabel}
-          </button>
-        </div>
-      </div>
-    `;
-    
-    // Card clicks open details panel
-    card.addEventListener("click", (e) => {
-      // Prevents opening sheet if clicking actual action btn
-      if (e.target.closest("button")) return;
-      openDetailPanel(font);
-    });
-    
-    // Action button clicks
-    card.querySelector(".card-btn").addEventListener("click", () => {
-      openDetailPanel(font);
-    });
-    
-    elements.fontGrid.appendChild(card);
-  });
+  // Render initial list (up to 9 items for faster load)
+  const initialBatch = filteredFonts.slice(0, 9);
+  initialBatch.forEach(font => appendFontCard(font));
+  infiniteScrollCounter = initialBatch.length;
 }
+
+// --- LOAD MORE FONTS (INFINITE SCROLL) ---
+function loadMoreFonts() {
+  if (isLoadingMore) return;
+  
+  const filteredFonts = getFilteredFonts();
+  if (filteredFonts.length === 0) return;
+  
+  isLoadingMore = true;
+  
+  // Add a slight delay to simulate loading feel
+  setTimeout(() => {
+    for (let i = 0; i < 6; i++) {
+      const idx = (infiniteScrollCounter + i) % filteredFonts.length;
+      const baseFont = filteredFonts[idx];
+      
+      // Select a family name extension to differentiate repeated scroll entries
+      const variantSuffix = ["Condensed", "Wide", "Pro", "Display", "Text", "Variable", "SemiBold", "UltraBold", "Micro"][Math.floor((infiniteScrollCounter + i) / filteredFonts.length) % 9];
+      
+      const infiniteFontInstance = {
+        ...baseFont,
+        id: `${baseFont.id}-inf-${infiniteScrollCounter}`,
+        name: `${baseFont.name} ${variantSuffix}`
+      };
+      
+      appendFontCard(infiniteFontInstance);
+    }
+    
+    infiniteScrollCounter += 6;
+    isLoadingMore = false;
+  }, 250);
+}
+
 
 // --- OPEN DETAIL SHEET/PANEL ---
 function openDetailPanel(font) {
@@ -862,13 +909,18 @@ function handleDownloadClick() {
 
 // --- SETUP EVENT LISTENERS ---
 function setupEventListeners() {
-  // Navigation scrolling collapse
+  // Navigation scrolling collapse & Infinite scroll trigger
   window.addEventListener("scroll", () => {
     if (window.scrollY > 150) {
       elements.detailPanel.classList.add("collapsed"); // reduce gap
       document.getElementById("navbar").classList.add("collapsed");
     } else {
       document.getElementById("navbar").classList.remove("collapsed");
+    }
+
+    // Check if scrolled near bottom for infinite scroll trigger
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
+      loadMoreFonts();
     }
   });
 

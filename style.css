@@ -206,24 +206,26 @@ header.collapsed {
 
 .hero-headline {
   font-family: var(--font-display);
-  font-size: var(--ts-4xl);
-  line-height: 1.15;
-  margin-bottom: 1.5rem;
+  font-size: clamp(2.5rem, 6vw, 3.85rem);
+  line-height: 1.1;
+  margin-bottom: 1.8rem;
   font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 .hero-subline {
-  font-size: var(--ts-lg);
+  font-size: clamp(1.1rem, 2.5vw, 1.45rem);
   color: var(--border-grey);
-  margin-bottom: 2.5rem;
-  max-width: 600px;
+  margin-bottom: 3rem;
+  max-width: 680px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.6;
 }
 
 .hero-ctas {
   display: flex;
-  gap: 1rem;
+  gap: 1.2rem;
   justify-content: center;
 }
 
@@ -231,13 +233,13 @@ header.collapsed {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.8rem 1.8rem;
+  padding: 1rem 2.2rem;
   border-radius: 4px;
-  font-size: var(--ts-sm);
+  font-size: var(--ts-base);
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-smooth);
-  min-height: 44px;
+  min-height: 48px;
 }
 
 .btn-primary {
@@ -431,6 +433,18 @@ header.collapsed + .main-container .sidebar-filters {
   flex-direction: column;
   transition: var(--transition-smooth);
   cursor: pointer;
+  
+  /* Infinite scroll emerge animation */
+  opacity: 0;
+  transform: translateY(40px);
+  animation: emergeCard 0.6s var(--easing-spring) forwards;
+}
+
+@keyframes emergeCard {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .font-card:hover {
