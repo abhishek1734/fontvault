@@ -273,103 +273,132 @@ header.collapsed {
   50% { transform: translateY(10px); opacity: 1; }
 }
 
-/* --- STICKY FILTER BAR --- */
-.filter-bar-wrapper {
+/* --- SIDEBAR FILTERS & LAYOUT --- */
+.content-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.sidebar-filters {
   position: sticky;
-  top: 64px;
+  top: 88px;
   z-index: 99;
   background-color: var(--surface-dark);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: var(--pure-white);
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
   transition: var(--transition-smooth);
 }
 
-header.collapsed + .filter-bar-wrapper {
-  top: 48px;
+header.collapsed + .main-container .sidebar-filters {
+  top: 72px;
 }
 
-.filter-bar {
+.sidebar-filters::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-filters::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-filters::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+.sidebar-filters-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 2rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.filter-bar::-webkit-scrollbar {
-  display: none;
-}
-
-.filter-groups {
-  display: flex;
   align-items: center;
-  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.8rem;
 }
 
-.filter-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.filter-group-title {
-  color: var(--border-grey);
-  font-family: var(--font-mono);
-  font-size: var(--ts-xs);
+.sidebar-filters-header h3 {
+  font-family: var(--font-display);
+  font-size: var(--ts-base);
+  font-weight: 400;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-.pill-container {
+.sidebar-filters .filter-groups {
   display: flex;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.pill {
-  height: 32px;
-  padding: 0 1rem;
-  border-radius: 16px;
-  font-size: var(--ts-sm);
+.sidebar-filters .filter-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.sidebar-filters .filter-group-title {
+  color: #888;
+  font-family: var(--font-mono);
+  font-size: var(--ts-xs);
+  letter-spacing: 0.1em;
+}
+
+.sidebar-filters .pill-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sidebar-filters .pill {
+  height: 28px;
+  padding: 0 0.8rem;
+  border-radius: 14px;
+  font-size: var(--ts-xs);
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid var(--border-grey);
-  background-color: var(--pure-white);
-  color: var(--near-black);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--border-grey);
   white-space: nowrap;
   transition: var(--transition-smooth);
 }
 
-.pill:hover {
-  background-color: var(--off-white);
+.sidebar-filters .pill:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--pure-white);
 }
 
-.pill.active {
+.sidebar-filters .pill.active {
   background-color: var(--signal-red) !important;
   color: var(--pure-white) !important;
   border-color: var(--signal-red) !important;
 }
 
-.divider {
-  width: 1px;
-  height: 16px;
-  background-color: rgba(255, 255, 255, 0.2);
+.sidebar-filters .divider {
+  display: none; /* Hide dividers in sidebar */
 }
 
-.clear-all {
+.sidebar-filters .clear-all {
   color: var(--border-grey);
-  font-size: var(--ts-sm);
+  font-size: var(--ts-xs);
   cursor: pointer;
   font-weight: 500;
   white-space: nowrap;
-  display: none; /* Show only when filters active */
+  display: none;
 }
 
-.clear-all:hover {
-  color: var(--pure-white);
+.sidebar-filters .clear-all:hover {
+  color: var(--signal-red);
   text-decoration: underline;
 }
+
 
 /* --- MAIN CONTENT & GRID --- */
 .main-container {
@@ -946,6 +975,16 @@ footer {
 
 /* --- RESPONSIVE LAYOUTS --- */
 @media (max-width: 1024px) {
+  .content-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .sidebar-filters {
+    position: relative;
+    top: 0 !important;
+    max-height: none;
+    padding: 1.2rem;
+  }
   .masonry-grid {
     column-count: 2;
   }
@@ -974,9 +1013,6 @@ footer {
   }
   .hero-ctas .btn {
     width: 100%;
-  }
-  .filter-bar {
-    padding: 0.8rem 1rem;
   }
   .masonry-grid {
     column-count: 1;

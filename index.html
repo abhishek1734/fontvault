@@ -46,25 +46,32 @@
     </div>
   </section>
 
-  <!-- STICKY FILTER BAR -->
-  <div class="filter-bar-wrapper" id="filter-wrapper">
-    <div class="filter-bar">
-      <div class="filter-groups" id="filter-groups-container">
-        <!-- Filter Groups will be injected by JavaScript -->
-      </div>
-      <span class="clear-all" id="clear-filters-btn">Clear all</span>
-    </div>
-  </div>
-
-  <!-- MAIN FONT-IN-USE GRID -->
+  <!-- MAIN FONT-IN-USE GRID WITH SIDEBAR FILTERS -->
   <main class="main-container" id="main-content">
     <h2 class="section-title">Type in the Wild</h2>
-    <div class="masonry-grid" id="font-grid">
-      <!-- Font Cards will be dynamically injected here -->
-      <!-- Skeleton Loading State -->
-      <div class="skeleton-card" style="display:none;"></div>
+    <div class="content-layout">
+      <!-- LEFT SIDEBAR FILTERS -->
+      <aside class="sidebar-filters" id="filter-wrapper">
+        <div class="sidebar-filters-header">
+          <h3>Filters</h3>
+          <span class="clear-all" id="clear-filters-btn">Clear all</span>
+        </div>
+        <div class="filter-groups" id="filter-groups-container">
+          <!-- Filter Groups will be injected by JavaScript -->
+        </div>
+      </aside>
+
+      <!-- RIGHT GRID AREA -->
+      <section class="grid-area">
+        <div class="masonry-grid" id="font-grid">
+          <!-- Font Cards will be dynamically injected here -->
+          <!-- Skeleton Loading State -->
+          <div class="skeleton-card" style="display:none;"></div>
+        </div>
+      </section>
     </div>
   </main>
+
 
   <!-- CURATED FEATURED COLLECTIONS -->
   <section class="collections-section" id="collections">
