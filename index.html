@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FontVault — Premium Font Discovery and Licensing</title>
+  <meta name="description" content="Discover, test, and license premium and free fonts with real-world design mockups.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVIGATION BAR -->
+  <header id="navbar">
+    <a href="#" class="logo">FONTVAULT</a>
+    <div class="nav-actions">
+      <div class="search-container">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input type="text" id="search-input" placeholder="Search fonts, categories, designers...">
+      </div>
+      <a href="#submit-font" class="nav-link">Submit a Font</a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="hero">
+    <div class="hero-bg-watermarks">
+      <div class="watermark">Instrument Serif</div>
+      <div class="watermark">Inter Variable</div>
+      <div class="watermark">JetBrains Mono</div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">// DISCOVER TYPE</p>
+      <h1 class="hero-headline">Every font the world uses.<br>Yours to explore.</h1>
+      <p class="hero-subline">Browse thousands of fonts — free, trial, and premium — with real design previews.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-primary" id="btn-browse-fonts">Browse Fonts</button>
+        <button class="btn btn-secondary" id="btn-free-downloads">Free Downloads</button>
+      </div>
+    </div>
+    <div class="scroll-indicator" id="scroll-arrow">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- STICKY FILTER BAR -->
+  <div class="filter-bar-wrapper" id="filter-wrapper">
+    <div class="filter-bar">
+      <div class="filter-groups" id="filter-groups-container">
+        <!-- Filter Groups will be injected by JavaScript -->
+      </div>
+      <span class="clear-all" id="clear-filters-btn">Clear all</span>
+    </div>
+  </div>
+
+  <!-- MAIN FONT-IN-USE GRID -->
+  <main class="main-container" id="main-content">
+    <h2 class="section-title">Type in the Wild</h2>
+    <div class="masonry-grid" id="font-grid">
+      <!-- Font Cards will be dynamically injected here -->
+      <!-- Skeleton Loading State -->
+      <div class="skeleton-card" style="display:none;"></div>
+    </div>
+  </main>
+
+  <!-- CURATED FEATURED COLLECTIONS -->
+  <section class="collections-section" id="collections">
+    <div class="main-container" style="padding-top:0; padding-bottom:0;">
+      <h2 class="section-title">Curated Collections</h2>
+      <div class="collections-grid">
+        <div class="collection-card" data-filter="Style:Serif">
+          <div class="collection-overlay"></div>
+          <div class="collection-bg-preview">
+            <span style="font-family:'DM Serif Display'">Aa</span>
+            <span style="font-family:'Playfair Display'">Bb</span>
+            <span style="font-family:'Cormorant Garamond'">Cc</span>
+            <span style="font-family:'Cinzel'">Dd</span>
+          </div>
+          <div class="collection-content">
+            <h3 class="collection-title">Editorial Classics</h3>
+            <p class="collection-count">Serif & Display</p>
+          </div>
+        </div>
+        <div class="collection-card" data-filter="Availability:Free">
+          <div class="collection-overlay"></div>
+          <div class="collection-bg-preview">
+            <span style="font-family:'Inter'">Fr</span>
+            <span style="font-family:'Space Grotesk'">Ee</span>
+            <span style="font-family:'Montserrat'">Dn</span>
+            <span style="font-family:'Outfit'">Ld</span>
+          </div>
+          <div class="collection-content">
+            <h3 class="collection-title">Free & Beautiful</h3>
+            <p class="collection-count">Open Source Fonts</p>
+          </div>
+        </div>
+        <div class="collection-card" data-filter="Style:Monospace">
+          <div class="collection-overlay"></div>
+          <div class="collection-bg-preview">
+            <span style="font-family:'JetBrains Mono'">[ ]</span>
+            <span style="font-family:'JetBrains Mono'">&lt;&gt;</span>
+            <span style="font-family:'JetBrains Mono'">fn</span>
+            <span style="font-family:'JetBrains Mono'">var</span>
+          </div>
+          <div class="collection-content">
+            <h3 class="collection-title">MonoSpace & Code</h3>
+            <p class="collection-count">Clean & Technical</p>
+          </div>
+        </div>
+        <div class="collection-card" data-filter="Use Case:Branding">
+          <div class="collection-overlay"></div>
+          <div class="collection-bg-preview">
+            <span style="font-family:'Syne'">Sy</span>
+            <span style="font-family:'Bebas Neue'">BE</span>
+            <span style="font-family:'DM Serif Display'">Vo</span>
+            <span style="font-family:'Space Grotesk'">Sp</span>
+          </div>
+          <div class="collection-content">
+            <h3 class="collection-title">The Branding Stack</h3>
+            <p class="collection-count">Modern Identity</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETAIL PANEL / DRAWER -->
+  <div class="detail-overlay" id="detail-overlay"></div>
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-header">
+      <h3 class="detail-header-title" id="detail-title">Font Name</h3>
+      <div class="close-btn" id="close-panel-btn">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+    
+    <div class="detail-body">
+      <!-- Specimen Testing Box -->
+      <div class="specimen-preview-box">
+        <div class="specimen-text" id="specimen-display" contenteditable="true">The quick brown fox jumps over the lazy dog.</div>
+        <div class="specimen-controls">
+          <div class="specimen-input-wrap">
+            <input type="text" id="specimen-input" placeholder="Type custom preview text...">
+          </div>
+          <div class="size-slider-wrap">
+            <span>Size</span>
+            <input type="range" id="size-slider" min="12" max="120" value="48">
+            <span id="size-display">48px</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabbed Info -->
+      <div class="tab-nav">
+        <span class="tab-btn active" data-tab="overview">Overview</span>
+        <span class="tab-btn" data-tab="styles">Styles</span>
+        <span class="tab-btn" data-tab="license">License</span>
+        <span class="tab-btn" data-tab="designer">Designer</span>
+      </div>
+
+      <div class="tab-contents">
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="tab-overview">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Designer</span>
+              <span class="info-value" id="info-designer">Designer Name</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Foundry</span>
+              <span class="info-value" id="info-foundry">Foundry</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Year Released</span>
+              <span class="info-value" id="info-year">2023</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Total Styles</span>
+              <span class="info-value" id="info-styles">8 Styles</span>
+            </div>
+            <div class="info-item" style="grid-column: span 2;">
+              <span class="info-label">Supported Languages</span>
+              <span class="info-value" id="info-languages">Latin, Cyrillic</span>
+            </div>
+            <p class="detail-desc" id="info-description">Description of the font goes here.</p>
+          </div>
+        </div>
+
+        <!-- Styles Tab -->
+        <div class="tab-content" id="tab-styles">
+          <div class="styles-list" id="styles-variant-list" style="display:flex; flex-direction:column; gap:1.2rem;">
+            <!-- Individual weight specimens will be injected here -->
+          </div>
+        </div>
+
+        <!-- License Tab -->
+        <div class="tab-content" id="tab-license">
+          <span class="badge-license" id="license-badge-pill">OPEN SOURCE</span>
+          <p class="detail-desc" id="license-description" style="margin-top:1rem;">License summary text here.</p>
+        </div>
+
+        <!-- Designer Tab -->
+        <div class="tab-content" id="tab-designer">
+          <div class="designer-profile">
+            <h4 id="designer-profile-name" style="margin-bottom:0.5rem; font-family:var(--font-display); font-size:var(--ts-lg);">Designer</h4>
+            <p class="detail-desc" id="designer-bio">Designer biography summary here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="detail-cta-panel">
+      <div class="cta-price-tag" id="cta-price-display">Free Download</div>
+      <button class="btn btn-black btn-full" id="detail-primary-cta">Download Free</button>
+      <div class="download-confirm-tooltip" id="download-tooltip">This will download Inter.zip (2.3 MB)</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-branding">
+        <a href="#" class="logo">FONTVAULT</a>
+        <p style="margin-top: 1rem;">The premium font discovery and licensing platform. Built for modern designers, brand builders, and type lovers.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#hero" id="footer-browse-link">Browse Fonts</a></li>
+          <li><a href="#collections">Curated Collections</a></li>
+          <li><a href="#submit-font">Submit a Font</a></li>
+          <li><a href="#about">About FontVault</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter" id="submit-font">
+        <h4>Submit a Font</h4>
+        <p>Found or designed a stunning typeface? Let us know.</p>
+        <form class="newsletter-form" id="newsletter-form" onsubmit="event.preventDefault(); alert('Submission sent! Thank you for supporting the typography community.'); this.reset();">
+          <input type="email" placeholder="Enter foundry URL or font name" required>
+          <button type="submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 FontVault. All rights reserved.</span>
+      <span>BUILT FOR TYPE LOVERS</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
