@@ -1,14 +1,16 @@
-// --- GOOGLE FONTS DATABASE ---
+// --- CURATED MULTI-PROVIDER DATABASE (Google, Fontshare, Dafont) ---
 const fontsData = [
+  // --- GOOGLE FONTS (Sourced from fonts.google.com) ---
   {
     id: "instrument-serif",
     name: "Instrument Serif",
+    provider: "google",
     designer: "Jordan Bell",
     foundry: "Instrument",
     year: "2023",
     stylesCount: 4,
     languages: ["Latin", "Latin Extended"],
-    description: "Instrument Serif is a elegant, high-contrast serif typeface designed for headlines and brand presentation. It draws inspiration from early 20th-century metal type, displaying soft curves and sharp counters that evoke luxury and editorial precision.",
+    description: "Instrument Serif is a elegant, high-contrast serif typeface designed for headlines and brand presentation. It draws inspiration from early 20th-century metal type, displaying soft curves and sharp counters.",
     availability: "Free for Personal",
     mood: "Elegant",
     useCase: "Editorial",
@@ -24,6 +26,7 @@ const fontsData = [
   {
     id: "inter",
     name: "Inter",
+    provider: "google",
     designer: "Rasmus Andersson",
     foundry: "RSMS",
     year: "2016",
@@ -45,6 +48,7 @@ const fontsData = [
   {
     id: "dm-serif-display",
     name: "DM Serif Display",
+    provider: "google",
     designer: "Colophon Foundry",
     foundry: "Colophon",
     year: "2019",
@@ -66,6 +70,7 @@ const fontsData = [
   {
     id: "jetbrains-mono",
     name: "JetBrains Mono",
+    provider: "google",
     designer: "Philipp Nurullin",
     foundry: "JetBrains",
     year: "2020",
@@ -87,12 +92,13 @@ const fontsData = [
   {
     id: "syne",
     name: "Syne",
+    provider: "google",
     designer: "Bonjour Monde",
     foundry: "Synesthesia",
     year: "2017",
     stylesCount: 5,
     languages: ["Latin"],
-    description: "Syne was originally designed for an art center in France. It features unique wide, expressive letterforms in its heavier weights (extra bold/italic) while remaining clean and architectural in its regular weights. Perfect for posters and branding.",
+    description: "Syne was originally designed for an art center in France. It features unique wide, expressive letterforms in its heavier weights (extra bold/italic) while remaining clean and architectural in its regular weights.",
     availability: "Free",
     mood: "Playful",
     useCase: "Branding",
@@ -108,12 +114,13 @@ const fontsData = [
   {
     id: "playfair-display",
     name: "Playfair Display",
+    provider: "google",
     designer: "Claus Eggers Sørensen",
     foundry: "Claus Sørensen",
     year: "2011",
     stylesCount: 6,
     languages: ["Latin", "Cyrillic"],
-    description: "Playfair Display is a transitional serif typeface. Influenced by printer John Baskerville's style and the emergence of thin steel pens, it features elegant high-contrast strokes that work beautifully in titles, invitations, and high-fashion editorial.",
+    description: "Playfair Display is a transitional serif typeface. Influenced by printer John Baskerville's style and the emergence of thin steel pens, it features elegant high-contrast strokes that work beautifully in titles and invitations.",
     availability: "Free",
     mood: "Elegant",
     useCase: "Editorial",
@@ -129,12 +136,13 @@ const fontsData = [
   {
     id: "space-grotesk",
     name: "Space Grotesk",
+    provider: "google",
     designer: "Florian Karsten",
     foundry: "FK Foundry",
     year: "2018",
     stylesCount: 5,
     languages: ["Latin", "Latin Extended"],
-    description: "Space Grotesk is a proportional sans-serif typeface based on Space Mono (designed by Colophon Foundry). It maintains the technical and quirky characteristics of the monospaced parent while optimizing readability for body copy and titles.",
+    description: "Space Grotesk is a proportional sans-serif typeface based on Space Mono. It maintains the technical and quirky characteristics of the monospaced parent while optimizing readability for body copy and titles.",
     availability: "Free",
     mood: "Bold",
     useCase: "Branding",
@@ -150,12 +158,13 @@ const fontsData = [
   {
     id: "bebas-neue",
     name: "Bebas Neue",
+    provider: "google",
     designer: "Ryoichi Tsunekawa",
     foundry: "Dharma Type",
     year: "2010",
     stylesCount: 5,
     languages: ["Latin", "Cyrillic"],
-    description: "Bebas Neue is a highly popular display sans-serif typeface based on the original Bebas free font. It is characterised by its clean lines, condensed cap-height, and bold, punchy presence suitable for headings, captions, and posters.",
+    description: "Bebas Neue is a highly popular display sans-serif typeface based on the original Bebas free font. It is characterised by its clean lines, condensed cap-height, and bold, punchy presence suitable for headings.",
     availability: "Free",
     mood: "Bold",
     useCase: "Poster",
@@ -171,12 +180,13 @@ const fontsData = [
   {
     id: "cinzel",
     name: "Cinzel",
+    provider: "google",
     designer: "Natanael Gama",
     foundry: "N Gama",
     year: "2012",
     stylesCount: 6,
     languages: ["Latin"],
-    description: "Cinzel is a typeface inspired by first-century Roman inscriptions. It follows classical proportions while incorporating a contemporary flare. Cinzel is perfect for fantasy titles, premium packaging, luxury labels, and historical displays.",
+    description: "Cinzel is a typeface inspired by first-century Roman inscriptions. It follows classical proportions while incorporating a contemporary flare. Cinzel is perfect for luxury labels and historical displays.",
     availability: "Free",
     mood: "Formal",
     useCase: "Packaging",
@@ -192,12 +202,13 @@ const fontsData = [
   {
     id: "cormorant-garamond",
     name: "Cormorant Garamond",
+    provider: "google",
     designer: "Christian Thalmann",
     foundry: "Catharsis",
     year: "2015",
     stylesCount: 10,
     languages: ["Latin", "Cyrillic"],
-    description: "Cormorant Garamond is a large, high-fidelity Garamond family designed for large display use. It is a stunning tribute to Claude Garamont's classic type designs, featuring ultra-thin serifs and elegant curves.",
+    description: "Cormorant Garamond is a large, high-fidelity Garamond family designed for large display use. It features ultra-thin serifs and elegant curves.",
     availability: "Free",
     mood: "Elegant",
     useCase: "Editorial",
@@ -211,35 +222,15 @@ const fontsData = [
     fileSize: "2.5 MB"
   },
   {
-    id: "cabinet-grotesk",
-    name: "Cabinet Grotesk",
-    designer: "Indian Type Foundry",
-    foundry: "ITF",
-    year: "2021",
-    stylesCount: 8,
-    languages: ["Latin"],
-    description: "Cabinet Grotesk is a premium sans-serif family designed specifically for branding, digital UI, and high-impact identity headers. It shifts between architectural geometry and elegant curves, creating high brand value.",
-    availability: "Premium",
-    mood: "Modern",
-    useCase: "Branding",
-    style: "Sans-Serif",
-    language: "Latin",
-    downloadUrl: "https://fontshare.com/fonts/cabinet-grotesk",
-    price: "$29",
-    mockupType: "branding",
-    mockupTitle: "STUDIO",
-    mockupSubtitle: "Creative Consultancy & Partner",
-    fileSize: "3.2 MB"
-  },
-  {
     id: "outfit",
     name: "Outfit",
+    provider: "google",
     designer: "Outfit Foundry",
     foundry: "Outfit",
     year: "2021",
     stylesCount: 9,
     languages: ["Latin"],
-    description: "Outfit is a playful, clean, geometric sans-serif font family. It is optimized for web screens, mobile UI products, and smart device applications. Its friendly shapes make it a modern classic.",
+    description: "Outfit is a playful, clean, geometric sans-serif font family. It is optimized for web screens, mobile UI products, and smart device applications.",
     availability: "Free",
     mood: "Playful",
     useCase: "UI",
@@ -251,33 +242,279 @@ const fontsData = [
     mockupTitle: "Explore // Dynamic",
     mockupSubtitle: "Quick interactive UI configurations",
     fileSize: "1.0 MB"
+  },
+  {
+    id: "montserrat",
+    name: "Montserrat",
+    provider: "google",
+    designer: "Julieta Ulanovsky",
+    foundry: "Montserrat Project",
+    year: "2011",
+    stylesCount: 18,
+    languages: ["Latin", "Cyrillic"],
+    description: "Montserrat is inspired by posters, signs and old windows from the historic Buenos Aires neighborhood. It has a beautiful geometric layout that is highly readable.",
+    availability: "Free",
+    mood: "Modern",
+    useCase: "Web",
+    style: "Sans-Serif",
+    language: "Latin",
+    downloadUrl: "https://fonts.google.com/specimen/Montserrat",
+    price: "Free",
+    mockupType: "poster",
+    mockupTitle: "MUNICIPAL",
+    mockupSubtitle: "BUENOS AIRES NEIGHBORHOOD",
+    fileSize: "2.8 MB"
+  },
+
+  // --- FONTSHARE FONTS (Sourced from fontshare.com) ---
+  {
+    id: "satoshi",
+    name: "Satoshi",
+    provider: "fontshare",
+    designer: "Indian Type Foundry",
+    foundry: "ITF",
+    year: "2021",
+    stylesCount: 10,
+    languages: ["Latin"],
+    description: "Satoshi is a modernist neo-grotesque sans-serif typeface. It is clean, minimalist, and highly adaptable for modern digital interfaces, posters, and body layouts.",
+    availability: "Free",
+    mood: "Minimal",
+    useCase: "UI",
+    style: "Sans-Serif",
+    language: "Latin",
+    downloadUrl: "https://www.fontshare.com/fonts/satoshi",
+    price: "Free",
+    mockupType: "ui",
+    mockupTitle: "Interface // Satoshi",
+    mockupSubtitle: "Optimal layout configurations",
+    fileSize: "1.8 MB"
+  },
+  {
+    id: "clash-display",
+    name: "Clash Display",
+    provider: "fontshare",
+    designer: "Indian Type Foundry",
+    foundry: "ITF",
+    year: "2021",
+    stylesCount: 6,
+    languages: ["Latin"],
+    description: "Clash Display is a display sans-serif typeface. Its designs feature very small counters and thick strokes, giving it a heavy, high-contrast personality ideal for headline posters.",
+    availability: "Free",
+    mood: "Bold",
+    useCase: "Poster",
+    style: "Display",
+    language: "Latin",
+    downloadUrl: "https://www.fontshare.com/fonts/clash-display",
+    price: "Free",
+    mockupType: "bold-label",
+    mockupTitle: "ATTENTION",
+    mockupSubtitle: "THIS PRODUCT IS HIGHLY EXPERIMENTAL",
+    fileSize: "1.1 MB"
+  },
+  {
+    id: "cabinet-grotesk-free",
+    name: "Cabinet Grotesk",
+    provider: "fontshare",
+    designer: "Indian Type Foundry",
+    foundry: "ITF",
+    year: "2021",
+    stylesCount: 8,
+    languages: ["Latin"],
+    description: "Cabinet Grotesk is a premium sans-serif family designed specifically for branding, digital UI, and high-impact identity headers. It shifts between architectural geometry and elegant curves.",
+    availability: "Free",
+    mood: "Modern",
+    useCase: "Branding",
+    style: "Sans-Serif",
+    language: "Latin",
+    downloadUrl: "https://www.fontshare.com/fonts/cabinet-grotesk",
+    price: "Free",
+    mockupType: "branding",
+    mockupTitle: "ITF DESIGN",
+    mockupSubtitle: "Branding Collective 2026",
+    fileSize: "2.4 MB"
+  },
+  {
+    id: "general-sans",
+    name: "General Sans",
+    provider: "fontshare",
+    designer: "Indian Type Foundry",
+    foundry: "ITF",
+    year: "2021",
+    stylesCount: 12,
+    languages: ["Latin"],
+    description: "General Sans is a neutral, highly readable grotesque typeface. Ideal for settings where legibility is paramount, like technical web documentation and long editorial reviews.",
+    availability: "Free",
+    mood: "Formal",
+    useCase: "Web",
+    style: "Sans-Serif",
+    language: "Latin",
+    downloadUrl: "https://www.fontshare.com/fonts/general-sans",
+    price: "Free",
+    mockupType: "book",
+    mockupTitle: "SPECIFICATION NOTES",
+    mockupSubtitle: "Compiled technical data sheet",
+    fileSize: "2.0 MB"
+  },
+  {
+    id: "zodiak",
+    name: "Zodiak",
+    provider: "fontshare",
+    designer: "Jérémie Hornus",
+    foundry: "ITF",
+    year: "2021",
+    stylesCount: 8,
+    languages: ["Latin"],
+    description: "Zodiak is an elegant serif typeface. Featuring exceptionally thin, delicate horizontal serifs, it shines in luxurious magazine titles and literary publications.",
+    availability: "Free",
+    mood: "Elegant",
+    useCase: "Editorial",
+    style: "Serif",
+    language: "Latin",
+    downloadUrl: "https://www.fontshare.com/fonts/zodiak",
+    price: "Free",
+    mockupType: "magazine",
+    mockupTitle: "ELEGANTIA",
+    mockupSubtitle: "High Fashion / Winter Issue",
+    fileSize: "1.6 MB"
+  },
+
+  // --- DAFONT FONTS (Sourced from dafont.com) ---
+  {
+    id: "lemon-milk",
+    name: "Lemon Milk",
+    provider: "dafont",
+    designer: "Muhammad Faisal",
+    foundry: "Ariq Sya",
+    year: "2016",
+    stylesCount: 4,
+    languages: ["Latin"],
+    description: "Lemon Milk is a extremely popular geometric display sans-serif typeface available on Dafont. Known for its sharp corners and modern uppercase letters, it is widely featured in YouTube videos, streetwear, and active posters.",
+    availability: "Free for Personal",
+    mood: "Bold",
+    useCase: "Branding",
+    style: "Display",
+    language: "Latin",
+    downloadUrl: "https://www.dafont.com/lemon-milk.font",
+    price: "Free",
+    mockupType: "branding",
+    mockupTitle: "LEMON",
+    mockupSubtitle: "CREATIVE HUB / STREETWEAR",
+    fileSize: "0.9 MB"
+  },
+  {
+    id: "coolvetica",
+    name: "Coolvetica",
+    provider: "dafont",
+    designer: "Ray Larabie",
+    foundry: "Typodermic",
+    year: "1999",
+    stylesCount: 4,
+    languages: ["Latin"],
+    description: "Coolvetica is a display sans-serif inspired by the custom Helvetica logos of the 1970s. It features tight kerning, funky curves, and a vintage retro presence suitable for branding.",
+    availability: "Free for Personal",
+    mood: "Vintage",
+    useCase: "Branding",
+    style: "Sans-Serif",
+    language: "Latin",
+    downloadUrl: "https://www.dafont.com/coolvetica.font",
+    price: "Free",
+    mockupType: "poster",
+    mockupTitle: "RETRO-WAVE",
+    mockupSubtitle: "Custom Typography Era",
+    fileSize: "1.2 MB"
+  },
+  {
+    id: "shoreline-script",
+    name: "Shoreline Script",
+    provider: "dafont",
+    designer: "Billy Argel",
+    foundry: "Billy Argel",
+    year: "2018",
+    stylesCount: 1,
+    languages: ["Latin"],
+    description: "Shoreline Script is a fluid, flowing script typeface with elaborate flourishes. Ideal for organic packaging, wedding invites, and signature branding items.",
+    availability: "Free for Personal",
+    mood: "Elegant",
+    useCase: "Packaging",
+    style: "Script",
+    language: "Latin",
+    downloadUrl: "https://www.dafont.com/shoreline-script.font",
+    price: "Free",
+    mockupType: "invitation",
+    mockupTitle: "Serenade of the Sea",
+    mockupSubtitle: "Premium Organic Reserve",
+    fileSize: "2.1 MB"
+  },
+  {
+    id: "old-london",
+    name: "Old London",
+    provider: "dafont",
+    designer: "Dieter Steffmann",
+    foundry: "Steffmann",
+    year: "2002",
+    stylesCount: 2,
+    languages: ["Latin"],
+    description: "Old London is a classic gothic blackletter font. It recreates old English typography beautifully, making it perfect for vintage editorial work, heavy metal band logos, and historic certificates.",
+    availability: "Free",
+    mood: "Vintage",
+    useCase: "Editorial",
+    style: "Serif",
+    language: "Latin",
+    downloadUrl: "https://www.dafont.com/old-london.font",
+    price: "Free",
+    mockupType: "luxury",
+    mockupTitle: "Chronicles",
+    mockupSubtitle: "ESTABLISHED ANNO DOMINI 1884",
+    fileSize: "0.7 MB"
   }
 ];
 
-// --- DYNAMIC GOOGLE FONTS LOADER ---
-function loadGoogleFont(fontName) {
-  const formattedName = fontName.replace(/\s+/g, '+');
-  const linkId = `gfont-${formattedName}`;
-  if (!document.getElementById(linkId)) {
-    const link = document.createElement('link');
-    link.id = linkId;
-    link.rel = 'stylesheet';
+// --- DYNAMIC MULTI-PROVIDER FONT FACE LOADER ---
+function loadExternalFont(font) {
+  const linkId = `font-face-${font.id}`;
+  if (document.getElementById(linkId)) return;
+  
+  const link = document.createElement('link');
+  link.id = linkId;
+  link.rel = 'stylesheet';
+  
+  if (font.provider === "google") {
+    const formattedName = font.name.replace(/\s+/g, '+');
     link.href = `https://fonts.googleapis.com/css2?family=${formattedName}:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500&display=swap`;
-    document.head.appendChild(link);
+  } else if (font.provider === "fontshare") {
+    const slug = font.name.toLowerCase().replace(/\s+/g, '-');
+    link.href = `https://api.fontshare.com/v2/css?f=${slug}@300,400,500,700&display=swap`;
+  } else if (font.provider === "dafont") {
+    // Dafont files are not served over direct CDN links. 
+    // We dynamically map them to matching Google Font fallback families for browser previewing
+    let fallbackGoogleFont = "";
+    if (font.name.includes("Lemon Milk")) fallbackGoogleFont = "Montserrat";
+    else if (font.name.includes("Coolvetica")) fallbackGoogleFont = "Rubik";
+    else if (font.name.includes("Shoreline Script")) fallbackGoogleFont = "Great Vibes";
+    else if (font.name.includes("Old London")) fallbackGoogleFont = "UnifrakturMaguntia";
+    else fallbackGoogleFont = "Playfair Display"; // fallback default
+    
+    if (fallbackGoogleFont) {
+      const formattedName = fallbackGoogleFont.replace(/\s+/g, '+');
+      link.href = `https://fonts.googleapis.com/css2?family=${formattedName}&display=swap`;
+      font.cssFamily = `'${fallbackGoogleFont}', cursive, sans-serif`;
+    }
   }
+  
+  document.head.appendChild(link);
 }
 
-// --- PRE-LOAD POPULAR FONTS FOR HERO & CARDS ---
+// --- PRE-LOAD CORE FONTS FOR HOMEPAGE ---
 fontsData.forEach(font => {
   if (font.availability === "Free" || font.availability === "Free for Personal") {
-    loadGoogleFont(font.name);
+    loadExternalFont(font);
   }
 });
 
 // --- FILTER CONFIGURATION ---
 const filterGroups = {
   "Availability": ["All", "Free", "Free for Personal", "Premium"],
-  "Style": ["Serif", "Sans-Serif", "Display", "Monospace"],
+  "Style": ["Serif", "Sans-Serif", "Display", "Monospace", "Script"],
   "Mood": ["Elegant", "Minimal", "Vintage", "Bold", "Playful", "Formal", "Modern"],
   "Use Case": ["Editorial", "UI", "Poster", "Web", "Packaging", "Branding"],
   "Language": ["Latin", "Cyrillic"]
@@ -393,7 +630,6 @@ function handleFilterClick(group, value) {
   if (group === "Availability") {
     activeFilters[group] = value;
   } else {
-    // Toggle active state
     if (activeFilters[group] === value) {
       activeFilters[group] = null;
     } else {
@@ -433,13 +669,12 @@ function clearAllFilters() {
 }
 
 // --- MOCKUP INLINE CSS GENERATOR ---
-// Generates clean styled inline typographic mockups based on the font style
 function getMockupHTML(font) {
   const fontNameSafe = font.name;
   let customStyle = "";
   
-  // Ensure the custom font style is loaded dynamically
-  loadGoogleFont(font.name);
+  loadExternalFont(font);
+  const targetFamily = font.cssFamily || `'${fontNameSafe}'`;
   
   if (font.mockupType === "magazine") {
     customStyle = `
@@ -455,7 +690,7 @@ function getMockupHTML(font) {
     return `
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="font-family: '${fontNameSafe}', serif; font-size: 2.2rem; font-style: italic; line-height: 1; text-align: center;">${font.mockupTitle}</div>
+        <div style="font-family: ${targetFamily}, serif; font-size: 2.2rem; font-style: italic; line-height: 1; text-align: center;">${font.mockupTitle}</div>
         <div style="font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; margin-top: 0.8rem; letter-spacing: 0.1em; color: #777;">${font.mockupSubtitle}</div>
       </div>
     `;
@@ -475,7 +710,7 @@ function getMockupHTML(font) {
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
         <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #888;">${font.mockupTitle}</div>
-        <div style="font-family: '${fontNameSafe}', sans-serif; font-size: 1.2rem; font-weight: 600; line-height: 1.3; margin: 1rem 0;">
+        <div style="font-family: ${targetFamily}, sans-serif; font-size: 1.2rem; font-weight: 600; line-height: 1.3; margin: 1rem 0;">
           Unlock variable spacing values seamlessly.
         </div>
         <div style="display: flex; gap: 0.5rem;">
@@ -499,7 +734,7 @@ function getMockupHTML(font) {
     return `
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="font-family: '${fontNameSafe}', monospace; font-size: 0.85rem; line-height: 1.5; color: #E0E0E0;">
+        <div style="font-family: ${targetFamily}, monospace; font-size: 0.85rem; line-height: 1.5; color: #E0E0E0;">
           <span style="color: #FF3B00">const</span> config = {<br>
           &nbsp;&nbsp;theme: <span style="color: #A9B1D6">'mono-dark'</span>,<br>
           &nbsp;&nbsp;opacity: <span style="color: #00C853">0.95</span><br>
@@ -523,7 +758,7 @@ function getMockupHTML(font) {
     return `
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="font-family: '${fontNameSafe}', sans-serif; font-size: 2.8rem; font-weight: 700; line-height: 0.95; letter-spacing: -0.04em;">${font.mockupTitle}</div>
+        <div style="font-family: ${targetFamily}, sans-serif; font-size: 2.5rem; font-weight: 700; line-height: 0.95; letter-spacing: -0.04em; text-align:center;">${font.mockupTitle}</div>
         <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--signal-red); margin-top: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;">${font.mockupSubtitle}</div>
       </div>
     `;
@@ -542,7 +777,7 @@ function getMockupHTML(font) {
     return `
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="font-family: '${fontNameSafe}', sans-serif; font-size: 2.5rem; font-weight: 800; line-height: 0.85; letter-spacing: -0.02em;">${font.mockupTitle}</div>
+        <div style="font-family: ${targetFamily}, sans-serif; font-size: 2.5rem; font-weight: 800; line-height: 0.85; letter-spacing: -0.02em;">${font.mockupTitle}</div>
         <div style="font-size: 0.7rem; color: #555; text-transform: uppercase; font-weight: 500;">${font.mockupSubtitle}</div>
       </div>
     `;
@@ -565,7 +800,7 @@ function getMockupHTML(font) {
     return `
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="font-family: '${fontNameSafe}', serif; font-size: 1.4rem; font-style: italic; text-align: center; margin-bottom: 0.4rem;">${font.mockupTitle}</div>
+        <div style="font-family: ${targetFamily}, serif; font-size: 1.4rem; font-style: italic; text-align: center; margin-bottom: 0.4rem;">${font.mockupTitle}</div>
         <div style="font-family: var(--font-body); font-size: 0.55rem; text-align: center; color: #7c7774; letter-spacing: 0.05em; text-transform: uppercase;">${font.mockupSubtitle}</div>
       </div>
     `;
@@ -585,7 +820,7 @@ function getMockupHTML(font) {
     return `
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="font-family: '${fontNameSafe}', sans-serif; font-size: 3.2rem; line-height: 0.9; font-weight: 900; text-align: center; letter-spacing: -0.02em;">${font.mockupTitle}</div>
+        <div style="font-family: ${targetFamily}, sans-serif; font-size: 3.2rem; line-height: 0.9; font-weight: 900; text-align: center; letter-spacing: -0.02em;">${font.mockupTitle}</div>
         <div style="font-family: var(--font-mono); font-size: 0.6rem; color: #FFFFFF; margin-top: 0.6rem; letter-spacing: 0.1em;">${font.mockupSubtitle}</div>
       </div>
     `;
@@ -605,7 +840,7 @@ function getMockupHTML(font) {
     return `
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="font-family: '${fontNameSafe}', serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.3em; margin-bottom: 0.5rem; text-align: center;">${font.mockupTitle}</div>
+        <div style="font-family: ${targetFamily}, serif; font-size: 1.8rem; font-weight: 300; letter-spacing: 0.3em; margin-bottom: 0.5rem; text-align: center;">${font.mockupTitle}</div>
         <div style="font-family: var(--font-mono); font-size: 0.55rem; color: #FFFFFF; letter-spacing: 0.15em;">${font.mockupSubtitle}</div>
       </div>
     `;
@@ -624,17 +859,16 @@ function getMockupHTML(font) {
     return `
       <div class="card-mockup" style="${customStyle}">
         <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="font-family: '${fontNameSafe}', serif; font-size: 1.5rem; line-height: 1.1; margin-bottom: 1rem; max-width: 80%;">${font.mockupTitle}</div>
+        <div style="font-family: ${targetFamily}, serif; font-size: 1.5rem; line-height: 1.1; margin-bottom: 1rem; max-width: 80%;">${font.mockupTitle}</div>
         <div style="font-family: var(--font-body); font-size: 0.6rem; color: #888;">${font.mockupSubtitle}</div>
       </div>
     `;
   }
 
-  // Fallback
   return `
     <div class="card-mockup" style="background-color:#FFF; display:flex; align-items:center; justify-content:center; border-bottom:1px solid #E0E0E0;">
       <span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>
-      <div style="font-family:'${fontNameSafe}'; font-size:2rem;">${font.name}</div>
+      <div style="font-family:${targetFamily}; font-size:2rem;">${font.name}</div>
     </div>
   `;
 }
@@ -660,6 +894,7 @@ function getFilteredFonts() {
                             font.designer.toLowerCase().includes(query) ||
                             font.foundry.toLowerCase().includes(query) ||
                             font.style.toLowerCase().includes(query) ||
+                            font.provider.toLowerCase().includes(query) ||
                             font.mood.toLowerCase().includes(query);
       if (!matchesSearch) return false;
     }
@@ -691,14 +926,25 @@ function appendFontCard(font) {
   const statusText = isFree ? "Free Download" : `${font.price} / Buy License`;
   const btnLabel = isFree ? "⬇ Try Free" : "Buy →";
   
+  // Format source label nicely
+  let providerLabel = font.provider.toUpperCase();
+  if (providerLabel === "GOOGLE") providerLabel = "GOOGLE FONTS";
+  
   const card = document.createElement("div");
   card.className = "font-card";
   card.setAttribute("aria-label", `${font.name}, ${font.style}, ${font.availability}`);
+  
+  loadExternalFont(font);
+  const targetFamily = font.cssFamily || `'${font.name}'`;
+  
   card.innerHTML = `
     ${getMockupHTML(font)}
     <div class="card-info">
-      <h3 class="card-font-name" style="font-family: '${font.name}', var(--font-display);">${font.name}</h3>
-      <p class="card-tags">${font.style} · ${font.mood} · ${font.useCase}</p>
+      <h3 class="card-font-name" style="font-family: ${targetFamily}, var(--font-display);">${font.name}</h3>
+      <p class="card-tags">
+        <span style="text-transform: uppercase; font-weight:700; color:var(--near-black); background:#E0E0E0; padding:2px 6px; border-radius:3px; margin-right:6px; font-size:0.6rem; font-family:var(--font-mono);">${providerLabel}</span>
+        ${font.style} · ${font.mood} · ${font.useCase}
+      </p>
       <div class="card-footer">
         <span class="card-status">
           <span class="status-dot ${statusDotClass}"></span>
@@ -761,13 +1007,11 @@ function loadMoreFonts() {
   
   isLoadingMore = true;
   
-  // Add a slight delay to simulate loading feel
   setTimeout(() => {
     for (let i = 0; i < 6; i++) {
       const idx = (infiniteScrollCounter + i) % filteredFonts.length;
       const baseFont = filteredFonts[idx];
       
-      // Select a family name extension to differentiate repeated scroll entries
       const variantSuffix = ["Condensed", "Wide", "Pro", "Display", "Text", "Variable", "SemiBold", "UltraBold", "Micro"][Math.floor((infiniteScrollCounter + i) / filteredFonts.length) % 9];
       
       const infiniteFontInstance = {
@@ -784,22 +1028,20 @@ function loadMoreFonts() {
   }, 250);
 }
 
-
 // --- OPEN DETAIL SHEET/PANEL ---
 function openDetailPanel(font) {
   selectedFont = font;
-  loadGoogleFont(font.name);
+  loadExternalFont(font);
   
   elements.detailTitle.textContent = font.name;
   
   // Set specimen preview style
-  elements.specimenDisplay.style.fontFamily = `'${font.name}', serif`;
+  const targetFamily = font.cssFamily || `'${font.name}'`;
+  elements.specimenDisplay.style.fontFamily = `${targetFamily}, serif`;
   
-  // Reset custom text preview input
   elements.specimenInput.value = "";
   elements.specimenDisplay.textContent = "The quick brown fox jumps over the lazy dog.";
   
-  // Setup Meta Info Tabs
   elements.infoDesigner.textContent = font.designer;
   elements.infoFoundry.textContent = font.foundry;
   elements.infoYear.textContent = font.year;
@@ -807,7 +1049,6 @@ function openDetailPanel(font) {
   elements.infoLanguages.textContent = font.languages.join(", ");
   elements.infoDescription.textContent = font.description;
   
-  // Style tab variants list
   elements.stylesVariantList.innerHTML = "";
   const weights = [
     { label: "Light 300", weight: 300 },
@@ -821,35 +1062,36 @@ function openDetailPanel(font) {
     item.style.paddingBottom = "0.8rem";
     item.innerHTML = `
       <div style="font-family: var(--font-mono); font-size: 0.65rem; color:#888; margin-bottom:0.2rem;">${w.label}</div>
-      <div style="font-family: '${font.name}'; font-weight: ${w.weight}; font-size: 1.8rem; word-break: break-word;">
+      <div style="font-family: ${targetFamily}; font-weight: ${w.weight}; font-size: 1.8rem; word-break: break-word;">
         Agile specimen lines.
       </div>
     `;
     elements.stylesVariantList.appendChild(item);
   });
   
-  // License text setup
   elements.licenseBadgePill.textContent = font.availability.toUpperCase();
   elements.licenseBadgePill.className = `badge-license ${getBadgeClass(font.availability)}`;
   
+  let sourceUrlLabel = "Google Fonts";
+  if (font.provider === "fontshare") sourceUrlLabel = "Fontshare";
+  else if (font.provider === "dafont") sourceUrlLabel = "Dafont";
+  
   if (font.availability === "Free") {
-    elements.licenseDescription.textContent = "Open Source License. This font is available for commercial & personal projects alike without any licensing fee.";
+    elements.licenseDescription.textContent = `Open Source License. This font is available for commercial & personal projects alike without any licensing fee, hosted on ${sourceUrlLabel}.`;
   } else if (font.availability === "Free for Personal") {
-    elements.licenseDescription.textContent = "Free for Personal Use. You may use this font for design exploration, personal projects, or mockups. Commercial use requires licensing.";
+    elements.licenseDescription.textContent = `Free for Personal Use. You may use this font for design exploration, personal projects, or mockups. Sourced from ${sourceUrlLabel}. Commercial use requires purchasing a license.`;
   } else {
-    elements.licenseDescription.textContent = "Commercial licensing required. Purchase or request access through the foundry or digital distribution service.";
+    elements.licenseDescription.textContent = `Commercial licensing required. Purchase or request access through the foundry or official vendor at ${sourceUrlLabel}.`;
   }
   
-  // Designer tab setup
   elements.designerProfileName.textContent = font.designer;
-  elements.designerBio.textContent = `${font.designer} is an acclaimed type designer known for their precise geometries and artistic layouts. They work collaboratively with global foundries to push type boundaries.`;
+  elements.designerBio.textContent = `${font.designer} is a typographer who publishes designs on ${sourceUrlLabel}. They work to build expressive and functional glyph sets for global communication design.`;
   
-  // Bottom CTAs
   elements.ctaPriceDisplay.textContent = font.availability === "Free" || font.availability === "Free for Personal" ? 
     "Free Download" : `License starting from ${font.price}`;
     
   if (font.availability === "Free" || font.availability === "Free for Personal") {
-    elements.detailPrimaryCta.textContent = "⬇ Download Free";
+    elements.detailPrimaryCta.textContent = `⬇ Download from ${sourceUrlLabel}`;
     elements.detailPrimaryCta.style.backgroundColor = "var(--near-black)";
     elements.detailPrimaryCta.style.color = "var(--pure-white)";
   } else {
@@ -858,79 +1100,64 @@ function openDetailPanel(font) {
     elements.detailPrimaryCta.style.color = "var(--pure-white)";
   }
   
-  // Reset tooltip
   elements.downloadTooltip.classList.remove("active");
   
-  // Show drawer/overlay
   elements.detailOverlay.classList.add("active");
   elements.detailPanel.classList.add("active");
-  document.body.style.overflow = "hidden"; // disable background scroll
+  document.body.style.overflow = "hidden";
 }
 
-// --- CLOSE DETAIL SHEET/PANEL ---
 function closeDetailPanel() {
   elements.detailOverlay.classList.remove("active");
   elements.detailPanel.classList.remove("active");
-  document.body.style.overflow = ""; // enable background scroll
+  document.body.style.overflow = "";
 }
 
-// --- TRIGGER DOWNLOAD SEQ ---
 function handleDownloadClick() {
   if (!selectedFont) return;
   
-  // If paid, redirect to purchase site directly
-  if (selectedFont.availability === "Premium" || selectedFont.availability === "Paid") {
-    window.open(selectedFont.downloadUrl, '_blank');
-    return;
-  }
+  let sourceName = "Google Fonts";
+  if (selectedFont.provider === "fontshare") sourceName = "Fontshare";
+  else if (selectedFont.provider === "dafont") sourceName = "Dafont";
   
-  // Confirmation Tooltip
-  elements.downloadTooltip.textContent = `This will download ${selectedFont.name.replace(/\s+/g, '_')}.zip (${selectedFont.fileSize || '1.5 MB'})`;
+  elements.downloadTooltip.textContent = `Redirecting to official ${sourceName} download page for "${selectedFont.name}"`;
   elements.downloadTooltip.classList.add("active");
   
-  // Perform download step with delay
   setTimeout(() => {
-    // Show success state on button
     const prevText = elements.detailPrimaryCta.textContent;
-    elements.detailPrimaryCta.textContent = "✓ Downloading...";
+    elements.detailPrimaryCta.textContent = "✓ Redirecting...";
     elements.detailPrimaryCta.style.backgroundColor = "#00C853";
     
     setTimeout(() => {
-      // Restore CTA
       elements.detailPrimaryCta.textContent = prevText;
       elements.detailPrimaryCta.style.backgroundColor = "var(--near-black)";
       
-      // Trigger actual download page redirection
       window.open(selectedFont.downloadUrl, '_blank');
       closeDetailPanel();
-    }, 1200);
-  }, 1000);
+    }, 1000);
+  }, 800);
 }
 
 // --- SETUP EVENT LISTENERS ---
 function setupEventListeners() {
-  // Navigation scrolling collapse & Infinite scroll trigger
   window.addEventListener("scroll", () => {
     if (window.scrollY > 150) {
-      elements.detailPanel.classList.add("collapsed"); // reduce gap
+      elements.detailPanel.classList.add("collapsed");
       document.getElementById("navbar").classList.add("collapsed");
     } else {
       document.getElementById("navbar").classList.remove("collapsed");
     }
 
-    // Check if scrolled near bottom for infinite scroll trigger
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
       loadMoreFonts();
     }
   });
 
-  // Search input query
   elements.searchInput.addEventListener("input", (e) => {
     searchQuery = e.target.value;
     renderGrid();
   });
   
-  // Browse Buttons & Arrow Clicks
   elements.browseBtn.addEventListener("click", () => {
     elements.searchInput.focus();
     elements.searchInput.scrollIntoView({ behavior: 'smooth' });
@@ -947,48 +1174,39 @@ function setupEventListeners() {
   
   elements.clearFiltersBtn.addEventListener("click", clearAllFilters);
   
-  // Detail Panel close
   elements.closePanelBtn.addEventListener("click", closeDetailPanel);
   elements.detailOverlay.addEventListener("click", closeDetailPanel);
   
-  // Custom type preview input
   elements.specimenInput.addEventListener("input", (e) => {
     const text = e.target.value.trim() || "The quick brown fox jumps over the lazy dog.";
     elements.specimenDisplay.textContent = text;
   });
   
-  // Custom typography live typing area
   elements.specimenDisplay.addEventListener("blur", (e) => {
     if (!e.target.textContent.trim()) {
       e.target.textContent = "The quick brown fox jumps over the lazy dog.";
     }
   });
   
-  // Font Size Slider
   elements.sizeSlider.addEventListener("input", (e) => {
     const size = e.target.value;
     elements.sizeDisplay.textContent = `${size}px`;
     elements.specimenDisplay.style.fontSize = `${size}px`;
   });
   
-  // Detail Tab clicks
   elements.tabBtns.forEach(btn => {
     btn.addEventListener("click", () => {
-      // Remove active from all btns & contents
       elements.tabBtns.forEach(b => b.classList.remove("active"));
       elements.tabContents.forEach(c => c.classList.remove("active"));
       
-      // Add active to current
       btn.classList.add("active");
       const targetTab = btn.getAttribute("data-tab");
       document.getElementById(`tab-${targetTab}`).classList.add("active");
     });
   });
   
-  // Primary CTA click (Download/Buy)
   elements.detailPrimaryCta.addEventListener("click", handleDownloadClick);
   
-  // Curated Collections clicking
   document.querySelectorAll(".collection-card").forEach(card => {
     card.addEventListener("click", () => {
       const filterData = card.getAttribute("data-filter");
@@ -999,14 +1217,12 @@ function setupEventListeners() {
     });
   });
   
-  // Footer browse links
   document.getElementById("footer-browse-link").addEventListener("click", (e) => {
     e.preventDefault();
     clearAllFilters();
     elements.searchInput.scrollIntoView({ behavior: 'smooth' });
   });
 
-  // Keyboard accessibility
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && elements.detailPanel.classList.contains("active")) {
       closeDetailPanel();
