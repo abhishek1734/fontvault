@@ -315,12 +315,9 @@ function appendFontCard(font, delay) {
 
   // Card click → open detail
   card.addEventListener("click", e => {
-    if (e.target.closest(".card-btn") || e.target.closest(".compare-add-btn")) return;
+    if (e.target.closest(".compare-add-btn")) return;
     openDetailPanel(font);
   });
-
-  // Try Free / Buy button
-  card.querySelector(".card-btn").addEventListener("click", () => openDetailPanel(font));
 
   // Compare add/remove button
   card.querySelector(".compare-add-btn").addEventListener("click", e => {
