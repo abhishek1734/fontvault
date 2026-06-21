@@ -1357,16 +1357,30 @@ function setupEventListeners() {
     searchDropdown.classList.add("visible");
   }
 
+  const searchClearBtn = document.getElementById("search-clear-btn");
+
   el.searchInput.addEventListener("input", e => {
     searchQuery = e.target.value.trim();
     renderSearchDropdown(searchQuery);
     renderGrid();
+    
+    if (searchQuery) searchClearBtn.classList.add("visible");
+    else searchClearBtn.classList.remove("visible");
   });
 
   el.searchInput.addEventListener("focus", () => {
     if (el.searchInput.value.trim()) {
       searchDropdown.classList.add("visible");
     }
+  });
+
+  searchClearBtn?.addEventListener("click", () => {
+    el.searchInput.value = "";
+    searchQuery = "";
+    searchClearBtn.classList.remove("visible");
+    searchDropdown.classList.remove("visible");
+    renderGrid();
+    el.searchInput.focus();
   });
 
   // Footer click to scroll down to full results

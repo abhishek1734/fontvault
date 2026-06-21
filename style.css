@@ -136,6 +136,25 @@ header.collapsed {
   color: var(--surface-dark);
 }
 
+.search-clear-icon {
+  cursor: pointer;
+  padding: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  color: #999 !important;
+}
+
+.search-clear-icon:hover {
+  color: var(--signal-red) !important;
+  transform: scale(1.1);
+}
+
+.search-clear-icon.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
 .nav-link {
   font-size: var(--ts-sm);
   font-weight: 500;
