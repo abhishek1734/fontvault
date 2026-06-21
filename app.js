@@ -279,6 +279,11 @@ function appendFontCard(font, delay) {
   card.innerHTML = `
     <div style="position: relative; background-color: var(--thumbnail-bg);">
       ${getMockupHTML(font)}
+      ${font.provider === 'custom' ? `
+        <button class="custom-font-delete-btn" title="Remove custom font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')">
+          ✕
+        </button>
+      ` : ''}
     </div>
     <div class="card-info">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
@@ -905,5 +910,33 @@ async function init() {
     document.getElementById("search-clear-btn").classList.add("visible");
   }
 }
+
+window.removeCustomFont = function(fontId) {
+  try {
+    const saved = localStorage.getItem("fontvault-uploads");
+    if (saved) {
+      let uploads = JSON.parse(saved);
+      uploads = uploads.filter(f => f.id !== fontId);
+      localStorage.setItem("fontvault-uploads", JSON.stringify(uploads));
+    }
+  } catch (e) {
+    console.error("Failed to remove custom font from localStorage:", e);
+  }
+
+  if (typeof fontsData !== "undefined") {
+    fontsData = fontsData.filter(f => f.id !== fontId);
+  }
+
+  if (window.favoritesSet) {
+    window.favoritesSet.delete(fontId);
+    try {
+      localStorage.setItem("fontvault-favorites", JSON.stringify(Array.from(window.favoritesSet)));
+    } catch (e) {}
+  }
+
+  if (typeof renderGrid === "function") {
+    renderGrid(true);
+  }
+};
 
 init();
