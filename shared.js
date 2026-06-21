@@ -90,6 +90,13 @@ function setupSharedEventListeners() {
     });
   });
 
+  const vaultBtn = document.getElementById("vault-btn");
+  if (vaultBtn && window.location.pathname.includes('font.html')) {
+    vaultBtn.addEventListener("click", () => {
+      window.location.href = 'index.html?vault=true';
+    });
+  }
+
   // Search input & dropdown logic
   const searchInput = document.getElementById("search-input");
   const searchContainer = document.getElementById("search-container");
@@ -283,3 +290,32 @@ function setupSharedEventListeners() {
     });
   }
 }
+
+// Global Favorites Logic
+window.favoritesSet = new Set(JSON.parse(localStorage.getItem('fontvault-favorites') || '[]'));
+window.toggleFavorite = function(fontId, btnElement) {
+  if (window.favoritesSet.has(fontId)) {
+    window.favoritesSet.delete(fontId);
+    if (btnElement) {
+      btnElement.classList.remove('active');
+      btnElement.innerHTML = '♡';
+      btnElement.style.color = 'var(--text-secondary)';
+      if (btnElement.id !== 'btn-fd-download') btnElement.style.borderColor = 'var(--border-grey)';
+    }
+  } else {
+    window.favoritesSet.add(fontId);
+    if (btnElement) {
+      btnElement.classList.add('active');
+      btnElement.innerHTML = '♥';
+      btnElement.style.color = 'var(--signal-red)';
+      btnElement.style.transform = 'scale(1.2)';
+      setTimeout(() => { if (btnElement) btnElement.style.transform = 'scale(1)'; }, 200);
+      if (btnElement.id !== 'btn-fd-download') btnElement.style.borderColor = 'var(--signal-red)';
+    }
+  }
+  localStorage.setItem('fontvault-favorites', JSON.stringify([...window.favoritesSet]));
+  
+  if (typeof activeFilters !== 'undefined' && activeFilters["Favorites"] && typeof renderGrid === 'function') {
+    renderGrid(true);
+  }
+};

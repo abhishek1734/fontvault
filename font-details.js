@@ -111,7 +111,12 @@ function renderFontDetails(font) {
         }
       </style>
       <div style="margin-top: 3rem; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; align-items: center;">
-        <button class="fd-download-btn" id="btn-fd-download">Download Family (${font.stylesCount} styles)</button>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <button class="fd-download-btn" id="btn-fd-download">Download Family (${font.stylesCount} styles)</button>
+          <button class="fd-download-btn ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'active' : ''}" style="padding: 1rem; font-size: 1.2rem; color: ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'var(--signal-red)' : 'inherit'}; border-color: ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'var(--signal-red)' : 'var(--near-black)'};" onclick="if(typeof toggleFavorite === 'function') toggleFavorite('${font.id}', this)">
+            ${window.favoritesSet && window.favoritesSet.has(font.id) ? '♥' : '♡'}
+          </button>
+        </div>
         <span style="font-family: var(--font-mono); font-size: 0.8rem; color: #999;">${font.price} / ${font.fileSize}</span>
       </div>
     </div>

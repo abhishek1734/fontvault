@@ -72,7 +72,8 @@ let activeFilters = {
   "Availability": "All",
   "Style":        null,
   "Mood":         null,
-  "Use Case":     null
+  "Use Case":     null,
+  "Favorites":    false
 };
 
 window.searchQuery = "";
@@ -83,6 +84,7 @@ let selectedFont = null;
 //  COMPARE STATE (max 3 fonts)
 // ─────────────────────────────────────────────────
 let compareSet = new Set();
+
 
 // ─────────────────────────────────────────────────
 //  DARK MODE
@@ -196,7 +198,7 @@ function updateClearButtonVisibility() {
 }
 
 function clearAllFilters() {
-  activeFilters = { "Provider":"All Providers","Availability":"All","Style":null,"Mood":null,"Use Case":null };
+  activeFilters = { "Provider":"All Providers","Availability":"All","Style":null,"Mood":null,"Use Case":null, "Favorites": false };
   window.searchQuery = "";
   el.searchInput.value = "";
   updateClearButtonVisibility();
@@ -292,6 +294,7 @@ function getMockupHTML(font) {
 // ─────────────────────────────────────────────────
 function getFilteredFonts() {
   return fontsData.filter(font => {
+    if (activeFilters["Favorites"] && !window.favoritesSet.has(font.id)) return false;
     if (window.searchQuery) {
       const q = window.searchQuery.toLowerCase();
       const match = [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
@@ -346,8 +349,12 @@ function appendFontCard(font, delay) {
   loadExternalFont(font);
   const fam = font.cssFamily || `'${font.name}'`;
 
+  const inFavorites = window.favoritesSet.has(font.id);
   card.innerHTML = `
     ${getMockupHTML(font)}
+    <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)">
+      ${inFavorites ? '♥' : '♡'}
+    </button>
     <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}">
       ${isInCompare ? '✕' : '+'}
     </button>
@@ -505,6 +512,7 @@ function renderTrending() {
 
 
 
+
 function toggleCompare(fontId) {
   if (compareSet.has(fontId)) {
     compareSet.delete(fontId);
@@ -640,6 +648,23 @@ function setupCollectionCards() {
 //  EVENT LISTENERS
 // ─────────────────────────────────────────────────
 function setupEventListeners() {
+  const vaultBtn = document.getElementById("vault-btn");
+  if (vaultBtn) {
+    vaultBtn.addEventListener("click", () => {
+      activeFilters["Favorites"] = !activeFilters["Favorites"];
+      if (activeFilters["Favorites"]) {
+        vaultBtn.style.background = "var(--signal-red)";
+        vaultBtn.style.color = "#fff";
+        vaultBtn.innerHTML = `<span style="color: #fff; font-size: 1.1rem;">♥</span> My Vault`;
+      } else {
+        vaultBtn.style.background = "transparent";
+        vaultBtn.style.color = "var(--text-primary)";
+        vaultBtn.innerHTML = `<span style="color: var(--signal-red); font-size: 1.1rem;">♥</span> My Vault`;
+      }
+      renderGrid(true);
+    });
+  }
+
   // Global Text Preview
   const globalPreviewInput = document.getElementById("global-preview-input");
   const globalPreviewClear = document.getElementById("global-preview-clear");
@@ -764,13 +789,22 @@ async function init() {
     el.searchInput.value = q;
     window.searchQuery = q;
   }
+  if (params.get("vault") === "true") {
+    activeFilters["Favorites"] = true;
+    const vaultBtn = document.getElementById("vault-btn");
+    if (vaultBtn) {
+      vaultBtn.style.background = "var(--signal-red)";
+      vaultBtn.style.color = "#fff";
+      vaultBtn.innerHTML = `<span style="color: #fff; font-size: 1.1rem;">♥</span> My Vault`;
+    }
+  }
 
   setupFilters();
   renderGrid(true);
   renderTrending();
   setupEventListeners();
 
-  if (params.get("scroll") === "true" && el.fontGrid) {
+  if ((params.get("scroll") === "true" || params.get("vault") === "true") && el.fontGrid) {
     // Small timeout to allow grid to render
     setTimeout(() => {
       el.fontGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });

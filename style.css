@@ -1070,10 +1070,29 @@ footer {
 
 @media (max-width: 640px) {
   header {
-    padding: 0 1rem;
+    padding: 0.5rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .nav-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
   .search-container {
-    display: none; /* Collapsed search on mobile */
+    order: 10;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .sidebar-filters .filter-groups {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    gap: 2rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sidebar-filters .filter-group {
+    flex: 0 0 auto;
   }
   .hero-headline {
     font-size: var(--ts-3xl);
@@ -1095,6 +1114,11 @@ footer {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
+  }
+  /* Show hover buttons permanently on touch devices */
+  .compare-add-btn, .favorite-add-btn {
+    opacity: 1 !important;
+    transform: scale(1) !important;
   }
 }
 
@@ -1308,6 +1332,27 @@ footer {
 }
 .font-card:hover .compare-add-btn { opacity:1; transform:scale(1); }
 .compare-add-btn.in-compare { opacity:1; transform:scale(1); background:var(--signal-red); color:#fff; border-color:var(--signal-red); }
+
+.favorite-add-btn {
+  position: absolute;
+  top: 0.65rem; right: 3rem; /* Next to compare btn */
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--pure-white);
+  border: 1px solid var(--border-grey);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; line-height: 1;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--text-secondary);
+  z-index: 2;
+}
+.font-card:hover .favorite-add-btn { opacity:1; transform:scale(1); }
+.favorite-add-btn.active { opacity:1; transform:scale(1); background:var(--pure-white); color:var(--signal-red); border-color:var(--signal-red); }
+[data-theme="dark"] .favorite-add-btn { background:#1A1A1A; border-color:#333; color:#F0F0F0; }
+[data-theme="dark"] .favorite-add-btn.active { color:var(--signal-red); border-color:var(--signal-red); }
 
 /* ========================================
    COMPARE TRAY
