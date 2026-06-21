@@ -352,24 +352,28 @@ function appendFontCard(font, delay) {
   const inFavorites = window.favoritesSet.has(font.id);
   card.innerHTML = `
     ${getMockupHTML(font)}
-    <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)">
-      ${inFavorites ? '♥' : '♡'}
-    </button>
-    <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}">
-      ${isInCompare ? '✕' : '+'}
-    </button>
     <div class="card-info">
       <h3 class="card-font-name" style="font-family:${fam},var(--font-display);">${font.name}</h3>
       <p class="card-tags">
         <span style="text-transform:uppercase;font-weight:700;color:var(--near-black);background:#E0E0E0;padding:2px 6px;border-radius:3px;margin-right:6px;font-size:0.6rem;font-family:var(--font-mono);">${providerLabel}</span>
         ${font.style} · ${font.mood} · ${font.useCase}
       </p>
-      <div class="card-footer">
+      <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center;">
         <span class="card-status">
           <span class="status-dot ${statusDotClass}"></span>
           ${statusText}
         </span>
-        <button class="card-btn" data-id="${font.id}">${btnLabel}</button>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="position: static; width: 32px; height: 32px; opacity: 1; transform: scale(1); display: flex;">
+            <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+          <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}" style="position: static; width: 32px; height: 32px; opacity: 1; transform: scale(1); display: flex;">
+            ${isInCompare ? '✕' : '+'}
+          </button>
+          <button class="card-btn" data-id="${font.id}">${btnLabel}</button>
+        </div>
       </div>
     </div>
   `;
@@ -655,11 +659,11 @@ function setupEventListeners() {
       if (activeFilters["Favorites"]) {
         vaultBtn.style.background = "var(--signal-red)";
         vaultBtn.style.color = "#fff";
-        vaultBtn.innerHTML = `<span style="color: #fff; font-size: 1.1rem;">♥</span> My Vault`;
+        vaultBtn.innerHTML = `My Vault`;
       } else {
         vaultBtn.style.background = "transparent";
         vaultBtn.style.color = "var(--text-primary)";
-        vaultBtn.innerHTML = `<span style="color: var(--signal-red); font-size: 1.1rem;">♥</span> My Vault`;
+        vaultBtn.innerHTML = `My Vault`;
       }
       renderGrid(true);
     });
@@ -795,7 +799,7 @@ async function init() {
     if (vaultBtn) {
       vaultBtn.style.background = "var(--signal-red)";
       vaultBtn.style.color = "#fff";
-      vaultBtn.innerHTML = `<span style="color: #fff; font-size: 1.1rem;">♥</span> My Vault`;
+      vaultBtn.innerHTML = `My Vault`;
     }
   }
 

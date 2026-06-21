@@ -298,7 +298,10 @@ window.toggleFavorite = function(fontId, btnElement) {
     window.favoritesSet.delete(fontId);
     if (btnElement) {
       btnElement.classList.remove('active');
-      btnElement.innerHTML = '♡';
+      const isHeartSVG = btnElement.querySelector('svg.heart-icon');
+      if (isHeartSVG) {
+        isHeartSVG.setAttribute('fill', 'none');
+      }
       btnElement.style.color = 'var(--text-secondary)';
       if (btnElement.id !== 'btn-fd-download') btnElement.style.borderColor = 'var(--border-grey)';
     }
@@ -306,7 +309,10 @@ window.toggleFavorite = function(fontId, btnElement) {
     window.favoritesSet.add(fontId);
     if (btnElement) {
       btnElement.classList.add('active');
-      btnElement.innerHTML = '♥';
+      const isHeartSVG = btnElement.querySelector('svg.heart-icon');
+      if (isHeartSVG) {
+        isHeartSVG.setAttribute('fill', 'currentColor');
+      }
       btnElement.style.color = 'var(--signal-red)';
       btnElement.style.transform = 'scale(1.2)';
       setTimeout(() => { if (btnElement) btnElement.style.transform = 'scale(1)'; }, 200);
