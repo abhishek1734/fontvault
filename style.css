@@ -566,6 +566,33 @@ header.collapsed + .main-container .sidebar-filters {
   padding: 1.5rem;
 }
 
+/* Font Uploader Card Styles */
+.uploader-dropzone {
+  border-color: var(--border-grey) !important;
+  background-color: rgba(0, 0, 0, 0.01) !important;
+}
+.uploader-dropzone.dragover {
+  border-color: var(--signal-red) !important;
+  background-color: rgba(255, 59, 0, 0.05) !important;
+  box-shadow: 0 0 20px rgba(255, 59, 0, 0.15) !important;
+}
+.uploader-dropzone.dragover svg {
+  transform: translateY(-5px);
+  color: var(--signal-red) !important;
+}
+[data-theme="dark"] .uploader-dropzone {
+  border-color: #2A2A2A !important;
+  background-color: rgba(255, 255, 255, 0.01) !important;
+}
+[data-theme="dark"] .uploader-dropzone.dragover {
+  border-color: #00f3ff !important;
+  background-color: rgba(0, 243, 255, 0.05) !important;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.15) !important;
+}
+[data-theme="dark"] .uploader-dropzone.dragover svg {
+  color: #00f3ff !important;
+}
+
 .card-font-name {
   font-family: var(--font-display);
   font-size: var(--ts-lg);

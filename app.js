@@ -320,6 +320,129 @@ function appendFontCard(font, delay) {
 }
 
 // ─────────────────────────────────────────────────
+//  DYNAMIC DRAG-AND-DROP FONT UPLOADER
+// ─────────────────────────────────────────────────
+function handleFontFile(file) {
+  const name = file.name;
+  const ext = name.substring(name.lastIndexOf('.')).toLowerCase();
+  if (!['.ttf', '.otf', '.woff', '.woff2'].includes(ext)) {
+    alert("Please upload a valid font file (.ttf, .otf, .woff, .woff2)");
+    return;
+  }
+
+  const cleanName = name
+    .substring(0, name.lastIndexOf('.'))
+    .replace(/[_-]/g, ' ')
+    .trim();
+  
+  const fontId = `custom-upload-${Date.now()}`;
+  const fileUrl = URL.createObjectURL(file);
+
+  const newFont = {
+    id: fontId,
+    name: cleanName + " (Uploaded)",
+    provider: "custom",
+    designer: "Self-Uploaded File",
+    foundry: file.name,
+    year: new Date().getFullYear().toString(),
+    stylesCount: 1,
+    languages: ["Latin"],
+    description: `This is your local font file "${file.name}" loaded dynamically in your browser.`,
+    availability: "Custom",
+    mood: "Modern",
+    useCase: "Web",
+    style: ext === '.ttf' ? 'Sans-Serif' : (ext === '.otf' ? 'Serif' : 'Display'),
+    language: "Latin",
+    downloadUrl: "#",
+    price: "Free",
+    fileSize: `${Math.round(file.size / 1024)} KB`,
+    cssFamily: `'${cleanName}'`,
+    localUrl: fileUrl,
+    pairsWith: []
+  };
+
+  fontsData.unshift(newFont);
+  renderGrid(true);
+  loadExternalFont(newFont);
+
+  setTimeout(() => {
+    const newCard = el.fontGrid.querySelector(`.font-card[aria-label*="${newFont.name}"]`);
+    if (newCard) {
+      newCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      newCard.style.outline = "2px solid var(--signal-red)";
+      setTimeout(() => { newCard.style.outline = "none"; }, 1500);
+    }
+  }, 300);
+}
+
+function setupFontUploader() {
+  const card = document.getElementById("font-uploader-card");
+  const input = document.getElementById("hidden-font-input");
+  if (!card || !input) return;
+
+  card.addEventListener("click", () => {
+    input.click();
+  });
+
+  input.addEventListener("change", e => {
+    if (e.target.files.length > 0) {
+      handleFontFile(e.target.files[0]);
+    }
+  });
+
+  const dropzone = card.querySelector(".uploader-dropzone");
+  if (!dropzone) return;
+
+  ["dragenter", "dragover"].forEach(eventName => {
+    dropzone.addEventListener(eventName, e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.add("dragover");
+    }, false);
+  });
+
+  ["dragleave", "drop"].forEach(eventName => {
+    dropzone.addEventListener(eventName, e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove("dragover");
+    }, false);
+  });
+
+  dropzone.addEventListener("drop", e => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length > 0) {
+      handleFontFile(files[0]);
+    }
+  });
+}
+
+function appendUploaderCard() {
+  const card = document.createElement("div");
+  card.className = "font-card uploader-card";
+  card.id = "font-uploader-card";
+  card.innerHTML = `
+    <div class="card-mockup uploader-dropzone" style="display:flex; flex-direction:column; justify-content:center; align-items:center; border:2px dashed var(--border-grey); border-radius:12px; background:rgba(0,0,0,0.02); min-height: 220px; transition: all 0.3s ease; cursor: pointer; padding: 2rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary); margin-bottom:1rem; transition: transform 0.3s ease;">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+      <span class="uploader-title" style="font-family:var(--font-mono); font-size:var(--ts-xs); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--near-black);">Drop Custom Font</span>
+      <span class="uploader-subtitle" style="font-size:0.75rem; color:#888; margin-top:0.4rem; text-align:center;">Drag & Drop or Click to Browse</span>
+      <input type="file" id="hidden-font-input" accept=".ttf,.otf,.woff,.woff2" style="display:none;">
+    </div>
+    <div class="card-info" style="border-top: none; padding: 1.5rem 1rem 1rem;">
+      <h3 class="card-font-name" style="font-family:var(--font-body); font-size:var(--ts-sm); font-weight: 600; color: #888;">SELF-HOSTED PREVIEW</h3>
+      <p class="card-tags" style="color:#aaa;">Render any local font (.ttf, .otf, .woff2) live</p>
+    </div>
+  `;
+  el.fontGrid.appendChild(card);
+  setupFontUploader();
+}
+
+// ─────────────────────────────────────────────────
 //  GRID RENDER
 // ─────────────────────────────────────────────────
 let currentRenderLimit = 30;
@@ -343,6 +466,12 @@ function renderGrid(resetLimit = true) {
     countEl.classList.add("visible");
   } else {
     countEl.classList.remove("visible");
+  }
+
+  // Prepend uploader card if no search/filter is active
+  const hasFiltersActive = window.searchQuery || Object.values(activeFilters).some(v => v && v !== "All Providers" && v !== "All");
+  if (!hasFiltersActive) {
+    appendUploaderCard();
   }
 
   if (filtered.length === 0) {
