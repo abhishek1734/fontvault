@@ -545,6 +545,16 @@ header.collapsed + .main-container .sidebar-filters {
   text-transform: uppercase;
 }
 
+.badge-availability-inline {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: var(--ts-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
 .badge-free { background-color: var(--near-black); color: var(--pure-white); }
 .badge-personal { background-color: var(--near-black); color: var(--pure-white); }
 .badge-trial { border: 1px solid var(--border-grey); background-color: rgba(255, 255, 255, 0.85); color: var(--near-black); }

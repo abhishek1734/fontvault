@@ -1,5 +1,9 @@
 // shared.js
 
+function getBadgeClass(a) {
+  return ({Free:"badge-free","Free for Personal":"badge-personal",Trial:"badge-trial",Premium:"badge-premium",Paid:"badge-paid",Custom:"badge-custom"})[a] || "badge-free";
+}
+
 function loadExternalFont(font) {
   const linkId = `font-face-${font.id}`;
   if (document.getElementById(linkId)) return;

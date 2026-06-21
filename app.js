@@ -170,10 +170,6 @@ function clearAllFilters() {
 // ─────────────────────────────────────────────────
 //  MOCKUP HTML
 // ─────────────────────────────────────────────────
-function getBadgeClass(a) {
-  return ({Free:"badge-free","Free for Personal":"badge-personal",Trial:"badge-trial",Premium:"badge-premium",Paid:"badge-paid",Custom:"badge-custom"})[a] || "badge-free";
-}
-
 function getMockupHTML(font) {
   loadExternalFont(font);
   const fam = font.cssFamily || `'${font.name}'`;
@@ -204,7 +200,7 @@ function getMockupHTML(font) {
         <div class="tech-corner" style="top: 10px; right: 10px; border-top-width: 2px; border-right-width: 2px;"></div>
         <div class="tech-corner" style="bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px;"></div>
         <div class="tech-corner" style="bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px;"></div>
-
+        
         <div class="mockup-preview-text futuristic-text" style="font-family:${fam},sans-serif; font-size:2.6rem; line-height:1.1; text-align:center; z-index:3;">
           ${titleText}
         </div>
@@ -283,32 +279,32 @@ function appendFontCard(font, delay) {
   card.innerHTML = `
     <div style="position: relative; background-color: var(--thumbnail-bg);">
       ${getMockupHTML(font)}
-      <div style="position: absolute; bottom: 0.65rem; right: 0.65rem; display: flex; gap: 0.5rem; z-index: 10;">
-        <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="opacity: 1; transform: scale(1);">
-          <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-        </button>
-        <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}" style="opacity: 1; transform: scale(1);">
-          ${isInCompare ? '✕' : '+'}
-        </button>
-      </div>
     </div>
     <div class="card-info">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+        <span class="badge-availability-inline ${getBadgeClass(font.availability)}">${font.availability}</span>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="opacity: 1; transform: scale(1);">
+            <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+          <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}" style="opacity: 1; transform: scale(1);">
+            ${isInCompare ? '✕' : '+'}
+          </button>
+        </div>
+      </div>
       <h3 class="card-font-name" style="font-family:${fam},var(--font-display);">${font.name}</h3>
       <p class="card-tags">
         <span style="text-transform:uppercase;font-weight:700;color:var(--near-black);background:#E0E0E0;padding:2px 6px;border-radius:3px;margin-right:6px;font-size:0.6rem;font-family:var(--font-mono);">${providerLabel}</span>
         ${font.style} · ${font.mood} · ${font.useCase}
       </p>
-      <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-        <span class="badge-availability ${getBadgeClass(font.availability)}" style="position: static; font-size: 0.65rem; padding: 3px 8px; border-radius: 12px; display: inline-block;">${font.availability}</span>
-      </div>
     </div>
   `;
 
   // Card click → open detail
   card.addEventListener("click", e => {
-    if (e.target.closest(".compare-add-btn")) return;
+    if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn")) return;
     openDetailPanel(font);
   });
 
