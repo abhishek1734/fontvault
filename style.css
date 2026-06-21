@@ -1112,6 +1112,7 @@ footer {
     padding: 0.5rem 1rem;
     flex-wrap: wrap;
     gap: 0.5rem;
+    height: auto !important;
   }
   .nav-actions {
     flex-wrap: wrap;
@@ -2230,4 +2231,203 @@ input[type=range]::-moz-range-thumb {
   border-color: var(--signal-red);
   transform: scale(1.1) !important;
   box-shadow: 0 0 10px rgba(255, 59, 0, 0.5);
+}
+
+/* --- FONT DETAIL PAGE RESPONSIVE LAYOUTS --- */
+.fd-hero {
+  padding: 6rem 2rem 4rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-grey);
+}
+
+.fd-title {
+  font-size: clamp(3rem, 10vw, 12rem);
+  line-height: 1;
+  margin: 0;
+  outline: none;
+  cursor: text;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.fd-edit-badge {
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  background: var(--signal-red);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  transform: rotate(5deg);
+  pointer-events: none;
+  opacity: 0.9;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.fd-hero-actions {
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.fd-hero-actions-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.fd-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 4rem;
+}
+
+.fd-tester-controls {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-grey);
+  background: rgba(0,0,0,0.02);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.fd-pairing-card {
+  padding: 1rem;
+  border: 1px solid var(--border-grey);
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+[data-theme="dark"] .fd-tester-controls {
+  background: rgba(255,255,255,0.02);
+}
+
+/* Weights Preview Grid */
+.fd-weights-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.fd-weight-card {
+  padding: 2rem;
+  border: 1px solid var(--border-grey);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fd-weight-card:hover {
+  border-color: var(--near-black);
+}
+
+.fd-weight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-grey);
+  padding-bottom: 0.75rem;
+}
+
+.fd-weight-preview {
+  font-size: 2.2rem;
+  line-height: 1.2;
+  color: var(--near-black);
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  .fd-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 2rem 1.25rem;
+  }
+  .compare-col {
+    flex: 0 0 auto !important;
+    overflow-y: visible !important;
+    border-right: none;
+    border-bottom: 1px solid var(--border-grey);
+    padding: 1.5rem 1rem;
+  }
+  .compare-overlay-body {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .fd-tester-controls {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .fd-tester-controls > div {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #fd-specimen {
+    padding: 1.5rem 1rem !important;
+  }
+  .search-dropdown {
+    min-width: 0 !important;
+    width: 100%;
+  }
+  .search-container:focus-within {
+    width: 100% !important;
+  }
+  .compare-tray-fonts {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+  }
+  .fd-hero {
+    padding: 4rem 1.25rem 3rem;
+  }
+  .fd-edit-badge {
+    right: 0;
+    top: -1.2rem;
+  }
+  .fd-weight-card {
+    padding: 1.25rem;
+  }
+  .fd-weight-preview {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .fd-pairing-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .fd-hero-actions-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  .fd-hero-actions-row .fd-download-btn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .fd-weight-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
 }
