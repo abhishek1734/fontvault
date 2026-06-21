@@ -330,49 +330,83 @@ function handleFontFile(file) {
     return;
   }
 
+  // LocalStorage has a 5MB limit. Warn user if file is too large (1.5MB threshold)
+  if (file.size > 1.5 * 1024 * 1024) {
+    alert(`This font file is too large (${Math.round(file.size / 1024)} KB). To make it persist across pages, please upload a compressed webfont file (like .woff2, which is usually under 100KB).`);
+    return;
+  }
+
   const cleanName = name
     .substring(0, name.lastIndexOf('.'))
     .replace(/[_-]/g, ' ')
     .trim();
   
   const fontId = `custom-upload-${Date.now()}`;
-  const fileUrl = URL.createObjectURL(file);
+  const format = ext === '.ttf' ? 'truetype' : (ext === '.otf' ? 'opentype' : (ext === '.woff' ? 'woff' : 'woff2'));
 
-  const newFont = {
-    id: fontId,
-    name: cleanName + " (Uploaded)",
-    provider: "custom",
-    designer: "Self-Uploaded File",
-    foundry: file.name,
-    year: new Date().getFullYear().toString(),
-    stylesCount: 1,
-    languages: ["Latin"],
-    description: `This is your local font file "${file.name}" loaded dynamically in your browser.`,
-    availability: "Custom",
-    mood: "Modern",
-    useCase: "Web",
-    style: ext === '.ttf' ? 'Sans-Serif' : (ext === '.otf' ? 'Serif' : 'Display'),
-    language: "Latin",
-    downloadUrl: "#",
-    price: "Free",
-    fileSize: `${Math.round(file.size / 1024)} KB`,
-    cssFamily: `'${cleanName}'`,
-    localUrl: fileUrl,
-    pairsWith: []
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64Url = e.target.result;
+
+    const newFont = {
+      id: fontId,
+      name: cleanName + " (Uploaded)",
+      provider: "custom",
+      designer: "Self-Uploaded File",
+      foundry: file.name,
+      year: new Date().getFullYear().toString(),
+      stylesCount: 1,
+      languages: ["Latin"],
+      description: `This is your local font file "${file.name}" loaded dynamically in your browser.`,
+      availability: "Custom",
+      mood: "Modern",
+      useCase: "Web",
+      style: ext === '.ttf' ? 'Sans-Serif' : (ext === '.otf' ? 'Serif' : 'Display'),
+      language: "Latin",
+      downloadUrl: "#",
+      price: "Free",
+      fileSize: `${Math.round(file.size / 1024)} KB`,
+      cssFamily: `'${cleanName}'`,
+      localUrl: base64Url,
+      format: format,
+      pairsWith: []
+    };
+
+    // Save to localStorage so it persists across page navigations (like details page)
+    try {
+      const saved = localStorage.getItem("fontvault-uploads");
+      const currentUploads = saved ? JSON.parse(saved) : [];
+      currentUploads.unshift(newFont);
+      // Keep only last 3 custom uploads to avoid filling storage
+      if (currentUploads.length > 3) {
+        currentUploads.pop();
+      }
+      localStorage.setItem("fontvault-uploads", JSON.stringify(currentUploads));
+    } catch (err) {
+      console.warn("Storage quota exceeded:", err);
+      alert("Local storage is full. This font will work for this session but won't persist across page reloads.");
+    }
+
+    // Add to fontsData in the current session
+    fontsData.unshift(newFont);
+    renderGrid(true);
+    loadExternalFont(newFont);
+
+    setTimeout(() => {
+      const newCard = el.fontGrid.querySelector(`.font-card[aria-label*="${newFont.name}"]`);
+      if (newCard) {
+        newCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        newCard.style.outline = "2px solid var(--signal-red)";
+        setTimeout(() => { newCard.style.outline = "none"; }, 1500);
+      }
+    }, 300);
   };
 
-  fontsData.unshift(newFont);
-  renderGrid(true);
-  loadExternalFont(newFont);
+  reader.onerror = function() {
+    alert("Failed to read the font file.");
+  };
 
-  setTimeout(() => {
-    const newCard = el.fontGrid.querySelector(`.font-card[aria-label*="${newFont.name}"]`);
-    if (newCard) {
-      newCard.scrollIntoView({ behavior: "smooth", block: "center" });
-      newCard.style.outline = "2px solid var(--signal-red)";
-      setTimeout(() => { newCard.style.outline = "none"; }, 1500);
-    }
-  }, 300);
+  reader.readAsDataURL(file);
 }
 
 function setupFontUploader() {

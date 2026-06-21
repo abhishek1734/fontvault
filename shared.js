@@ -12,10 +12,12 @@ function loadExternalFont(font) {
   if (font.localUrl) {
     const style = document.createElement("style");
     style.id = linkId;
-    let format = 'woff2';
-    if (font.localUrl.endsWith('.ttf')) format = 'truetype';
-    else if (font.localUrl.endsWith('.otf')) format = 'opentype';
-    else if (font.localUrl.endsWith('.woff')) format = 'woff';
+    let format = font.format || 'woff2';
+    if (!font.format) {
+      if (font.localUrl.endsWith('.ttf')) format = 'truetype';
+      else if (font.localUrl.endsWith('.otf')) format = 'opentype';
+      else if (font.localUrl.endsWith('.woff')) format = 'woff';
+    }
 
     style.innerHTML = `
       @font-face {
