@@ -577,8 +577,10 @@ const fontsData = [
 //  TRENDING font IDs (shown in the top strip)
 // ─────────────────────────────────────────────────
 const trendingFontIds = [
-  "instrument-serif","satoshi","clash-display",
-  "switzer","boska","bebas-neue","tanker","zodiak"
+  "instrument-serif", "satoshi", "clash-display", "switzer", "boska", 
+  "bebas-neue", "tanker", "zodiak", "roboto", "open-sans", "lato", 
+  "montserrat", "oswald", "source-sans-pro", "raleway", "ubuntu", 
+  "playfair-display", "merriweather", "nunito", "rubik", "work-sans"
 ];
 
 // ─────────────────────────────────────────────────
@@ -643,6 +645,7 @@ let activeFilters = {
 };
 
 let searchQuery = "";
+let globalPreviewText = "";
 let selectedFont = null;
 
 // ─────────────────────────────────────────────────
@@ -807,19 +810,20 @@ function getMockupHTML(font) {
   loadExternalFont(font);
   const fam = font.cssFamily || `'${font.name}'`;
   const badge = `<span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>`;
+  const titleText = globalPreviewText || font.mockupTitle;
 
   const mockups = {
     magazine: (f,fam,badge) => `
       <div class="card-mockup" style="background:#F0EDE6;color:#0A0A0A;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
         ${badge}
-        <div style="font-family:${fam},serif;font-size:2.2rem;font-style:italic;line-height:1;text-align:center;">${f.mockupTitle}</div>
+        <div class="mockup-preview-text" style="font-family:${fam},serif;font-size:2.2rem;font-style:italic;line-height:1;text-align:center;">${titleText}</div>
         <div style="font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;margin-top:0.8rem;letter-spacing:0.1em;color:#777;">${f.mockupSubtitle}</div>
       </div>`,
     ui: (f,fam,badge) => `
       <div class="card-mockup" style="background:#FAFAFA;color:#0A0A0A;display:flex;flex-direction:column;justify-content:space-between;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
         ${badge}
         <div style="font-family:var(--font-mono);font-size:0.65rem;color:#888;">${f.mockupTitle}</div>
-        <div style="font-family:${fam},sans-serif;font-size:1.2rem;font-weight:600;line-height:1.3;margin:1rem 0;">Unlock variable spacing values seamlessly.</div>
+        <div class="mockup-preview-text" style="font-family:${fam},sans-serif;font-size:1.2rem;font-weight:600;line-height:1.3;margin:1rem 0;">${globalPreviewText || "Unlock variable spacing values seamlessly."}</div>
         <div style="display:flex;gap:0.5rem;">
           <div style="width:28px;height:12px;background:#000;border-radius:6px;"></div>
           <div style="width:12px;height:12px;background:#E0E0E0;border-radius:6px;"></div>
@@ -828,23 +832,23 @@ function getMockupHTML(font) {
     code: (f,fam,badge) => `
       <div class="card-mockup" style="background:#111;color:#A9B1D6;display:flex;flex-direction:column;justify-content:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
         ${badge}
-        <div style="font-family:${fam},monospace;font-size:0.85rem;line-height:1.5;color:#E0E0E0;">
-          <span style="color:#FF3B00">const</span> config = {<br>
+        <div class="mockup-preview-text" style="font-family:${fam},monospace;font-size:0.85rem;line-height:1.5;color:#E0E0E0;">
+          ${globalPreviewText || `<span style="color:#FF3B00">const</span> config = {<br>
           &nbsp;&nbsp;theme: <span style="color:#A9B1D6">'mono-dark'</span>,<br>
           &nbsp;&nbsp;opacity: <span style="color:#00C853">0.95</span><br>
-          }
+          }`}
         </div>
       </div>`,
     branding: (f,fam,badge) => `
       <div class="card-mockup" style="background:#0A0A0A;color:#FFF;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
         ${badge}
-        <div style="font-family:${fam},sans-serif;font-size:2.5rem;font-weight:700;line-height:0.95;letter-spacing:-0.04em;text-align:center;">${f.mockupTitle}</div>
+        <div class="mockup-preview-text" style="font-family:${fam},sans-serif;font-size:2.5rem;font-weight:700;line-height:0.95;letter-spacing:-0.04em;text-align:center;">${titleText}</div>
         <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--signal-red);margin-top:0.8rem;letter-spacing:0.2em;text-transform:uppercase;">${f.mockupSubtitle}</div>
       </div>`,
     poster: (f,fam,badge) => `
       <div class="card-mockup" style="background:#F5F5F5;color:#0A0A0A;display:flex;flex-direction:column;justify-content:space-between;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
         ${badge}
-        <div style="font-family:${fam},sans-serif;font-size:2.5rem;font-weight:800;line-height:0.85;letter-spacing:-0.02em;">${f.mockupTitle}</div>
+        <div class="mockup-preview-text" style="font-family:${fam},sans-serif;font-size:2.5rem;font-weight:800;line-height:0.85;letter-spacing:-0.02em;">${titleText}</div>
         <div style="font-size:0.7rem;color:#555;text-transform:uppercase;font-weight:500;">${f.mockupSubtitle}</div>
       </div>`,
     invitation: (f,fam,badge) => `
@@ -1044,8 +1048,20 @@ function renderTrending() {
         <span class="trending-provider-tag">${providerLabel}</span>
       </div>
     `;
-    card.addEventListener("click", () => openDetailPanel(font));
+    card.dataset.id = font.id; // Store ID for delegation
     strip.appendChild(card);
+  });
+
+  // Duplicate the entire inner HTML to create a seamless infinite loop
+  strip.innerHTML += strip.innerHTML;
+
+  // Event delegation for clicks
+  strip.addEventListener("click", e => {
+    const card = e.target.closest(".trending-card");
+    if (card && card.dataset.id) {
+      const font = fontsData.find(f => f.id === card.dataset.id);
+      if (font) openDetailPanel(font);
+    }
   });
 
   // Drag-to-scroll
@@ -1503,6 +1519,31 @@ function setupEventListeners() {
     if (searchContainer && !searchContainer.contains(e.target)) {
       searchDropdown?.classList.remove("visible");
     }
+  });
+
+  // Global Text Preview
+  const globalPreviewInput = document.getElementById("global-preview-input");
+  globalPreviewInput?.addEventListener("input", e => {
+    globalPreviewText = e.target.value;
+    // Don't re-render the whole grid on every keystroke, just update the text in DOM
+    document.querySelectorAll(".mockup-preview-text").forEach(el => {
+      // For code mockup with HTML tags
+      if (el.innerHTML.includes('<span class="color')) {
+         // skip or rebuild it correctly, but simple way:
+         // If they type, it overwrites the HTML. If they clear, it reverts on next render.
+      }
+      
+      // Store original HTML if not stored yet
+      if (!el.hasAttribute('data-original-html')) {
+        el.setAttribute('data-original-html', el.innerHTML);
+      }
+      
+      if (globalPreviewText) {
+        el.textContent = globalPreviewText;
+      } else {
+        el.innerHTML = el.getAttribute('data-original-html');
+      }
+    });
   });
 
   // Clear filters
