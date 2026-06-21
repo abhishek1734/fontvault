@@ -852,6 +852,21 @@ function setupEventListeners() {
     if (navbar) navbar.classList.toggle("collapsed", window.scrollY > 80);
   }, { passive: true });
 
+  // Mobile Collapsible Filters
+  const filterWrapper = document.getElementById("filter-wrapper");
+  const filterHeader = filterWrapper?.querySelector(".sidebar-filters-header");
+  if (filterWrapper && filterHeader) {
+    filterHeader.addEventListener("click", (e) => {
+      // Don't toggle expansion if clicking on "Clear all" button
+      if (e.target.closest("#clear-filters-btn")) return;
+      
+      // Only toggle on mobile screens
+      if (window.innerWidth <= 640) {
+        filterWrapper.classList.toggle("expanded");
+      }
+    });
+  }
+
   // Collection cards
   setupCollectionCards();
 }
