@@ -182,42 +182,89 @@ function setupSharedEventListeners() {
       if (!query) return;
       try {
         const saved = localStorage.getItem("fontvault-recent-searches");
-        let recents = saved ? JSON.parse(saved) : [];
-        recents = recents.filter(q => q.toLowerCase() !== query.toLowerCase());
-        recents.unshift(query);
-        if (recents.length > 5) recents.pop();
-        localStorage.setItem("fontvault-recent-searches", JSON.stringify(recents));
+        let searches = saved ? JSON.parse(saved) : [];
+        searches = searches.filter(s => s.toLowerCase() !== query.toLowerCase());
+        searches.unshift(query);
+        if (searches.length > 5) {
+          searches.pop();
+        }
+        localStorage.setItem("fontvault-recent-searches", JSON.stringify(searches));
       } catch (e) {
         console.error("Failed to save recent search:", e);
       }
     }
 
+    window.deleteRecentSearch = function(query) {
+      try {
+        const saved = localStorage.getItem("fontvault-recent-searches");
+        if (saved) {
+          let searches = JSON.parse(saved);
+          searches = searches.filter(s => s !== query);
+          localStorage.setItem("fontvault-recent-searches", JSON.stringify(searches));
+        }
+      } catch (e) {
+        console.error("Failed to delete recent search:", e);
+      }
+      renderRecentSearches();
+    };
+
     function renderRecentSearches() {
       try {
         const saved = localStorage.getItem("fontvault-recent-searches");
-        const recents = saved ? JSON.parse(saved) : [];
+        const searches = saved ? JSON.parse(saved) : [];
         
-        if (recents.length === 0) {
+        if (searches.length === 0) {
           searchDropdown.classList.remove("visible");
           return;
         }
-        
-        if (searchDropdownFooter) searchDropdownFooter.style.display = "none";
-        
+
+        if (searchDropdownFooter) {
+          searchDropdownFooter.style.display = "none";
+        }
+
         searchDropdownList.innerHTML = `
-          <div class="recent-searches-header" style="padding: 0.5rem 1.2rem; font-size: 0.75rem; text-transform: uppercase; color: #888; font-family: var(--font-mono); border-bottom: 1px solid var(--border-grey); display: flex; justify-content: space-between; align-items: center;">
+          <div style="padding: 0.5rem 1rem; font-size: 0.7rem; text-transform: uppercase; color: #888; font-family: var(--font-mono); font-weight: 700; border-bottom: 1px solid var(--border-grey); display: flex; justify-content: space-between; align-items: center;">
             <span>Recent Searches</span>
-            <button id="clear-recents-btn" style="background: none; border: none; font-size: 0.7rem; color: var(--signal-red); cursor: pointer; text-transform: uppercase; font-family: var(--font-mono); outline: none;">Clear</button>
+            <button id="clear-recent-searches-btn" style="background: none; border: none; color: var(--signal-red); font-size: 0.7rem; cursor: pointer; text-transform: uppercase; font-weight: 700;">Clear All</button>
           </div>
-          ${recents.map(q => `
-            <div class="search-dropdown-item recent-search-item" data-query="${q}" style="cursor: pointer; padding: 0.6rem 1.2rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: #999; flex-shrink: 0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <span style="font-weight: 500; color: var(--near-black);">${q}</span>
+          ${searches.map(query => `
+            <div class="search-dropdown-recent-item" data-query="${query}" style="display: flex; align-items: center; justify-content: space-between; color: var(--near-black);">
+              <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #888; flex-shrink: 0;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${query}</span>
+              </div>
+              <button class="delete-recent-search-btn" data-query="${query}" style="background: none; border: none; color: #888; font-size: 1rem; cursor: pointer; padding: 0.25rem;" onclick="event.stopPropagation(); deleteRecentSearch('${query}')">✕</button>
             </div>
           `).join("")}
         `;
-        
-        const clearBtn = document.getElementById("clear-recents-btn");
+
+        searchDropdownList.querySelectorAll(".search-dropdown-recent-item").forEach(item => {
+          item.addEventListener("click", (e) => {
+            if (e.target.closest(".delete-recent-search-btn")) return;
+            const q = item.dataset.query;
+            searchInput.value = q;
+            searchDropdown.classList.remove("visible");
+            if (searchClearBtn) searchClearBtn.classList.add("visible");
+
+            if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
+              if (typeof renderGrid === "function" && typeof window.searchQuery !== "undefined") {
+                window.searchQuery = q;
+                renderGrid();
+                const gridSection = document.getElementById("font-grid");
+                if (gridSection) {
+                  gridSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }
+            } else {
+              window.location.href = `index.html?search=${encodeURIComponent(q)}&scroll=true`;
+            }
+          });
+        });
+
+        const clearBtn = document.getElementById("clear-recent-searches-btn");
         if (clearBtn) {
           clearBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -225,27 +272,10 @@ function setupSharedEventListeners() {
             searchDropdown.classList.remove("visible");
           });
         }
-        
-        searchDropdownList.querySelectorAll(".recent-search-item").forEach(item => {
-          item.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const query = item.dataset.query;
-            searchInput.value = query;
-            if (searchClearBtn) searchClearBtn.classList.add("visible");
-            
-            if (typeof renderGrid === "function" && typeof window.searchQuery !== "undefined") {
-              window.searchQuery = query;
-              renderGrid();
-            } else {
-              window.location.href = `index.html?search=${encodeURIComponent(query)}&scroll=true`;
-            }
-            searchDropdown.classList.remove("visible");
-          });
-        });
-        
+
         searchDropdown.classList.add("visible");
       } catch (e) {
-        console.error("Failed to render recent searches:", e);
+        console.error("Error rendering recent searches:", e);
       }
     }
 
@@ -255,7 +285,10 @@ function setupSharedEventListeners() {
         return;
       }
   
-      if (searchDropdownFooter) searchDropdownFooter.style.display = "block";
+      if (searchDropdownFooter) {
+        searchDropdownFooter.style.display = "";
+      }
+
       const q = query.toLowerCase();
       const matches = fontsData.filter(font => {
         return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
@@ -283,10 +316,8 @@ function setupSharedEventListeners() {
         // Add click to dropdown items
         searchDropdownList.querySelectorAll(".search-dropdown-item").forEach(item => {
           item.addEventListener("click", () => {
-            const typed = searchInput.value.trim();
-            if (typed) saveRecentSearch(typed);
-            
             const font = fontsData.find(f => f.id === item.dataset.id);
+            saveRecentSearch(searchInput.value.trim());
             if (font) window.location.href = `font.html?id=${font.id}`;
             searchDropdown.classList.remove("visible");
           });
@@ -309,12 +340,11 @@ function setupSharedEventListeners() {
         renderGrid();
       }
     });
- 
+
     searchInput.addEventListener("keydown", e => {
       if (e.key === "Enter") {
         const query = searchInput.value.trim();
-        if (query) saveRecentSearch(query);
-        
+        saveRecentSearch(query);
         e.preventDefault();
         searchDropdown.classList.remove("visible");
         if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
@@ -329,16 +359,17 @@ function setupSharedEventListeners() {
     });
   
     searchInput.addEventListener("focus", () => {
-      if (searchInput.value.trim()) {
-        renderSearchDropdown(searchInput.value.trim());
+      const q = searchInput.value.trim();
+      if (q) {
+        renderSearchDropdown(q);
       } else {
         renderRecentSearches();
       }
     });
 
-    searchInput.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (!searchInput.value.trim()) {
+    searchInput.addEventListener("click", () => {
+      const q = searchInput.value.trim();
+      if (!q) {
         renderRecentSearches();
       }
     });
@@ -357,8 +388,7 @@ function setupSharedEventListeners() {
     // Footer click to scroll down to full results (only on index)
     searchDropdownFooter?.addEventListener("click", () => {
       const query = searchInput.value.trim();
-      if (query) saveRecentSearch(query);
-      
+      saveRecentSearch(query);
       searchDropdown.classList.remove("visible");
       if (window.location.pathname.includes('font.html')) {
         window.location.href = `index.html?search=${encodeURIComponent(query)}`;
