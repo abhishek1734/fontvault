@@ -284,7 +284,7 @@ function appendFontCard(font, delay) {
 
   const inFavorites = window.favoritesSet.has(font.id);
   card.innerHTML = `
-    <div style="position: relative; background-color: var(--matte-${colorIndex});">
+    <div style="position: relative; background-color: var(--thumbnail-bg);">
       ${getMockupHTML(font)}
       <div style="position: absolute; bottom: 0.65rem; right: 0.65rem; display: flex; gap: 0.5rem; z-index: 10;">
         <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="opacity: 1; transform: scale(1);">
