@@ -1434,14 +1434,7 @@ footer {
 
 [data-theme="dark"] .search-result-count { color: #666; }
 
-/* ========================================
-   FOOTER BOTTOM — CENTERED CREDIT
-======================================== */
-.footer-bottom {
-  flex-direction: column;
-  gap: 0.35rem;
-  text-align: center;
-}
+
 
 /* ========================================
    AUTH MODAL
