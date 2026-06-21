@@ -279,7 +279,7 @@ function appendFontCard(font, delay) {
   card.innerHTML = `
     <div style="position: relative; background-color: var(--thumbnail-bg);">
       ${getMockupHTML(font)}
-      ${font.provider === 'custom' ? `
+      ${(font.availability === 'Custom' || font.id.startsWith('custom-upload-')) ? `
         <button class="custom-font-delete-btn" title="Remove custom font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')">
           ✕
         </button>
