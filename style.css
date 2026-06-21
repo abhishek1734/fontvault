@@ -1109,19 +1109,44 @@ footer {
 
 @media (max-width: 640px) {
   header {
-    padding: 0.5rem 1rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    display: grid !important;
+    grid-template-areas:
+      "logo vault dark"
+      "search search search" !important;
+    grid-template-columns: 1fr auto auto !important;
+    grid-template-rows: auto auto !important;
+    gap: 0.5rem 0.75rem !important;
+    padding: 0.75rem 1rem !important;
     height: auto !important;
+    align-items: center !important;
+  }
+  .logo {
+    grid-area: logo !important;
+    justify-self: start !important;
+    font-size: 1.15rem !important;
   }
   .nav-actions {
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    display: contents !important;
   }
   .search-container {
-    order: 10;
-    width: 100%;
-    margin-top: 0.5rem;
+    grid-area: search !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  #vault-btn {
+    grid-area: vault !important;
+    margin: 0 !important;
+    padding: 0.4rem 0.75rem !important;
+    font-size: 0.8rem !important;
+    height: 36px !important;
+    box-sizing: border-box !important;
+  }
+  #dark-toggle {
+    grid-area: dark !important;
+    margin: 0 !important;
+    width: 36px !important;
+    height: 36px !important;
+    box-sizing: border-box !important;
   }
   .sidebar-filters .filter-groups {
     display: flex;
