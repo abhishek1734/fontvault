@@ -21,6 +21,21 @@ function loadExternalFont(font) {
   const linkId = `font-face-${font.id}`;
   if (document.getElementById(linkId)) return;
 
+  // Custom Hosted Fonts Support
+  if (font.localUrl) {
+    const style = document.createElement("style");
+    style.id = linkId;
+    style.innerHTML = `
+      @font-face {
+        font-family: '${font.name}';
+        src: url('${font.localUrl}') format('woff2');
+        font-display: swap;
+      }
+    `;
+    document.head.appendChild(style);
+    return;
+  }
+
   const link = document.createElement('link');
   link.id = linkId;
   link.rel = 'stylesheet';
@@ -33,6 +48,7 @@ function loadExternalFont(font) {
     link.href = `https://api.fontshare.com/v2/css?f=${slug}@300,400,500,700&display=swap`;
   } else if (font.provider === "dafont") {
     // Dafont fonts aren't on a public CDN — use curated Google Font fallbacks for preview
+    // Note: If you add font.localUrl to these entries in fonts.js, it will use your local file instead!
     const fallbackMap = {
       "lemon-milk":     "Montserrat",
       "coolvetica":     "Rubik",
