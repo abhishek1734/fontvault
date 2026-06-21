@@ -1,4 +1,15 @@
 let fontsData = [
+  // ══════════════ CUSTOM HOSTED FONTS ══════════════
+  {
+    id: "impact-local", name: "Impact Local", provider: "custom",
+    designer: "Geoffrey Lee", foundry: "Stephenson Blake", year: "1965", stylesCount: 1,
+    languages: ["Latin", "Cyrillic"],
+    description: "Impact is a realist sans-serif typeface designed by Geoffrey Lee in 1965. This is a local test font loaded directly from our assets folder.",
+    availability: "Free for Personal", mood: "Loud", useCase: "Poster", style: "Sans-Serif", language: "Latin",
+    downloadUrl: "#", price: "Free", fileSize: "140 KB",
+    cssFamily: "'Impact Local'", localUrl: "assets/fonts/impact.ttf",
+    pairsWith: []
+  },
 
   // ══════════════ GOOGLE FONTS ══════════════
   {
