@@ -784,8 +784,8 @@ function getFilteredFonts() {
   return fontsData.filter(font => {
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
-      const match = [font.name,font.designer,font.foundry,font.style,font.provider,font.mood,font.useCase]
-        .some(v => v.toLowerCase().includes(q));
+      const match = [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
+        .some(v => v && v.toLowerCase().includes(q));
       if (!match) return false;
     }
     if (activeFilters["Provider"] !== "All Providers") {
