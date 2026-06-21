@@ -943,12 +943,11 @@ function appendFontCard(font, delay) {
         <button class="card-btn" data-id="${font.id}">${btnLabel}</button>
       </div>
     </div>
-    <input class="card-live-input" type="text" placeholder="Type to preview in ${font.name}..." data-id="${font.id}">
   `;
 
   // Card click → open detail
   card.addEventListener("click", e => {
-    if (e.target.closest(".card-btn") || e.target.closest(".compare-add-btn") || e.target.closest(".card-live-input")) return;
+    if (e.target.closest(".card-btn") || e.target.closest(".compare-add-btn")) return;
     openDetailPanel(font);
   });
 
@@ -960,30 +959,6 @@ function appendFontCard(font, delay) {
     e.stopPropagation();
     toggleCompare(font.id);
   });
-
-  // Live preview input
-  const liveInput = card.querySelector(".card-live-input");
-  const mockupEl = card.querySelector(".card-mockup");
-  let mockupTextEl = null;
-
-  liveInput.addEventListener("focus", () => {
-    // Find the largest text element in the mockup for live preview
-    if (!mockupTextEl) {
-      const divs = Array.from(mockupEl.querySelectorAll("div"));
-      mockupTextEl = divs.reduce((best, d) =>
-        (parseInt(getComputedStyle(d).fontSize) > (best ? parseInt(getComputedStyle(best).fontSize) : 0)) ? d : best
-      , null);
-    }
-  });
-
-  liveInput.addEventListener("input", e => {
-    if (mockupTextEl && e.target.value.trim()) {
-      mockupTextEl.textContent = e.target.value;
-    }
-  });
-
-  liveInput.addEventListener("click", e => e.stopPropagation());
-
   el.fontGrid.appendChild(card);
 }
 
@@ -1523,16 +1498,18 @@ function setupEventListeners() {
 
   // Global Text Preview
   const globalPreviewInput = document.getElementById("global-preview-input");
+  const globalPreviewClear = document.getElementById("global-preview-clear");
+  
   globalPreviewInput?.addEventListener("input", e => {
     globalPreviewText = e.target.value;
+    
+    if (globalPreviewClear) {
+      if (globalPreviewText) globalPreviewClear.classList.add("visible");
+      else globalPreviewClear.classList.remove("visible");
+    }
+
     // Don't re-render the whole grid on every keystroke, just update the text in DOM
     document.querySelectorAll(".mockup-preview-text").forEach(el => {
-      // For code mockup with HTML tags
-      if (el.innerHTML.includes('<span class="color')) {
-         // skip or rebuild it correctly, but simple way:
-         // If they type, it overwrites the HTML. If they clear, it reverts on next render.
-      }
-      
       // Store original HTML if not stored yet
       if (!el.hasAttribute('data-original-html')) {
         el.setAttribute('data-original-html', el.innerHTML);
@@ -1544,6 +1521,14 @@ function setupEventListeners() {
         el.innerHTML = el.getAttribute('data-original-html');
       }
     });
+  });
+
+  globalPreviewClear?.addEventListener("click", () => {
+    if (globalPreviewInput) {
+      globalPreviewInput.value = "";
+      globalPreviewInput.dispatchEvent(new Event("input")); // trigger the input logic to clear UI
+      globalPreviewInput.focus();
+    }
   });
 
   // Clear filters

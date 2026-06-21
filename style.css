@@ -1136,7 +1136,6 @@ footer {
 [data-theme="dark"] .compare-shared-text-wrap input { background:#1A1A1A; border-color:#2A2A2A; color:#F0F0F0; }
 [data-theme="dark"] .pairing-card { background:#1A1A1A; border-color:#2A2A2A; }
 [data-theme="dark"] .pairing-card:hover { background:#222; border-color:#555; }
-[data-theme="dark"] .card-live-input { background:rgba(20,20,20,0.97); border-color:#2A2A2A; color:#F0F0F0; }
 [data-theme="dark"] .compare-add-btn { background:#1A1A1A; border-color:#333; color:#F0F0F0; }
 [data-theme="dark"] .compare-tray { background:#1A1A1A; }
 
@@ -1226,26 +1225,6 @@ footer {
    CARD LIVE PREVIEW & COMPARE BUTTON
 ======================================== */
 .font-card { position:relative; overflow:hidden; }
-.card-live-input {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  padding: 0.5rem 1rem;
-  font-size: 0.75rem;
-  border: none;
-  border-top: 1px solid var(--border-grey);
-  background: rgba(255,255,255,0.97);
-  backdrop-filter: blur(8px);
-  color: var(--near-black);
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.22s ease, transform 0.22s ease;
-  z-index: 5;
-  font-family: var(--font-body);
-  width: 100%;
-  box-sizing: border-box;
-}
-.card-live-input::placeholder { color:#bbb; }
-.font-card:hover .card-live-input { opacity:1; transform:translateY(0); }
 
 .compare-add-btn {
   position: absolute;
@@ -1862,6 +1841,36 @@ footer {
 .global-preview-bar {
   margin-bottom: 2rem;
   width: 100%;
+  position: relative;
+}
+
+.global-preview-clear {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  cursor: pointer;
+  display: none;
+  padding: 0.5rem;
+  transition: color 0.2s;
+  border-radius: 50%;
+}
+
+.global-preview-clear:hover {
+  color: var(--near-black);
+  background-color: rgba(0,0,0,0.05);
+}
+
+.global-preview-clear.visible {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-theme="dark"] .global-preview-clear:hover {
+  color: var(--pure-white);
+  background-color: rgba(255,255,255,0.1);
 }
 
 #global-preview-input {
