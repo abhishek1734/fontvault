@@ -2070,3 +2070,58 @@ input[type=range]::-moz-range-thumb {
   50% { opacity: 0.5; }
   100% { opacity: 1; }
 }
+
+/* Futuristic Thumbnail CSS */
+.futuristic-glass {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
+[data-theme="dark"] .futuristic-glass {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.futuristic-text {
+  color: #0A0A0A;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
+}
+[data-theme="dark"] .futuristic-text {
+  color: #FFFFFF;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.futuristic-designer {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--signal-red);
+}
+[data-theme="dark"] .futuristic-designer {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.glow-orb {
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] .glow-orb {
+  mix-blend-mode: screen;
+}
+
+.tech-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(0,0,0,0.2);
+  border-style: solid;
+  border-width: 0;
+}
+[data-theme="dark"] .tech-corner {
+  border-color: rgba(255,255,255,0.2);
+}

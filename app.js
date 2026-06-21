@@ -216,18 +216,44 @@ function getBadgeClass(a) {
 function getMockupHTML(font) {
   loadExternalFont(font);
   const fam = font.cssFamily || `'${font.name}'`;
-  const badge = `<span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>`;
+  const badge = `<span class="badge-availability ${getBadgeClass(font.availability)}" style="z-index: 5;">${font.availability}</span>`;
   const titleText = globalPreviewText || font.name;
   const designerText = font.designer || font.foundry || 'Independent';
 
+  // Deterministic hues based on font ID for the holographic glow
+  let hash = 0;
+  for (let i = 0; i < font.id.length; i++) hash = font.id.charCodeAt(i) + ((hash << 5) - hash);
+  const hue1 = Math.abs(hash) % 360;
+  const hue2 = (hue1 + 120) % 360;
+
   return `
-    <div class="card-mockup" style="display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);color:#0A0A0A;text-align:center;">
-      ${badge}
-      <div class="mockup-preview-text" style="font-family:${fam},sans-serif;font-size:2.8rem;line-height:1.1;color:#000;">
-        ${titleText}
-      </div>
-      <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--signal-red);margin-top:1.5rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:600;">
-        ${designerText}
+    <div class="card-mockup" style="position:relative; display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem; overflow:hidden; min-height: 220px; border-bottom:1px solid var(--border-grey);">
+      
+      <!-- Holographic Glows -->
+      <div class="glow-orb" style="position:absolute; top:-30%; left:-10%; width:80%; height:80%; background: radial-gradient(circle, hsl(${hue1}, 100%, 75%) 0%, transparent 70%); opacity: 0.5; filter: blur(30px); z-index: 0;"></div>
+      <div class="glow-orb" style="position:absolute; bottom:-30%; right:-10%; width:80%; height:80%; background: radial-gradient(circle, hsl(${hue2}, 100%, 75%) 0%, transparent 70%); opacity: 0.5; filter: blur(30px); z-index: 0;"></div>
+      
+      <!-- Futuristic Grid/Dots -->
+      <div style="position:absolute; inset:0; background-image: radial-gradient(rgba(128,128,128,0.2) 1px, transparent 1px); background-size: 15px 15px; z-index: 0;"></div>
+
+      <!-- Glassmorphic Plate -->
+      <div class="futuristic-glass" style="position:relative; z-index: 2; display:flex; flex-direction:column; align-items:center; justify-content:center; width: 100%; height: 100%; padding: 2rem 1rem;">
+        
+        <!-- Tech Corner Accents -->
+        <div class="tech-corner" style="top: 10px; left: 10px; border-top-width: 2px; border-left-width: 2px;"></div>
+        <div class="tech-corner" style="top: 10px; right: 10px; border-top-width: 2px; border-right-width: 2px;"></div>
+        <div class="tech-corner" style="bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px;"></div>
+        <div class="tech-corner" style="bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px;"></div>
+
+        ${badge}
+        
+        <div class="mockup-preview-text futuristic-text" style="font-family:${fam},sans-serif; font-size:2.6rem; line-height:1.1; text-align:center; z-index:3;">
+          ${titleText}
+        </div>
+        
+        <div class="futuristic-designer" style="font-family:var(--font-mono); font-size:0.7rem; margin-top:1.2rem; letter-spacing:0.2em; text-transform:uppercase; font-weight:700; z-index:3; padding: 4px 10px; border-radius: 20px;">
+          <span style="opacity:0.4; margin-right:4px;">SYS.</span>${designerText}
+        </div>
       </div>
     </div>
   `;
