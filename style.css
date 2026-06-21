@@ -45,13 +45,17 @@
   padding: 0;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   font-family: var(--font-body);
   font-size: var(--ts-base);
   color: var(--near-black);
   background-color: var(--pure-white);
   line-height: 1.5;
-  overflow-x: hidden;
 }
 
 a {
@@ -1131,10 +1135,12 @@ footer {
   .search-container:focus-within {
     order: 4;
     width: 100%;
+    flex: 1 1 100%;
     margin-top: 0.5rem;
   }
   .search-dropdown {
     min-width: 100%;
+    max-width: 100vw;
   }
   .sidebar-filters-header {
     cursor: pointer;
