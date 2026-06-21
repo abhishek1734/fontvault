@@ -549,6 +549,7 @@ header.collapsed + .main-container .sidebar-filters {
 .badge-trial { border: 1px solid var(--border-grey); background-color: rgba(255, 255, 255, 0.85); color: var(--near-black); }
 .badge-premium { background-color: var(--signal-red); color: var(--pure-white); }
 .badge-paid { border: 1px solid var(--near-black); background-color: rgba(255, 255, 255, 0.85); color: var(--near-black); }
+.badge-custom { border: 1px solid rgba(0, 243, 255, 0.8); background-color: rgba(0, 243, 255, 0.15); color: #00f3ff; text-shadow: 0 0 5px rgba(0, 243, 255, 0.5); }
 
 .card-info {
   padding: 1.5rem;

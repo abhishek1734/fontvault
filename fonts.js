@@ -34,7 +34,7 @@ let fontsData = [
   },
   {
     id: "coolvetica-local",
-    name: "Coolvetica Local",
+    name: "Coolvetica",
     provider: "custom",
     designer: "Ray Larabie",
     foundry: "Typodermic Fonts",
@@ -50,13 +50,13 @@ let fontsData = [
     downloadUrl: "#",
     price: "Free",
     fileSize: "330 KB",
-    cssFamily: "'Coolvetica Local'",
+    cssFamily: "'Coolvetica'",
     localUrl: "assets/fonts/Coolvetica Rg.otf",
     pairsWith: []
   },
   {
     id: "galaxy-dingbats-local",
-    name: "Galaxy Dingbats Local",
+    name: "Galaxy Dingbats",
     provider: "custom",
     designer: "Unknown Designer",
     foundry: "Independent",
@@ -72,7 +72,7 @@ let fontsData = [
     downloadUrl: "#",
     price: "Free",
     fileSize: "94 KB",
-    cssFamily: "'Galaxy Dingbats Local'",
+    cssFamily: "'Galaxy Dingbats'",
     localUrl: "assets/fonts/Galaxy_dingbats-Regular.ttf",
     pairsWith: []
   },

@@ -22,7 +22,7 @@ fontsData.forEach(f => loadExternalFont(f));
 // ─────────────────────────────────────────────────
 const filterGroups = {
   "Provider":     ["All Providers","Google Fonts","Fontshare","Dafont"],
-  "Availability": ["All","Free","Free for Personal","Premium"],
+  "Availability": ["All","Free","Free for Personal","Premium","Custom"],
   "Style":        ["Serif","Sans-Serif","Display","Monospace","Script"],
   "Mood":         ["Elegant","Minimal","Vintage","Bold","Playful","Formal","Modern"],
   "Use Case":     ["Editorial","UI","Poster","Web","Packaging","Branding"]
@@ -171,7 +171,7 @@ function clearAllFilters() {
 //  MOCKUP HTML
 // ─────────────────────────────────────────────────
 function getBadgeClass(a) {
-  return ({Free:"badge-free","Free for Personal":"badge-personal",Trial:"badge-trial",Premium:"badge-premium",Paid:"badge-paid"})[a] || "badge-free";
+  return ({Free:"badge-free","Free for Personal":"badge-personal",Trial:"badge-trial",Premium:"badge-premium",Paid:"badge-paid",Custom:"badge-custom"})[a] || "badge-free";
 }
 
 function getMockupHTML(font) {
@@ -236,7 +236,13 @@ function getFilteredFonts() {
       const provMap = {"Google Fonts":"google","Fontshare":"fontshare","Dafont":"dafont"};
       if (font.provider !== provMap[activeFilters["Provider"]]) return false;
     }
-    if (activeFilters["Availability"] !== "All" && font.availability !== activeFilters["Availability"]) return false;
+    if (activeFilters["Availability"] !== "All") {
+      if (activeFilters["Availability"] === "Custom") {
+        if (font.provider !== "custom") return false;
+      } else {
+        if (font.availability !== activeFilters["Availability"]) return false;
+      }
+    }
     if (activeFilters["Style"] && font.style !== activeFilters["Style"]) return false;
     if (activeFilters["Mood"] && font.mood !== activeFilters["Mood"]) return false;
     if (activeFilters["Use Case"] && font.useCase !== activeFilters["Use Case"]) return false;
