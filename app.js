@@ -889,6 +889,21 @@ function renderGrid() {
   el.fontGrid.innerHTML = "";
   const filtered = getFilteredFonts();
 
+  // Show/update search result count
+  let countEl = document.getElementById("search-result-count");
+  if (!countEl) {
+    countEl = document.createElement("p");
+    countEl.id = "search-result-count";
+    countEl.className = "search-result-count";
+    el.fontGrid.parentElement.insertBefore(countEl, el.fontGrid);
+  }
+  if (searchQuery || Object.values(activeFilters).some(v => v && v !== "All Providers" && v !== "All")) {
+    countEl.textContent = `Showing ${filtered.length} of ${fontsData.length} fonts`;
+    countEl.classList.add("visible");
+  } else {
+    countEl.classList.remove("visible");
+  }
+
   if (filtered.length === 0) {
     el.fontGrid.innerHTML = `
       <div style="grid-column:span 3;text-align:center;padding:4rem 1rem;color:#777;width:100%;">
@@ -941,8 +956,111 @@ function renderTrending() {
 }
 
 // ─────────────────────────────────────────────────
-//  COMPARE FUNCTIONS
+//  AUTH MODAL
 // ─────────────────────────────────────────────────
+function openAuthModal() {
+  const overlay = document.getElementById("auth-overlay");
+  if (overlay) {
+    overlay.classList.add("visible");
+    document.body.style.overflow = "hidden";
+    // Focus email field after animation
+    setTimeout(() => {
+      const emailField = document.getElementById("auth-email");
+      if (emailField) emailField.focus();
+    }, 350);
+  }
+}
+
+function closeAuthModal() {
+  const overlay = document.getElementById("auth-overlay");
+  if (overlay) {
+    overlay.classList.remove("visible");
+    document.body.style.overflow = "";
+  }
+}
+
+function setupAuthModal() {
+  // Close button
+  const closeBtn = document.getElementById("auth-close");
+  if (closeBtn) closeBtn.addEventListener("click", closeAuthModal);
+
+  // Click overlay backdrop to close
+  const overlay = document.getElementById("auth-overlay");
+  if (overlay) {
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay) closeAuthModal();
+    });
+  }
+
+  // Tab switching (Sign In / Create Account)
+  const tabs = document.querySelectorAll(".auth-tab");
+  const subtitle = document.getElementById("auth-subtitle");
+  const submitBtn = document.getElementById("auth-submit-btn");
+  const forgotLink = document.getElementById("auth-forgot");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const mode = tab.dataset.mode;
+      if (mode === "signup") {
+        if (subtitle) subtitle.textContent = "Create a free account to submit and save fonts.";
+        if (submitBtn) submitBtn.textContent = "Create Account";
+        if (forgotLink) forgotLink.style.display = "none";
+      } else {
+        if (subtitle) subtitle.textContent = "Sign in to submit and save fonts.";
+        if (submitBtn) submitBtn.textContent = "Sign In";
+        if (forgotLink) forgotLink.style.display = "";
+      }
+    });
+  });
+
+  // Google Sign-in button
+  const googleBtn = document.getElementById("btn-google-signin");
+  if (googleBtn) {
+    googleBtn.addEventListener("click", () => {
+      googleBtn.textContent = "Redirecting to Google...";
+      googleBtn.disabled = true;
+      setTimeout(() => {
+        closeAuthModal();
+        googleBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg> Continue with Google`;
+        googleBtn.disabled = false;
+        alert("Google Sign-in is not connected to a backend in this demo. This is a UI prototype.");
+      }, 1200);
+    });
+  }
+
+  // Form submit
+  const form = document.getElementById("auth-form");
+  if (form) {
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const email = document.getElementById("auth-email")?.value.trim();
+      const password = document.getElementById("auth-password")?.value;
+      const activeTab = document.querySelector(".auth-tab.active")?.dataset.mode;
+
+      if (!email || !password) { alert("Please fill in both email and password."); return; }
+      if (password.length < 6) { alert("Password must be at least 6 characters."); return; }
+
+      // Simulate loading state
+      if (submitBtn) { submitBtn.textContent = "Please wait..."; submitBtn.disabled = true; }
+      setTimeout(() => {
+        closeAuthModal();
+        if (submitBtn) { submitBtn.textContent = activeTab === "signup" ? "Create Account" : "Sign In"; submitBtn.disabled = false; }
+        alert(`Welcome to FontVault! (This is a UI demo — no real backend is connected.)`);
+      }, 1000);
+    });
+  }
+
+  // Forgot password link
+  if (forgotLink) {
+    forgotLink.addEventListener("click", e => {
+      e.preventDefault();
+      alert("Password reset email would be sent in the live version.");
+    });
+  }
+}
+
 function toggleCompare(fontId) {
   if (compareSet.has(fontId)) {
     compareSet.delete(fontId);
@@ -1197,21 +1315,23 @@ function setupEventListeners() {
   // Clear filters
   el.clearFiltersBtn.addEventListener("click", clearAllFilters);
 
-  // Hero buttons
+  // Hero browse button
   el.browseBtn?.addEventListener("click", () =>
     document.getElementById("main-content").scrollIntoView({ behavior: "smooth" })
   );
-  el.freeDownloadsBtn?.addEventListener("click", () => {
-    activeFilters["Availability"] = "Free";
-    setupFilters();
-    renderGrid();
-    document.getElementById("main-content").scrollIntoView({ behavior: "smooth" });
-  });
 
   // Scroll arrow
   el.scrollArrow?.addEventListener("click", () =>
     document.getElementById("trending-section").scrollIntoView({ behavior: "smooth" })
   );
+
+  // Submit a Font nav button → open auth modal
+  const submitNavBtn = document.getElementById("submit-font-nav-btn");
+  if (submitNavBtn) submitNavBtn.addEventListener("click", openAuthModal);
+
+  // Submit a Font footer form → open auth modal
+  const newsletterForm = document.getElementById("newsletter-form");
+  if (newsletterForm) newsletterForm.addEventListener("submit", e => { e.preventDefault(); openAuthModal(); });
 
   // Detail panel — close
   el.closePanelBtn.addEventListener("click", closeDetailPanel);
@@ -1249,10 +1369,12 @@ function setupEventListeners() {
   // Dark mode toggle
   el.darkToggle?.addEventListener("click", toggleDarkMode);
 
-  // Keyboard: Escape closes panels
+  // Keyboard: Escape closes all modals/panels
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") {
-      if (el.compareOverlay.classList.contains("visible")) closeComparison();
+      const authOverlay = document.getElementById("auth-overlay");
+      if (authOverlay?.classList.contains("visible")) closeAuthModal();
+      else if (el.compareOverlay.classList.contains("visible")) closeComparison();
       else closeDetailPanel();
     }
   });
@@ -1294,6 +1416,7 @@ function init() {
   renderGrid();
   renderTrending();
   setupEventListeners();
+  setupAuthModal();
   updateClearButtonVisibility();
 }
 

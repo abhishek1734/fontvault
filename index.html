@@ -22,7 +22,7 @@
         </svg>
         <input type="text" id="search-input" placeholder="Search fonts, categories, designers...">
       </div>
-      <a href="#submit-font" class="nav-link">Submit a Font</a>
+      <button class="nav-link" id="submit-font-nav-btn" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;">Submit a Font</button>
       <button id="dark-toggle" class="dark-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -44,7 +44,6 @@
       <p class="hero-subline">Browse 50+ fonts — free, trial, and premium — with real design previews.</p>
       <div class="hero-ctas">
         <button class="btn btn-primary" id="btn-browse-fonts">Browse Fonts</button>
-        <button class="btn btn-secondary" id="btn-free-downloads">Free Downloads</button>
       </div>
     </div>
     <div class="scroll-indicator" id="scroll-arrow">
@@ -60,8 +59,10 @@
       <h2 class="section-title" style="margin-bottom:0;">Trending This Week</h2>
       <span class="trending-badge">Live</span>
     </div>
-    <div class="trending-strip" id="trending-strip">
-      <!-- Injected by JS -->
+    <div class="trending-outer" id="trending-outer">
+      <div class="trending-track" id="trending-strip">
+        <!-- Cards injected + duplicated by JS -->
+      </div>
     </div>
   </section>
 
@@ -96,12 +97,7 @@
       <div class="collections-grid">
         <div class="collection-card" data-filter="Style:Serif">
           <div class="collection-overlay"></div>
-          <div class="collection-bg-preview">
-            <span style="font-family:'DM Serif Display'">Aa</span>
-            <span style="font-family:'Playfair Display'">Bb</span>
-            <span style="font-family:'Cormorant Garamond'">Cc</span>
-            <span style="font-family:'Cinzel'">Dd</span>
-          </div>
+          <img class="collection-img" src="assets/editorial.png" alt="Editorial Classics — Serif fonts" loading="lazy">
           <div class="collection-content">
             <h3 class="collection-title">Editorial Classics</h3>
             <p class="collection-count">Serif &amp; Display</p>
@@ -109,12 +105,7 @@
         </div>
         <div class="collection-card" data-filter="Availability:Free">
           <div class="collection-overlay"></div>
-          <div class="collection-bg-preview">
-            <span style="font-family:'Inter'">Fr</span>
-            <span style="font-family:'Space Grotesk'">Ee</span>
-            <span style="font-family:'Montserrat'">Dn</span>
-            <span style="font-family:'Outfit'">Ld</span>
-          </div>
+          <img class="collection-img" src="assets/free.png" alt="Free and Beautiful fonts" loading="lazy">
           <div class="collection-content">
             <h3 class="collection-title">Free &amp; Beautiful</h3>
             <p class="collection-count">Open Source Fonts</p>
@@ -122,12 +113,7 @@
         </div>
         <div class="collection-card" data-filter="Style:Monospace">
           <div class="collection-overlay"></div>
-          <div class="collection-bg-preview">
-            <span style="font-family:'JetBrains Mono'">[ ]</span>
-            <span style="font-family:'JetBrains Mono'">&lt;&gt;</span>
-            <span style="font-family:'JetBrains Mono'">fn</span>
-            <span style="font-family:'JetBrains Mono'">var</span>
-          </div>
+          <img class="collection-img" src="assets/code.png" alt="MonoSpace and Code fonts" loading="lazy">
           <div class="collection-content">
             <h3 class="collection-title">MonoSpace &amp; Code</h3>
             <p class="collection-count">Clean &amp; Technical</p>
@@ -135,12 +121,7 @@
         </div>
         <div class="collection-card" data-filter="Use Case:Branding">
           <div class="collection-overlay"></div>
-          <div class="collection-bg-preview">
-            <span style="font-family:'Syne'">Sy</span>
-            <span style="font-family:'Bebas Neue'">BE</span>
-            <span style="font-family:'DM Serif Display'">Vo</span>
-            <span style="font-family:'Space Grotesk'">Sp</span>
-          </div>
+          <img class="collection-img" src="assets/branding.png" alt="The Branding Stack" loading="lazy">
           <div class="collection-content">
             <h3 class="collection-title">The Branding Stack</h3>
             <p class="collection-count">Modern Identity</p>
@@ -309,9 +290,55 @@
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 FontVault. All rights reserved.</span>
-      <span>BUILT FOR TYPE LOVERS</span>
+      <span style="display:block;text-align:center;width:100%;margin-top:0.5rem;font-family:var(--font-body);font-size:0.75rem;color:#888;">Designed by Abhishek Kumar</span>
     </div>
   </footer>
+
+  <!-- AUTH MODAL -->
+  <div class="auth-overlay" id="auth-overlay">
+    <div class="auth-modal" id="auth-modal" role="dialog" aria-modal="true" aria-label="Sign in to FontVault">
+      <button class="auth-close" id="auth-close" aria-label="Close">&times;</button>
+
+      <div class="auth-brand">
+        <span class="logo" style="font-size:1.1rem;">FONTVAULT</span>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-mode="signin">Sign In</button>
+        <button class="auth-tab" data-mode="signup">Create Account</button>
+      </div>
+
+      <p class="auth-subtitle" id="auth-subtitle">Sign in to submit and save fonts.</p>
+
+      <!-- Google Sign-in -->
+      <button class="btn-google" id="btn-google-signin">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="auth-divider"><span>or</span></div>
+
+      <form class="auth-form" id="auth-form" novalidate>
+        <div class="auth-field">
+          <label for="auth-email">Email</label>
+          <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="auth-field">
+          <label for="auth-password">Password</label>
+          <input type="password" id="auth-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required>
+          <a href="#" class="auth-forgot" id="auth-forgot">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn-auth-submit" id="auth-submit-btn">Sign In</button>
+      </form>
+
+      <p class="auth-terms">By continuing, you agree to FontVault's <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
