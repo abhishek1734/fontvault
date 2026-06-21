@@ -84,7 +84,7 @@ function loadExternalFont(font) {
     }
   } else if (font.provider === "fontshare") {
     const slug = font.name.toLowerCase().replace(/\s+/g, '-');
-    link.href = `https://api.fontshare.com/v2/css?f=${slug}@300,400,500,700&display=swap`;
+    link.href = `https://api.fontshare.com/v2/css?f=${slug}@100,200,300,400,500,600,700,800,900&display=swap`;
   } else if (font.provider === "dafont") {
     const fallbackMap = {
       "lemon-milk":     "Montserrat",

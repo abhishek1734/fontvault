@@ -317,6 +317,25 @@ function getFontWeights(font) {
       return Array.from(weights).sort((a, b) => a - b);
     }
   }
+  
+  if (font.provider === 'fontshare') {
+    const fontshareWeights = {
+      'satoshi': [300, 400, 500, 700, 900],
+      'clash-display': [200, 300, 400, 500, 600, 700],
+      'cabinet-grotesk-free': [100, 200, 300, 400, 500, 700, 800, 900],
+      'general-sans': [200, 300, 400, 500, 600, 700],
+      'zodiak': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      'switzer': [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      'boska': [300, 400, 500, 700, 900],
+      'chillax': [200, 300, 400, 500, 600, 700],
+      'tanker': [400],
+      'ranade': [100, 200, 300, 400, 500, 700]
+    };
+    if (fontshareWeights[font.id]) {
+      return fontshareWeights[font.id];
+    }
+  }
+
   if (font.provider === 'google' || font.provider === 'fontshare') {
     if (font.stylesCount === 1) return [400];
     return [300, 400, 500, 700];

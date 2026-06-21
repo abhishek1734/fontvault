@@ -662,7 +662,13 @@ async function initGoogleFonts(apiKey) {
 
     const mappedFonts = data.items.map(item => {
       const id = item.family.toLowerCase().replace(/\s+/g, '-');
-      if (existingIds.has(id)) return null;
+      if (existingIds.has(id)) {
+        const existingFont = fontsData.find(f => f.id === id);
+        if (existingFont) {
+          existingFont.variants = item.variants;
+        }
+        return null;
+      }
 
       // Map Google category to our style labels
       let mappedStyle = "Sans-Serif";
