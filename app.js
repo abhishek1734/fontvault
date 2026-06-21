@@ -270,10 +270,7 @@ const cardObserver = new IntersectionObserver((entries, observer) => {
 }, { root: null, rootMargin: '50px', threshold: 0.1 });
 
 function appendFontCard(font, delay) {
-  const isFree = font.availability === "Free" || font.availability === "Free for Personal";
-  const statusDotClass = isFree ? "green" : "grey";
-  const statusText = isFree ? "Free Download" : `${font.price} / Buy License`;
-  const btnLabel = isFree ? "⬇ Try Free" : "Buy →";
+
   const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT" }[font.provider] || font.provider.toUpperCase();
   const isInCompare = compareSet.has(font.id);
 
@@ -313,13 +310,6 @@ function appendFontCard(font, delay) {
         <span style="text-transform:uppercase;font-weight:700;color:var(--near-black);background:#E0E0E0;padding:2px 6px;border-radius:3px;margin-right:6px;font-size:0.6rem;font-family:var(--font-mono);">${providerLabel}</span>
         ${font.style} · ${font.mood} · ${font.useCase}
       </p>
-      <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center;">
-        <span class="card-status">
-          <span class="status-dot ${statusDotClass}"></span>
-          ${statusText}
-        </span>
-        <button class="card-btn" data-id="${font.id}">${btnLabel}</button>
-      </div>
     </div>
   `;
 
