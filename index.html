@@ -4,10 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FontVault — Premium Font Discovery and Licensing</title>
-  <meta name="description" content="Discover, test, and license premium and free fonts with real-world design mockups.">
+  <meta name="description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- SCROLL PROGRESS BAR -->
+  <div id="progress-bar" class="progress-bar"></div>
 
   <!-- NAVIGATION BAR -->
   <header id="navbar">
@@ -20,6 +23,11 @@
         <input type="text" id="search-input" placeholder="Search fonts, categories, designers...">
       </div>
       <a href="#submit-font" class="nav-link">Submit a Font</a>
+      <button id="dark-toggle" class="dark-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
   </header>
 
@@ -33,7 +41,7 @@
     <div class="hero-content">
       <p class="hero-eyebrow">// DISCOVER TYPE</p>
       <h1 class="hero-headline">Every font the world uses.<br>Yours to explore.</h1>
-      <p class="hero-subline">Browse thousands of fonts — free, trial, and premium — with real design previews.</p>
+      <p class="hero-subline">Browse 50+ fonts — free, trial, and premium — with real design previews.</p>
       <div class="hero-ctas">
         <button class="btn btn-primary" id="btn-browse-fonts">Browse Fonts</button>
         <button class="btn btn-secondary" id="btn-free-downloads">Free Downloads</button>
@@ -43,6 +51,17 @@
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
+    </div>
+  </section>
+
+  <!-- TRENDING THIS WEEK -->
+  <section class="trending-section" id="trending-section">
+    <div class="trending-header">
+      <h2 class="section-title" style="margin-bottom:0;">Trending This Week</h2>
+      <span class="trending-badge">Live</span>
+    </div>
+    <div class="trending-strip" id="trending-strip">
+      <!-- Injected by JS -->
     </div>
   </section>
 
@@ -57,21 +76,18 @@
           <span class="clear-all" id="clear-filters-btn">Clear all</span>
         </div>
         <div class="filter-groups" id="filter-groups-container">
-          <!-- Filter Groups will be injected by JavaScript -->
+          <!-- Filter Groups injected by JS -->
         </div>
       </aside>
 
       <!-- RIGHT GRID AREA -->
       <section class="grid-area">
         <div class="masonry-grid" id="font-grid">
-          <!-- Font Cards will be dynamically injected here -->
-          <!-- Skeleton Loading State -->
-          <div class="skeleton-card" style="display:none;"></div>
+          <!-- Font Cards dynamically injected -->
         </div>
       </section>
     </div>
   </main>
-
 
   <!-- CURATED FEATURED COLLECTIONS -->
   <section class="collections-section" id="collections">
@@ -88,7 +104,7 @@
           </div>
           <div class="collection-content">
             <h3 class="collection-title">Editorial Classics</h3>
-            <p class="collection-count">Serif & Display</p>
+            <p class="collection-count">Serif &amp; Display</p>
           </div>
         </div>
         <div class="collection-card" data-filter="Availability:Free">
@@ -100,7 +116,7 @@
             <span style="font-family:'Outfit'">Ld</span>
           </div>
           <div class="collection-content">
-            <h3 class="collection-title">Free & Beautiful</h3>
+            <h3 class="collection-title">Free &amp; Beautiful</h3>
             <p class="collection-count">Open Source Fonts</p>
           </div>
         </div>
@@ -113,8 +129,8 @@
             <span style="font-family:'JetBrains Mono'">var</span>
           </div>
           <div class="collection-content">
-            <h3 class="collection-title">MonoSpace & Code</h3>
-            <p class="collection-count">Clean & Technical</p>
+            <h3 class="collection-title">MonoSpace &amp; Code</h3>
+            <p class="collection-count">Clean &amp; Technical</p>
           </div>
         </div>
         <div class="collection-card" data-filter="Use Case:Branding">
@@ -141,11 +157,11 @@
       <h3 class="detail-header-title" id="detail-title">Font Name</h3>
       <div class="close-btn" id="close-panel-btn">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
     </div>
-    
+
     <div class="detail-body">
       <!-- Specimen Testing Box -->
       <div class="specimen-preview-box">
@@ -201,7 +217,6 @@
         <!-- Styles Tab -->
         <div class="tab-content" id="tab-styles">
           <div class="styles-list" id="styles-variant-list" style="display:flex; flex-direction:column; gap:1.2rem;">
-            <!-- Individual weight specimens will be injected here -->
           </div>
         </div>
 
@@ -219,13 +234,47 @@
           </div>
         </div>
       </div>
+
+      <!-- PAIRING SUGGESTIONS (injected by JS) -->
+      <div id="pairing-section"></div>
     </div>
 
     <!-- CTA Section -->
     <div class="detail-cta-panel">
       <div class="cta-price-tag" id="cta-price-display">Free Download</div>
       <button class="btn btn-black btn-full" id="detail-primary-cta">Download Free</button>
-      <div class="download-confirm-tooltip" id="download-tooltip">This will download Inter.zip (2.3 MB)</div>
+      <div class="download-confirm-tooltip" id="download-tooltip">Opening download page...</div>
+    </div>
+  </div>
+
+  <!-- COMPARE TRAY (fixed bottom) -->
+  <div class="compare-tray" id="compare-tray">
+    <span class="compare-tray-label">Comparing</span>
+    <div class="compare-tray-fonts" id="compare-tray-fonts"></div>
+    <div class="compare-tray-actions">
+      <button class="btn-compare-now" id="compare-now-btn">Compare Now</button>
+      <button class="btn-compare-clear" id="compare-tray-clear">Clear</button>
+    </div>
+  </div>
+
+  <!-- COMPARE OVERLAY (full-screen) -->
+  <div class="compare-overlay" id="compare-overlay">
+    <div class="compare-overlay-header">
+      <span class="compare-overlay-title">Font Comparison</span>
+      <div class="compare-overlay-controls">
+        <div class="compare-shared-text-wrap">
+          <span>Preview:</span>
+          <input type="text" id="compare-shared-input" placeholder="Type to preview..." value="The quick brown fox">
+        </div>
+        <button class="compare-overlay-close" id="compare-close-btn" aria-label="Close comparison">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="compare-overlay-body" id="compare-overlay-body">
+      <!-- Injected by JS -->
     </div>
   </div>
 
@@ -242,7 +291,7 @@
           <li><a href="#hero" id="footer-browse-link">Browse Fonts</a></li>
           <li><a href="#collections">Curated Collections</a></li>
           <li><a href="#submit-font">Submit a Font</a></li>
-          <li><a href="#about">About FontVault</a></li>
+          <li><a href="#trending-section">Trending</a></li>
         </ul>
       </div>
       <div class="footer-newsletter" id="submit-font">
