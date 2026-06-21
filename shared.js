@@ -156,6 +156,22 @@ function setupSharedEventListeners() {
         renderGrid();
       }
     });
+
+    searchInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        searchDropdown.classList.remove("visible");
+        if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
+          const gridSection = document.getElementById("font-grid");
+          if (gridSection) {
+            gridSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        } else {
+          const query = searchInput.value.trim();
+          window.location.href = `index.html?search=${encodeURIComponent(query)}&scroll=true`;
+        }
+      }
+    });
   
     searchInput.addEventListener("focus", () => {
       if (searchInput.value.trim()) {

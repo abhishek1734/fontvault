@@ -9,6 +9,16 @@
   --border-grey: #E0E0E0;
   --signal-red: #FF3B00;
 
+  /* Matte card backgrounds */
+  --matte-0: #FDEBEC;
+  --matte-1: #EAF7EE;
+  --matte-2: #ECF2FB;
+  --matte-3: #FDF6E5;
+  --matte-4: #F4ECFB;
+  --matte-5: #FDF1E9;
+  --matte-6: #E7F7F6;
+  --matte-7: #F1F2F4;
+
   /* Typography scale */
   --font-display: 'DM Serif Display', serif;
   --font-body: 'Inter', sans-serif;
@@ -1128,7 +1138,23 @@ footer {
 /* ========================================
    DARK MODE
 ======================================== */
-[data-theme="dark"] { --pure-white:#0D0D0D; --near-black:#F0F0F0; --surface-dark:#1E1E1E; --off-white:#161616; --border-grey:#2A2A2A; }
+[data-theme="dark"] {
+  --pure-white: #0D0D0D;
+  --near-black: #F0F0F0;
+  --surface-dark: #1E1E1E;
+  --off-white: #161616;
+  --border-grey: #2A2A2A;
+
+  /* Matte card backgrounds */
+  --matte-0: #2A1E1E;
+  --matte-1: #1C2720;
+  --matte-2: #1D232C;
+  --matte-3: #2A261C;
+  --matte-4: #241E2A;
+  --matte-5: #2A221C;
+  --matte-6: #1A2625;
+  --matte-7: #1E1F21;
+}
 [data-theme="dark"] body { background-color:#0D0D0D; color:#F0F0F0; }
 [data-theme="dark"] header { background-color:rgba(13,13,13,0.95); border-color:#2A2A2A; }
 [data-theme="dark"] .sidebar-filters { background:#0D0D0D; border-color:#2A2A2A; }

@@ -334,6 +334,14 @@ function appendFontCard(font, delay) {
   card.className = "font-card";
   card.setAttribute("aria-label", `${font.name}, ${font.style}, ${font.availability}`);
   card.style.animationDelay = `${delay * 0.04}s`;
+  
+  // Deterministic matte background color based on font ID
+  let hash = 0;
+  for (let i = 0; i < font.id.length; i++) {
+    hash = font.id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const colorIndex = Math.abs(hash) % 8;
+  card.style.backgroundColor = `var(--matte-${colorIndex})`;
 
   loadExternalFont(font);
   const fam = font.cssFamily || `'${font.name}'`;
@@ -761,6 +769,13 @@ async function init() {
   renderGrid(true);
   renderTrending();
   setupEventListeners();
+
+  if (params.get("scroll") === "true" && el.fontGrid) {
+    // Small timeout to allow grid to render
+    setTimeout(() => {
+      el.fontGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
   setupSharedEventListeners();
   updateClearButtonVisibility();
 
