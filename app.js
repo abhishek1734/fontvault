@@ -14,66 +14,6 @@ const trendingFontIds = [
   "playfair-display", "merriweather", "nunito", "rubik", "work-sans"
 ];
 
-// ─────────────────────────────────────────────────
-//  FONT LOADER — Google / Fontshare / Dafont fallback
-// ─────────────────────────────────────────────────
-function loadExternalFont(font) {
-  const linkId = `font-face-${font.id}`;
-  if (document.getElementById(linkId)) return;
-
-  // Custom Hosted Fonts Support
-  if (font.localUrl) {
-    const style = document.createElement("style");
-    style.id = linkId;
-    let format = 'woff2';
-    if (font.localUrl.endsWith('.ttf')) format = 'truetype';
-    else if (font.localUrl.endsWith('.otf')) format = 'opentype';
-    else if (font.localUrl.endsWith('.woff')) format = 'woff';
-
-    style.innerHTML = `
-      @font-face {
-        font-family: '${font.name}';
-        src: url('${font.localUrl}') format('${format}');
-        font-display: swap;
-      }
-    `;
-    document.head.appendChild(style);
-    return;
-  }
-
-  const link = document.createElement('link');
-  link.id = linkId;
-  link.rel = 'stylesheet';
-
-  if (font.provider === "google") {
-    const n = font.name.replace(/\s+/g, '+');
-    link.href = `https://fonts.googleapis.com/css2?family=${n}:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap`;
-  } else if (font.provider === "fontshare") {
-    const slug = font.name.toLowerCase().replace(/\s+/g, '-');
-    link.href = `https://api.fontshare.com/v2/css?f=${slug}@300,400,500,700&display=swap`;
-  } else if (font.provider === "dafont") {
-    // Dafont fonts aren't on a public CDN — use curated Google Font fallbacks for preview
-    // Note: If you add font.localUrl to these entries in fonts.js, it will use your local file instead!
-    const fallbackMap = {
-      "lemon-milk":     "Montserrat",
-      "coolvetica":     "Rubik",
-      "shoreline-script":"Great Vibes",
-      "old-london":     "UnifrakturMaguntia",
-      "freshman":       "Barlow Condensed",
-      "capture-it":     "Special Elite",
-      "milkshake":      "Pacifico",
-      "edo-sz":         "Black Han Sans",
-      "badaboom-pro":   "Boogaloo"
-    };
-    const fallback = fallbackMap[font.id] || "Playfair Display";
-    const n = fallback.replace(/\s+/g, '+');
-    link.href = `https://fonts.googleapis.com/css2?family=${n}&display=swap`;
-    font.cssFamily = `'${fallback}', cursive`;
-  }
-
-  document.head.appendChild(link);
-}
-
 // Pre-load all fonts
 fontsData.forEach(f => loadExternalFont(f));
 

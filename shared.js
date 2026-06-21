@@ -4,6 +4,26 @@ function loadExternalFont(font) {
   const linkId = `font-face-${font.id}`;
   if (document.getElementById(linkId)) return;
 
+  // Custom Hosted Fonts Support
+  if (font.localUrl) {
+    const style = document.createElement("style");
+    style.id = linkId;
+    let format = 'woff2';
+    if (font.localUrl.endsWith('.ttf')) format = 'truetype';
+    else if (font.localUrl.endsWith('.otf')) format = 'opentype';
+    else if (font.localUrl.endsWith('.woff')) format = 'woff';
+
+    style.innerHTML = `
+      @font-face {
+        font-family: '${font.name}';
+        src: url('${font.localUrl}') format('${format}');
+        font-display: swap;
+      }
+    `;
+    document.head.appendChild(style);
+    return;
+  }
+
   const link = document.createElement('link');
   link.id = linkId;
   link.rel = 'stylesheet';

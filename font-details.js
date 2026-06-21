@@ -55,7 +55,7 @@ function renderFontDetails(font) {
   root.innerHTML = `
     <div class="fd-hero" style="padding: 6rem 2rem 4rem; text-align: center; border-bottom: 1px solid var(--border-grey);">
       <p style="font-family: var(--font-mono); color: #888; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 1rem;">
-        ${font.provider} / ${font.style}
+        ${font.provider || 'custom'} / ${font.style || 'Display'}
       </p>
       <div style="position: relative; display: inline-block; max-width: 100%;">
         <h1 class="fd-title" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: clamp(3rem, 10vw, 12rem); line-height: 1; margin: 0; outline: none; cursor: text;">
@@ -64,7 +64,7 @@ function renderFontDetails(font) {
         <div style="position: absolute; top: -1rem; right: -1rem; background: var(--signal-red); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-sans); font-weight: 500; transform: rotate(5deg); pointer-events: none; opacity: 0.9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Edit this!</div>
       </div>
       <p style="margin-top: 2rem; font-size: 1.1rem; color: #666; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-        ${font.description}
+        ${font.description || 'A beautiful custom typeface hosted locally.'}
       </p>
       <style>
         .fd-download-btn {
@@ -112,14 +112,14 @@ function renderFontDetails(font) {
       </style>
       <div style="margin-top: 3rem; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; align-items: center;">
         <div style="display: flex; gap: 1rem; align-items: center;">
-          <button class="fd-download-btn" id="btn-fd-download">Download Family (${font.stylesCount} styles)</button>
+          <button class="fd-download-btn" id="btn-fd-download">Download Family (${font.stylesCount || 1} styles)</button>
           <button class="fd-download-btn ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'active' : ''}" style="padding: 1rem; font-size: 1.2rem; color: ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'var(--signal-red)' : 'inherit'}; border-color: ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'var(--signal-red)' : 'var(--near-black)'}; display: flex; align-items: center; justify-content: center;" onclick="if(typeof toggleFavorite === 'function') toggleFavorite('${font.id}', this)">
             <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="${window.favoritesSet && window.favoritesSet.has(font.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
           </button>
         </div>
-        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: #999;">${font.price} / ${font.fileSize}</span>
+        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: #999;">${font.price || 'Free'} / ${font.fileSize || 'N/A'}</span>
       </div>
     </div>
 
@@ -169,10 +169,10 @@ function renderFontDetails(font) {
       <aside class="fd-sidebar">
         <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.2rem;">Details</h3>
         <div style="display:flex; flex-direction:column; gap:1.5rem;">
-          <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">Designer</span><span style="font-size:1rem; font-weight:500;">${font.designer}</span></div>
-          <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">Foundry</span><span style="font-size:1rem; font-weight:500;">${font.foundry}</span></div>
-          <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">Year Released</span><span style="font-size:1rem; font-weight:500;">${font.year}</span></div>
-          <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">Languages</span><span style="font-size:1rem; font-weight:500;">${font.languages.join(', ')}</span></div>
+          <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">Designer</span><span style="font-size:1rem; font-weight:500;">${font.designer || 'Independent'}</span></div>
+          <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">Foundry</span><span style="font-size:1rem; font-weight:500;">${font.foundry || 'Independent'}</span></div>
+          <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">Year Released</span><span style="font-size:1rem; font-weight:500;">${font.year || 'N/A'}</span></div>
+          <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">Languages</span><span style="font-size:1rem; font-weight:500;">${font.languages ? font.languages.join(', ') : 'Latin'}</span></div>
         </div>
 
         <h3 style="margin-top: 3rem; margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.2rem;">Pairs Well With</h3>
