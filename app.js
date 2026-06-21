@@ -854,6 +854,18 @@ function setupEventListeners() {
 
   // Collection cards
   setupCollectionCards();
+
+  // Mobile Filters Accordion Collapse/Expand
+  const filtersToggle = document.getElementById("filters-mobile-toggle");
+  const filterWrapper = document.getElementById("filter-wrapper");
+  if (filtersToggle && filterWrapper) {
+    filtersToggle.addEventListener("click", (e) => {
+      if (e.target.id === "clear-filters-btn") return;
+      if (window.innerWidth <= 1024) {
+        filterWrapper.classList.toggle("expanded");
+      }
+    });
+  }
 }
 
 // ─────────────────────────────────────────────────
