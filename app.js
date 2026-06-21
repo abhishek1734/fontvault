@@ -311,8 +311,17 @@ function getFilteredFonts() {
 }
 
 // ─────────────────────────────────────────────────
-//  FONT CARD
+//  FONT CARD & SCROLL ANIMATION
 // ─────────────────────────────────────────────────
+const cardObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { root: null, rootMargin: '50px', threshold: 0.1 });
+
 function appendFontCard(font, delay) {
   const isFree = font.availability === "Free" || font.availability === "Free for Personal";
   const statusDotClass = isFree ? "green" : "grey";
@@ -365,6 +374,9 @@ function appendFontCard(font, delay) {
     toggleCompare(font.id);
   });
   el.fontGrid.appendChild(card);
+  
+  // Observe for scroll animation
+  cardObserver.observe(card);
 }
 
 // ─────────────────────────────────────────────────
