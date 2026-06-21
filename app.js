@@ -75,7 +75,7 @@ let activeFilters = {
   "Use Case":     null
 };
 
-let searchQuery = "";
+window.searchQuery = "";
 let globalPreviewText = "";
 let selectedFont = null;
 
@@ -197,7 +197,7 @@ function updateClearButtonVisibility() {
 
 function clearAllFilters() {
   activeFilters = { "Provider":"All Providers","Availability":"All","Style":null,"Mood":null,"Use Case":null };
-  searchQuery = "";
+  window.searchQuery = "";
   el.searchInput.value = "";
   updateClearButtonVisibility();
   setupFilters();
@@ -292,8 +292,8 @@ function getMockupHTML(font) {
 // ─────────────────────────────────────────────────
 function getFilteredFonts() {
   return fontsData.filter(font => {
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
+    if (window.searchQuery) {
+      const q = window.searchQuery.toLowerCase();
       const match = [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
         .some(v => v && v.toLowerCase().includes(q));
       if (!match) return false;
@@ -398,7 +398,7 @@ function renderGrid(resetLimit = true) {
     countEl.className = "search-result-count";
     el.fontGrid.parentElement.insertBefore(countEl, el.fontGrid);
   }
-  if (searchQuery || Object.values(activeFilters).some(v => v && v !== "All Providers" && v !== "All")) {
+  if (window.searchQuery || Object.values(activeFilters).some(v => v && v !== "All Providers" && v !== "All")) {
     countEl.textContent = `Showing ${Math.min(currentRenderLimit, filtered.length)} of ${filtered.length} matching fonts (Total: ${fontsData.length})`;
     countEl.classList.add("visible");
   } else {
@@ -754,7 +754,7 @@ async function init() {
   const q = params.get("search");
   if (q && el.searchInput) {
     el.searchInput.value = q;
-    searchQuery = q;
+    window.searchQuery = q;
   }
 
   setupFilters();

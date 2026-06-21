@@ -151,7 +151,7 @@ function setupSharedEventListeners() {
       if (query) searchClearBtn?.classList.add("visible");
       else searchClearBtn?.classList.remove("visible");
   
-      if (typeof renderGrid === "function" && typeof searchQuery !== "undefined") {
+      if (typeof renderGrid === "function" && typeof window.searchQuery !== "undefined") {
         window.searchQuery = query;
         renderGrid();
       }
@@ -167,7 +167,7 @@ function setupSharedEventListeners() {
       searchInput.value = "";
       searchClearBtn.classList.remove("visible");
       searchDropdown.classList.remove("visible");
-      if (typeof renderGrid === "function" && typeof searchQuery !== "undefined") {
+      if (typeof renderGrid === "function" && typeof window.searchQuery !== "undefined") {
         window.searchQuery = "";
         renderGrid();
       }
