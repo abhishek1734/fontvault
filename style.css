@@ -1392,7 +1392,7 @@ footer {
 
 /* Highlight the hovered card */
 .trending-card {
-  transition: border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
+  transition: all 0.22s ease;
 }
 
 .trending-outer:hover .trending-card:not(:hover) {
@@ -1405,7 +1405,17 @@ footer {
   transform: translateY(-6px) scale(1.02) !important;
   box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important;
   border-color: var(--near-black) !important;
+  background-color: var(--near-black) !important;
+  color: var(--pure-white) !important;
   z-index: 2;
+}
+
+.trending-card:hover .trending-rank { color: #888 !important; }
+.trending-card:hover .trending-style-tag,
+.trending-card:hover .trending-provider-tag {
+  background: #333 !important;
+  color: #DDD !important;
+  border-color: #444 !important;
 }
 
 /* ========================================
