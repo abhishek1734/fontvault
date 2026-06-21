@@ -76,16 +76,118 @@ function setupSharedEventListeners() {
   if (darkToggle) darkToggle.addEventListener("click", toggleDarkMode);
 
   // Logo home click
-  const logo = document.querySelector(".nav-logo");
-  if (logo) {
+  const logos = document.querySelectorAll(".logo");
+  logos.forEach(logo => {
     logo.addEventListener("click", (e) => {
       e.preventDefault();
       // If we are on font.html, navigate back to index.html
       if (window.location.pathname.includes('font.html')) {
         window.location.href = 'index.html';
       } else {
+        if (typeof clearAllFilters === "function") clearAllFilters();
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        // Optional: clear filters logic can be dispatched here if on index.html
+      }
+    });
+  });
+
+  // Search input & dropdown logic
+  const searchInput = document.getElementById("search-input");
+  const searchContainer = document.getElementById("search-container");
+  const searchDropdown = document.getElementById("search-dropdown");
+  const searchDropdownList = document.getElementById("search-dropdown-list");
+  const searchDropdownFooter = document.getElementById("search-dropdown-footer");
+  const searchDropdownTerm = document.getElementById("search-dropdown-term");
+  const searchClearBtn = document.getElementById("search-clear-btn");
+
+  if (searchInput && searchDropdown) {
+    function renderSearchDropdown(query) {
+      if (!query) {
+        searchDropdown.classList.remove("visible");
+        return;
+      }
+  
+      const q = query.toLowerCase();
+      const matches = fontsData.filter(font => {
+        return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
+          .some(v => v && v.toLowerCase().includes(q));
+      }).slice(0, 5); // top 5 results
+  
+      if (matches.length === 0) {
+        searchDropdownList.innerHTML = `<div class="search-dropdown-item" style="cursor:default;color:#888;">No fonts found matching "${query}"</div>`;
+      } else {
+        searchDropdownList.innerHTML = matches.map(font => {
+          loadExternalFont(font);
+          const fam = font.cssFamily || `'${font.name}'`;
+          const providerLabel = { google:"Google Fonts", fontshare:"Fontshare", dafont:"Dafont" }[font.provider] || font.provider;
+          return `
+            <div class="search-dropdown-item" data-id="${font.id}">
+              <div class="search-dropdown-item-left">
+                <span class="search-dropdown-name" style="font-family:${fam},sans-serif;">${font.name}</span>
+                <span class="search-dropdown-meta">${font.style} &middot; ${font.designer || font.foundry || 'Unknown Designer'}</span>
+              </div>
+              <span class="search-dropdown-provider">${providerLabel}</span>
+            </div>
+          `;
+        }).join("");
+  
+        // Add click to dropdown items
+        searchDropdownList.querySelectorAll(".search-dropdown-item").forEach(item => {
+          item.addEventListener("click", () => {
+            const font = fontsData.find(f => f.id === item.dataset.id);
+            if (font) window.location.href = `font.html?id=${font.id}`;
+            searchDropdown.classList.remove("visible");
+          });
+        });
+      }
+  
+      searchDropdownTerm.textContent = query;
+      searchDropdown.classList.add("visible");
+    }
+  
+    searchInput.addEventListener("input", e => {
+      const query = e.target.value.trim();
+      renderSearchDropdown(query);
+      
+      if (query) searchClearBtn?.classList.add("visible");
+      else searchClearBtn?.classList.remove("visible");
+  
+      if (typeof renderGrid === "function" && typeof searchQuery !== "undefined") {
+        window.searchQuery = query;
+        renderGrid();
+      }
+    });
+  
+    searchInput.addEventListener("focus", () => {
+      if (searchInput.value.trim()) {
+        searchDropdown.classList.add("visible");
+      }
+    });
+  
+    searchClearBtn?.addEventListener("click", () => {
+      searchInput.value = "";
+      searchClearBtn.classList.remove("visible");
+      searchDropdown.classList.remove("visible");
+      if (typeof renderGrid === "function" && typeof searchQuery !== "undefined") {
+        window.searchQuery = "";
+        renderGrid();
+      }
+      searchInput.focus();
+    });
+  
+    // Footer click to scroll down to full results (only on index)
+    searchDropdownFooter?.addEventListener("click", () => {
+      searchDropdown.classList.remove("visible");
+      if (window.location.pathname.includes('font.html')) {
+        window.location.href = `index.html?search=${encodeURIComponent(searchInput.value.trim())}`;
+      } else {
+        document.getElementById("main-content")?.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  
+    // Hide dropdown when clicking outside
+    document.addEventListener("click", e => {
+      if (searchContainer && !searchContainer.contains(e.target)) {
+        searchDropdown?.classList.remove("visible");
       }
     });
   }

@@ -589,104 +589,6 @@ function setupCollectionCards() {
 //  EVENT LISTENERS
 // ─────────────────────────────────────────────────
 function setupEventListeners() {
-  // Logo click -> Home
-  const logo = document.querySelector(".logo");
-  logo?.addEventListener("click", (e) => {
-    e.preventDefault();
-    clearAllFilters();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-
-  // Search input & dropdown logic
-  const searchContainer = document.getElementById("search-container");
-  const searchDropdown = document.getElementById("search-dropdown");
-  const searchDropdownList = document.getElementById("search-dropdown-list");
-  const searchDropdownFooter = document.getElementById("search-dropdown-footer");
-  const searchDropdownTerm = document.getElementById("search-dropdown-term");
-
-  function renderSearchDropdown(query) {
-    if (!query) {
-      searchDropdown.classList.remove("visible");
-      return;
-    }
-
-    const q = query.toLowerCase();
-    const matches = fontsData.filter(font => {
-      return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
-        .some(v => v && v.toLowerCase().includes(q));
-    }).slice(0, 5); // top 5 results
-
-    if (matches.length === 0) {
-      searchDropdownList.innerHTML = `<div class="search-dropdown-item" style="cursor:default;color:#888;">No fonts found matching "${query}"</div>`;
-    } else {
-      searchDropdownList.innerHTML = matches.map(font => {
-        loadExternalFont(font);
-        const fam = font.cssFamily || `'${font.name}'`;
-        const providerLabel = { google:"Google Fonts", fontshare:"Fontshare", dafont:"Dafont" }[font.provider] || font.provider;
-        return `
-          <div class="search-dropdown-item" data-id="${font.id}">
-            <div class="search-dropdown-item-left">
-              <span class="search-dropdown-name" style="font-family:${fam},sans-serif;">${font.name}</span>
-              <span class="search-dropdown-meta">${font.style} &middot; ${font.designer || font.foundry || 'Unknown Designer'}</span>
-            </div>
-            <span class="search-dropdown-provider">${providerLabel}</span>
-          </div>
-        `;
-      }).join("");
-
-      // Add click to dropdown items
-      searchDropdownList.querySelectorAll(".search-dropdown-item").forEach(item => {
-        item.addEventListener("click", () => {
-          const font = fontsData.find(f => f.id === item.dataset.id);
-          if (font) openDetailPanel(font);
-          searchDropdown.classList.remove("visible");
-        });
-      });
-    }
-
-    searchDropdownTerm.textContent = query;
-    searchDropdown.classList.add("visible");
-  }
-
-  const searchClearBtn = document.getElementById("search-clear-btn");
-
-  el.searchInput.addEventListener("input", e => {
-    searchQuery = e.target.value.trim();
-    renderSearchDropdown(searchQuery);
-    renderGrid();
-    
-    if (searchQuery) searchClearBtn.classList.add("visible");
-    else searchClearBtn.classList.remove("visible");
-  });
-
-  el.searchInput.addEventListener("focus", () => {
-    if (el.searchInput.value.trim()) {
-      searchDropdown.classList.add("visible");
-    }
-  });
-
-  searchClearBtn?.addEventListener("click", () => {
-    el.searchInput.value = "";
-    searchQuery = "";
-    searchClearBtn.classList.remove("visible");
-    searchDropdown.classList.remove("visible");
-    renderGrid();
-    el.searchInput.focus();
-  });
-
-  // Footer click to scroll down to full results
-  searchDropdownFooter?.addEventListener("click", () => {
-    searchDropdown.classList.remove("visible");
-    document.getElementById("main-content").scrollIntoView({ behavior: "smooth" });
-  });
-
-  // Hide dropdown when clicking outside
-  document.addEventListener("click", e => {
-    if (searchContainer && !searchContainer.contains(e.target)) {
-      searchDropdown?.classList.remove("visible");
-    }
-  });
-
   // Global Text Preview
   const globalPreviewInput = document.getElementById("global-preview-input");
   const globalPreviewClear = document.getElementById("global-preview-clear");
@@ -793,12 +695,24 @@ function init() {
   const savedDark = localStorage.getItem("fontvault-dark");
   if (savedDark === "1") applyTheme(true);
 
+  // Parse search query from URL if coming from font detail page
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get("search");
+  if (q && el.searchInput) {
+    el.searchInput.value = q;
+    searchQuery = q;
+  }
+
   setupFilters();
   renderGrid();
   renderTrending();
   setupEventListeners();
   setupSharedEventListeners();
   updateClearButtonVisibility();
+
+  if (q && document.getElementById("search-clear-btn")) {
+    document.getElementById("search-clear-btn").classList.add("visible");
+  }
 }
 
 init();
