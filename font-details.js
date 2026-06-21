@@ -1,6 +1,6 @@
 // font-details.js
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   setupSharedEventListeners();
   const urlParams = new URLSearchParams(window.location.search);
   const fontId = urlParams.get('id');
@@ -15,9 +15,20 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  // Show loading state while fetching API
+  const root = document.getElementById('font-detail-root');
+  root.innerHTML = `
+    <div style="text-align:center; padding:10rem 2rem; color:var(--signal-red);">
+      <p style="font-size:var(--ts-xl);font-family:var(--font-mono);animation:pulse 1.5s infinite;">CONNECTING TO GOOGLE FONTS API...</p>
+    </div>
+  `;
+
+  // Wait for fonts to populate
+  await initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY');
+
   const font = fontsData.find(f => f.id === fontId);
   if (!font) {
-    document.getElementById('font-detail-root').innerHTML = `
+    root.innerHTML = `
       <div style="text-align:center; padding:10rem 2rem;">
         <h2>Font not found in the database.</h2>
         <a href="index.html" class="btn btn-primary" style="margin-top:2rem;">Return to Home</a>
