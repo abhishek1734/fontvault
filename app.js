@@ -129,32 +129,6 @@ const el = {
   trendingStrip:   document.getElementById("trending-strip"),
   darkToggle:      document.getElementById("dark-toggle"),
   progressBar:     document.getElementById("progress-bar"),
-  // Detail panel
-  detailOverlay:   document.getElementById("detail-overlay"),
-  detailPanel:     document.getElementById("detail-panel"),
-  closePanelBtn:   document.getElementById("close-panel-btn"),
-  detailTitle:     document.getElementById("detail-title"),
-  specimenDisplay: document.getElementById("specimen-display"),
-  specimenInput:   document.getElementById("specimen-input"),
-  sizeSlider:      document.getElementById("size-slider"),
-  sizeDisplay:     document.getElementById("size-display"),
-  tabBtns:         document.querySelectorAll(".tab-btn"),
-  tabContents:     document.querySelectorAll(".tab-content"),
-  infoDesigner:    document.getElementById("info-designer"),
-  infoFoundry:     document.getElementById("info-foundry"),
-  infoYear:        document.getElementById("info-year"),
-  infoStyles:      document.getElementById("info-styles"),
-  infoLanguages:   document.getElementById("info-languages"),
-  infoDescription: document.getElementById("info-description"),
-  stylesVariantList:document.getElementById("styles-variant-list"),
-  licenseBadgePill:document.getElementById("license-badge-pill"),
-  licenseDescription:document.getElementById("license-description"),
-  designerProfileName:document.getElementById("designer-profile-name"),
-  designerBio:     document.getElementById("designer-bio"),
-  ctaPriceDisplay: document.getElementById("cta-price-display"),
-  detailPrimaryCta:document.getElementById("detail-primary-cta"),
-  downloadTooltip: document.getElementById("download-tooltip"),
-  pairingSection:  document.getElementById("pairing-section"),
   // Compare
   compareTray:     document.getElementById("compare-tray"),
   compareTrayFonts:document.getElementById("compare-tray-fonts"),
@@ -478,111 +452,7 @@ function renderTrending() {
   strip.addEventListener("mousemove", e => { if (!isDown) return; e.preventDefault(); const x = e.pageX - strip.offsetLeft; strip.scrollLeft = scrollLeft - (x - startX) * 1.5; });
 }
 
-// ─────────────────────────────────────────────────
-//  AUTH MODAL
-// ─────────────────────────────────────────────────
-function openAuthModal() {
-  const overlay = document.getElementById("auth-overlay");
-  if (overlay) {
-    overlay.classList.add("visible");
-    document.body.style.overflow = "hidden";
-    // Focus email field after animation
-    setTimeout(() => {
-      const emailField = document.getElementById("auth-email");
-      if (emailField) emailField.focus();
-    }, 350);
-  }
-}
 
-function closeAuthModal() {
-  const overlay = document.getElementById("auth-overlay");
-  if (overlay) {
-    overlay.classList.remove("visible");
-    document.body.style.overflow = "";
-  }
-}
-
-function setupAuthModal() {
-  // Close button
-  const closeBtn = document.getElementById("auth-close");
-  if (closeBtn) closeBtn.addEventListener("click", closeAuthModal);
-
-  // Click overlay backdrop to close
-  const overlay = document.getElementById("auth-overlay");
-  if (overlay) {
-    overlay.addEventListener("click", e => {
-      if (e.target === overlay) closeAuthModal();
-    });
-  }
-
-  // Tab switching (Sign In / Create Account)
-  const tabs = document.querySelectorAll(".auth-tab");
-  const subtitle = document.getElementById("auth-subtitle");
-  const submitBtn = document.getElementById("auth-submit-btn");
-  const forgotLink = document.getElementById("auth-forgot");
-
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      const mode = tab.dataset.mode;
-      if (mode === "signup") {
-        if (subtitle) subtitle.textContent = "Create a free account to submit and save fonts.";
-        if (submitBtn) submitBtn.textContent = "Create Account";
-        if (forgotLink) forgotLink.style.display = "none";
-      } else {
-        if (subtitle) subtitle.textContent = "Sign in to submit and save fonts.";
-        if (submitBtn) submitBtn.textContent = "Sign In";
-        if (forgotLink) forgotLink.style.display = "";
-      }
-    });
-  });
-
-  // Google Sign-in button
-  const googleBtn = document.getElementById("btn-google-signin");
-  if (googleBtn) {
-    googleBtn.addEventListener("click", () => {
-      googleBtn.textContent = "Redirecting to Google...";
-      googleBtn.disabled = true;
-      setTimeout(() => {
-        closeAuthModal();
-        googleBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg> Continue with Google`;
-        googleBtn.disabled = false;
-        alert("Google Sign-in is not connected to a backend in this demo. This is a UI prototype.");
-      }, 1200);
-    });
-  }
-
-  // Form submit
-  const form = document.getElementById("auth-form");
-  if (form) {
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const email = document.getElementById("auth-email")?.value.trim();
-      const password = document.getElementById("auth-password")?.value;
-      const activeTab = document.querySelector(".auth-tab.active")?.dataset.mode;
-
-      if (!email || !password) { alert("Please fill in both email and password."); return; }
-      if (password.length < 6) { alert("Password must be at least 6 characters."); return; }
-
-      // Simulate loading state
-      if (submitBtn) { submitBtn.textContent = "Please wait..."; submitBtn.disabled = true; }
-      setTimeout(() => {
-        closeAuthModal();
-        if (submitBtn) { submitBtn.textContent = activeTab === "signup" ? "Create Account" : "Sign In"; submitBtn.disabled = false; }
-        alert(`Welcome to FontVault! (This is a UI demo — no real backend is connected.)`);
-      }, 1000);
-    });
-  }
-
-  // Forgot password link
-  if (forgotLink) {
-    forgotLink.addEventListener("click", e => {
-      e.preventDefault();
-      alert("Password reset email would be sent in the live version.");
-    });
-  }
-}
 
 function toggleCompare(fontId) {
   if (compareSet.has(fontId)) {
@@ -697,101 +567,8 @@ function openDetailPanel(font) {
   window.location.href = `font.html?id=${font.id}`;
 }
 
-// Overview tab
-  el.infoDesigner.textContent = font.designer;
-  el.infoFoundry.textContent = font.foundry;
-  el.infoYear.textContent = font.year;
-  el.infoStyles.textContent = `${font.stylesCount} Styles`;
-  el.infoLanguages.textContent = font.languages.join(", ");
-  el.infoDescription.textContent = font.description;
 
-  // Styles tab — weight specimens
-  const weights = [300,400,500,700];
-  el.stylesVariantList.innerHTML = weights.slice(0, Math.min(font.stylesCount, 4)).map(w => `
-    <div style="border-bottom:1px solid var(--border-grey);padding-bottom:1rem;">
-      <div style="font-family:var(--font-mono);font-size:0.6rem;color:#888;margin-bottom:0.3rem;">Weight ${w}</div>
-      <div style="font-family:${fam},serif;font-size:1.6rem;font-weight:${w};line-height:1.2;">The quick brown fox</div>
-    </div>
-  `).join("");
 
-  // License tab
-  const licenseType = font.availability === "Free" ? "SIL Open Font License (OFL)" : font.availability === "Free for Personal" ? "Free for Personal Use" : "Commercial License";
-  const licenseDesc = font.availability === "Free"
-    ? "This font is free to use in personal and commercial projects under the SIL Open Font License. You may use it freely in print, web, and digital products without attribution."
-    : font.availability === "Free for Personal"
-    ? "This font is free for personal, non-commercial use. For commercial projects, publications, or client work, please purchase a commercial license from the designer."
-    : "This is a paid font. Purchase a commercial license to use in client or commercial projects.";
-  el.licenseBadgePill.textContent = font.availability === "Free" ? "OPEN SOURCE" : font.availability === "Free for Personal" ? "PERSONAL USE" : "COMMERCIAL";
-  el.licenseDescription.textContent = licenseDesc;
-
-  // Designer tab
-  el.designerProfileName.textContent = font.designer;
-  el.designerBio.textContent = `${font.designer} designed ${font.name} in ${font.year} for ${font.foundry}. This typeface represents ${font.mood.toLowerCase()} aesthetic sensibilities and is optimized for ${font.useCase.toLowerCase()} contexts.`;
-
-  // CTA
-  el.ctaPriceDisplay.textContent = font.availability === "Free" ? "Free Download" : font.availability === "Free for Personal" ? "Free (Personal)" : font.price;
-  el.detailPrimaryCta.textContent = font.availability !== "Premium" ? "⬇ Download Free" : "Buy License →";
-  el.downloadTooltip.textContent = `Opens the official download page for ${font.name} (${font.fileSize})`;
-
-  // Pairing suggestions
-  renderPairings(font);
-
-  // Show panel
-  el.detailPanel.classList.add("open");
-  el.detailOverlay.classList.add("active");
-  document.body.style.overflow = "hidden";
-}
-
-function closeDetailPanel() {
-  el.detailPanel.classList.remove("open");
-  el.detailOverlay.classList.remove("active");
-  document.body.style.overflow = "";
-}
-
-function renderPairings(font) {
-  const section = el.pairingSection;
-  if (!section) return;
-
-  if (!font.pairsWith || font.pairsWith.length === 0) {
-    section.innerHTML = "";
-    return;
-  }
-
-  const pairFonts = font.pairsWith
-    .map(p => ({ ...p, font: fontsData.find(f => f.id === p.id) }))
-    .filter(p => p.font);
-
-  if (pairFonts.length === 0) { section.innerHTML = ""; return; }
-
-  section.innerHTML = `
-    <div class="pairing-section">
-      <p class="pairing-section-title">Pairs Well With</p>
-      <div class="pairing-cards">
-        ${pairFonts.map(p => {
-          loadExternalFont(p.font);
-          const fam = p.font.cssFamily || `'${p.font.name}'`;
-          return `
-            <div class="pairing-card" data-pair-id="${p.font.id}">
-              <div class="pairing-preview" style="font-family:${fam},serif;">Aa</div>
-              <div class="pairing-info">
-                <div class="pairing-role">${p.role}</div>
-                <div class="pairing-name">${p.font.name}</div>
-                <div class="pairing-style">${p.font.style} · ${p.font.provider === 'google' ? 'Google Fonts' : p.font.provider === 'fontshare' ? 'Fontshare' : 'Dafont'}</div>
-              </div>
-              <div class="pairing-arrow">→</div>
-            </div>`;
-        }).join("")}
-      </div>
-    </div>`;
-
-  // Click on pairing card → open that font's detail
-  section.querySelectorAll(".pairing-card").forEach(card => {
-    card.addEventListener("click", () => {
-      const pairFont = fontsData.find(f => f.id === card.dataset.pairId);
-      if (pairFont) openDetailPanel(pairFont);
-    });
-  });
-}
 
 // ─────────────────────────────────────────────────
 //  COLLECTION CARDS
@@ -966,38 +743,7 @@ function setupEventListeners() {
   const newsletterForm = document.getElementById("newsletter-form");
   if (newsletterForm) newsletterForm.addEventListener("submit", e => { e.preventDefault(); openAuthModal(); });
 
-  // Detail panel — close
-  el.closePanelBtn.addEventListener("click", closeDetailPanel);
-  el.detailOverlay.addEventListener("click", closeDetailPanel);
 
-  // Detail panel — specimen input
-  el.specimenInput.addEventListener("input", e => {
-    if (e.target.value.trim()) el.specimenDisplay.textContent = e.target.value;
-  });
-
-  // Detail panel — size slider
-  el.sizeSlider.addEventListener("input", e => {
-    const size = e.target.value;
-    el.specimenDisplay.style.fontSize = size + "px";
-    el.sizeDisplay.textContent = size + "px";
-  });
-
-  // Detail panel — tabs
-  el.tabBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      el.tabBtns.forEach(b => b.classList.remove("active"));
-      el.tabContents.forEach(c => c.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
-    });
-  });
-
-  // Detail panel — CTA download
-  el.detailPrimaryCta.addEventListener("click", () => {
-    if (selectedFont) {
-      window.open(selectedFont.downloadUrl, "_blank", "noopener,noreferrer");
-    }
-  });
 
   // Dark mode toggle
   el.darkToggle?.addEventListener("click", toggleDarkMode);
@@ -1006,9 +752,11 @@ function setupEventListeners() {
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") {
       const authOverlay = document.getElementById("auth-overlay");
-      if (authOverlay?.classList.contains("visible")) closeAuthModal();
+      if (authOverlay?.classList.contains("visible")) {
+        authOverlay.classList.remove("visible");
+        document.body.style.overflow = "";
+      }
       else if (el.compareOverlay.classList.contains("visible")) closeComparison();
-      else closeDetailPanel();
     }
   });
 
@@ -1049,7 +797,7 @@ function init() {
   renderGrid();
   renderTrending();
   setupEventListeners();
-  setupAuthModal();
+  setupSharedEventListeners();
   updateClearButtonVisibility();
 }
 
