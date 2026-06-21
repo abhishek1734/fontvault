@@ -1375,7 +1375,7 @@ footer {
   display: flex;
   gap: 1rem;
   width: max-content;
-  padding: 0.25rem 2rem 1.4rem;
+  padding: 1rem 2rem 3.5rem; /* Increased top/bottom padding to prevent hover cropping */
   animation: scrollMarquee 38s linear infinite;
   will-change: transform;
 }
@@ -1411,11 +1411,15 @@ footer {
 }
 
 .trending-card:hover .trending-rank { color: #888 !important; }
-.trending-card:hover .trending-style-tag,
+.trending-card:hover .trending-style-tag {
+  background: transparent !important;
+  color: #aaa !important;
+  border: none !important;
+}
 .trending-card:hover .trending-provider-tag {
-  background: #333 !important;
-  color: #DDD !important;
-  border-color: #444 !important;
+  background: transparent !important;
+  color: #FF7043 !important;
+  border: none !important;
 }
 
 /* ========================================
