@@ -51,6 +51,9 @@ function renderFontDetails(font) {
   const root = document.getElementById('font-detail-root');
   const fam = font.cssFamily || `'${font.name}'`;
   
+  const weights = getFontWeights(font);
+  const defaultWeight = weights.includes(400) ? 400 : weights[0];
+  
   // Render structure
   root.innerHTML = `
     <div class="fd-hero" style="padding: 6rem 2rem 4rem; text-align: center; border-bottom: 1px solid var(--border-grey);">
@@ -152,10 +155,38 @@ function renderFontDetails(font) {
               </div>
               <input type="range" id="fd-tracking" min="-0.1" max="0.5" step="0.01" value="0">
             </div>
+            <div style="display:flex; flex-direction:column; width: 100%; max-width: 200px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Weight</label>
+                <span id="fd-weight-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">${defaultWeight}</span>
+              </div>
+              <select id="fd-weight" style="padding: 0.25rem 0.5rem; background: var(--pure-white); border: 1px solid var(--border-grey); border-radius: 4px; color: var(--near-black); font-family: var(--font-mono); font-size: 0.85rem; outline: none; cursor: pointer; height: 1.8rem;" ${weights.length <= 1 ? 'disabled' : ''}>
+                ${weights.map(w => `<option value="${w}" ${w === defaultWeight ? 'selected' : ''}>${w} — ${getWeightLabel(w)}</option>`).join('')}
+              </select>
+            </div>
           </div>
-          <div id="fd-specimen" contenteditable="true" spellcheck="false" style="padding: 3rem 2rem; font-family: ${fam}, serif; font-size: 64px; line-height: 1.2; outline: none;">
+          <div id="fd-specimen" contenteditable="true" spellcheck="false" style="padding: 3rem 2rem; font-family: ${fam}, serif; font-size: 64px; line-height: 1.2; font-weight: ${defaultWeight}; outline: none;">
             The quick brown fox jumps over the lazy dog. A journey of a thousand miles begins with a single step.
           </div>
+        </div>
+
+        <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem; margin-top: 3rem;">Available Weights & Styles</h3>
+        <div class="fd-weights-grid" style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 3rem;">
+          ${weights.map(w => `
+            <div class="fd-weight-card" style="padding: 2rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-grey); padding-bottom: 0.75rem;">
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; color: var(--near-black); text-transform: uppercase;">
+                  ${getWeightLabel(w)} (${w})
+                </span>
+                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #888;">
+                  ${font.name} ${getWeightLabel(w)}
+                </span>
+              </div>
+              <div class="fd-weight-preview" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: 2.2rem; font-weight: ${w}; line-height: 1.2; color: var(--near-black); outline: none;">
+                The quick brown fox jumps over the lazy dog.
+              </div>
+            </div>
+          `).join('')}
         </div>
 
         <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem;">Glyphs</h3>
@@ -255,4 +286,55 @@ function renderFontDetails(font) {
   if(trackingSlider && specimen) {
     trackingSlider.addEventListener("input", updateSpecimen);
   }
+
+  const weightSelect = document.getElementById("fd-weight");
+  const weightVal = document.getElementById("fd-weight-val");
+  if (weightSelect && specimen) {
+    weightSelect.addEventListener("change", (e) => {
+      const w = e.target.value;
+      if (weightVal) weightVal.textContent = w;
+      specimen.style.fontWeight = w;
+    });
+  }
+}
+
+// -------------------------------------------------
+// HELPERS FOR FONT WEIGHTS
+// -------------------------------------------------
+
+function getFontWeights(font) {
+  if (font.variants && Array.isArray(font.variants)) {
+    const weights = new Set();
+    font.variants.forEach(v => {
+      const match = v.match(/\d+/);
+      if (match) {
+        weights.add(parseInt(match[0], 10));
+      } else if (v === 'regular' || v === 'italic') {
+        weights.add(400);
+      }
+    });
+    if (weights.size > 0) {
+      return Array.from(weights).sort((a, b) => a - b);
+    }
+  }
+  if (font.provider === 'google' || font.provider === 'fontshare') {
+    if (font.stylesCount === 1) return [400];
+    return [300, 400, 500, 700];
+  }
+  return [400];
+}
+
+function getWeightLabel(weight) {
+  const labels = {
+    100: "Thin",
+    200: "Extra Light",
+    300: "Light",
+    400: "Regular",
+    500: "Medium",
+    600: "Semi Bold",
+    700: "Bold",
+    800: "Extra Bold",
+    900: "Black"
+  };
+  return labels[weight] || "Regular";
 }

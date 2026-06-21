@@ -2172,3 +2172,25 @@ input[type=range]::-moz-range-thumb {
   color: #00f3ff;
   text-shadow: 0 0 8px rgba(0, 243, 255, 0.8);
 }
+
+/* --- AVAILABLE WEIGHTS PREVIEW SECTION --- */
+.fd-weight-card {
+  background-color: var(--pure-white);
+  border: 1px solid var(--border-grey);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.fd-weight-card:hover {
+  border-color: var(--near-black);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+[data-theme="dark"] .fd-weight-card:hover {
+  border-color: #555;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.fd-weight-preview {
+  caret-color: var(--signal-red);
+}

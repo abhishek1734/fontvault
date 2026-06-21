@@ -36,7 +36,52 @@ function loadExternalFont(font) {
 
   if (font.provider === "google") {
     const n = font.name.replace(/\s+/g, '+');
-    link.href = `https://fonts.googleapis.com/css2?family=${n}:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap`;
+    if (font.variants && Array.isArray(font.variants)) {
+      const wghts = new Set();
+      let hasItalic = false;
+      let hasNormal = false;
+      
+      font.variants.forEach(v => {
+        if (v.includes('italic')) hasItalic = true;
+        else hasNormal = true;
+        
+        const num = v.match(/\d+/);
+        if (num) {
+          wghts.add(num[0]);
+        } else if (v === 'regular') {
+          wghts.add('400');
+        }
+      });
+      
+      if (wghts.size === 0) wghts.add('400');
+      const sortedWghts = Array.from(wghts).sort((a,b) => parseInt(a) - parseInt(b));
+      
+      if (hasItalic && hasNormal) {
+        const pairs = [];
+        sortedWghts.forEach(w => {
+          const wStr = w === '400' ? 'regular' : w;
+          if (font.variants.includes(wStr) || font.variants.includes(w)) {
+            pairs.push(`0,${w}`);
+          }
+          if (font.variants.includes(`${w}italic`) || (w === '400' && font.variants.includes('italic'))) {
+            pairs.push(`1,${w}`);
+          }
+        });
+        pairs.sort((a,b) => {
+          const [italA, wA] = a.split(',').map(Number);
+          const [italB, wB] = b.split(',').map(Number);
+          if (italA !== italB) return italA - italB;
+          return wA - wB;
+        });
+        link.href = `https://fonts.googleapis.com/css2?family=${n}:ital,wght@${pairs.join(';')}&display=swap`;
+      } else if (hasItalic) {
+        link.href = `https://fonts.googleapis.com/css2?family=${n}:ital,wght@1,${sortedWghts.join(';')}&display=swap`;
+      } else {
+        link.href = `https://fonts.googleapis.com/css2?family=${n}:wght@${sortedWghts.join(';')}&display=swap`;
+      }
+    } else {
+      link.href = `https://fonts.googleapis.com/css2?family=${n}:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap`;
+    }
   } else if (font.provider === "fontshare") {
     const slug = font.name.toLowerCase().replace(/\s+/g, '-');
     link.href = `https://api.fontshare.com/v2/css?f=${slug}@300,400,500,700&display=swap`;

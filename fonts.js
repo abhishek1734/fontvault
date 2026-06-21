@@ -693,7 +693,8 @@ async function initGoogleFonts(apiKey) {
         mockupSubtitle: "Google Fonts Showcase",
         fileSize: "~1 MB",
         pairsWith: [],
-        cssFamily: `'${item.family}', ${mappedStyle.toLowerCase()}`
+        cssFamily: `'${item.family}', ${mappedStyle.toLowerCase()}`,
+        variants: item.variants
       };
     }).filter(Boolean);
 
