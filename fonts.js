@@ -1,4 +1,4 @@
-const fontsData = [
+let fontsData = [
 
   // ══════════════ GOOGLE FONTS ══════════════
   {
@@ -567,3 +567,63 @@ const fontsData = [
   {"id":"pathway-gothic-one","name":"Pathway Gothic One","provider":"dafont","designer":"Designer 99","foundry":"Foundry 99","year":"2002","stylesCount":3,"languages":["Latin","Cyrillic"],"description":"Pathway Gothic One is a versatile monospace font that perfectly captures a modern aesthetic. It is highly recommended for code applications.","availability":"Free for Personal","mood":"Modern","useCase":"Code","style":"Monospace","language":"Latin","downloadUrl":"https://www.dafont.com/search?q=Pathway+Gothic+One","price":"Free","mockupType":"ui","mockupTitle":"Pathway Gothic One Showcase","mockupSubtitle":"A premium typographic experience","fileSize":"0.1 MB","pairsWith":[]},
   {"id":"oleo-script","name":"Oleo Script","provider":"google","designer":"Designer 100","foundry":"Foundry 100","year":"2003","stylesCount":4,"languages":["Latin","Cyrillic"],"description":"Oleo Script is a versatile display font that perfectly captures a classic aesthetic. It is highly recommended for branding applications.","availability":"Free","mood":"Classic","useCase":"Branding","style":"Display","language":"Latin","downloadUrl":"https://fonts.google.com/specimen/Oleo+Script","price":"Free","mockupType":"ui","mockupTitle":"Oleo Script Showcase","mockupSubtitle":"A premium typographic experience","fileSize":"1.1 MB","pairsWith":[]}
 ];
+
+// -------------------------------------------------
+// DYNAMIC GOOGLE FONTS API INTEGRATION
+// -------------------------------------------------
+
+async function initGoogleFonts(apiKey) {
+  try {
+    const response = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}`);
+    if (!response.ok) throw new Error("Failed to fetch Google Fonts");
+    
+    const data = await response.json();
+    if (!data.items) return;
+
+    // Filter out fonts we already have hardcoded so we don't duplicate them
+    const existingIds = new Set(fontsData.map(f => f.id));
+
+    const mappedFonts = data.items.map(item => {
+      const id = item.family.toLowerCase().replace(/\s+/g, '-');
+      if (existingIds.has(id)) return null;
+
+      // Map Google category to our style labels
+      let mappedStyle = "Sans-Serif";
+      if (item.category === "serif") mappedStyle = "Serif";
+      else if (item.category === "display") mappedStyle = "Display";
+      else if (item.category === "handwriting") mappedStyle = "Handwriting";
+      else if (item.category === "monospace") mappedStyle = "Monospace";
+
+      return {
+        id: id,
+        name: item.family,
+        provider: "google",
+        designer: "Google Fonts",
+        foundry: "Google",
+        year: item.lastModified ? item.lastModified.split("-")[0] : "N/A",
+        stylesCount: item.variants.length,
+        languages: item.subsets,
+        description: `${item.family} is a high-quality ${mappedStyle.toLowerCase()} typeface available from the Google Fonts library. It supports ${item.subsets.length} languages and comes in ${item.variants.length} styles.`,
+        availability: "Free",
+        mood: "Modern", // Default mood
+        useCase: "Web", // Default use case
+        style: mappedStyle,
+        language: "Latin", // Simplified
+        downloadUrl: `https://fonts.google.com/specimen/${item.family.replace(/\s+/g, '+')}`,
+        price: "Free",
+        mockupType: "ui",
+        mockupTitle: item.family,
+        mockupSubtitle: "Google Fonts Showcase",
+        fileSize: "~1 MB",
+        pairsWith: [],
+        cssFamily: `'${item.family}', ${mappedStyle.toLowerCase()}`
+      };
+    }).filter(Boolean);
+
+    // Append to our existing curated list
+    fontsData = [...fontsData, ...mappedFonts];
+    console.log(`Successfully loaded ${mappedFonts.length} fonts from Google API.`);
+  } catch (error) {
+    console.error("Error loading Google Fonts:", error);
+  }
+}

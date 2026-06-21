@@ -370,8 +370,12 @@ function appendFontCard(font, delay) {
 // ─────────────────────────────────────────────────
 //  GRID RENDER
 // ─────────────────────────────────────────────────
-function renderGrid() {
+let currentRenderLimit = 30;
+
+function renderGrid(resetLimit = true) {
   el.fontGrid.innerHTML = "";
+  if (resetLimit) currentRenderLimit = 30;
+  
   const filtered = getFilteredFonts();
 
   // Show/update search result count
@@ -383,7 +387,7 @@ function renderGrid() {
     el.fontGrid.parentElement.insertBefore(countEl, el.fontGrid);
   }
   if (searchQuery || Object.values(activeFilters).some(v => v && v !== "All Providers" && v !== "All")) {
-    countEl.textContent = `Showing ${filtered.length} of ${fontsData.length} fonts`;
+    countEl.textContent = `Showing ${Math.min(currentRenderLimit, filtered.length)} of ${filtered.length} matching fonts (Total: ${fontsData.length})`;
     countEl.classList.add("visible");
   } else {
     countEl.classList.remove("visible");
@@ -395,10 +399,37 @@ function renderGrid() {
         <p style="font-size:var(--ts-lg);font-family:var(--font-display);">No fonts matched your search.</p>
         <span style="font-size:var(--ts-sm);cursor:pointer;text-decoration:underline;margin-top:1rem;display:inline-block;" onclick="clearAllFilters()">Clear all filters</span>
       </div>`;
+    updateLoadMoreBtn(0, 0);
     return;
   }
 
-  filtered.forEach((font, i) => appendFontCard(font, i));
+  const toRender = filtered.slice(0, currentRenderLimit);
+  toRender.forEach((font, i) => appendFontCard(font, i));
+  updateLoadMoreBtn(filtered.length, currentRenderLimit);
+}
+
+function updateLoadMoreBtn(totalFiltered, currentLimit) {
+  let btn = document.getElementById("load-more-fonts-btn");
+  if (totalFiltered <= currentLimit) {
+    if (btn) btn.style.display = "none";
+    return;
+  }
+  
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.id = "load-more-fonts-btn";
+    btn.className = "btn btn-outline";
+    btn.style.margin = "3rem auto";
+    btn.style.display = "block";
+    btn.textContent = "Load More Fonts";
+    btn.addEventListener("click", () => {
+      currentRenderLimit += 30;
+      renderGrid(false);
+    });
+    el.fontGrid.parentElement.appendChild(btn);
+  } else {
+    btn.style.display = "block";
+  }
 }
 
 // ─────────────────────────────────────────────────
@@ -690,10 +721,21 @@ function setupEventListeners() {
 // ─────────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────────
-function init() {
+async function init() {
   // Apply saved dark mode preference
   const savedDark = localStorage.getItem("fontvault-dark");
   if (savedDark === "1") applyTheme(true);
+
+  // Show a loading state
+  if (el.fontGrid) {
+    el.fontGrid.innerHTML = `
+      <div style="grid-column:span 3;text-align:center;padding:4rem 1rem;color:var(--signal-red);width:100%;">
+        <p style="font-size:var(--ts-xl);font-family:var(--font-mono);animation:pulse 1.5s infinite;">CONNECTING TO GOOGLE FONTS API...</p>
+      </div>`;
+  }
+
+  // Await the fetch
+  await initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY');
 
   // Parse search query from URL if coming from font detail page
   const params = new URLSearchParams(window.location.search);
@@ -704,7 +746,7 @@ function init() {
   }
 
   setupFilters();
-  renderGrid();
+  renderGrid(true);
   renderTrending();
   setupEventListeners();
   setupSharedEventListeners();
