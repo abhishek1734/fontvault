@@ -351,7 +351,19 @@ function appendFontCard(font, delay) {
 
   const inFavorites = window.favoritesSet.has(font.id);
   card.innerHTML = `
-    ${getMockupHTML(font)}
+    <div style="position: relative;">
+      ${getMockupHTML(font)}
+      <div style="position: absolute; bottom: 0.65rem; right: 0.65rem; display: flex; gap: 0.5rem; z-index: 10;">
+        <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="opacity: 1; transform: scale(1);">
+          <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
+        <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}" style="opacity: 1; transform: scale(1);">
+          ${isInCompare ? '✕' : '+'}
+        </button>
+      </div>
+    </div>
     <div class="card-info">
       <h3 class="card-font-name" style="font-family:${fam},var(--font-display);">${font.name}</h3>
       <p class="card-tags">
@@ -363,17 +375,7 @@ function appendFontCard(font, delay) {
           <span class="status-dot ${statusDotClass}"></span>
           ${statusText}
         </span>
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="position: static; width: 32px; height: 32px; opacity: 1; transform: scale(1); display: flex;">
-            <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </button>
-          <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}" style="position: static; width: 32px; height: 32px; opacity: 1; transform: scale(1); display: flex;">
-            ${isInCompare ? '✕' : '+'}
-          </button>
-          <button class="card-btn" data-id="${font.id}">${btnLabel}</button>
-        </div>
+        <button class="card-btn" data-id="${font.id}">${btnLabel}</button>
       </div>
     </div>
   `;
