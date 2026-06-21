@@ -46,9 +46,12 @@ function renderFontDetails(font) {
       <p style="font-family: var(--font-mono); color: #888; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 1rem;">
         ${font.provider} / ${font.style}
       </p>
-      <h1 class="fd-title" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: clamp(4rem, 10vw, 12rem); line-height: 1; margin: 0; outline: none; cursor: text;">
-        ${font.name}
-      </h1>
+      <div style="position: relative; display: inline-block; max-width: 100%;">
+        <h1 class="fd-title" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: clamp(3rem, 10vw, 12rem); line-height: 1; margin: 0; outline: none; cursor: text;">
+          ${font.name}
+        </h1>
+        <div style="position: absolute; top: -1rem; right: -1rem; background: var(--signal-red); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-sans); font-weight: 500; transform: rotate(5deg); pointer-events: none; opacity: 0.9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Edit this!</div>
+      </div>
       <p style="margin-top: 2rem; font-size: 1.1rem; color: #666; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
         ${font.description}
       </p>
@@ -96,7 +99,7 @@ function renderFontDetails(font) {
           border-color: #fff;
         }
       </style>
-      <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 1rem; align-items: center;">
+      <div style="margin-top: 3rem; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; align-items: center;">
         <button class="fd-download-btn" id="btn-fd-download">Download Family (${font.stylesCount} styles)</button>
         <span style="font-family: var(--font-mono); font-size: 0.8rem; color: #999;">${font.price} / ${font.fileSize}</span>
       </div>
@@ -109,7 +112,7 @@ function renderFontDetails(font) {
           <button class="fd-unit-btn" id="fd-unit-toggle">Switch to REM</button>
         </div>
         <div class="fd-tester" style="border: 1px solid var(--border-grey); border-radius: 8px; overflow: hidden; margin-bottom: 3rem;">
-          <div style="padding: 1rem; border-bottom: 1px solid var(--border-grey); background: rgba(0,0,0,0.02); display: flex; gap: 2rem;">
+          <div style="padding: 1rem; border-bottom: 1px solid var(--border-grey); background: rgba(0,0,0,0.02); display: flex; flex-wrap: wrap; gap: 2rem;">
             <div style="display:flex; flex-direction:column; width: 100%; max-width: 200px;">
               <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
                 <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Size</label>
@@ -123,6 +126,13 @@ function renderFontDetails(font) {
                 <span id="fd-leading-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">1.2</span>
               </div>
               <input type="range" id="fd-leading" min="0.8" max="2.5" step="0.1" value="1.2">
+            </div>
+            <div style="display:flex; flex-direction:column; width: 100%; max-width: 200px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Tracking</label>
+                <span id="fd-tracking-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">0em</span>
+              </div>
+              <input type="range" id="fd-tracking" min="-0.1" max="0.5" step="0.01" value="0">
             </div>
           </div>
           <div id="fd-specimen" contenteditable="true" spellcheck="false" style="padding: 3rem 2rem; font-family: ${fam}, serif; font-size: 64px; line-height: 1.2; outline: none;">
@@ -176,9 +186,11 @@ function renderFontDetails(font) {
   // Attach tester event listeners
   const sizeSlider = document.getElementById("fd-size");
   const leadingSlider = document.getElementById("fd-leading");
+  const trackingSlider = document.getElementById("fd-tracking");
   const specimen = document.getElementById("fd-specimen");
   const sizeVal = document.getElementById("fd-size-val");
   const leadingVal = document.getElementById("fd-leading-val");
+  const trackingVal = document.getElementById("fd-tracking-val");
   const unitToggle = document.getElementById("fd-unit-toggle");
 
   let useRem = false;
@@ -186,6 +198,7 @@ function renderFontDetails(font) {
   function updateSpecimen() {
     const s = sizeSlider.value;
     const l = leadingSlider.value;
+    const t = trackingSlider ? trackingSlider.value : "0";
     
     if (useRem) {
       const remSize = (s / 16).toFixed(2);
@@ -198,6 +211,11 @@ function renderFontDetails(font) {
     
     leadingVal.textContent = l;
     specimen.style.lineHeight = l;
+    
+    if (trackingVal) {
+      trackingVal.textContent = t + "em";
+      specimen.style.letterSpacing = t + "em";
+    }
   }
 
   if (unitToggle) {
@@ -214,5 +232,9 @@ function renderFontDetails(font) {
 
   if(leadingSlider && specimen) {
     leadingSlider.addEventListener("input", updateSpecimen);
+  }
+
+  if(trackingSlider && specimen) {
+    trackingSlider.addEventListener("input", updateSpecimen);
   }
 }
