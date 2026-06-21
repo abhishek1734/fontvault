@@ -217,76 +217,20 @@ function getMockupHTML(font) {
   loadExternalFont(font);
   const fam = font.cssFamily || `'${font.name}'`;
   const badge = `<span class="badge-availability ${getBadgeClass(font.availability)}">${font.availability}</span>`;
-  const titleText = globalPreviewText || font.mockupTitle;
+  const titleText = globalPreviewText || font.name;
+  const designerText = font.designer || font.foundry || 'Independent';
 
-  const mockups = {
-    magazine: (f,fam,badge) => `
-      <div class="card-mockup" style="color:#0A0A0A;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
-        ${badge}
-        <div class="mockup-preview-text" style="font-family:${fam},serif;font-size:2.2rem;font-style:italic;line-height:1;text-align:center;">${titleText}</div>
-        <div style="font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;margin-top:0.8rem;letter-spacing:0.1em;color:#555;">${f.mockupSubtitle}</div>
-      </div>`,
-    ui: (f,fam,badge) => `
-      <div class="card-mockup" style="color:#0A0A0A;display:flex;flex-direction:column;justify-content:space-between;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
-        ${badge}
-        <div style="font-family:var(--font-mono);font-size:0.65rem;color:#555;">${f.mockupTitle}</div>
-        <div class="mockup-preview-text" style="font-family:${fam},sans-serif;font-size:1.2rem;font-weight:600;line-height:1.3;margin:1rem 0;">${globalPreviewText || "Unlock variable spacing values seamlessly."}</div>
-        <div style="display:flex;gap:0.5rem;">
-          <div style="width:28px;height:12px;background:#000;border-radius:6px;"></div>
-          <div style="width:12px;height:12px;background:#999;border-radius:6px;"></div>
-        </div>
-      </div>`,
-    code: (f,fam,badge) => `
-      <div class="card-mockup" style="color:#0A0A0A;display:flex;flex-direction:column;justify-content:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
-        ${badge}
-        <div class="mockup-preview-text" style="font-family:${fam},monospace;font-size:0.85rem;line-height:1.5;color:#222;">
-          ${globalPreviewText || `<span style="color:#FF3B00">const</span> config = {<br>
-          &nbsp;&nbsp;theme: <span style="color:#0040A0">'mono-dark'</span>,<br>
-          &nbsp;&nbsp;opacity: <span style="color:#008833">0.95</span><br>
-          }`}
-        </div>
-      </div>`,
-    branding: (f,fam,badge) => `
-      <div class="card-mockup" style="color:#0A0A0A;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
-        ${badge}
-        <div class="mockup-preview-text" style="font-family:${fam},sans-serif;font-size:2.5rem;font-weight:700;line-height:0.95;letter-spacing:-0.04em;text-align:center;">${titleText}</div>
-        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--signal-red);margin-top:0.8rem;letter-spacing:0.2em;text-transform:uppercase;">${f.mockupSubtitle}</div>
-      </div>`,
-    poster: (f,fam,badge) => `
-      <div class="card-mockup" style="color:#0A0A0A;display:flex;flex-direction:column;justify-content:space-between;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
-        ${badge}
-        <div class="mockup-preview-text" style="font-family:${fam},sans-serif;font-size:2.5rem;font-weight:800;line-height:0.85;letter-spacing:-0.02em;">${titleText}</div>
-        <div style="font-size:0.7rem;color:#555;text-transform:uppercase;font-weight:500;">${f.mockupSubtitle}</div>
-      </div>`,
-    invitation: (f,fam,badge) => `
-      <div class="card-mockup" style="color:#2E2B2A;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border:6px double #E6DFD3;margin:4px;border-radius:4px;background:rgba(255,255,255,0.4);">
-        ${badge}
-        <div style="font-family:${fam},serif;font-size:1.4rem;font-style:italic;text-align:center;margin-bottom:0.4rem;">${f.mockupTitle}</div>
-        <div style="font-family:var(--font-body);font-size:0.55rem;text-align:center;color:#666;letter-spacing:0.05em;text-transform:uppercase;">${f.mockupSubtitle}</div>
-      </div>`,
-    "bold-label": (f,fam,badge) => `
-      <div class="card-mockup" style="color:#0A0A0A;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
-        ${badge}
-        <div style="font-family:${fam},sans-serif;font-size:3.2rem;line-height:0.9;font-weight:900;text-align:center;letter-spacing:-0.02em;">${f.mockupTitle}</div>
-        <div style="font-family:var(--font-mono);font-size:0.6rem;color:#444;margin-top:0.6rem;letter-spacing:0.1em;">${f.mockupSubtitle}</div>
-      </div>`,
-    luxury: (f,fam,badge) => `
-      <div class="card-mockup" style="color:#0A0A0A;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);">
-        ${badge}
-        <div style="font-family:${fam},serif;font-size:1.8rem;font-weight:300;letter-spacing:0.3em;margin-bottom:0.5rem;text-align:center;">${f.mockupTitle}</div>
-        <div style="font-family:var(--font-mono);font-size:0.55rem;color:#444;letter-spacing:0.15em;">${f.mockupSubtitle}</div>
-      </div>`,
-    book: (f,fam,badge) => `
-      <div class="card-mockup" style="color:#0A0A0A;display:flex;flex-direction:column;justify-content:space-between;padding:1.8rem;border-bottom:1px solid var(--border-grey);">
-        ${badge}
-        <div style="font-family:${fam},serif;font-size:1.5rem;line-height:1.1;margin-bottom:1rem;max-width:80%;">${f.mockupTitle}</div>
-        <div style="font-family:var(--font-body);font-size:0.6rem;color:#555;">${f.mockupSubtitle}</div>
-      </div>`
-  };
-
-  const fn = mockups[font.mockupType];
-  if (fn) return fn(font, fam, badge);
-  return `<div class="card-mockup" style="display:flex;align-items:center;justify-content:center;border-bottom:1px solid #E0E0E0;color:#0A0A0A;">${badge}<div style="font-family:${fam};font-size:2rem;">${font.name}</div></div>`;
+  return `
+    <div class="card-mockup" style="display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.5rem;border-bottom:1px solid var(--border-grey);color:#0A0A0A;text-align:center;">
+      ${badge}
+      <div class="mockup-preview-text" style="font-family:${fam},sans-serif;font-size:2.8rem;line-height:1.1;color:#000;">
+        ${titleText}
+      </div>
+      <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--signal-red);margin-top:1.5rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:600;">
+        ${designerText}
+      </div>
+    </div>
+  `;
 }
 
 // ─────────────────────────────────────────────────
