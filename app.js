@@ -177,7 +177,6 @@ function getBadgeClass(a) {
 function getMockupHTML(font) {
   loadExternalFont(font);
   const fam = font.cssFamily || `'${font.name}'`;
-  const badge = `<span class="badge-availability ${getBadgeClass(font.availability)}" style="z-index: 5;">${font.availability}</span>`;
   const titleText = globalPreviewText || font.name;
   const designerText = font.designer || font.foundry || 'Independent';
 
@@ -206,8 +205,6 @@ function getMockupHTML(font) {
         <div class="tech-corner" style="bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px;"></div>
         <div class="tech-corner" style="bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px;"></div>
 
-        ${badge}
-        
         <div class="mockup-preview-text futuristic-text" style="font-family:${fam},sans-serif; font-size:2.6rem; line-height:1.1; text-align:center; z-index:3;">
           ${titleText}
         </div>
@@ -303,6 +300,9 @@ function appendFontCard(font, delay) {
         <span style="text-transform:uppercase;font-weight:700;color:var(--near-black);background:#E0E0E0;padding:2px 6px;border-radius:3px;margin-right:6px;font-size:0.6rem;font-family:var(--font-mono);">${providerLabel}</span>
         ${font.style} · ${font.mood} · ${font.useCase}
       </p>
+      <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span class="badge-availability ${getBadgeClass(font.availability)}" style="position: static; font-size: 0.65rem; padding: 3px 8px; border-radius: 12px; display: inline-block;">${font.availability}</span>
+      </div>
     </div>
   `;
 
