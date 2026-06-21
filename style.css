@@ -1692,3 +1692,137 @@ footer {
 @media (max-width: 480px) {
   .auth-modal { padding: 2rem 1.25rem 1.5rem; max-width: 94vw; }
 }
+
+/* ========================================
+   SEARCH DROPDOWN (MyFonts Style)
+======================================== */
+.search-container {
+  position: relative;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  min-width: 320px;
+  background: var(--pure-white);
+  border: 1px solid var(--border-grey);
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  margin-top: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-5px);
+  transition: all 0.2s ease;
+  z-index: 100;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-dropdown.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+[data-theme="dark"] .search-dropdown {
+  background: #1A1A1A;
+  border-color: #333;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.search-dropdown-list {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.search-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border-grey);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.search-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.search-dropdown-item:hover {
+  background: var(--off-white);
+}
+
+[data-theme="dark"] .search-dropdown-item {
+  border-color: #333;
+}
+
+[data-theme="dark"] .search-dropdown-item:hover {
+  background: #222;
+}
+
+.search-dropdown-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.search-dropdown-name {
+  font-size: 1.25rem;
+  line-height: 1.1;
+  /* Font family will be set dynamically inline */
+}
+
+.search-dropdown-meta {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.search-dropdown-provider {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 0.15rem 0.4rem;
+  background: var(--border-grey);
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+[data-theme="dark"] .search-dropdown-provider {
+  background: #333;
+  color: #ccc;
+}
+
+.search-dropdown-footer {
+  padding: 0.75rem 1rem;
+  background: var(--off-white);
+  border-top: 1px solid var(--border-grey);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  color: var(--near-black);
+  transition: background 0.15s ease;
+}
+
+.search-dropdown-footer:hover {
+  background: #e5e5e5;
+}
+
+[data-theme="dark"] .search-dropdown-footer {
+  background: #222;
+  border-color: #333;
+  color: #F0F0F0;
+}
+
+[data-theme="dark"] .search-dropdown-footer:hover {
+  background: #2a2a2a;
+}
