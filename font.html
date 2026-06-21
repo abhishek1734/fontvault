@@ -44,145 +44,12 @@
     </div>
   </header>
 
-  <!-- HERO SECTION -->
-  <section class="hero" id="hero">
-    <div class="hero-bg-watermarks">
-      <div class="watermark">Instrument Serif</div>
-      <div class="watermark">Inter Variable</div>
-      <div class="watermark">JetBrains Mono</div>
-    </div>
-    <div class="hero-content">
-      <p class="hero-eyebrow">// DISCOVER TYPE</p>
-      <h1 class="hero-headline">Every font the world uses.<br>Yours to explore.</h1>
-      <p class="hero-subline">Discover 150+ meticulously curated typefaces. Test drive them instantly in real-world design mockups—without downloading a single file.</p>
-      <div class="hero-ctas">
-        <button class="btn btn-primary" id="btn-browse-fonts">Browse Fonts</button>
-      </div>
-    </div>
-    <div class="scroll-indicator" id="scroll-arrow">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-  </section>
-
-  <!-- TRENDING THIS WEEK -->
-  <section class="trending-section" id="trending-section">
-    <div class="trending-header">
-      <h2 class="section-title" style="margin-bottom:0;">Trending This Week</h2>
-      <span class="trending-badge">Live</span>
-    </div>
-    <div class="trending-outer" id="trending-outer">
-      <div class="trending-track" id="trending-strip">
-        <!-- Cards injected + duplicated by JS -->
-      </div>
-    </div>
-  </section>
-
-  <!-- MAIN FONT-IN-USE GRID WITH SIDEBAR FILTERS -->
-  <main class="main-container" id="main-content">
-    <h2 class="section-title">Type in the Wild</h2>
-    <div class="content-layout">
-      <!-- LEFT SIDEBAR FILTERS -->
-      <aside class="sidebar-filters" id="filter-wrapper">
-        <div class="sidebar-filters-header">
-          <h3>Filters</h3>
-          <span class="clear-all" id="clear-filters-btn">Clear all</span>
-        </div>
-        <div class="filter-groups" id="filter-groups-container">
-          <!-- Filter Groups injected by JS -->
-        </div>
-      </aside>
-
-      <!-- RIGHT GRID AREA -->
-      <section class="grid-area">
-        <div class="global-preview-bar">
-          <input type="text" id="global-preview-input" placeholder="Type here to preview text across all fonts..." autocomplete="off">
-          <div class="global-preview-clear" id="global-preview-clear" title="Clear text">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-        <div class="masonry-grid" id="font-grid">
-          <!-- Font Cards dynamically injected -->
-        </div>
-      </section>
+  <!-- FONT DETAILS MAIN SECTION -->
+  <main class="font-page-main" id="font-page-main">
+    <div id="font-detail-root" class="font-detail-container">
+      <!-- Injected by font-details.js -->
     </div>
   </main>
-
-  <!-- CURATED FEATURED COLLECTIONS -->
-  <section class="collections-section" id="collections">
-    <div class="main-container" style="padding-top:0; padding-bottom:0;">
-      <h2 class="section-title">Curated Collections</h2>
-      <div class="collections-grid">
-        <div class="collection-card" data-filter="Style:Serif">
-          <div class="collection-overlay"></div>
-          <img class="collection-img" src="assets/editorial.png" alt="Editorial Classics — Serif fonts" loading="lazy">
-          <div class="collection-content">
-            <h3 class="collection-title">Editorial Classics</h3>
-            <p class="collection-count">Serif &amp; Display</p>
-          </div>
-        </div>
-        <div class="collection-card" data-filter="Availability:Free">
-          <div class="collection-overlay"></div>
-          <img class="collection-img" src="assets/free.png" alt="Free and Beautiful fonts" loading="lazy">
-          <div class="collection-content">
-            <h3 class="collection-title">Free &amp; Beautiful</h3>
-            <p class="collection-count">Open Source Fonts</p>
-          </div>
-        </div>
-        <div class="collection-card" data-filter="Style:Monospace">
-          <div class="collection-overlay"></div>
-          <img class="collection-img" src="assets/code.png" alt="MonoSpace and Code fonts" loading="lazy">
-          <div class="collection-content">
-            <h3 class="collection-title">MonoSpace &amp; Code</h3>
-            <p class="collection-count">Clean &amp; Technical</p>
-          </div>
-        </div>
-        <div class="collection-card" data-filter="Use Case:Branding">
-          <div class="collection-overlay"></div>
-          <img class="collection-img" src="assets/branding.png" alt="The Branding Stack" loading="lazy">
-          <div class="collection-content">
-            <h3 class="collection-title">The Branding Stack</h3>
-            <p class="collection-count">Modern Identity</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- COMPARE TRAY (fixed bottom) -->
-  <div class="compare-tray" id="compare-tray">
-    <span class="compare-tray-label">Comparing</span>
-    <div class="compare-tray-fonts" id="compare-tray-fonts"></div>
-    <div class="compare-tray-actions">
-      <button class="btn-compare-now" id="compare-now-btn">Compare Now</button>
-      <button class="btn-compare-clear" id="compare-tray-clear">Clear</button>
-    </div>
-  </div>
-
-  <!-- COMPARE OVERLAY (full-screen) -->
-  <div class="compare-overlay" id="compare-overlay">
-    <div class="compare-overlay-header">
-      <span class="compare-overlay-title">Font Comparison</span>
-      <div class="compare-overlay-controls">
-        <div class="compare-shared-text-wrap">
-          <span>Preview:</span>
-          <input type="text" id="compare-shared-input" placeholder="Type to preview..." value="The quick brown fox">
-        </div>
-        <button class="compare-overlay-close" id="compare-close-btn" aria-label="Close comparison">
-          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div class="compare-overlay-body" id="compare-overlay-body">
-      <!-- Injected by JS -->
-    </div>
-  </div>
 
   <!-- FOOTER -->
   <footer>
@@ -267,6 +134,6 @@
 
   <script src="fonts.js"></script>
   <script src="shared.js"></script>
-  <script src="app.js"></script>
+  <script src="font-details.js"></script>
 </body>
 </html>
