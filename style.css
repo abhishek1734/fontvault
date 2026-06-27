@@ -9,6 +9,7 @@
 :root {
   --pure-white: #0B0B0B;
   --near-black: #F5F2E8;
+  --text-secondary: #888888;
   --surface-dark: #121212;
   --off-white: #161616;
   --border-grey: #222222;
@@ -359,7 +360,7 @@ header.collapsed {
   border: none;
   border-right: 1px solid var(--border-grey);
   border-radius: 0;
-  padding: 0 3rem 2rem 0; /* padding only on right before divider */
+  padding: 0 0 2rem 0; /* padding-right moved to inner elements */
   margin-top: 1rem;
   color: var(--near-black);
   max-height: calc(100vh - 120px);
@@ -386,9 +387,10 @@ header.collapsed + .main-container .sidebar-filters {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-grey);
-  padding-bottom: 0.8rem;
+  padding: 0 3rem 0.8rem 0;
+  box-sizing: border-box;
 }
 
 .sidebar-filters-header h3 {
@@ -403,13 +405,20 @@ header.collapsed + .main-container .sidebar-filters {
 .sidebar-filters .filter-groups {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 0;
+  padding-right: 3rem;
+  box-sizing: border-box;
 }
 
 .sidebar-filters .filter-group {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  margin-bottom: 0.5rem;
+  transition: margin-bottom 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-filters .filter-group[open] {
   margin-bottom: 1.5rem;
 }
 
@@ -453,6 +462,16 @@ header.collapsed + .main-container .sidebar-filters {
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
+  padding-top: 0;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, padding-top 0.2s ease;
+}
+
+.sidebar-filters .filter-group[open] .pill-container {
+  max-height: 300px;
+  opacity: 1;
   padding-top: 0.75rem;
 }
 
@@ -493,17 +512,19 @@ header.collapsed + .main-container .sidebar-filters {
 }
 
 .sidebar-filters .clear-all {
-  color: var(--border-grey);
+  color: var(--signal-red) !important;
   font-size: var(--ts-xs);
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   display: none;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
 }
 
 .sidebar-filters .clear-all:hover {
-  color: var(--signal-red);
   text-decoration: underline;
+  opacity: 0.8;
 }
 
 
@@ -629,12 +650,12 @@ header.collapsed + .main-container .sidebar-filters {
   width: 100%;
   font-family: var(--font-mono);
   font-size: var(--ts-xs);
-  opacity: 0.6;
 }
 
 .foundry-label {
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  opacity: 0.6;
 }
 
 /* Font Uploader Card Styles */
@@ -1496,6 +1517,7 @@ footer {
 [data-theme="light"] {
   --pure-white: #FFFFFF;
   --near-black: #0A0A0A;
+  --text-secondary: #666666;
   --surface-dark: #F5F5F5;
   --off-white: #F5F5F5;
   --border-grey: #E0E0E0;

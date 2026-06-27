@@ -276,7 +276,7 @@ function appendFontCard(font, delay) {
         <span class="meta-item">${font.variants ? 'Variable' : 'Static'}</span>
         <span class="meta-item">${font.availability}</span>
         
-        <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="background:none; border:none; cursor:pointer; color:inherit; padding:0; display:flex; align-items:center;">
+        <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="background:none; border:none; cursor:pointer; color:${inFavorites ? 'var(--signal-red)' : 'var(--text-secondary)'}; padding:0; display:flex; align-items:center;">
           <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
@@ -310,11 +310,13 @@ function appendFontCard(font, delay) {
     </div>
   `;
 
-  // Card click → open detail
+  // Card click → open detail (Disabled - only open details page on View Family click)
+  /*
   card.addEventListener("click", e => {
     if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".custom-font-delete-btn") || e.target.closest(".huge-preview-text") || e.target.closest(".view-family-hover-btn")) return;
     openDetailPanel(font);
   });
+  */
 
   // Compare add/remove button
   card.querySelector(".compare-add-btn").addEventListener("click", e => {
