@@ -183,7 +183,7 @@ function getMockupHTML(font) {
   const hue2 = (hue1 + 120) % 360;
 
   return `
-    <div class="card-mockup" style="position:relative; display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem; overflow:hidden; min-height: 220px; border-bottom:1px solid var(--border-grey);">
+    <div class="card-mockup" style="position:relative; display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem; overflow:hidden; min-height:220px; border-bottom:1px solid var(--border-grey); width:100%; max-width:100%; box-sizing:border-box;">
       
       <!-- Holographic Glows -->
       <div class="glow-orb" style="position:absolute; top:-30%; left:-10%; width:80%; height:80%; background: radial-gradient(circle, hsl(${hue1}, 100%, 75%) 0%, transparent 70%); opacity: 0.5; filter: blur(30px); z-index: 0;"></div>
@@ -193,7 +193,7 @@ function getMockupHTML(font) {
       <div style="position:absolute; inset:0; background-image: radial-gradient(rgba(128,128,128,0.2) 1px, transparent 1px); background-size: 15px 15px; z-index: 0;"></div>
 
       <!-- Glassmorphic Plate -->
-      <div class="futuristic-glass" style="position:relative; z-index: 2; display:flex; flex-direction:column; align-items:center; justify-content:center; width: 100%; height: 100%; padding: 2rem 1rem;">
+      <div class="futuristic-glass" style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; max-width:100%; box-sizing:border-box; padding:1.5rem 1rem; overflow:hidden;">
         
         <!-- Tech Corner Accents -->
         <div class="tech-corner" style="top: 10px; left: 10px; border-top-width: 2px; border-left-width: 2px;"></div>
@@ -201,7 +201,7 @@ function getMockupHTML(font) {
         <div class="tech-corner" style="bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px;"></div>
         <div class="tech-corner" style="bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px;"></div>
         
-        <div class="mockup-preview-text futuristic-text" style="font-family:${fam},sans-serif; font-size:2.6rem; line-height:1.1; text-align:center; z-index:3;">
+        <div class="mockup-preview-text futuristic-text" style="font-family:${fam},sans-serif; font-size:clamp(1.4rem,5vw,2.6rem); line-height:1.1; text-align:center; z-index:3; max-width:100%; overflow:hidden; word-break:break-word;">
           ${titleText}
         </div>
         

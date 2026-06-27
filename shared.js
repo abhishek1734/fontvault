@@ -479,6 +479,57 @@ function setupSharedEventListeners() {
       openAuthModal();
     });
   }
+
+  // Mobile Hamburger Menu Logic
+  const hamburgerBtn = document.getElementById("hamburger-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const mobileSubmitBtn = document.getElementById("mobile-submit-btn");
+  const mobileLoginBtn = document.getElementById("mobile-login-btn");
+
+  if (hamburgerBtn && mobileMenu) {
+    hamburgerBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = mobileMenu.classList.toggle("open");
+      hamburgerBtn.classList.toggle("open");
+      hamburgerBtn.setAttribute("aria-expanded", isOpen);
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("open");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
+  if (mobileSubmitBtn) {
+    mobileSubmitBtn.addEventListener("click", () => {
+      if (mobileMenu && hamburgerBtn) {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("open");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      }
+      openAuthModal();
+    });
+  }
+
+  if (mobileLoginBtn) {
+    mobileLoginBtn.addEventListener("click", () => {
+      if (mobileMenu && hamburgerBtn) {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("open");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      }
+      // Explicitly switch to Sign In mode
+      const signinTab = document.querySelector('.auth-tab[data-mode="signin"]');
+      if (signinTab) {
+        signinTab.click();
+      }
+      openAuthModal();
+    });
+  }
 }
 
 // Global Favorites Logic
