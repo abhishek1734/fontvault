@@ -277,7 +277,11 @@ function appendFontCard(font, delay) {
         <div class="card-size-slider-wrap" style="display: flex; align-items: center; gap: 0.4rem; margin-right: 1.2rem; font-family: var(--font-mono); font-size: 0.65rem;" onclick="event.stopPropagation();">
           <span style="opacity: 0.6;">SIZE</span>
           <input type="range" class="card-size-slider" min="20" max="200" value="${currentGlobalSize}" style="width: 60px; cursor: pointer; height: 3px; accent-color: var(--signal-red);" oninput="updateCardFontSize(this, '${font.id}')">
-          <span class="card-size-value" style="min-width: 32px; text-align: right; opacity: 0.6;">${currentGlobalSize}px</span>
+          <div style="display: flex; align-items: center; gap: 0.15rem;">
+            <input type="number" class="card-size-input" value="${currentGlobalSize}" min="20" max="200" style="width: 30px; background: transparent; border: none; border-bottom: 1px dashed var(--border-grey); color: inherit; font-family: var(--font-mono); font-size: 0.65rem; text-align: right;" oninput="updateCardFontSizeFromInput(this, '${font.id}')">
+            <span style="opacity: 0.6;">px</span>
+            <span class="card-size-reset size-reset-btn" style="margin-left: 0.3rem; display: none;" onclick="resetCardFontSize(this, '${font.id}')">Reset</span>
+          </div>
         </div>
         <span class="meta-item">${font.stylesCount || 1} Style${(font.stylesCount || 1) > 1 ? 's' : ''}</span>
         <span class="meta-item">${font.variants ? 'Variable' : 'Static'}</span>
@@ -838,39 +842,59 @@ function setupEventListeners() {
     }
   });
 
-  // Font Size Slider
+  // Font Size Slider & Number Input
   const fontSizeSlider = document.getElementById("font-size-slider");
-  const sliderValueLabel = document.getElementById("slider-value-label");
-  if (fontSizeSlider) {
-    fontSizeSlider.addEventListener("input", e => {
-      const size = e.target.value;
-      if (sliderValueLabel) {
-        sliderValueLabel.textContent = `${size}px`;
-      }
-      if (el.fontGrid) {
-        el.fontGrid.style.setProperty("--preview-font-size", `${size}px`);
-        
-        // Sync all card-specific sliders and labels
-        const cardSliders = el.fontGrid.querySelectorAll(".card-size-slider");
-        cardSliders.forEach(slider => {
-          slider.value = size;
-          const valLabel = slider.nextElementSibling;
-          if (valLabel) {
-            valLabel.textContent = `${size}px`;
-          }
-        });
-        // Remove individual font-size overrides on preview texts
-        const previews = el.fontGrid.querySelectorAll(".huge-preview-text");
-        previews.forEach(p => {
-          p.style.fontSize = "";
-        });
-      }
-    });
-    // Set initial size
+  const globalSizeInput = document.getElementById("global-size-input");
+  const globalSizeReset = document.getElementById("global-size-reset");
+
+  function syncGlobalSize(size) {
+    if (fontSizeSlider) fontSizeSlider.value = size;
+    if (globalSizeInput) globalSizeInput.value = size;
+    
+    // Toggle reset button (default is 120)
+    if (globalSizeReset) {
+      globalSizeReset.style.display = (parseInt(size) === 120) ? "none" : "inline";
+    }
+
     if (el.fontGrid) {
-      el.fontGrid.style.setProperty("--preview-font-size", `${fontSizeSlider.value}px`);
+      el.fontGrid.style.setProperty("--preview-font-size", `${size}px`);
+      
+      // Sync all card-specific sliders, inputs, and hide card resets
+      const cardSliders = el.fontGrid.querySelectorAll(".card-size-slider");
+      cardSliders.forEach(slider => {
+        slider.value = size;
+        const parentWrap = slider.closest(".card-size-slider-wrap");
+        if (parentWrap) {
+          const cardInput = parentWrap.querySelector(".card-size-input");
+          if (cardInput) cardInput.value = size;
+          const cardReset = parentWrap.querySelector(".card-size-reset");
+          if (cardReset) cardReset.style.display = "none";
+        }
+      });
+      // Remove individual font-size overrides on preview texts
+      const previews = el.fontGrid.querySelectorAll(".huge-preview-text");
+      previews.forEach(p => {
+        p.style.fontSize = "";
+      });
     }
   }
+
+  if (fontSizeSlider) {
+    fontSizeSlider.addEventListener("input", e => syncGlobalSize(e.target.value));
+  }
+  if (globalSizeInput) {
+    globalSizeInput.addEventListener("input", e => {
+      let val = parseInt(e.target.value);
+      if (isNaN(val)) return;
+      if (val < 40) val = 40;
+      if (val > 220) val = 220;
+      syncGlobalSize(val);
+    });
+  }
+
+  window.resetGlobalFontSize = function() {
+    syncGlobalSize(120);
+  };
 
   // Clear filters
   el.clearFiltersBtn.addEventListener("click", clearAllFilters);
@@ -1128,13 +1152,56 @@ window.updateCardFontSize = function(slider, fontId) {
   if (card) {
     const size = slider.value;
     const previewText = card.querySelector(".huge-preview-text");
-    if (previewText) {
-      previewText.style.fontSize = `${size}px`;
+    if (previewText) previewText.style.fontSize = `${size}px`;
+
+    const sizeInput = card.querySelector(".card-size-input");
+    if (sizeInput) sizeInput.value = size;
+
+    const globalSize = parseInt(document.getElementById("font-size-slider")?.value || 120);
+    const resetBtn = card.querySelector(".card-size-reset");
+    if (resetBtn) {
+      resetBtn.style.display = (parseInt(size) === globalSize) ? "none" : "inline";
     }
-    const valLabel = card.querySelector(".card-size-value");
-    if (valLabel) {
-      valLabel.textContent = `${size}px`;
+  }
+};
+
+window.updateCardFontSizeFromInput = function(input, fontId) {
+  const card = input.closest(".font-card");
+  if (card) {
+    let size = parseInt(input.value);
+    if (isNaN(size)) return;
+    if (size < 20) size = 20;
+    if (size > 200) size = 200;
+
+    const previewText = card.querySelector(".huge-preview-text");
+    if (previewText) previewText.style.fontSize = `${size}px`;
+
+    const slider = card.querySelector(".card-size-slider");
+    if (slider) slider.value = size;
+
+    const globalSize = parseInt(document.getElementById("font-size-slider")?.value || 120);
+    const resetBtn = card.querySelector(".card-size-reset");
+    if (resetBtn) {
+      resetBtn.style.display = (size === globalSize) ? "none" : "inline";
     }
+  }
+};
+
+window.resetCardFontSize = function(btn, fontId) {
+  const card = btn.closest(".font-card");
+  if (card) {
+    const globalSize = parseInt(document.getElementById("font-size-slider")?.value || 120);
+    
+    const slider = card.querySelector(".card-size-slider");
+    if (slider) slider.value = globalSize;
+
+    const sizeInput = card.querySelector(".card-size-input");
+    if (sizeInput) sizeInput.value = globalSize;
+
+    const previewText = card.querySelector(".huge-preview-text");
+    if (previewText) previewText.style.fontSize = "";
+
+    btn.style.display = "none";
   }
 };
 

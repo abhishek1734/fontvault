@@ -6,7 +6,7 @@
   <title>FontVault — Premium Font Discovery and Licensing</title>
   <meta name="description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=5.1">
+  <link rel="stylesheet" href="style.css?v=5.2">
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
@@ -128,7 +128,11 @@
           <div class="toolbar-slider-wrap" style="display: flex; align-items: center; gap: 0.75rem; margin-left: 1.5rem; padding-left: 1.5rem; border-left: 1px solid var(--border-grey); font-family: var(--font-mono); font-size: var(--ts-xs); opacity: 0.8; white-space: nowrap;">
             <span>SIZE</span>
             <input type="range" id="font-size-slider" min="40" max="220" value="120" style="width: 100px; cursor: pointer;">
-            <span id="slider-value-label" style="min-width: 40px; text-align: right;">120px</span>
+            <div style="display: flex; align-items: center; gap: 0.25rem;">
+              <input type="number" id="global-size-input" value="120" min="40" max="220" style="width: 42px; background: transparent; border: none; border-bottom: 1px dashed var(--border-grey); color: inherit; font-family: var(--font-mono); font-size: var(--ts-xs); text-align: right; margin-right: 2px;">
+              <span>px</span>
+              <span id="global-size-reset" class="size-reset-btn" style="margin-left: 0.5rem; display: none;">Reset</span>
+            </div>
           </div>
         </div>
         <div class="masonry-grid" id="font-grid">
@@ -292,8 +296,8 @@
     </div>
   </div>
 
-  <script src="fonts.js?v=5.1"></script>
-  <script src="shared.js?v=5.1"></script>
-  <script src="app.js?v=5.1"></script>
+  <script src="fonts.js?v=5.2"></script>
+  <script src="shared.js?v=5.2"></script>
+  <script src="app.js?v=5.2"></script>
 </body>
 </html>
