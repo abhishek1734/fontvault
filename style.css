@@ -1950,7 +1950,7 @@ footer {
   color: #888;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 0.5rem 0 1rem;
+  padding: 0.5rem 0 1rem 3rem;
   display: none;
 }
 
@@ -2351,10 +2351,14 @@ footer {
    GLOBAL TEXT PREVIEW BAR
 ======================================== */
 .global-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 2rem;
   width: 100%;
   position: relative;
   padding-left: 3rem;
+  padding-right: 3rem;
   box-sizing: border-box;
 }
 

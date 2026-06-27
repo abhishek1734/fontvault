@@ -266,12 +266,19 @@ function appendFontCard(font, delay) {
   const fam = font.cssFamily || `'${font.name}'`;
   const titleText = globalPreviewText || font.name;
   const inFavorites = window.favoritesSet.has(font.id);
+  const currentGlobalSize = document.getElementById("font-size-slider")?.value || 120;
 
   card.innerHTML = `
     <!-- Top Row: Name and Meta -->
     <div class="card-header-row">
       <span class="font-name-label" style="font-family:${fam},var(--font-display); font-size:1.2rem; opacity: 1; text-transform: none; letter-spacing: normal;">${font.name}</span>
       <div class="card-meta-right">
+        <!-- Card-specific size slider -->
+        <div class="card-size-slider-wrap" style="display: flex; align-items: center; gap: 0.4rem; margin-right: 1.2rem; font-family: var(--font-mono); font-size: 0.65rem;" onclick="event.stopPropagation();">
+          <span style="opacity: 0.6;">SIZE</span>
+          <input type="range" class="card-size-slider" min="20" max="200" value="${currentGlobalSize}" style="width: 60px; cursor: pointer; height: 3px; accent-color: var(--signal-red);" oninput="updateCardFontSize(this, '${font.id}')">
+          <span class="card-size-value" style="min-width: 32px; text-align: right; opacity: 0.6;">${currentGlobalSize}px</span>
+        </div>
         <span class="meta-item">${font.stylesCount || 1} Style${(font.stylesCount || 1) > 1 ? 's' : ''}</span>
         <span class="meta-item">${font.variants ? 'Variable' : 'Static'}</span>
         <span class="meta-item">${font.availability}</span>
@@ -842,6 +849,21 @@ function setupEventListeners() {
       }
       if (el.fontGrid) {
         el.fontGrid.style.setProperty("--preview-font-size", `${size}px`);
+        
+        // Sync all card-specific sliders and labels
+        const cardSliders = el.fontGrid.querySelectorAll(".card-size-slider");
+        cardSliders.forEach(slider => {
+          slider.value = size;
+          const valLabel = slider.nextElementSibling;
+          if (valLabel) {
+            valLabel.textContent = `${size}px`;
+          }
+        });
+        // Remove individual font-size overrides on preview texts
+        const previews = el.fontGrid.querySelectorAll(".huge-preview-text");
+        previews.forEach(p => {
+          p.style.fontSize = "";
+        });
       }
     });
     // Set initial size
@@ -1098,6 +1120,21 @@ window.removeCustomFont = function(fontId) {
 
   if (typeof renderGrid === "function") {
     renderGrid(true);
+  }
+};
+
+window.updateCardFontSize = function(slider, fontId) {
+  const card = slider.closest(".font-card");
+  if (card) {
+    const size = slider.value;
+    const previewText = card.querySelector(".huge-preview-text");
+    if (previewText) {
+      previewText.style.fontSize = `${size}px`;
+    }
+    const valLabel = card.querySelector(".card-size-value");
+    if (valLabel) {
+      valLabel.textContent = `${size}px`;
+    }
   }
 };
 
