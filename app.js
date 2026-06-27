@@ -281,8 +281,8 @@ function appendFontCard(font, delay) {
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
         </button>
-        <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}" style="background:none; border:1px solid var(--border-grey); border-radius:4px; padding:2px 8px; cursor:pointer; color:inherit; font-family:var(--font-mono); font-size:10px;">
-          ${isInCompare ? '✕' : '+ COMPARE'}
+        <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}">
+          ${isInCompare ? '✕ COMPARE' : '+ COMPARE'}
         </button>
       </div>
     </div>
@@ -292,6 +292,9 @@ function appendFontCard(font, delay) {
       <div class="huge-preview-text" contenteditable="true" spellcheck="false" style="font-family:${fam},sans-serif;">
         ${titleText}
       </div>
+      <a class="view-family-hover-btn" href="font.html?id=${font.id}" target="_blank">
+        VIEW FAMILY
+      </a>
     </div>
 
     <!-- Bottom Row: Foundry -->
@@ -307,7 +310,7 @@ function appendFontCard(font, delay) {
 
   // Card click → open detail
   card.addEventListener("click", e => {
-    if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".custom-font-delete-btn") || e.target.closest(".huge-preview-text")) return;
+    if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".custom-font-delete-btn") || e.target.closest(".huge-preview-text") || e.target.closest(".view-family-hover-btn")) return;
     openDetailPanel(font);
   });
 
@@ -316,6 +319,14 @@ function appendFontCard(font, delay) {
     e.stopPropagation();
     toggleCompare(font.id);
   });
+
+  // Prevent click propagation on View Family hover button
+  const viewFamilyBtn = card.querySelector(".view-family-hover-btn");
+  if (viewFamilyBtn) {
+    viewFamilyBtn.addEventListener("click", e => {
+      e.stopPropagation();
+    });
+  }
 
   // Prevent click propagation on preview text to allow inline editing
   const previewTextEl = card.querySelector(".huge-preview-text");
@@ -645,7 +656,7 @@ function toggleCompare(fontId) {
     const id = btn.dataset.id;
     const inSet = compareSet.has(id);
     btn.classList.toggle("in-compare", inSet);
-    btn.textContent = inSet ? "✕" : "+";
+    btn.textContent = inSet ? "✕ COMPARE" : "+ COMPARE";
     btn.title = inSet ? "Remove from compare" : "Add to compare";
   });
 }
@@ -880,7 +891,7 @@ function setupEventListeners() {
     updateCompareTray();
     document.querySelectorAll(".compare-add-btn").forEach(btn => {
       btn.classList.remove("in-compare");
-      btn.textContent = "+";
+      btn.textContent = "+ COMPARE";
     });
   });
 
