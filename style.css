@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
+/* --- NATIVE PAGE TRANSITIONS --- */
+@view-transition {
+  navigation: auto;
+}
+
 /* --- DESIGN SYSTEM TOKENS --- */
 :root {
   --pure-white: #FFFFFF;
@@ -2397,3 +2402,20 @@ input[type=range]::-moz-range-thumb {
 .delete-recent-search-btn:hover {
   color: var(--signal-red) !important;
 }
+
+/* --- SMOOTH PAGE LOAD FADE-IN --- */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.font-detail-container, .main-container {
+  animation: pageFadeIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+

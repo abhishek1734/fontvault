@@ -1,6 +1,14 @@
 // font-details.js
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Apply dark mode preference immediately to prevent flashing
+  const savedDark = localStorage.getItem("fontvault-dark");
+  if (savedDark === "1") {
+    applyTheme(true);
+  } else {
+    applyTheme(false);
+  }
+
   setupSharedEventListeners();
   const urlParams = new URLSearchParams(window.location.search);
   const fontId = urlParams.get('id');
@@ -39,10 +47,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Load the external font
   loadExternalFont(font);
-
-  // Apply dark mode preference if stored
-  const savedDark = localStorage.getItem("fontvault-dark");
-  if (savedDark === "1") applyTheme(true);
 
   renderFontDetails(font);
 });

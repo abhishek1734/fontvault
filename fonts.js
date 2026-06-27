@@ -651,16 +651,46 @@ let fontsData = [
 
 async function initGoogleFonts(apiKey) {
   try {
-    const response = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}`);
-    if (!response.ok) throw new Error("Failed to fetch Google Fonts");
-    
-    const data = await response.json();
-    if (!data.items) return;
+    const cacheKey = "fontvault-cached-google-fonts";
+    const cacheTimeKey = "fontvault-cached-time";
+    const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
+
+    let items = null;
+    const cachedData = localStorage.getItem(cacheKey);
+    const cachedTime = localStorage.getItem(cacheTimeKey);
+
+    if (cachedData && cachedTime && (Date.now() - parseInt(cachedTime) < cacheDuration)) {
+      try {
+        items = JSON.parse(cachedData);
+        console.log("Loaded Google Fonts from cache.");
+      } catch (e) {
+        console.warn("Failed to parse cached Google Fonts, refetching...", e);
+      }
+    }
+
+    if (!items) {
+      console.log("Fetching Google Fonts from API...");
+      const response = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}`);
+      if (!response.ok) throw new Error("Failed to fetch Google Fonts");
+      
+      const data = await response.json();
+      if (data.items) {
+        items = data.items;
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(items));
+          localStorage.setItem(cacheTimeKey, Date.now().toString());
+        } catch (e) {
+          console.warn("Storage quota exceeded, could not cache Google Fonts locally:", e);
+        }
+      }
+    }
+
+    if (!items) return;
 
     // Filter out fonts we already have hardcoded so we don't duplicate them
     const existingIds = new Set(fontsData.map(f => f.id));
 
-    const mappedFonts = data.items.map(item => {
+    const mappedFonts = items.map(item => {
       const id = item.family.toLowerCase().replace(/\s+/g, '-');
       if (existingIds.has(id)) {
         const existingFont = fontsData.find(f => f.id === id);
@@ -706,7 +736,7 @@ async function initGoogleFonts(apiKey) {
 
     // Append to our existing curated list
     fontsData = [...fontsData, ...mappedFonts];
-    console.log(`Successfully loaded ${mappedFonts.length} fonts from Google API.`);
+    console.log(`Successfully loaded ${mappedFonts.length} fonts.`);
   } catch (error) {
     console.error("Error loading Google Fonts:", error);
   }
