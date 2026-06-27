@@ -52,12 +52,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function renderFontDetails(font) {
-  window.currentFontDetails = font;
   const root = document.getElementById('font-detail-root');
   const fam = font.cssFamily || `'${font.name}'`;
   
   const weights = getFontWeights(font);
-  window.currentFontWeights = weights;
   const defaultWeight = weights.includes(400) ? 400 : weights[0];
   
   // Render structure
@@ -132,76 +130,70 @@ function renderFontDetails(font) {
       </div>
     </div>
 
-    <!-- Side-by-side Specimen & Weights Row -->
-    <div class="fd-specimen-row">
-      <!-- Left Column: Interactive Specimen -->
-      <div class="fd-specimen-left">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-          <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin: 0;">Interactive Specimen</h3>
-          <button class="fd-unit-btn" id="fd-unit-toggle">Switch to REM</button>
-        </div>
-        <div class="fd-tester" style="border: 1px solid var(--border-grey); border-radius: 8px; overflow: hidden; margin-bottom: 0;">
-          <div style="padding: 1rem; border-bottom: 1px solid var(--border-grey); background: rgba(0,0,0,0.02); display: flex; flex-wrap: wrap; gap: 1.5rem;">
-            <!-- Size slider -->
-            <div style="display:flex; flex-direction:column; flex: 1; min-width: 120px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                <label style="font-size:0.7rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Size</label>
-                <span id="fd-size-val" style="font-size:0.7rem; color:var(--near-black); font-family:var(--font-mono);">64px</span>
+    <!-- Interactive Specimen + Weights Side by Side (Full Width) -->
+    <div class="fd-specimen-section">
+      <div class="fd-specimen-inner">
+        <!-- Left: Interactive Specimen -->
+        <div class="fd-specimen-left">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin: 0;">Interactive Specimen</h3>
+            <button class="fd-unit-btn" id="fd-unit-toggle">Switch to REM</button>
+          </div>
+          <div class="fd-tester" style="border: 1px solid var(--border-grey); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 1rem; border-bottom: 1px solid var(--border-grey); background: rgba(0,0,0,0.02); display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-end;">
+              <div style="display:flex; flex-direction:column; min-width: 140px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                  <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Size</label>
+                  <span id="fd-size-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">64px</span>
+                </div>
+                <input type="range" id="fd-size" min="16" max="150" value="64">
               </div>
-              <input type="range" id="fd-size" min="16" max="150" value="64">
+              <div style="display:flex; flex-direction:column; min-width: 140px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                  <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Leading</label>
+                  <span id="fd-leading-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">1.2</span>
+                </div>
+                <input type="range" id="fd-leading" min="0.8" max="2.5" step="0.1" value="1.2">
+              </div>
+              <div style="display:flex; flex-direction:column; min-width: 140px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                  <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Tracking</label>
+                  <span id="fd-tracking-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">0em</span>
+                </div>
+                <input type="range" id="fd-tracking" min="-0.1" max="0.5" step="0.01" value="0">
+              </div>
+              <div style="display:flex; flex-direction:column; min-width: 140px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                  <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Weight</label>
+                  <span id="fd-weight-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">${defaultWeight}</span>
+                </div>
+                <select id="fd-weight" style="padding: 0.25rem 0.5rem; background: var(--pure-white); border: 1px solid var(--border-grey); border-radius: 4px; color: var(--near-black); font-family: var(--font-mono); font-size: 0.85rem; outline: none; cursor: pointer; height: 1.8rem;" ${weights.length <= 1 ? 'disabled' : ''}>
+                  ${weights.map(w => `<option value="${w}" ${w === defaultWeight ? 'selected' : ''}>${w} — ${getWeightLabel(w)}</option>`).join('')}
+                </select>
+              </div>
             </div>
-            <!-- Leading slider -->
-            <div style="display:flex; flex-direction:column; flex: 1; min-width: 120px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                <label style="font-size:0.7rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Leading</label>
-                <span id="fd-leading-val" style="font-size:0.7rem; color:var(--near-black); font-family:var(--font-mono);">1.2</span>
-              </div>
-              <input type="range" id="fd-leading" min="0.8" max="2.5" step="0.1" value="1.2">
-            </div>
-            <!-- Tracking slider -->
-            <div style="display:flex; flex-direction:column; flex: 1; min-width: 120px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                <label style="font-size:0.7rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Tracking</label>
-                <span id="fd-tracking-val" style="font-size:0.7rem; color:var(--near-black); font-family:var(--font-mono);">0em</span>
-              </div>
-              <input type="range" id="fd-tracking" min="-0.1" max="0.5" step="0.01" value="0">
-            </div>
-            <!-- Weight select -->
-            <div style="display:flex; flex-direction:column; flex: 1; min-width: 120px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
-                <label style="font-size:0.7rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Weight</label>
-                <span id="fd-weight-val" style="font-size:0.7rem; color:var(--near-black); font-family:var(--font-mono);">${defaultWeight}</span>
-              </div>
-              <select id="fd-weight" style="padding: 0.25rem 0.5rem; background: var(--pure-white); border: 1px solid var(--border-grey); border-radius: 4px; color: var(--near-black); font-family: var(--font-mono); font-size: 0.8rem; outline: none; cursor: pointer; height: 1.8rem;" ${weights.length <= 1 ? 'disabled' : ''}>
-                ${weights.map(w => `<option value="${w}" ${w === defaultWeight ? 'selected' : ''}>${w} — ${getWeightLabel(w)}</option>`).join('')}
-              </select>
+            <div id="fd-specimen" contenteditable="true" spellcheck="false" style="padding: 3rem 2rem; font-family: ${fam}, serif; font-size: 64px; line-height: 1.2; font-weight: ${defaultWeight}; outline: none; min-height: 280px;">
+              The quick brown fox jumps over the lazy dog.
             </div>
           </div>
-          <div id="fd-specimen" contenteditable="true" spellcheck="false" style="padding: 3rem 2rem; font-family: ${fam}, serif; font-size: 64px; line-height: 1.2; font-weight: ${defaultWeight}; outline: none; min-height: 250px;">
-            The quick brown fox jumps over the lazy dog. A journey of a thousand miles begins with a single step.
-          </div>
         </div>
-      </div>
 
-      <!-- Right Column: Available Weights & Styles -->
-      <div class="fd-specimen-right">
-        <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem; margin-top: 0;">Available Weights</h3>
-        <div class="fd-weights-grid" style="display: flex; flex-direction: column; gap: 1.25rem; max-height: 380px; overflow-y: auto; padding-right: 0.5rem;">
-          ${weights.map(w => `
-            <div class="fd-weight-card" style="padding: 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.01);">
-               <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-grey); padding-bottom: 0.5rem;">
-                 <span style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; color: var(--near-black); text-transform: uppercase;">
-                   ${getWeightLabel(w)} (${w})
-                 </span>
-                 <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #888;">
-                   ${font.name} ${getWeightLabel(w)}
-                 </span>
-               </div>
-               <div class="fd-weight-preview" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: 1.6rem; font-weight: ${w}; line-height: 1.2; color: var(--near-black); outline: none;">
-                 The quick brown fox jumps over the lazy dog.
-               </div>
-            </div>
-          `).join('')}
+        <!-- Right: Available Weights & Styles -->
+        <div class="fd-weights-right">
+          <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem; margin-top: 0;">Available Weights &amp; Styles</h3>
+          <div class="fd-weights-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+            ${weights.map(w => `
+              <div class="fd-weight-card" style="padding: 1.25rem 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-grey); padding-bottom: 0.5rem;">
+                  <span style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; color: var(--near-black); text-transform: uppercase;">${getWeightLabel(w)}</span>
+                  <span style="font-family: var(--font-mono); font-size: 0.7rem; color: #888;">${w}</span>
+                </div>
+                <div class="fd-weight-preview" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: 1.5rem; font-weight: ${w}; line-height: 1.2; color: var(--near-black); outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  The quick brown fox
+                </div>
+              </div>
+            `).join('')}
+          </div>
         </div>
       </div>
     </div>
@@ -259,108 +251,99 @@ function renderFontDetails(font) {
             <!-- Rendered sections injected here -->
           </div>
         </div>
-    </div>
-
-    <!-- Layouts Preview Section -->
-    <div class="fd-layouts-section">
-      <div class="fd-layouts-header">
-        <h2 style="font-family:var(--font-display); font-size:2.2rem; font-weight:600; margin:0;">Layouts</h2>
-        
-        <div class="fd-layouts-tabs">
-          <button id="fd-layout-btn-new" class="fd-layouts-tab-btn" onclick="shuffleLayoutTexts()">+ New Layout</button>
-          <div style="width: 1px; height: 12px; background: var(--border-grey);"></div>
-          <button id="fd-layout-btn-default" class="fd-layouts-tab-btn active" onclick="setLayoutPreset('default')">Default Layout</button>
-          <button id="fd-layout-btn-layout1" class="fd-layouts-tab-btn" onclick="setLayoutPreset('layout1')">Layout 1</button>
-          <button id="fd-layout-btn-layout2" class="fd-layouts-tab-btn" onclick="setLayoutPreset('layout2')">Layout 2</button>
-          <div style="width: 1px; height: 12px; background: var(--border-grey);"></div>
-          <button class="fd-layouts-tab-btn" style="color:var(--signal-red);" onclick="setLayoutPreset('default')">Reset</button>
-        </div>
-      </div>
-
-      <div class="fd-layouts-container">
-        <!-- Title Block -->
-        <div class="fd-layouts-block">
-          <div class="fd-layouts-font-tag" onclick="cycleLayoutWeight('title')">
-            <span id="fd-layout-title-font-name">${font.name} Bold</span>
-            <span style="opacity: 0.5;">▾</span>
-          </div>
-          <div id="fd-layout-title-text" contenteditable="true" spellcheck="false" style="font-family:${fam}; font-size:clamp(2.5rem, 8vw, 7.5rem); font-weight:700; line-height:1.05; outline:none;">
-            Ask powerful questions
-          </div>
-          <div class="fd-layouts-add-style" onclick="cycleLayoutWeight('title')">+ Cycle Style</div>
-        </div>
-
-        <!-- Sub-heading Block -->
-        <div class="fd-layouts-block">
-          <div class="fd-layouts-font-tag" onclick="cycleLayoutWeight('sub')">
-            <span id="fd-layout-sub-font-name">${font.name} Medium</span>
-            <span style="opacity: 0.5;">▾</span>
-          </div>
-          <div id="fd-layout-sub-text" contenteditable="true" spellcheck="false" style="font-family:${fam}; font-size:clamp(1.5rem, 4vw, 2.8rem); font-weight:500; line-height:1.3; outline:none;">
-            All the world’s a stage and all the men and women merely players. They have their exits and their entrances; And one man in his time plays many parts.
-          </div>
-          <div class="fd-layouts-add-style" onclick="cycleLayoutWeight('sub')">+ Cycle Style</div>
-        </div>
-
-        <!-- Body Text Block -->
-        <div class="fd-layouts-block">
-          <div class="fd-layouts-font-tag" onclick="cycleLayoutWeight('body')">
-            <span id="fd-layout-body-font-name">${font.name} Regular</span>
-            <span style="opacity: 0.5;">▾</span>
-          </div>
-          <div class="fd-layouts-body-grid">
-            <div id="fd-layout-body-col1" contenteditable="true" spellcheck="false" style="font-family:${fam}; font-size:1rem; font-weight:400; line-height:1.6; outline:none; text-align:justify;">
-              In this fast-paced world, it is important to take a moment and reflect on our journey. We often get caught up in the rat race and forget what is truly important in life. We strive for success, wealth, and fame, but these things are fleeting and can never bring true happiness.
-            </div>
-            <div id="fd-layout-body-col2" contenteditable="true" spellcheck="false" style="font-family:${fam}; font-size:1rem; font-weight:400; line-height:1.6; outline:none; text-align:justify;">
-              an opportunity for growth and learning. We must embrace challenges and obstacles as opportunities for growth and transformation. It's easy to get caught up in comparing ourselves to others and measuring our success by external standards.
-            </div>
-            <div id="fd-layout-body-col3" contenteditable="true" spellcheck="false" style="font-family:${fam}; font-size:1rem; font-weight:400; line-height:1.6; outline:none; text-align:justify;">
-              qualities, strengths, and weaknesses and allow them to guide you on your journey. The world needs more individuals who are true to themselves, who live with purpose and passion, and who inspire others to do the same. We are all here for a reason.
-            </div>
-          </div>
-          <div class="fd-layouts-add-style" onclick="cycleLayoutWeight('body')">+ Cycle Style</div>
-        </div>
       </div>
     </div>
 
-    <!-- Font Technical Details Section (Moved below Layouts) -->
-    <div class="fd-metadata-section">
-      <div class="fd-metadata-grid">
-        <div class="fd-metadata-item">
-          <span class="fd-metadata-label">Designer</span>
-          <span class="fd-metadata-value">${font.designer || 'Independent'}</span>
-        </div>
-        <div class="fd-metadata-item">
-          <span class="fd-metadata-label">Foundry</span>
-          <span class="fd-metadata-value">${font.foundry || 'Independent'}</span>
-        </div>
-        <div class="fd-metadata-item">
-          <span class="fd-metadata-label">Year Released</span>
-          <span class="fd-metadata-value">${font.year || 'N/A'}</span>
-        </div>
-        <div class="fd-metadata-item">
-          <span class="fd-metadata-label">Languages</span>
-          <span class="fd-metadata-value">${font.languages ? font.languages.join(', ') : 'Latin'}</span>
+    <!-- Layout Section -->
+    <div class="fd-layout-section">
+      <div class="fd-layout-header">
+        <h2 style="font-family:var(--font-display); font-size:2.2rem; font-weight:600; margin:0; color:var(--near-black);">Layout</h2>
+        <div class="fd-layout-controls">
+          <button class="fd-layout-preset-btn active" onclick="setLayoutPreset('default', this)">Default Layout</button>
+          <button class="fd-layout-preset-btn" onclick="setLayoutPreset('editorial', this)">Editorial</button>
+          <button class="fd-layout-preset-btn" onclick="setLayoutPreset('minimal', this)">Minimal</button>
+          <button class="fd-layout-btn" onclick="resetLayoutText()">Reset</button>
         </div>
       </div>
 
-      <div class="fd-pairings-container">
-        <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin: 0 0 1.5rem 0;">Pairs Well With</h3>
-        <div class="fd-pairings-grid">
-          ${font.pairsWith && font.pairsWith.length > 0 ? font.pairsWith.map(pair => {
-            const pairFont = fontsData.find(f => f.id === pair.id);
-            if (!pairFont) return '';
-            return `
-              <div style="padding: 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display:flex; justify-content:space-between; align-items:center; background: rgba(0,0,0,0.01);">
+      <div id="fd-layout-body">
+        <!-- Title Row -->
+        <div class="fd-layout-row fd-layout-title-row">
+          <div class="fd-layout-row-label">
+            <span class="fd-layout-font-tag">${font.name}</span>
+            <span class="fd-layout-role-tag">Title</span>
+          </div>
+          <div
+            id="fd-layout-title"
+            class="fd-layout-title"
+            style="font-family:${fam}, serif;"
+            contenteditable="true"
+            spellcheck="false"
+          >Ask powerful questions</div>
+          <div class="fd-layout-row-add">+ Add Style</div>
+        </div>
+
+        <!-- Subheading Row -->
+        <div class="fd-layout-row fd-layout-sub-row">
+          <div class="fd-layout-row-label">
+            <span class="fd-layout-font-tag">${font.name}</span>
+            <span class="fd-layout-role-tag">Subheading</span>
+          </div>
+          <div
+            id="fd-layout-sub"
+            class="fd-layout-sub"
+            style="font-family:${fam}, serif;"
+            contenteditable="true"
+            spellcheck="false"
+          >All the world's a stage and all the men and women merely players. They have their exits and their entrances; And one man in his time plays many parts.</div>
+          <div class="fd-layout-row-add">+ Add Style</div>
+        </div>
+
+        <!-- Body Row -->
+        <div class="fd-layout-row fd-layout-body-row">
+          <div class="fd-layout-row-label">
+            <span class="fd-layout-font-tag">${font.name}</span>
+            <span class="fd-layout-role-tag">Body</span>
+          </div>
+          <div id="fd-layout-body-text" class="fd-layout-body-text" style="font-family:${fam}, serif;">
+            <div contenteditable="true" spellcheck="false">In this fast-paced world, it is important to take a moment and reflect on our journey. We often get caught up in the rat race and forget what is truly important in life. We strive for success, wealth and fame, but these things are fleeting and can never truly fulfil us.</div>
+            <div contenteditable="true" spellcheck="false">An opportunity for growth and learning. We must embrace challenges and obstacles as opportunities for growth and transformation. It's easy to get caught up in comparing ourselves to others and measuring our worth by external standards.</div>
+            <div contenteditable="true" spellcheck="false">Qualities, strengths, and weaknesses and allow them to guide you on your journey. The world needs more individuals who are true to themselves, who live with purpose and passion, and who inspire others to do the same.</div>
+          </div>
+          <div class="fd-layout-row-add">+ Add Style</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Font Details & Pairings (moved below Layout) -->
+    <div class="fd-details-section">
+      <div class="fd-details-inner">
+        <div class="fd-details-col">
+          <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem;">Font Details</h3>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Designer</span><span style="font-size:1rem; font-weight:500;">${font.designer || 'Independent'}</span></div>
+            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Foundry</span><span style="font-size:1rem; font-weight:500;">${font.foundry || 'Independent'}</span></div>
+            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Year Released</span><span style="font-size:1rem; font-weight:500;">${font.year || 'N/A'}</span></div>
+            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Category</span><span style="font-size:1rem; font-weight:500;">${font.style || 'Display'}</span></div>
+            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">License</span><span style="font-size:1rem; font-weight:500;">${font.price || 'Free'}</span></div>
+            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Languages</span><span style="font-size:1rem; font-weight:500;">${font.languages ? font.languages.join(', ') : 'Latin'}</span></div>
+          </div>
+        </div>
+        <div class="fd-pairings-col">
+          <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem;">Pairs Well With</h3>
+          <div style="display:flex; flex-direction:column; gap:1rem;">
+            ${font.pairsWith && font.pairsWith.length > 0 ? font.pairsWith.map(pair => {
+              const pairFont = fontsData.find(f => f.id === pair.id);
+              if (!pairFont) return '';
+              return `<div style="padding: 1rem; border: 1px solid var(--border-grey); border-radius: 6px; display:flex; justify-content:space-between; align-items:center; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
                 <div>
-                  <span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem; font-family:var(--font-mono);">${pair.role}</span>
-                  <span style="font-size:1.05rem; font-weight:600; color:var(--near-black);">${pairFont.name}</span>
+                  <span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">${pair.role}</span>
+                  <span style="font-size:1rem; font-weight:500;">${pairFont.name}</span>
                 </div>
-                <a href="font.html?id=${pairFont.id}" class="fd-unit-btn" style="color:var(--signal-red); border-color:var(--signal-red); text-decoration:none;">View</a>
-              </div>
-            `;
-          }).join('') : '<p style="color:#888; font-size:0.9rem; margin:0;">No specific pairings suggested.</p>'}
+                <a href="font.html?id=${pairFont.id}" style="color:var(--signal-red); text-decoration:none; font-size:0.8rem; font-weight:500;">View →</a>
+              </div>`;
+            }).join('') : '<p style="color:#888; font-size:0.9rem;">No specific pairings suggested.</p>'}
+          </div>
         </div>
       </div>
     </div>
@@ -741,131 +724,63 @@ window.applyStyleOverridesToGrid = function() {
     cell.style.fontWeight = weight;
     cell.style.fontStyle = style;
   });
-};
+}
 
 // -------------------------------------------------
-// LAYOUT PRESETS & CUSTOM EDITING
+// LAYOUT SECTION PRESETS
 // -------------------------------------------------
-const layoutPresets = {
+
+const LAYOUT_PRESETS = {
   default: {
     title: "Ask powerful questions",
-    sub: "All the world’s a stage and all the men and women merely players. They have their exits and their entrances; And one man in his time plays many parts.",
-    col1: "In this fast-paced world, it is important to take a moment and reflect on our journey. We often get caught up in the rat race and forget what is truly important in life. We strive for success, wealth, and fame, but these things are fleeting and can never bring true happiness.",
-    col2: "an opportunity for growth and learning. We must embrace challenges and obstacles as opportunities for growth and transformation. It's easy to get caught up in comparing ourselves to others and measuring our success by external standards.",
-    col3: "qualities, strengths, and weaknesses and allow them to guide you on your journey. The world needs more individuals who are true to themselves, who live with purpose and passion, and who inspire others to do the same. We are all here for a reason."
+    sub: "All the world's a stage and all the men and women merely players. They have their exits and their entrances; And one man in his time plays many parts.",
+    body: [
+      "In this fast-paced world, it is important to take a moment and reflect on our journey. We often get caught up in the rat race and forget what is truly important in life. We strive for success, wealth and fame, but these things are fleeting and can never truly fulfil us.",
+      "An opportunity for growth and learning. We must embrace challenges and obstacles as opportunities for growth and transformation. It's easy to get caught up in comparing ourselves to others and measuring our worth by external standards.",
+      "Qualities, strengths, and weaknesses and allow them to guide you on your journey. The world needs more individuals who are true to themselves, who live with purpose and passion, and who inspire others to do the same."
+    ]
   },
-  layout1: {
-    title: "Design is thinking made visual.",
-    sub: "Simplicity is the ultimate sophistication. When you remove everything that is unnecessary, you are left with the pure essence of design and layout.",
-    col1: "Every designer strives to find the perfect balance between form and function. It is not just about making things look beautiful; it is about solving complex problems, building hierarchy, and creating meaningful structures.",
-    col2: "Through careful curation of grid systems, typography weight contrast, color theory, and whitespace, we can create interfaces and editorial layouts that resonate deeply with our users.",
-    col3: "Ultimately, the best designs are those that feel completely invisible. They guide the user's eye effortlessly, creating a seamless, intuitive flow that feels totally natural and engaging."
+  editorial: {
+    title: "The art of seeing beauty in everything",
+    sub: "Design is not just what it looks like and feels like. Design is how it works. True elegance is not about complexity, but clarity.",
+    body: [
+      "Typography is the voice of design. Every letterform carries history, intention, and emotion. A well-set headline can stop a reader mid-scroll, pull them in, and hold them there for a moment longer than expected.",
+      "The best typefaces disappear into the work. When type is perfect, you stop noticing the letters and start feeling what they say. That invisible quality is what every typographer strives for.",
+      "Whitespace, rhythm, hierarchy — these are the instruments of a typographer's orchestra. And when they come together in perfect balance, even the simplest word becomes unforgettable."
+    ]
   },
-  layout2: {
-    title: "Typography is the voice of text.",
-    sub: "Type is a beautiful group of letters, not a group of beautiful letters. The arrangement and rendering of type has a profound impact on how information is received.",
-    col1: "Choosing the right typeface is like choosing an outfit for your words. It establishes the tone, voice, and personality of the brand before a single word is actually read. Serif implies editorial history.",
-    col2: "Contrast is absolutely key. Pairing a bold, expressive display serif with a clean, neutral, geometric sans-serif creates a dynamic visual tension that keeps the reader engaged and curious.",
-    col3: "Always pay close attention to the details: line-height, letter-spacing, and typographic scale. Good typography makes reading effortless, while bad typography creates visual friction and fatigue."
+  minimal: {
+    title: "Less, but better",
+    sub: "Good design is as little design as possible. The aim is to do justice to the natural qualities of the form.",
+    body: [
+      "Simplicity is not the absence of clutter. It is the presence of purpose. Every element must earn its place.",
+      "Restraint takes more discipline than abundance. Choosing what to leave out defines a design as much as what is left in.",
+      "The best interface is the one that gets out of the way and lets the content breathe. Clarity always wins."
+    ]
   }
 };
 
-window.setLayoutPreset = function(presetName) {
-  const data = layoutPresets[presetName];
+window.setLayoutPreset = function(preset, btn) {
+  const data = LAYOUT_PRESETS[preset];
   if (!data) return;
 
-  const titleText = document.getElementById("fd-layout-title-text");
-  const subText = document.getElementById("fd-layout-sub-text");
-  const col1 = document.getElementById("fd-layout-body-col1");
-  const col2 = document.getElementById("fd-layout-body-col2");
-  const col3 = document.getElementById("fd-layout-body-col3");
+  const titleEl = document.getElementById("fd-layout-title");
+  const subEl = document.getElementById("fd-layout-sub");
+  const bodyEl = document.getElementById("fd-layout-body-text");
 
-  if (titleText) titleText.textContent = data.title;
-  if (subText) subText.textContent = data.sub;
-  if (col1) col1.textContent = data.col1;
-  if (col2) col2.textContent = data.col2;
-  if (col3) col3.textContent = data.col3;
-
-  // Toggle active tab styling
-  const btns = ["default", "layout1", "layout2"];
-  btns.forEach(b => {
-    const btn = document.getElementById(`fd-layout-btn-${b}`);
-    if (btn) {
-      if (b === presetName) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
-    }
-  });
-};
-
-const shuffleTitles = [
-  "Creativity is intelligence having fun.",
-  "Make it simple, but significant.",
-  "Form follows function.",
-  "Digital experiences crafted with care.",
-  "Type has a physical presence.",
-  "Think outside the text box."
-];
-
-const shuffleSubs = [
-  "Great design is a multi-layered relationship between human beings and their environment. It starts with empathy and ends with pixel perfection.",
-  "Detail is not just a detail. It is the design. Every curve, pixel, line, and color decision shapes the user's perception of the product.",
-  "Typography is the craft of endowing a human language with a durable visual form. It is the architecture of the written page."
-];
-
-window.shuffleLayoutTexts = function() {
-  const randomTitle = shuffleTitles[Math.floor(Math.random() * shuffleTitles.length)];
-  const randomSub = shuffleSubs[Math.floor(Math.random() * shuffleSubs.length)];
-
-  const titleText = document.getElementById("fd-layout-title-text");
-  const subText = document.getElementById("fd-layout-sub-text");
-
-  if (titleText) titleText.textContent = randomTitle;
-  if (subText) subText.textContent = randomSub;
-
-  // Deactivate all preset buttons
-  ["default", "layout1", "layout2"].forEach(b => {
-    const btn = document.getElementById(`fd-layout-btn-${b}`);
-    if (btn) btn.classList.remove("active");
-  });
-};
-
-const sectionWeightIndexes = {
-  title: 0,
-  sub: 0,
-  body: 0
-};
-
-window.cycleLayoutWeight = function(section) {
-  const weights = window.currentFontWeights || [400];
-  const fontName = window.currentFontDetails?.name || "Font";
-  
-  sectionWeightIndexes[section] = (sectionWeightIndexes[section] + 1) % weights.length;
-  const activeWeight = weights[sectionWeightIndexes[section]];
-  const label = getWeightLabel(activeWeight);
-
-  if (section === "title") {
-    const text = document.getElementById("fd-layout-title-text");
-    if (text) text.style.fontWeight = activeWeight;
-    const nameLabel = document.getElementById("fd-layout-title-font-name");
-    if (nameLabel) nameLabel.textContent = `${fontName} ${label}`;
-  } else if (section === "sub") {
-    const text = document.getElementById("fd-layout-sub-text");
-    if (text) text.style.fontWeight = activeWeight;
-    const nameLabel = document.getElementById("fd-layout-sub-font-name");
-    if (nameLabel) nameLabel.textContent = `${fontName} ${label}`;
-  } else if (section === "body") {
-    const cols = [
-      document.getElementById("fd-layout-body-col1"),
-      document.getElementById("fd-layout-body-col2"),
-      document.getElementById("fd-layout-body-col3")
-    ];
-    cols.forEach(c => {
-      if (c) c.style.fontWeight = activeWeight;
-    });
-    const nameLabel = document.getElementById("fd-layout-body-font-name");
-    if (nameLabel) nameLabel.textContent = `${fontName} ${label}`;
+  if (titleEl) titleEl.textContent = data.title;
+  if (subEl) subEl.textContent = data.sub;
+  if (bodyEl) {
+    bodyEl.innerHTML = data.body.map(p =>
+      `<div contenteditable="true" spellcheck="false">${p}</div>`
+    ).join('');
   }
+
+  // Update active button state
+  document.querySelectorAll(".fd-layout-preset-btn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
 };
+
+window.resetLayoutText = function() {
+  setLayoutPreset("default", document.querySelector(".fd-layout-preset-btn"));
+};;
