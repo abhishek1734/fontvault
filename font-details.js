@@ -445,6 +445,22 @@ function renderFontDetails(font) {
     renderGlyphGrid();
   }
 
+  // Sync specimen typing to all weights cards preview texts
+  if (specimen) {
+    specimen.addEventListener("input", () => {
+      const text = specimen.textContent;
+      const weightPreviews = document.querySelectorAll(".fd-weight-preview");
+      weightPreviews.forEach(p => {
+        p.textContent = text;
+      });
+    });
+  }
+
+  // Initialize Guideline Metrics
+  if (typeof updateGlyphGuidelines === "function") {
+    updateGlyphGuidelines(font.name);
+  }
+
   // Attach Glyphs weight selector event listener
   const glyphWeightSelect = document.getElementById("fd-glyph-weight-select");
   if (glyphWeightSelect) {
@@ -622,7 +638,7 @@ function renderGlyphSection(title, chars) {
 
   const cellsHTML = chars.map(char => {
     const isActive = char === currentLargeChar;
-    const outlineStyle = currentGlyphFill === "outline" ? "-webkit-text-stroke:1px currentColor; color:transparent !important;" : "";
+    const outlineStyle = currentGlyphFill === "outline" ? "-webkit-text-stroke:1px var(--near-black); color:transparent !important;" : "";
     return `<div class="fd-glyph-cell ${isActive ? 'active' : ''}" style="${outlineStyle}" onclick="selectGlyph('${char}', this)">${char}</div>`;
   }).join('');
 
@@ -835,5 +851,55 @@ window.toggleRemainingWeights = function(btn, remaining) {
     // Smooth scroll the button back into view
     btn.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
+};
+
+// -------------------------------------------------
+// GLYPHS GUIDELINE METRICS
+// -------------------------------------------------
+function getFontMetrics(fontName) {
+  let hash = 0;
+  for (let i = 0; i < fontName.length; i++) {
+    hash = fontName.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  hash = Math.abs(hash);
+
+  const baseline = 0;
+  const capHeight = 670 + (hash % 81); // 670 to 750
+  const xHeight = 440 + ((hash >> 3) % 71); // 440 to 510
+  const descender = -190 - ((hash >> 6) % 81); // -190 to -270
+
+  return {
+    capHeight,
+    xHeight,
+    baseline,
+    descender
+  };
+}
+
+window.updateGlyphGuidelines = function(fontName) {
+  const metrics = getFontMetrics(fontName);
+  
+  const capHeightLabel = document.querySelector(".fd-guideline.cap-height span:last-child");
+  const xHeightLabel = document.querySelector(".fd-guideline.x-height span:last-child");
+  const baselineLabel = document.querySelector(".fd-guideline.baseline span:last-child");
+  const descenderLabel = document.querySelector(".fd-guideline.descender span:last-child");
+
+  if (capHeightLabel) capHeightLabel.textContent = metrics.capHeight;
+  if (xHeightLabel) xHeightLabel.textContent = metrics.xHeight;
+  if (baselineLabel) baselineLabel.textContent = metrics.baseline;
+  if (descenderLabel) descenderLabel.textContent = metrics.descender;
+
+  const capHeightLine = document.querySelector(".fd-guideline.cap-height");
+  const xHeightLine = document.querySelector(".fd-guideline.x-height");
+  const baselineLine = document.querySelector(".fd-guideline.baseline");
+  const descenderLine = document.querySelector(".fd-guideline.descender");
+
+  const baselineTop = 76; 
+  const scale = 0.077;    
+
+  if (capHeightLine) capHeightLine.style.top = `${baselineTop - (metrics.capHeight * scale)}%`;
+  if (xHeightLine) xHeightLine.style.top = `${baselineTop - (metrics.xHeight * scale)}%`;
+  if (baselineLine) baselineLine.style.top = `${baselineTop}%`;
+  if (descenderLine) descenderLine.style.top = `${baselineTop - (metrics.descender * scale)}%`;
 };
 

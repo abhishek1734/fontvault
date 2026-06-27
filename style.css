@@ -3023,6 +3023,10 @@ input[type=number] {
   display: none;
 }
 
+.fd-weight-card {
+  cursor: text;
+}
+
 .fd-weights-see-more {
   width: 100%;
   margin-top: 0.75rem;
