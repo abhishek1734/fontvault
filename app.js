@@ -289,7 +289,7 @@ function appendFontCard(font, delay) {
 
     <!-- Center Row: Huge Preview Text -->
     <div class="card-body-row">
-      <div class="huge-preview-text" style="font-family:${fam},sans-serif;">
+      <div class="huge-preview-text" contenteditable="true" spellcheck="false" style="font-family:${fam},sans-serif;">
         ${titleText}
       </div>
     </div>
@@ -307,7 +307,7 @@ function appendFontCard(font, delay) {
 
   // Card click → open detail
   card.addEventListener("click", e => {
-    if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".custom-font-delete-btn")) return;
+    if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".custom-font-delete-btn") || e.target.closest(".huge-preview-text")) return;
     openDetailPanel(font);
   });
 
@@ -316,6 +316,21 @@ function appendFontCard(font, delay) {
     e.stopPropagation();
     toggleCompare(font.id);
   });
+
+  // Prevent click propagation on preview text to allow inline editing
+  const previewTextEl = card.querySelector(".huge-preview-text");
+  if (previewTextEl) {
+    previewTextEl.addEventListener("click", e => {
+      e.stopPropagation();
+    });
+    previewTextEl.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        previewTextEl.blur();
+      }
+    });
+  }
+
   el.fontGrid.appendChild(card);
   
   // Observe for scroll animation
