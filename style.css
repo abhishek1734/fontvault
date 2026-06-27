@@ -485,22 +485,23 @@ header.collapsed + .main-container .sidebar-filters {
 }
 
 .masonry-grid {
-  column-count: 3;
-  column-gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   width: 100%;
 }
 
 .font-card {
-  break-inside: avoid;
   background-color: var(--pure-white);
   border: 1px solid var(--border-grey);
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   transition: var(--transition-smooth);
   cursor: pointer;
+  width: 100%;
+  min-height: 180px;
   
   /* Infinite scroll emerge animation */
   opacity: 0;
@@ -574,6 +575,29 @@ header.collapsed + .main-container .sidebar-filters {
 
 .card-info {
   padding: 1.5rem;
+  width: 320px;
+  flex-shrink: 0;
+  order: 1;
+  border-right: 1px solid var(--border-grey);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-preview-wrapper {
+  flex: 1;
+  order: 2;
+  position: relative;
+  background-color: var(--thumbnail-bg);
+  display: flex;
+  align-items: stretch;
+}
+
+.card-preview-wrapper .card-mockup {
+  aspect-ratio: auto !important;
+  height: 100% !important;
+  min-height: 180px !important;
+  border-bottom: none !important;
 }
 
 /* Font Uploader Card Styles */
@@ -1106,7 +1130,27 @@ footer {
     padding: 1.2rem;
   }
   .masonry-grid {
-    column-count: 2;
+    flex-direction: column;
+  }
+  .font-card {
+    flex-direction: column !important;
+    min-height: auto !important;
+  }
+  .card-info {
+    width: 100% !important;
+    order: 2 !important;
+    border-right: none !important;
+    border-top: 1px solid var(--border-grey) !important;
+  }
+  .card-preview-wrapper {
+    width: 100% !important;
+    order: 1 !important;
+  }
+  .card-preview-wrapper .card-mockup {
+    aspect-ratio: 16/10 !important;
+    height: auto !important;
+    min-height: 220px !important;
+    border-bottom: 1px solid var(--border-grey) !important;
   }
   .collections-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1291,7 +1335,7 @@ footer {
     width: 100%;
   }
   .masonry-grid {
-    column-count: 1;
+    flex-direction: column;
   }
   .collections-grid {
     grid-template-columns: 1fr;

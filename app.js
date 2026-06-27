@@ -277,7 +277,7 @@ function appendFontCard(font, delay) {
 
   const inFavorites = window.favoritesSet.has(font.id);
   card.innerHTML = `
-    <div style="position: relative; background-color: var(--thumbnail-bg);">
+    <div class="card-preview-wrapper" style="position: relative; background-color: var(--thumbnail-bg);">
       ${getMockupHTML(font)}
       ${(font.availability === 'Custom' || font.id.startsWith('custom-upload-')) ? `
         <button class="custom-font-delete-btn" title="Remove custom font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')">
@@ -462,7 +462,7 @@ function appendUploaderCard() {
   card.className = "font-card uploader-card";
   card.id = "font-uploader-card";
   card.innerHTML = `
-    <div class="card-mockup uploader-dropzone" style="display:flex; flex-direction:column; justify-content:center; align-items:center; border:2px dashed var(--border-grey); border-radius:12px; background:rgba(0,0,0,0.02); min-height: 220px; transition: all 0.3s ease; cursor: pointer; padding: 2rem;">
+    <div class="card-preview-wrapper card-mockup uploader-dropzone" style="display:flex; flex-direction:column; justify-content:center; align-items:center; border:2px dashed var(--border-grey); border-radius:12px; background:rgba(0,0,0,0.02); min-height: 220px; transition: all 0.3s ease; cursor: pointer; padding: 2rem;">
       <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary); margin-bottom:1rem; transition: transform 0.3s ease;">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
         <polyline points="17 8 12 3 7 8"></polyline>
