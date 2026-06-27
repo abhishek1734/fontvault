@@ -6,14 +6,14 @@
   <title>FontVault — Premium Font Discovery and Licensing</title>
   <meta name="description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=4.2">
+  <link rel="stylesheet" href="style.css?v=4.3">
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
-      if (savedDark === "1") {
-        document.documentElement.setAttribute("data-theme", "dark");
-      } else {
+      if (savedDark === "0") {
         document.documentElement.setAttribute("data-theme", "light");
+      } else {
+        document.documentElement.setAttribute("data-theme", "dark");
       }
     })();
   </script>
@@ -155,8 +155,8 @@
     </div>
   </div>
 
-  <script src="fonts.js?v=4.2"></script>
-  <script src="shared.js?v=4.2"></script>
-  <script src="font-details.js?v=4.2"></script>
+  <script src="fonts.js?v=4.3"></script>
+  <script src="shared.js?v=4.3"></script>
+  <script src="font-details.js?v=4.3"></script>
 </body>
 </html>

@@ -6,14 +6,14 @@
   <title>FontVault — Premium Font Discovery and Licensing</title>
   <meta name="description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=4.2">
+  <link rel="stylesheet" href="style.css?v=4.3">
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
-      if (savedDark === "1") {
-        document.documentElement.setAttribute("data-theme", "dark");
-      } else {
+      if (savedDark === "0") {
         document.documentElement.setAttribute("data-theme", "light");
+      } else {
+        document.documentElement.setAttribute("data-theme", "dark");
       }
     })();
   </script>
@@ -117,11 +117,18 @@
       <!-- RIGHT GRID AREA -->
       <section class="grid-area">
         <div class="global-preview-bar">
-          <input type="text" id="global-preview-input" placeholder="Type here to preview text across all fonts..." autocomplete="off">
-          <div class="global-preview-clear" id="global-preview-clear" title="Clear text">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+          <div class="search-input-wrapper" style="flex: 1; position: relative; display: flex; align-items: center;">
+            <input type="text" id="global-preview-input" placeholder="Type here to preview text across all fonts..." autocomplete="off" style="width: 100%;">
+            <div class="global-preview-clear" id="global-preview-clear" title="Clear text">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+          <div class="toolbar-slider-wrap" style="display: flex; align-items: center; gap: 0.75rem; margin-left: 1.5rem; padding-left: 1.5rem; border-left: 1px solid var(--border-grey); font-family: var(--font-mono); font-size: var(--ts-xs); opacity: 0.8; white-space: nowrap;">
+            <span>SIZE</span>
+            <input type="range" id="font-size-slider" min="40" max="220" value="120" style="width: 100px; cursor: pointer;">
+            <span id="slider-value-label" style="min-width: 40px; text-align: right;">120px</span>
           </div>
         </div>
         <div class="masonry-grid" id="font-grid">
@@ -285,8 +292,8 @@
     </div>
   </div>
 
-  <script src="fonts.js?v=4.2"></script>
-  <script src="shared.js?v=4.2"></script>
-  <script src="app.js?v=4.2"></script>
+  <script src="fonts.js?v=4.3"></script>
+  <script src="shared.js?v=4.3"></script>
+  <script src="app.js?v=4.3"></script>
 </body>
 </html>

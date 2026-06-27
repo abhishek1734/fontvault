@@ -3,10 +3,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
   // Apply dark mode preference immediately to prevent flashing
   const savedDark = localStorage.getItem("fontvault-dark");
-  if (savedDark === "1") {
-    applyTheme(true);
-  } else {
+  if (savedDark === "0") {
     applyTheme(false);
+  } else {
+    applyTheme(true);
   }
 
   setupSharedEventListeners();

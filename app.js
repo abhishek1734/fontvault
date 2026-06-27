@@ -109,12 +109,15 @@ const el = {
 function setupFilters() {
   el.filterContainer.innerHTML = "";
   Object.entries(filterGroups).forEach(([group, options], idx) => {
-    const groupEl = document.createElement("div");
+    const groupEl = document.createElement("details");
     groupEl.className = "filter-group";
-    const titleEl = document.createElement("span");
+    groupEl.open = true; // Open by default
+    
+    const titleEl = document.createElement("summary");
     titleEl.className = "filter-group-title";
     titleEl.textContent = group;
     groupEl.appendChild(titleEl);
+    
     const pillWrap = document.createElement("div");
     pillWrap.className = "pill-container";
     options.forEach(opt => {
@@ -128,11 +131,6 @@ function setupFilters() {
     });
     groupEl.appendChild(pillWrap);
     el.filterContainer.appendChild(groupEl);
-    if (idx < Object.keys(filterGroups).length - 1) {
-      const div = document.createElement("div");
-      div.className = "divider";
-      el.filterContainer.appendChild(div);
-    }
   });
 }
 
@@ -256,7 +254,6 @@ const cardObserver = new IntersectionObserver((entries, observer) => {
 }, { root: null, rootMargin: '50px', threshold: 0.1 });
 
 function appendFontCard(font, delay) {
-
   const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT" }[font.provider] || font.provider.toUpperCase();
   const isInCompare = compareSet.has(font.id);
 
@@ -264,52 +261,53 @@ function appendFontCard(font, delay) {
   card.className = "font-card";
   card.setAttribute("aria-label", `${font.name}, ${font.style}, ${font.availability}`);
   card.style.animationDelay = `${delay * 0.04}s`;
-  
-  // Deterministic matte background color based on font ID
-  let hash = 0;
-  for (let i = 0; i < font.id.length; i++) {
-    hash = font.id.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const colorIndex = Math.abs(hash) % 8;
 
   loadExternalFont(font);
   const fam = font.cssFamily || `'${font.name}'`;
-
+  const titleText = globalPreviewText || font.name;
   const inFavorites = window.favoritesSet.has(font.id);
+
   card.innerHTML = `
-    <div class="card-preview-wrapper" style="position: relative; background-color: var(--thumbnail-bg);">
-      ${getMockupHTML(font)}
+    <!-- Top Row: Name and Meta -->
+    <div class="card-header-row">
+      <span class="font-name-label" style="font-family:${fam},var(--font-display); font-size:1.2rem; opacity: 1; text-transform: none; letter-spacing: normal;">${font.name}</span>
+      <div class="card-meta-right">
+        <span class="meta-item">${font.stylesCount || 1} Style${(font.stylesCount || 1) > 1 ? 's' : ''}</span>
+        <span class="meta-item">${font.variants ? 'Variable' : 'Static'}</span>
+        <span class="meta-item">${font.availability}</span>
+        
+        <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="background:none; border:none; cursor:pointer; color:inherit; padding:0; display:flex; align-items:center;">
+          <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
+        <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}" style="background:none; border:1px solid var(--border-grey); border-radius:4px; padding:2px 8px; cursor:pointer; color:inherit; font-family:var(--font-mono); font-size:10px;">
+          ${isInCompare ? '✕' : '+ COMPARE'}
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Row: Huge Preview Text -->
+    <div class="card-body-row">
+      <div class="huge-preview-text" style="font-family:${fam},sans-serif;">
+        ${titleText}
+      </div>
+    </div>
+
+    <!-- Bottom Row: Foundry -->
+    <div class="card-footer-row">
+      <span class="foundry-label">by ${font.foundry || font.designer || 'Independent'} &middot; <span style="opacity:0.6;font-family:var(--font-mono);">${providerLabel}</span></span>
       ${(font.availability === 'Custom' || font.id.startsWith('custom-upload-')) ? `
-        <button class="custom-font-delete-btn" title="Remove custom font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')">
-          ✕
+        <button class="custom-font-delete-btn" title="Remove custom font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')" style="background:none; border:none; cursor:pointer; color:var(--signal-red);">
+          ✕ REMOVE
         </button>
       ` : ''}
-    </div>
-    <div class="card-info">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
-        <span class="badge-availability-inline ${getBadgeClass(font.availability)}">${font.availability}</span>
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="opacity: 1; transform: scale(1);">
-            <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </button>
-          <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}" style="opacity: 1; transform: scale(1);">
-            ${isInCompare ? '✕' : '+'}
-          </button>
-        </div>
-      </div>
-      <h3 class="card-font-name" style="font-family:${fam},var(--font-display);">${font.name}</h3>
-      <p class="card-tags">
-        <span style="text-transform:uppercase;font-weight:700;color:var(--near-black);background:#E0E0E0;padding:2px 6px;border-radius:3px;margin-right:6px;font-size:0.6rem;font-family:var(--font-mono);">${providerLabel}</span>
-        ${font.style} · ${font.mood} · ${font.useCase}
-      </p>
     </div>
   `;
 
   // Card click → open detail
   card.addEventListener("click", e => {
-    if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn")) return;
+    if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".custom-font-delete-btn")) return;
     openDetailPanel(font);
   });
 
@@ -462,19 +460,29 @@ function appendUploaderCard() {
   card.className = "font-card uploader-card";
   card.id = "font-uploader-card";
   card.innerHTML = `
-    <div class="card-preview-wrapper card-mockup uploader-dropzone" style="display:flex; flex-direction:column; justify-content:center; align-items:center; border:2px dashed var(--border-grey); border-radius:12px; background:rgba(0,0,0,0.02); min-height: 220px; transition: all 0.3s ease; cursor: pointer; padding: 2rem;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary); margin-bottom:1rem; transition: transform 0.3s ease;">
+    <!-- Top Row: Name and Meta -->
+    <div class="card-header-row">
+      <span class="font-name-label" style="font-family:var(--font-body); font-size:1.1rem; opacity: 1; text-transform: none; letter-spacing: normal;">Drag & Drop Font</span>
+      <div class="card-meta-right">
+        <span class="meta-item">SELF-HOSTED PREVIEW</span>
+      </div>
+    </div>
+
+    <!-- Center Row: Dropzone UI -->
+    <div class="card-body-row uploader-dropzone" style="display:flex; flex-direction:column; justify-content:center; align-items:center; border:2px dashed var(--border-grey); border-radius:12px; background:rgba(255,255,255,0.01); transition: all 0.3s ease; cursor: pointer; padding: 1.5rem; width:100%; height:100%; box-sizing:border-box;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary); margin-bottom:0.5rem; transition: transform 0.3s ease;">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
         <polyline points="17 8 12 3 7 8"></polyline>
         <line x1="12" y1="3" x2="12" y2="15"></line>
       </svg>
       <span class="uploader-title" style="font-family:var(--font-mono); font-size:var(--ts-xs); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--near-black);">Drop Custom Font</span>
-      <span class="uploader-subtitle" style="font-size:0.75rem; color:#888; margin-top:0.4rem; text-align:center;">Drag & Drop or Click to Browse</span>
+      <span class="uploader-subtitle" style="font-size:0.7rem; color:#888; margin-top:0.2rem; text-align:center;">Drag & Drop or Click to Browse</span>
       <input type="file" id="hidden-font-input" accept=".ttf,.otf,.woff,.woff2" style="display:none;">
     </div>
-    <div class="card-info" style="border-top: none; padding: 1.5rem 1rem 1rem;">
-      <h3 class="card-font-name" style="font-family:var(--font-body); font-size:var(--ts-sm); font-weight: 600; color: #888;">SELF-HOSTED PREVIEW</h3>
-      <p class="card-tags" style="color:#aaa;">Render any local font (.ttf, .otf, .woff2) live</p>
+
+    <!-- Bottom Row: Info -->
+    <div class="card-footer-row">
+      <span class="foundry-label">Render any local font (.ttf, .otf, .woff2) instantly on the main grid</span>
     </div>
   `;
   el.fontGrid.appendChild(card);
@@ -771,7 +779,7 @@ function setupEventListeners() {
     }
 
     // Don't re-render the whole grid on every keystroke, just update the text in DOM
-    document.querySelectorAll(".mockup-preview-text").forEach(el => {
+    document.querySelectorAll(".huge-preview-text").forEach(el => {
       // Store original HTML if not stored yet
       if (!el.hasAttribute('data-original-html')) {
         el.setAttribute('data-original-html', el.innerHTML);
@@ -792,6 +800,25 @@ function setupEventListeners() {
       globalPreviewInput.focus();
     }
   });
+
+  // Font Size Slider
+  const fontSizeSlider = document.getElementById("font-size-slider");
+  const sliderValueLabel = document.getElementById("slider-value-label");
+  if (fontSizeSlider) {
+    fontSizeSlider.addEventListener("input", e => {
+      const size = e.target.value;
+      if (sliderValueLabel) {
+        sliderValueLabel.textContent = `${size}px`;
+      }
+      if (el.fontGrid) {
+        el.fontGrid.style.setProperty("--preview-font-size", `${size}px`);
+      }
+    });
+    // Set initial size
+    if (el.fontGrid) {
+      el.fontGrid.style.setProperty("--preview-font-size", `${fontSizeSlider.value}px`);
+    }
+  }
 
   // Clear filters
   el.clearFiltersBtn.addEventListener("click", clearAllFilters);
@@ -877,7 +904,11 @@ function setupEventListeners() {
 async function init() {
   // Apply saved dark mode preference
   const savedDark = localStorage.getItem("fontvault-dark");
-  if (savedDark === "1") applyTheme(true);
+  if (savedDark === "0") {
+    applyTheme(false);
+  } else {
+    applyTheme(true);
+  }
 
   // Show a loading state
   if (el.fontGrid) {
