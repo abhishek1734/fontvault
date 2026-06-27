@@ -3004,7 +3004,7 @@ input[type=number] {
   width: 100%;
   padding: 0 4rem;
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 460px;
   gap: 3rem;
   align-items: flex-start;
   box-sizing: border-box;
@@ -3015,25 +3015,52 @@ input[type=number] {
 }
 
 .fd-weights-right {
-  /* scrollable weights list */
-  max-height: 80vh;
-  overflow-y: auto;
+  /* no auto-scroll — show/hide logic via JS */
 }
 
-.fd-weights-right::-webkit-scrollbar {
-  width: 3px;
+.fd-weight-card.fd-weight-hidden {
+  display: none;
 }
 
-.fd-weights-right::-webkit-scrollbar-track {
+.fd-weights-see-more {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.85rem 1.25rem;
   background: transparent;
+  border: 1px dashed var(--border-grey);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
 }
 
-.fd-weights-right::-webkit-scrollbar-thumb {
-  background: var(--border-grey);
-  border-radius: 2px;
+.fd-weights-see-more:hover {
+  border-color: var(--signal-red);
+  color: var(--signal-red);
+  background: rgba(255, 75, 43, 0.04);
 }
 
-@media (max-width: 900px) {
+.fd-weights-see-more .see-more-count {
+  background: var(--signal-red);
+  color: #fff;
+  border-radius: 99px;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+
+@media (max-width: 1100px) {
   .fd-specimen-inner {
     grid-template-columns: 1fr;
     padding: 0 1.5rem;

@@ -181,9 +181,9 @@ function renderFontDetails(font) {
         <!-- Right: Available Weights & Styles -->
         <div class="fd-weights-right">
           <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem; margin-top: 0;">Available Weights &amp; Styles</h3>
-          <div class="fd-weights-grid" style="display: flex; flex-direction: column; gap: 1rem;">
-            ${weights.map(w => `
-              <div class="fd-weight-card" style="padding: 1.25rem 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
+          <div class="fd-weights-grid" id="fd-weights-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+            ${weights.map((w, i) => `
+              <div class="fd-weight-card ${i >= 6 ? 'fd-weight-hidden' : ''}" style="padding: 1.25rem 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-grey); padding-bottom: 0.5rem;">
                   <span style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; color: var(--near-black); text-transform: uppercase;">${getWeightLabel(w)}</span>
                   <span style="font-family: var(--font-mono); font-size: 0.7rem; color: #888;">${w}</span>
@@ -193,6 +193,11 @@ function renderFontDetails(font) {
                 </div>
               </div>
             `).join('')}
+            ${weights.length > 6 ? `
+              <button class="fd-weights-see-more" id="fd-weights-see-more" onclick="toggleRemainingWeights(this, ${weights.length - 6})">
+                See <span class="see-more-count">${weights.length - 6}</span> More Style${weights.length - 6 !== 1 ? 's' : ''}
+              </button>
+            ` : ''}
           </div>
         </div>
       </div>
@@ -783,4 +788,53 @@ window.setLayoutPreset = function(preset, btn) {
 
 window.resetLayoutText = function() {
   setLayoutPreset("default", document.querySelector(".fd-layout-preset-btn"));
-};;
+};
+
+// -------------------------------------------------
+// WEIGHTS SHOW / HIDE TOGGLE
+// -------------------------------------------------
+window.toggleRemainingWeights = function(btn, remaining) {
+  const grid = document.getElementById("fd-weights-grid");
+  if (!grid) return;
+
+  const hiddenCards = grid.querySelectorAll(".fd-weight-card.fd-weight-hidden");
+
+  if (hiddenCards.length > 0) {
+    // Reveal all hidden cards with a staggered fade-in
+    hiddenCards.forEach((card, i) => {
+      card.style.opacity = "0";
+      card.style.transform = "translateY(8px)";
+      card.style.transition = "opacity 0.25s ease, transform 0.25s ease";
+      card.classList.remove("fd-weight-hidden");
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          card.style.opacity = "1";
+          card.style.transform = "translateY(0)";
+        }, i * 40);
+      });
+    });
+    // Update button to collapse mode
+    btn.innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="opacity:0.7">
+        <path d="M18 15l-6-6-6 6"/>
+      </svg>
+      Show Less
+    `;
+  } else {
+    // Re-hide cards beyond index 5
+    const allCards = grid.querySelectorAll(".fd-weight-card");
+    allCards.forEach((card, i) => {
+      if (i >= 6) {
+        card.classList.add("fd-weight-hidden");
+        card.style.opacity = "";
+        card.style.transform = "";
+        card.style.transition = "";
+      }
+    });
+    // Restore See More button text
+    btn.innerHTML = `See <span class="see-more-count">${remaining}</span> More Style${remaining !== 1 ? 's' : ''}`;
+    // Smooth scroll the button back into view
+    btn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+};
+
