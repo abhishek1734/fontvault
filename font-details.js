@@ -193,12 +193,6 @@ function renderFontDetails(font) {
           `).join('')}
         </div>
 
-        <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem;">Glyphs</h3>
-        <div class="fd-glyphs" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 1rem; font-family: ${fam}, serif; font-size: 2rem; text-align: center; color: var(--near-black);">
-          ${"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&@$#%!?".split('').map(char => 
-            `<div style="padding: 1rem 0; border: 1px solid var(--border-grey); border-radius: 6px;">${char}</div>`
-          ).join('')}
-        </div>
       </div>
       
       <aside class="fd-sidebar">
@@ -225,6 +219,62 @@ function renderFontDetails(font) {
           }).join('') : '<p style="color:#888; font-size:0.9rem;">No specific pairings suggested.</p>'}
         </div>
       </aside>
+    </div>
+
+    <!-- Glyphs Editor/Inspection Section -->
+    <div class="fd-glyphs-section">
+      <div class="fd-glyphs-layout">
+        <!-- Left Panel: Large Glyph Preview -->
+        <div class="fd-glyphs-left">
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 1px solid var(--border-grey); padding-bottom:1rem;">
+            <h2 style="font-family:var(--font-display); font-size:2.2rem; font-weight:600; margin:0; color:var(--near-black);">Glyphs</h2>
+            <div style="text-align:right; font-family:var(--font-mono); font-size:0.75rem; color:#888;">
+              <span id="fd-glyph-meta-name" style="display:block; font-weight:600; text-transform:uppercase; color:var(--near-black);">Capital Letter A</span>
+              <span id="fd-glyph-meta-unicode">U+0041</span>
+            </div>
+          </div>
+          <div class="fd-glyph-preview-card">
+            <!-- Guidelines Overlay -->
+            <div class="fd-guidelines-container">
+              <div class="fd-guideline cap-height"><span>Cap Height</span><span>700</span></div>
+              <div class="fd-guideline x-height"><span>X-Height</span><span>500</span></div>
+              <div class="fd-guideline baseline"><span>Baseline</span><span>0</span></div>
+              <div class="fd-guideline descender"><span>Descender</span><span>-200</span></div>
+            </div>
+            <!-- Large Glyph Character -->
+            <div id="fd-large-glyph" class="fd-glyph-display" style="font-family:${fam};">A</div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Glyph Browser -->
+        <div class="fd-glyphs-right">
+          <!-- Top Controls -->
+          <div class="fd-glyph-controls">
+            <select id="fd-glyph-weight-select" class="fd-control-select">
+              <option value="normal" selected>Regular</option>
+              <option value="bold">Bold</option>
+              <option value="italic">Italic</option>
+            </select>
+            
+            <div class="fd-btn-group">
+              <button id="fd-glyph-fill-solid" class="fd-btn-group-btn active" onclick="setGlyphFillMode('solid')">Solid</button>
+              <button id="fd-glyph-fill-outline" class="fd-btn-group-btn" onclick="setGlyphFillMode('outline')">Outline</button>
+            </div>
+            
+            <div class="fd-btn-group">
+              <button id="fd-glyph-set-basic" class="fd-btn-group-btn active" onclick="setGlyphSet('basic')">Basic Set</button>
+              <button id="fd-glyph-set-full" class="fd-btn-group-btn" onclick="setGlyphSet('full')">Full Set</button>
+            </div>
+
+            <input type="text" id="fd-glyph-custom-input" class="fd-control-input" placeholder="Type your letters">
+          </div>
+
+          <!-- Glyph Grid Content -->
+          <div id="fd-glyph-browser-content" style="display:flex; flex-direction:column; gap:2rem;">
+            <!-- Rendered sections injected here -->
+          </div>
+        </div>
+      </div>
     </div>
   `;
 
@@ -300,6 +350,31 @@ function renderFontDetails(font) {
       specimen.style.fontWeight = w;
     });
   }
+
+  // Initialize Glyphs Grid
+  if (typeof renderGlyphGrid === "function") {
+    renderGlyphGrid();
+  }
+
+  // Attach Glyphs weight selector event listener
+  const glyphWeightSelect = document.getElementById("fd-glyph-weight-select");
+  if (glyphWeightSelect) {
+    glyphWeightSelect.addEventListener("change", () => {
+      if (typeof applyStyleOverridesToGrid === "function") {
+        applyStyleOverridesToGrid();
+      }
+    });
+  }
+
+  // Attach Glyphs custom text input listener
+  const glyphCustomInput = document.getElementById("fd-glyph-custom-input");
+  if (glyphCustomInput) {
+    glyphCustomInput.addEventListener("input", () => {
+      if (typeof renderGlyphGrid === "function") {
+        renderGlyphGrid();
+      }
+    });
+  }
 }
 
 // -------------------------------------------------
@@ -361,3 +436,221 @@ function getWeightLabel(weight) {
   };
   return labels[weight] || "Regular";
 }
+
+// -------------------------------------------------
+// GLYPHS INTERACTIVE VIEW SYSTEM
+// -------------------------------------------------
+let currentGlyphSet = "basic";
+let currentGlyphFill = "solid";
+
+function getGlyphMetadata(char) {
+  const code = char.charCodeAt(0);
+  const hex = code.toString(16).toUpperCase().padStart(4, '0');
+  const unicodeStr = `U+${hex}`;
+  
+  let name = "";
+  if (char >= 'A' && char <= 'Z') {
+    name = `Capital Letter ${char}`;
+  } else if (char >= 'a' && char <= 'z') {
+    name = `Lowercase Letter ${char.toUpperCase()}`;
+  } else if (char >= '0' && char <= '9') {
+    name = `Digit ${char}`;
+  } else {
+    const symbolNames = {
+      '!': 'Exclamation Mark',
+      '@': 'At Sign',
+      '#': 'Number Sign / Hash',
+      '$': 'Dollar Sign',
+      '%': 'Percent Sign',
+      '^': 'Caret / Circumflex',
+      '&': 'Ampersand',
+      '*': 'Asterisk',
+      '(': 'Left Parenthesis',
+      ')': 'Right Parenthesis',
+      '-': 'Hyphen-Minus',
+      '_': 'Low Line / Underscore',
+      '=': 'Equals Sign',
+      '+': 'Plus Sign',
+      '{': 'Left Curly Bracket',
+      '}': 'Right Curly Bracket',
+      '[': 'Left Square Bracket',
+      ']': 'Right Square Bracket',
+      '|': 'Vertical Line / Pipe',
+      ':': 'Colon',
+      ';': 'Semicolon',
+      '"': 'Quotation Mark',
+      "'": 'Apostrophe',
+      '<': 'Less-Than Sign',
+      '>': 'Greater-Than Sign',
+      ',': 'Comma',
+      '.': 'Full Stop / Period',
+      '?': 'Question Mark',
+      '/': 'Solidus / Slash',
+      '~': 'Tilde',
+      '`': 'Grave Accent'
+    };
+    name = symbolNames[char] || `Character '${char}'`;
+  }
+  return { name, unicode: unicodeStr };
+}
+
+window.renderGlyphGrid = function() {
+  const container = document.getElementById("fd-glyph-browser-content");
+  if (!container) return;
+
+  const customInput = document.getElementById("fd-glyph-custom-input");
+  const customVal = customInput ? customInput.value : "";
+  
+  let html = "";
+  
+  if (customVal) {
+    // Unique characters from custom input
+    const uniqueChars = Array.from(new Set(customVal.split('')));
+    html += renderGlyphSection("Custom Letters", uniqueChars);
+  } else {
+    // Normal categorized layout
+    if (currentGlyphSet === "basic") {
+      html += renderGlyphSection("Uppercase", "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''));
+      html += renderGlyphSection("Lowercase", "abcdefghijklmnopqrstuvwxyz".split(''));
+      html += renderGlyphSection("Numerals", "0123456789".split(''));
+    } else {
+      html += renderGlyphSection("Uppercase", "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''));
+      html += renderGlyphSection("Lowercase", "abcdefghijklmnopqrstuvwxyz".split(''));
+      html += renderGlyphSection("Numerals", "0123456789".split(''));
+      html += renderGlyphSection("Symbols & Punctuation", "!@#$%^&*()_+-=[]{}|;':\",./<>?~`".split(''));
+    }
+  }
+
+  container.innerHTML = html;
+
+  // Re-apply style and weight overrides to cells
+  applyStyleOverridesToGrid();
+};
+
+function renderGlyphSection(title, chars) {
+  if (chars.length === 0) return "";
+  const currentLargeChar = document.getElementById("fd-large-glyph")?.textContent || "A";
+
+  const cellsHTML = chars.map(char => {
+    const isActive = char === currentLargeChar;
+    const outlineStyle = currentGlyphFill === "outline" ? "-webkit-text-stroke:1px currentColor; color:transparent !important;" : "";
+    return `<div class="fd-glyph-cell ${isActive ? 'active' : ''}" style="${outlineStyle}" onclick="selectGlyph('${char}', this)">${char}</div>`;
+  }).join('');
+
+  return `
+    <div class="fd-glyph-section">
+      <div class="fd-glyph-section-header">
+        <span>${title}</span>
+        <span style="opacity: 0.5;">${chars.length} glyphs</span>
+      </div>
+      <div class="fd-glyph-grid">
+        ${cellsHTML}
+      </div>
+    </div>
+  `;
+}
+
+window.selectGlyph = function(char, cellElement) {
+  const largeGlyph = document.getElementById("fd-large-glyph");
+  const nameEl = document.getElementById("fd-glyph-meta-name");
+  const unicodeEl = document.getElementById("fd-glyph-meta-unicode");
+
+  if (!largeGlyph) return;
+
+  // Scale pop transition animation
+  largeGlyph.classList.add("scale-pop");
+  
+  setTimeout(() => {
+    largeGlyph.textContent = char;
+    
+    // Update metadata
+    const meta = getGlyphMetadata(char);
+    if (nameEl) nameEl.textContent = meta.name;
+    if (unicodeEl) unicodeEl.textContent = meta.unicode;
+    
+    largeGlyph.classList.remove("scale-pop");
+  }, 150);
+
+  // Update active cell class
+  const grid = cellElement.closest("#fd-glyph-browser-content");
+  if (grid) {
+    grid.querySelectorAll(".fd-glyph-cell").forEach(cell => {
+      cell.classList.remove("active");
+    });
+  }
+  cellElement.classList.add("active");
+};
+
+window.setGlyphFillMode = function(mode) {
+  currentGlyphFill = mode;
+  
+  const solidBtn = document.getElementById("fd-glyph-fill-solid");
+  const outlineBtn = document.getElementById("fd-glyph-fill-outline");
+  if (solidBtn && outlineBtn) {
+    if (mode === "solid") {
+      solidBtn.classList.add("active");
+      outlineBtn.classList.remove("active");
+    } else {
+      solidBtn.classList.remove("active");
+      outlineBtn.classList.add("active");
+    }
+  }
+
+  const largeGlyph = document.getElementById("fd-large-glyph");
+  if (largeGlyph) {
+    if (mode === "outline") {
+      largeGlyph.style.webkitTextStroke = "2px var(--near-black)";
+      largeGlyph.style.color = "transparent";
+    } else {
+      largeGlyph.style.webkitTextStroke = "none";
+      largeGlyph.style.color = "var(--near-black)";
+    }
+  }
+
+  renderGlyphGrid();
+};
+
+window.setGlyphSet = function(set) {
+  currentGlyphSet = set;
+  
+  const basicBtn = document.getElementById("fd-glyph-set-basic");
+  const fullBtn = document.getElementById("fd-glyph-set-full");
+  if (basicBtn && fullBtn) {
+    if (set === "basic") {
+      basicBtn.classList.add("active");
+      fullBtn.classList.remove("active");
+    } else {
+      basicBtn.classList.remove("active");
+      fullBtn.classList.add("active");
+    }
+  }
+
+  renderGlyphGrid();
+};
+
+window.applyStyleOverridesToGrid = function() {
+  const weightSelect = document.getElementById("fd-glyph-weight-select");
+  if (!weightSelect) return;
+  
+  const mode = weightSelect.value;
+  let weight = "400";
+  let style = "normal";
+  
+  if (mode === "bold") {
+    weight = "700";
+  } else if (mode === "italic") {
+    style = "italic";
+  }
+
+  const largeGlyph = document.getElementById("fd-large-glyph");
+  if (largeGlyph) {
+    largeGlyph.style.fontWeight = weight;
+    largeGlyph.style.fontStyle = style;
+  }
+
+  const cells = document.querySelectorAll(".fd-glyph-cell");
+  cells.forEach(cell => {
+    cell.style.fontWeight = weight;
+    cell.style.fontStyle = style;
+  });
+};
