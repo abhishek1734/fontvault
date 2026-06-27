@@ -989,8 +989,12 @@ async function init() {
   tooltip.textContent = "Click on text to edit";
   document.body.appendChild(tooltip);
 
-  // Tooltip mouse movement listener
+  // Tooltip mouse movement listener with 5s fade timeout
   if (el.fontGrid) {
+    let lastHoveredCard = null;
+    let tooltipTimeout = null;
+    let fadeOutTimeout = null;
+
     el.fontGrid.addEventListener("mousemove", e => {
       const card = e.target.closest(".font-card");
       const tooltipEl = document.getElementById("edit-tooltip");
@@ -998,19 +1002,51 @@ async function init() {
         // Hide tooltip if hovering interactive controls
         if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".view-family-hover-btn") || e.target.closest(".custom-font-delete-btn")) {
           tooltipEl.style.display = "none";
+          clearTimeout(tooltipTimeout);
+          clearTimeout(fadeOutTimeout);
+          lastHoveredCard = null;
           return;
         }
-        tooltipEl.style.display = "block";
-        tooltipEl.style.left = (e.clientX + 15) + "px";
-        tooltipEl.style.top = (e.clientY + 15) + "px";
+
+        // If entering a different card, show tooltip and start 5-second timer
+        if (card !== lastHoveredCard) {
+          lastHoveredCard = card;
+          clearTimeout(tooltipTimeout);
+          clearTimeout(fadeOutTimeout);
+          
+          tooltipEl.classList.remove("fade-out");
+          tooltipEl.style.display = "block";
+          
+          tooltipTimeout = setTimeout(() => {
+            tooltipEl.classList.add("fade-out");
+            fadeOutTimeout = setTimeout(() => {
+              tooltipEl.style.display = "none";
+            }, 300);
+          }, 5000);
+        }
+
+        // Only update position if it's currently visible
+        if (tooltipEl.style.display !== "none") {
+          tooltipEl.style.left = (e.clientX + 15) + "px";
+          tooltipEl.style.top = (e.clientY + 15) + "px";
+        }
       } else if (tooltipEl) {
         tooltipEl.style.display = "none";
+        clearTimeout(tooltipTimeout);
+        clearTimeout(fadeOutTimeout);
+        lastHoveredCard = null;
       }
     });
 
     el.fontGrid.addEventListener("mouseleave", () => {
       const tooltipEl = document.getElementById("edit-tooltip");
-      if (tooltipEl) tooltipEl.style.display = "none";
+      if (tooltipEl) {
+        tooltipEl.style.display = "none";
+        tooltipEl.classList.remove("fade-out");
+      }
+      clearTimeout(tooltipTimeout);
+      clearTimeout(fadeOutTimeout);
+      lastHoveredCard = null;
     });
   }
 

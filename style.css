@@ -2670,6 +2670,12 @@ input[type=range]::-moz-range-thumb {
   white-space: nowrap;
   z-index: 99999;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+
+.edit-tooltip.fade-out {
+  opacity: 0;
 }
 
 [data-theme="dark"] .edit-tooltip {
