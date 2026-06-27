@@ -140,7 +140,7 @@ function renderFontDetails(font) {
             <button class="fd-unit-btn" id="fd-unit-toggle">Switch to REM</button>
           </div>
           <div class="fd-tester" style="border: 1px solid var(--border-grey); border-radius: 8px; overflow: hidden;">
-            <div style="padding: 1rem; border-bottom: 1px solid var(--border-grey); background: rgba(0,0,0,0.02); display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-end;">
+            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-grey); background: rgba(0,0,0,0.02); display: flex; flex-wrap: wrap; column-gap: 3.5rem; row-gap: 1.5rem; align-items: flex-end;">
               <div style="display:flex; flex-direction:column; min-width: 140px;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
                   <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Size</label>
@@ -182,8 +182,8 @@ function renderFontDetails(font) {
         <div class="fd-weights-right">
           <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem; margin-top: 0;">Available Weights &amp; Styles</h3>
           <div class="fd-weights-grid" id="fd-weights-grid" style="display: flex; flex-direction: column; gap: 1rem;">
-            ${weights.map((w, i) => `
-              <div class="fd-weight-card ${i >= 6 ? 'fd-weight-hidden' : ''}" style="padding: 1.25rem 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
+            ${weights.slice(0, 6).map((w, i) => `
+              <div class="fd-weight-card" style="padding: 1.25rem 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-grey); padding-bottom: 0.5rem;">
                   <span style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; color: var(--near-black); text-transform: uppercase;">${getWeightLabel(w)}</span>
                   <span style="font-family: var(--font-mono); font-size: 0.7rem; color: #888;">${w}</span>
@@ -194,6 +194,19 @@ function renderFontDetails(font) {
               </div>
             `).join('')}
             ${weights.length > 6 ? `
+              <div id="fd-hidden-weights-wrapper" style="display: flex; flex-direction: column; gap: 1rem; max-height: 0px; opacity: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;">
+                ${weights.slice(6).map((w, i) => `
+                  <div class="fd-weight-card" style="padding: 1.25rem 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-grey); padding-bottom: 0.5rem;">
+                      <span style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; color: var(--near-black); text-transform: uppercase;">${getWeightLabel(w)}</span>
+                      <span style="font-family: var(--font-mono); font-size: 0.7rem; color: #888;">${w}</span>
+                    </div>
+                    <div class="fd-weight-preview" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: 1.5rem; font-weight: ${w}; line-height: 1.2; color: var(--near-black); outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      The quick brown fox
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
               <button class="fd-weights-see-more" id="fd-weights-see-more" onclick="toggleRemainingWeights(this, ${weights.length - 6})">
                 See <span class="see-more-count">${weights.length - 6}</span> More Style${weights.length - 6 !== 1 ? 's' : ''}
               </button>
@@ -794,45 +807,31 @@ window.resetLayoutText = function() {
 // WEIGHTS SHOW / HIDE TOGGLE
 // -------------------------------------------------
 window.toggleRemainingWeights = function(btn, remaining) {
-  const grid = document.getElementById("fd-weights-grid");
-  if (!grid) return;
+  const wrapper = document.getElementById("fd-hidden-weights-wrapper");
+  if (!wrapper) return;
 
-  const hiddenCards = grid.querySelectorAll(".fd-weight-card.fd-weight-hidden");
+  const isCollapsed = wrapper.style.maxHeight === "0px" || wrapper.style.maxHeight === "";
 
-  if (hiddenCards.length > 0) {
-    // Reveal all hidden cards with a staggered fade-in
-    hiddenCards.forEach((card, i) => {
-      card.style.opacity = "0";
-      card.style.transform = "translateY(8px)";
-      card.style.transition = "opacity 0.25s ease, transform 0.25s ease";
-      card.classList.remove("fd-weight-hidden");
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          card.style.opacity = "1";
-          card.style.transform = "translateY(0)";
-        }, i * 40);
-      });
-    });
+  if (isCollapsed) {
+    // Expand
+    wrapper.style.maxHeight = wrapper.scrollHeight + "px";
+    wrapper.style.opacity = "1";
+    
     // Update button to collapse mode
     btn.innerHTML = `
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="opacity:0.7">
-        <path d="M18 15l-6-6-6 6"/>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="opacity:0.7; transform: rotate(180deg); margin-right: 0.25rem;">
+        <path d="M19 9l-7 7-7-7"/>
       </svg>
       Show Less
     `;
   } else {
-    // Re-hide cards beyond index 5
-    const allCards = grid.querySelectorAll(".fd-weight-card");
-    allCards.forEach((card, i) => {
-      if (i >= 6) {
-        card.classList.add("fd-weight-hidden");
-        card.style.opacity = "";
-        card.style.transform = "";
-        card.style.transition = "";
-      }
-    });
+    // Collapse
+    wrapper.style.maxHeight = "0px";
+    wrapper.style.opacity = "0";
+
     // Restore See More button text
     btn.innerHTML = `See <span class="see-more-count">${remaining}</span> More Style${remaining !== 1 ? 's' : ''}`;
+    
     // Smooth scroll the button back into view
     btn.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
