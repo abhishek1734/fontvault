@@ -995,12 +995,29 @@ async function init() {
     let tooltipTimeout = null;
     let fadeOutTimeout = null;
 
+    // Instantly hide tooltip when entering edit mode
+    document.addEventListener("focusin", e => {
+      if (e.target.closest(".huge-preview-text")) {
+        const tooltipEl = document.getElementById("edit-tooltip");
+        if (tooltipEl) {
+          tooltipEl.style.display = "none";
+          tooltipEl.classList.add("fade-out");
+          clearTimeout(tooltipTimeout);
+          clearTimeout(fadeOutTimeout);
+          lastHoveredCard = null;
+        }
+      }
+    });
+
     el.fontGrid.addEventListener("mousemove", e => {
       const card = e.target.closest(".font-card");
       const tooltipEl = document.getElementById("edit-tooltip");
       if (card && tooltipEl) {
-        // Hide tooltip if hovering interactive controls
-        if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".view-family-hover-btn") || e.target.closest(".custom-font-delete-btn")) {
+        const activeEl = document.activeElement;
+        const isEditing = activeEl && activeEl.closest(".huge-preview-text") && activeEl.closest(".font-card") === card;
+
+        // Hide tooltip if hovering interactive controls or currently editing
+        if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".view-family-hover-btn") || e.target.closest(".custom-font-delete-btn") || isEditing) {
           tooltipEl.style.display = "none";
           clearTimeout(tooltipTimeout);
           clearTimeout(fadeOutTimeout);
@@ -1014,8 +1031,9 @@ async function init() {
           clearTimeout(tooltipTimeout);
           clearTimeout(fadeOutTimeout);
           
-          tooltipEl.classList.remove("fade-out");
           tooltipEl.style.display = "block";
+          tooltipEl.offsetHeight; // Force reflow for smooth transition
+          tooltipEl.classList.remove("fade-out");
           
           tooltipTimeout = setTimeout(() => {
             tooltipEl.classList.add("fade-out");
@@ -1026,7 +1044,7 @@ async function init() {
         }
 
         // Only update position if it's currently visible
-        if (tooltipEl.style.display !== "none") {
+        if (tooltipEl.style.display !== "none" && !tooltipEl.classList.contains("fade-out")) {
           tooltipEl.style.left = (e.clientX + 15) + "px";
           tooltipEl.style.top = (e.clientY + 15) + "px";
         }
