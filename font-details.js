@@ -60,7 +60,7 @@ function renderFontDetails(font) {
   
   // Render structure
   root.innerHTML = `
-    <div class="fd-hero" style="padding: 6rem 2rem 4rem; text-align: center; border-bottom: 1px solid var(--border-grey);">
+    <div class="fd-hero" style="padding: 6rem 4rem 4rem; text-align: center; border-bottom: 1px solid var(--border-grey);">
       <p style="font-family: var(--font-mono); color: #888; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 1rem;">
         ${font.provider || 'custom'} / ${font.style || 'Display'}
       </p>

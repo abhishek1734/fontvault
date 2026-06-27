@@ -2715,10 +2715,10 @@ input[type=number] {
    GLYPHS SECTION
 ======================================== */
 .fd-glyphs-section {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 6rem 2rem;
+  width: 100%;
+  padding: 6rem 4rem;
   border-top: 1px solid var(--border-grey);
+  box-sizing: border-box;
 }
 
 .fd-glyphs-layout {
@@ -2961,12 +2961,18 @@ input[type=number] {
 }
 
 @media (max-width: 768px) {
+  .fd-glyphs-section {
+    padding: 4rem 1.5rem;
+  }
   .fd-glyph-grid {
     grid-template-columns: repeat(6, 1fr);
   }
 }
 
 @media (max-width: 480px) {
+  .fd-glyphs-section {
+    padding: 3rem 1rem;
+  }
   .fd-glyph-grid {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -2995,13 +3001,13 @@ input[type=number] {
 }
 
 .fd-specimen-inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  width: 100%;
+  padding: 0 4rem;
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr 360px;
   gap: 3rem;
   align-items: flex-start;
+  box-sizing: border-box;
 }
 
 .fd-specimen-left {
@@ -3030,6 +3036,7 @@ input[type=number] {
 @media (max-width: 900px) {
   .fd-specimen-inner {
     grid-template-columns: 1fr;
+    padding: 0 1.5rem;
   }
   .fd-weights-right {
     max-height: none;
@@ -3052,13 +3059,15 @@ input[type=number] {
 }
 
 .fd-layout-header {
-  max-width: 1400px;
-  margin: 0 auto 0;
-  padding: 0 2rem 2rem;
+  width: 100%;
+  padding: 0 4rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .fd-layout-header h2 {
@@ -3115,11 +3124,11 @@ input[type=number] {
 
 /* Layout rows */
 .fd-layout-row {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2.5rem 2rem;
+  width: 100%;
+  padding: 3rem 4rem;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   position: relative;
+  box-sizing: border-box;
 }
 
 .fd-layout-row-label {
@@ -3225,6 +3234,12 @@ input[type=number] {
 }
 
 @media (max-width: 768px) {
+  .fd-layout-header {
+    padding: 0 1.5rem 2rem;
+  }
+  .fd-layout-row {
+    padding: 2rem 1.5rem;
+  }
   .fd-layout-body-text {
     grid-template-columns: 1fr;
   }
@@ -3244,13 +3259,13 @@ input[type=number] {
 }
 
 .fd-details-inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  width: 100%;
+  padding: 0 4rem;
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 5rem;
   align-items: flex-start;
+  box-sizing: border-box;
 }
 
 .fd-details-col h3,
@@ -3264,6 +3279,7 @@ input[type=number] {
   .fd-details-inner {
     grid-template-columns: 1fr;
     gap: 3rem;
+    padding: 0 1.5rem;
   }
 }
 
