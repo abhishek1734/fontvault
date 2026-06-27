@@ -292,19 +292,21 @@ function appendFontCard(font, delay) {
       <div class="huge-preview-text" contenteditable="true" spellcheck="false" style="font-family:${fam},sans-serif;">
         ${titleText}
       </div>
-      <a class="view-family-hover-btn" href="font.html?id=${font.id}" target="_blank">
-        VIEW FAMILY
-      </a>
     </div>
 
-    <!-- Bottom Row: Foundry -->
+    <!-- Bottom Row: Foundry and View Family -->
     <div class="card-footer-row">
       <span class="foundry-label">by ${font.foundry || font.designer || 'Independent'} &middot; <span style="opacity:0.6;font-family:var(--font-mono);">${providerLabel}</span></span>
-      ${(font.availability === 'Custom' || font.id.startsWith('custom-upload-')) ? `
-        <button class="custom-font-delete-btn" title="Remove custom font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')" style="background:none; border:none; cursor:pointer; color:var(--signal-red);">
-          ✕ REMOVE
-        </button>
-      ` : ''}
+      <div class="card-footer-right" style="display:flex; align-items:center; gap:1rem;">
+        ${(font.availability === 'Custom' || font.id.startsWith('custom-upload-')) ? `
+          <button class="custom-font-delete-btn" title="Remove custom font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')" style="background:none; border:none; cursor:pointer; color:var(--signal-red); font-family:var(--font-mono); font-size:10px; font-weight:700;">
+            ✕ REMOVE
+          </button>
+        ` : ''}
+        <a class="view-family-hover-btn" href="font.html?id=${font.id}" target="_blank">
+          VIEW FAMILY
+        </a>
+      </div>
     </div>
   `;
 

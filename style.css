@@ -436,13 +436,16 @@ header.collapsed + .main-container .sidebar-filters {
 }
 
 .sidebar-filters .filter-group-title::after {
-  content: '→';
-  font-size: 0.8rem;
-  transition: transform 0.2s ease;
+  content: '+';
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: none;
 }
 
 .sidebar-filters .filter-group[open] .filter-group-title::after {
-  transform: rotate(90deg);
+  content: '−';
+  transform: none;
 }
 
 .sidebar-filters .pill-container {
@@ -1688,40 +1691,29 @@ footer {
 }
 
 .view-family-hover-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  opacity: 0;
-  pointer-events: none;
-  background-color: var(--signal-red);
-  color: #ffffff !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 0 !important; /* Rectangular! */
+  border: 1px solid var(--signal-red) !important;
+  background-color: transparent !important;
+  color: var(--signal-red) !important;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 12px 24px;
-  border-radius: 24px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   text-decoration: none;
-  box-shadow: 0 10px 30px rgba(255, 75, 43, 0.3);
-  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
-  z-index: 10;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: none !important;
 }
 
 .view-family-hover-btn:hover {
-  background-color: #ff3314;
-  transform: translate(-50%, -50%) scale(1.05);
-}
-
-.font-card:hover .view-family-hover-btn {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-  pointer-events: auto;
-}
-
-.font-card:hover .huge-preview-text {
-  opacity: 0.25;
-  filter: blur(0.5px);
+  background-color: var(--signal-red) !important;
+  color: #ffffff !important;
 }
 
 .favorite-add-btn {
