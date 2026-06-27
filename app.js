@@ -982,6 +982,38 @@ async function init() {
   setupSharedEventListeners();
   updateClearButtonVisibility();
 
+  // Create global edit tooltip dynamically
+  const tooltip = document.createElement("div");
+  tooltip.id = "edit-tooltip";
+  tooltip.className = "edit-tooltip";
+  tooltip.textContent = "Click on text to edit";
+  document.body.appendChild(tooltip);
+
+  // Tooltip mouse movement listener
+  if (el.fontGrid) {
+    el.fontGrid.addEventListener("mousemove", e => {
+      const card = e.target.closest(".font-card");
+      const tooltipEl = document.getElementById("edit-tooltip");
+      if (card && tooltipEl) {
+        // Hide tooltip if hovering interactive controls
+        if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".view-family-hover-btn") || e.target.closest(".custom-font-delete-btn")) {
+          tooltipEl.style.display = "none";
+          return;
+        }
+        tooltipEl.style.display = "block";
+        tooltipEl.style.left = (e.clientX + 15) + "px";
+        tooltipEl.style.top = (e.clientY + 15) + "px";
+      } else if (tooltipEl) {
+        tooltipEl.style.display = "none";
+      }
+    });
+
+    el.fontGrid.addEventListener("mouseleave", () => {
+      const tooltipEl = document.getElementById("edit-tooltip");
+      if (tooltipEl) tooltipEl.style.display = "none";
+    });
+  }
+
   if (q && document.getElementById("search-clear-btn")) {
     document.getElementById("search-clear-btn").classList.add("visible");
   }
