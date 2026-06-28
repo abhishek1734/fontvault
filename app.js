@@ -1257,8 +1257,8 @@ function setupAiFontFinder() {
       }));
 
       const apiKey = window.GEMINI_API_KEY || "";
-      if (!apiKey) {
-        throw new Error("Gemini API key is not configured in config.js");
+      if (!apiKey || apiKey === "PLACEHOLDER_API_KEY") {
+        throw new Error("Gemini API key is set to 'PLACEHOLDER_API_KEY'. Please make sure your local config.js contains your actual API key and refresh.");
       }
 
       // Gemini Prompt structure
