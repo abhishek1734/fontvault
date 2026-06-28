@@ -1204,6 +1204,77 @@ window.resetCardFontSize = function(btn, fontId) {
 };
 
 // ─────────────────────────────────────────────────
+//  API KEY SETUP MODAL
+// ─────────────────────────────────────────────────
+function showApiKeyModal(onSave) {
+  // Don't show twice
+  if (document.getElementById("api-key-modal")) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "api-key-modal";
+  overlay.innerHTML = `
+    <div class="api-key-modal-backdrop"></div>
+    <div class="api-key-modal-box">
+      <div class="api-key-modal-icon">🔑</div>
+      <h2 class="api-key-modal-title">Enter your Gemini API Key</h2>
+      <p class="api-key-modal-desc">
+        FontVault's AI Font Finder uses Google Gemini. Your key is stored only in your browser's local storage and never sent to any server other than Google.
+      </p>
+      <p class="api-key-modal-desc">
+        Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com</a>
+      </p>
+      <input
+        type="text"
+        id="api-key-modal-input"
+        class="api-key-modal-input"
+        placeholder="Paste your Gemini API key here…"
+        spellcheck="false"
+        autocomplete="off"
+      />
+      <div class="api-key-modal-actions">
+        <button id="api-key-modal-save" class="api-key-modal-btn-save">Save &amp; Search</button>
+        <button id="api-key-modal-cancel" class="api-key-modal-btn-cancel">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  // Pre-fill if there's an existing key
+  const existing = localStorage.getItem("fontvault-gemini-key") || "";
+  if (existing && existing !== "PLACEHOLDER_API_KEY") {
+    document.getElementById("api-key-modal-input").value = existing;
+  }
+
+  document.getElementById("api-key-modal-save").addEventListener("click", () => {
+    const key = document.getElementById("api-key-modal-input").value.trim();
+    if (!key) {
+      document.getElementById("api-key-modal-input").classList.add("api-key-modal-input--error");
+      return;
+    }
+    localStorage.setItem("fontvault-gemini-key", key);
+    overlay.remove();
+    if (typeof onSave === "function") onSave();
+  });
+
+  document.getElementById("api-key-modal-cancel").addEventListener("click", () => {
+    overlay.remove();
+  });
+
+  document.querySelector(".api-key-modal-backdrop").addEventListener("click", () => {
+    overlay.remove();
+  });
+
+  document.getElementById("api-key-modal-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      document.getElementById("api-key-modal-save").click();
+    }
+  });
+
+  // Focus input
+  setTimeout(() => document.getElementById("api-key-modal-input")?.focus(), 50);
+}
+
+// ─────────────────────────────────────────────────
 //  AI FONT FINDER LOGIC
 // ─────────────────────────────────────────────────
 function setupAiFontFinder() {
@@ -1256,9 +1327,17 @@ function setupAiFontFinder() {
         provider: f.provider || "google"
       }));
 
-      const apiKey = window.GEMINI_API_KEY || "";
+      const apiKey = localStorage.getItem("fontvault-gemini-key") || window.GEMINI_API_KEY || "";
       if (!apiKey || apiKey === "PLACEHOLDER_API_KEY") {
-        throw new Error("Gemini API key is set to 'PLACEHOLDER_API_KEY'. Please make sure your local config.js contains your actual API key and refresh.");
+        // Show the API key setup modal instead of throwing
+        showApiKeyModal(() => {
+          // After key is saved, re-trigger the search
+          submitBtn.click();
+        });
+        clearInterval(msgInterval);
+        loadingState.style.display = "none";
+        submitBtn.disabled = false;
+        return;
       }
 
       // Gemini Prompt structure
