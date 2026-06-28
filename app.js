@@ -794,21 +794,15 @@ function setupEventListeners() {
   if (vaultBtn) {
     vaultBtn.addEventListener("click", () => {
       activeFilters["Favorites"] = !activeFilters["Favorites"];
+      vaultBtn.classList.toggle("active", activeFilters["Favorites"]);
+      
       if (activeFilters["Favorites"]) {
-        vaultBtn.style.background = "var(--signal-red)";
-        vaultBtn.style.color = "#fff";
-        vaultBtn.innerHTML = `My Vault`;
-        
         // Smooth scroll to the font grid
         if (el.fontGrid) {
           setTimeout(() => {
             el.fontGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 100);
         }
-      } else {
-        vaultBtn.style.background = "transparent";
-        vaultBtn.style.color = "var(--near-black)";
-        vaultBtn.innerHTML = `My Vault`;
       }
       renderGrid(true);
     });
@@ -987,10 +981,10 @@ function setupEventListeners() {
 async function init() {
   // Apply saved dark mode preference
   const savedDark = localStorage.getItem("fontvault-dark");
-  if (savedDark === "0") {
-    applyTheme(false);
-  } else {
+  if (savedDark === "1") {
     applyTheme(true);
+  } else {
+    applyTheme(false);
   }
 
   // Show a loading state
@@ -1015,9 +1009,7 @@ async function init() {
     activeFilters["Favorites"] = true;
     const vaultBtn = document.getElementById("vault-btn");
     if (vaultBtn) {
-      vaultBtn.style.background = "var(--signal-red)";
-      vaultBtn.style.color = "#fff";
-      vaultBtn.innerHTML = `My Vault`;
+      vaultBtn.classList.add("active");
     }
   }
 
