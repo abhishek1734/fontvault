@@ -1316,7 +1316,18 @@ JSON Schema:
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let errDetails = "";
+        try {
+          const errJson = await response.json();
+          errDetails = errJson.error?.message || JSON.stringify(errJson);
+        } catch (e) {
+          try {
+            errDetails = await response.text();
+          } catch (t) {
+            errDetails = "Could not read error details";
+          }
+        }
+        throw new Error(`HTTP ${response.status} - ${errDetails}`);
       }
 
       const data = await response.json();
