@@ -1185,7 +1185,6 @@ window.updateCardFontSizeFromInput = function(input, fontId) {
     }
   }
 };
-
 window.resetCardFontSize = function(btn, fontId) {
   const card = btn.closest(".font-card");
   if (card) {
@@ -1203,5 +1202,408 @@ window.resetCardFontSize = function(btn, fontId) {
     btn.style.display = "none";
   }
 };
+
+// ─────────────────────────────────────────────────
+//  AI FONT FINDER LOGIC
+// ─────────────────────────────────────────────────
+function setupAiFontFinder() {
+  const finderInput = document.getElementById("ai-finder-input");
+  const submitBtn = document.getElementById("ai-finder-submit-btn");
+  const loadingState = document.getElementById("ai-finder-loading");
+  const loadingText = document.getElementById("ai-finder-loading-text");
+  const resultsContainer = document.getElementById("ai-finder-results");
+  const suggestions = document.querySelectorAll(".suggestion-tag");
+
+  if (!submitBtn || !finderInput) return;
+
+  // Handle suggestion tags clicks
+  suggestions.forEach(tag => {
+    tag.addEventListener("click", () => {
+      finderInput.value = tag.getAttribute("data-prompt");
+      submitBtn.click();
+    });
+  });
+
+  // Handle CTA Submit button click
+  submitBtn.addEventListener("click", async () => {
+    const prompt = finderInput.value.trim();
+    if (!prompt) return;
+
+    // Show loading state, hide results
+    loadingState.style.display = "block";
+    resultsContainer.style.display = "none";
+    submitBtn.disabled = true;
+
+    // Loading texts rotation
+    const loadingMsgs = [
+      "Analyzing typography style...",
+      "Matching font personalities...",
+      "Finding best combinations...",
+      "Checking spacing guidelines..."
+    ];
+    let msgIdx = 0;
+    loadingText.textContent = loadingMsgs[msgIdx];
+    const msgInterval = setInterval(() => {
+      msgIdx = (msgIdx + 1) % loadingMsgs.length;
+      loadingText.textContent = loadingMsgs[msgIdx];
+    }, 1500);
+
+    try {
+      // Build dynamically loaded font database to restrict recommendations
+      const allFontsList = fontsData.map(f => ({
+        name: f.name,
+        category: f.style || "Sans-Serif",
+        provider: f.provider || "google"
+      }));
+
+      const apiKey = window.GEMINI_API_KEY || "";
+      if (!apiKey) {
+        throw new Error("Gemini API key is not configured in config.js");
+      }
+
+      // Gemini Prompt structure
+      const systemPrompt = `You are a typography specialist. Analyze the user's project intent/design goal and recommend the best fonts from the provided database.
+Available Font Database:
+${JSON.stringify(allFontsList)}
+
+Return a JSON object matching this schema exactly. You must ONLY recommend font names that exist in the provided database. Do not hallucinate or use external font names.
+
+JSON Schema:
+{
+  "headline_fonts": [
+    {
+      "name": "string (Exact font name from database)",
+      "explanation": "string (Why it is perfect for headlines/logos/hero section)"
+    }
+  ], // Recommend exactly 3 headline fonts
+  "body_fonts": [
+    {
+      "name": "string (Exact font name from database)",
+      "explanation": "string (Why it is perfect for body text/interface readability)"
+    }
+  ], // Recommend exactly 3 body fonts
+  "pairings": [
+    {
+      "heading_font": "string (Exact font name from database)",
+      "body_font": "string (Exact font name from database)",
+      "score": number (out of 10, e.g. 9.3),
+      "reason": "string (Why this pair works well together)"
+    }
+  ], // Generate 2-3 pairings
+  "insights": {
+    "emotional_tone": "string",
+    "brand_positioning": "string",
+    "visual_strategy": "string"
+  }
+}`;
+
+      // Call API via standard fetch
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: systemPrompt },
+              { text: `User request: ${prompt}` }
+            ]
+          }],
+          generationConfig: {
+            responseMimeType: "application/json"
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) throw new Error("Empty response from AI");
+
+      const result = JSON.parse(rawText);
+      renderAiResults(result);
+
+    } catch (err) {
+      console.error("AI Finder Error:", err);
+      showAiError();
+    } finally {
+      clearInterval(msgInterval);
+      loadingState.style.display = "none";
+      submitBtn.disabled = false;
+    }
+  });
+
+  // Action Buttons handlers
+  document.getElementById("ai-action-regenerate")?.addEventListener("click", () => {
+    submitBtn.click();
+  });
+
+  document.getElementById("ai-action-similar")?.addEventListener("click", () => {
+    // Look at first headline font recommendation
+    const firstHeadlineEl = document.querySelector("#headline-recommendations .ai-rec-card");
+    if (!firstHeadlineEl) return;
+    const name = firstHeadlineEl.getAttribute("data-ai-font-name");
+    const found = fontsData.find(f => f.name.toLowerCase() === name.toLowerCase());
+    if (found && found.style) {
+      // Toggle category filter
+      activeFilters["Style"] = [found.style];
+      // Sync filter UI checkboxes
+      const checkboxes = document.querySelectorAll(".filter-checkbox");
+      checkboxes.forEach(cb => {
+        if (cb.dataset.group === "Style") {
+          cb.checked = (cb.dataset.value === found.style);
+        }
+      });
+      renderGrid(true);
+      document.getElementById("main-content").scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
+  document.getElementById("ai-action-save")?.addEventListener("click", () => {
+    const recommendedNames = Array.from(document.querySelectorAll("[data-ai-font-name]")).map(el => el.getAttribute("data-ai-font-name"));
+    if (recommendedNames.length === 0) return;
+    
+    let addedCount = 0;
+    recommendedNames.forEach(name => {
+      const found = fontsData.find(f => f.name.toLowerCase() === name.toLowerCase());
+      if (found) {
+        let favorites = JSON.parse(localStorage.getItem("fontvault-favorites") || "[]");
+        if (!favorites.includes(found.id)) {
+          favorites.push(found.id);
+          localStorage.setItem("fontvault-favorites", JSON.stringify(favorites));
+          addedCount++;
+        }
+      }
+    });
+
+    if (addedCount > 0) {
+      alert(`Added ${addedCount} recommended fonts to My Vault (Favorites)!`);
+    } else {
+      alert("These recommended fonts are already in My Vault!");
+    }
+  });
+
+  document.getElementById("ai-action-compare")?.addEventListener("click", () => {
+    // Add recommended fonts to compareSet
+    const recommendedNames = Array.from(document.querySelectorAll("[data-ai-font-name]")).map(el => el.getAttribute("data-ai-font-name"));
+    if (recommendedNames.length === 0) return;
+    
+    let addedCount = 0;
+    recommendedNames.forEach(name => {
+      const found = fontsData.find(f => f.name.toLowerCase() === name.toLowerCase());
+      if (found) {
+        if (!compareSet.has(found.id)) {
+          if (compareSet.size >= 3) {
+            // Remove first added to stay under 3 fonts limit
+            const firstId = [...compareSet][0];
+            compareSet.delete(firstId);
+          }
+          compareSet.add(found.id);
+          addedCount++;
+        }
+      }
+    });
+
+    if (addedCount > 0) {
+      updateCompareTray();
+      // Also refresh all compare buttons on visible cards
+      document.querySelectorAll(".compare-add-btn").forEach(btn => {
+        const id = btn.dataset.id;
+        const inSet = compareSet.has(id);
+        btn.classList.toggle("in-compare", inSet);
+        btn.textContent = inSet ? "✕ COMPARE" : "+ COMPARE";
+        btn.title = inSet ? "Remove from compare" : "Add to compare";
+      });
+      alert(`Added ${addedCount} recommended fonts to Compare tray!`);
+    } else {
+      alert("These fonts are already in your Compare list!");
+    }
+  });
+}
+
+function renderAiResults(data) {
+  const headlineList = document.getElementById("headline-recommendations");
+  const bodyList = document.getElementById("body-recommendations");
+  const pairingsList = document.getElementById("ai-pairings-list");
+  const insightsBox = document.getElementById("ai-insights-content");
+
+  if (!headlineList || !bodyList || !pairingsList || !insightsBox) return;
+
+  headlineList.innerHTML = "";
+  bodyList.innerHTML = "";
+  pairingsList.innerHTML = "";
+  insightsBox.innerHTML = "";
+
+  const defaultSpecimen = "Design is intelligence made visible.";
+
+  // Helper to render card
+  const renderCard = (fontData, explanation) => {
+    const matchedFont = fontsData.find(f => f.name.toLowerCase() === fontData.name.toLowerCase()) || {
+      name: fontData.name,
+      style: "Sans-Serif",
+      cssFamily: `'${fontData.name}', sans-serif`
+    };
+
+    // Load webfont dynamically if it's a Google Font and we haven't loaded it
+    if (matchedFont.provider === "google") {
+      const linkId = `ai-font-${matchedFont.id}`;
+      if (!document.getElementById(linkId)) {
+        const link = document.createElement("link");
+        link.id = linkId;
+        link.rel = "stylesheet";
+        link.href = `https://fonts.googleapis.com/css2?family=${matchedFont.name.replace(/\s+/g, "+")}:wght@400;700&display=swap`;
+        document.head.appendChild(link);
+      }
+    }
+
+    return `
+      <div class="ai-rec-card" data-ai-font-name="${matchedFont.name}">
+        <div class="ai-rec-header">
+          <span class="ai-rec-name">${matchedFont.name}</span>
+          <span class="ai-rec-tag">${matchedFont.style || 'Sans-Serif'}</span>
+        </div>
+        <div class="ai-rec-preview" contenteditable="true" spellcheck="false" style="font-family:${matchedFont.cssFamily || `'` + matchedFont.name + `'`};">
+          ${defaultSpecimen}
+        </div>
+        <p class="ai-rec-explanation">${explanation}</p>
+      </div>
+    `;
+  };
+
+  // 1. Headline Fonts
+  if (data.headline_fonts) {
+    data.headline_fonts.forEach(item => {
+      headlineList.innerHTML += renderCard(item, item.explanation);
+    });
+  }
+
+  // 2. Body Fonts
+  if (data.body_fonts) {
+    data.body_fonts.forEach(item => {
+      bodyList.innerHTML += renderCard(item, item.explanation);
+    });
+  }
+
+  // 3. Best Pairings
+  if (data.pairings) {
+    data.pairings.forEach(pair => {
+      pairingsList.innerHTML += `
+        <div class="ai-pairing-card">
+          <div class="ai-pairing-names-row">
+            <span class="ai-pairing-names">${pair.heading_font} + ${pair.body_font}</span>
+            <span class="ai-pairing-score">Score: ${pair.score}/10</span>
+          </div>
+          <p class="ai-pairing-reason">${pair.reason}</p>
+        </div>
+      `;
+    });
+  }
+
+  // 4. AI Insights
+  if (data.insights) {
+    insightsBox.innerHTML = `
+      <div class="ai-insights-card">
+        <div class="ai-insight-item">
+          <span class="ai-insight-label">Emotional Tone</span>
+          <p class="ai-insight-text">${data.insights.emotional_tone || 'Elegant and professional'}</p>
+        </div>
+        <div class="ai-insight-item">
+          <span class="ai-insight-label">Brand Positioning</span>
+          <p class="ai-insight-text">${data.insights.brand_positioning || 'Premium market positioning'}</p>
+        </div>
+        <div class="ai-insight-item">
+          <span class="ai-insight-label">Visual Strategy</span>
+          <p class="ai-insight-text">${data.insights.visual_strategy || 'Balanced hierarchy'}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // Show results panel with fade/slide
+  const resultsContainer = document.getElementById("ai-finder-results");
+  if (resultsContainer) {
+    resultsContainer.style.display = "block";
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function showAiError() {
+  const headlineList = document.getElementById("headline-recommendations");
+  const bodyList = document.getElementById("body-recommendations");
+  if (headlineList) headlineList.innerHTML = `<p style="color:var(--signal-red);">Unable to generate recommendations right now. Please try again.</p>`;
+  if (bodyList) bodyList.innerHTML = `<p style="color:var(--signal-red);">Unable to generate recommendations right now. Please try again.</p>`;
+  
+  const resultsContainer = document.getElementById("ai-finder-results");
+  if (resultsContainer) {
+    resultsContainer.style.display = "block";
+  }
+}
+
+// ─────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────
+async function init() {
+  // Apply saved dark mode preference
+  const savedDark = localStorage.getItem("fontvault-dark");
+  if (savedDark === "1") {
+    applyTheme(true);
+  } else {
+    applyTheme(false);
+  }
+
+  // Show a loading state
+  if (el.fontGrid) {
+    el.fontGrid.innerHTML = `
+      <div style="grid-column:span 3;text-align:center;padding:4rem 1rem;color:var(--signal-red);width:100%;">
+        <p style="font-size:var(--ts-xl);font-family:var(--font-mono);animation:pulse 1.5s infinite;">CONNECTING TO GOOGLE FONTS API...</p>
+      </div>`;
+  }
+
+  // Await the fetch
+  await initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY');
+
+  // Parse search query from URL if coming from font detail page
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get("search");
+  if (q && el.searchInput) {
+    el.searchInput.value = q;
+    window.searchQuery = q;
+  }
+  if (params.get("vault") === "true") {
+    activeFilters["Favorites"] = true;
+    const vaultBtn = document.getElementById("vault-btn");
+    if (vaultBtn) {
+      vaultBtn.classList.add("active");
+    }
+  }
+
+  setupFilters();
+  renderGrid(true);
+  renderTrending();
+  setupEventListeners();
+  setupAiFontFinder();
+
+  if ((params.get("scroll") === "true" || params.get("vault") === "true") && el.fontGrid) {
+    // Small timeout to allow grid to render
+    setTimeout(() => {
+      el.fontGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+  setupSharedEventListeners();
+  updateClearButtonVisibility();
+
+  // Create global edit tooltip dynamically
+  const tooltip = document.createElement("div");
+  tooltip.id = "edit-tooltip";
+  tooltip.className = "edit-tooltip";
+  tooltip.textContent = "Click on text to edit";
+  document.body.appendChild(tooltip);
+
+  // Collection cards
+  setupCollectionCards();
+}
 
 init();

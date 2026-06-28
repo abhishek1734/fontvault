@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+gemini_usage.json
+.env.local

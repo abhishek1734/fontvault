@@ -6,7 +6,7 @@
   <title>FontVault — Premium Font Discovery and Licensing</title>
   <meta name="description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=5.10">
+  <link rel="stylesheet" href="style.css?v=5.11">
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
@@ -83,6 +83,92 @@
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
+    </div>
+  </section>
+
+  <!-- AI FONT FINDER SECTION -->
+  <section class="ai-finder-section" id="ai-finder-section">
+    <div class="ai-finder-container">
+      <div class="ai-finder-header">
+        <h2 class="ai-finder-title">AI Font Finder</h2>
+        <p class="ai-finder-subtitle">Powered by Gemini AI &bull; Describe your project, brand, or design goal to discover the perfect typography matches.</p>
+      </div>
+
+      <div class="ai-finder-input-wrap">
+        <textarea id="ai-finder-input" class="ai-finder-input" placeholder="Describe your project, brand, or design goal..." rows="2"></textarea>
+        <button id="ai-finder-submit-btn" class="btn btn-primary btn-glow">Find Perfect Fonts</button>
+      </div>
+
+      <div class="ai-finder-suggestions">
+        <span class="suggestion-tag" data-prompt="Luxury skincare brand">Luxury skincare brand</span>
+        <span class="suggestion-tag" data-prompt="Startup landing page">Startup landing page</span>
+        <span class="suggestion-tag" data-prompt="Modern portfolio website">Modern portfolio website</span>
+        <span class="suggestion-tag" data-prompt="Editorial fashion magazine">Editorial fashion magazine</span>
+        <span class="suggestion-tag" data-prompt="Minimal productivity app">Minimal productivity app</span>
+      </div>
+
+      <!-- Loading State (hidden by default) -->
+      <div id="ai-finder-loading" class="ai-finder-loading" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p id="ai-finder-loading-text" class="loading-text">Analyzing typography style...</p>
+        
+        <div class="skeleton-grid">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+      </div>
+
+      <!-- Results Container (hidden by default) -->
+      <div id="ai-finder-results" class="ai-finder-results" style="display: none;">
+        
+        <!-- Recommendation Panels -->
+        <div class="ai-recommendations-grid">
+          <!-- Left Panel: Headline Fonts -->
+          <div class="recommendation-panel">
+            <h3 class="panel-title">Headline Fonts</h3>
+            <div id="headline-recommendations" class="recommendations-list">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <!-- Right Panel: Body Fonts -->
+          <div class="recommendation-panel">
+            <h3 class="panel-title">Body Fonts</h3>
+            <div id="body-recommendations" class="recommendations-list">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Pairings & Insights -->
+        <div class="ai-pairings-insights-row">
+          <!-- Pairings -->
+          <div class="ai-pairings-box">
+            <h3 class="panel-title">Best Pairings</h3>
+            <div id="ai-pairings-list" class="pairings-list">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <!-- Insights -->
+          <div class="ai-insights-box">
+            <h3 class="panel-title">Why These Fonts Work</h3>
+            <div id="ai-insights-content" class="insights-content">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart Action Buttons -->
+        <div class="ai-actions-row">
+          <button id="ai-action-similar" class="btn btn-secondary btn-sm">Similar Fonts</button>
+          <button id="ai-action-regenerate" class="btn btn-secondary btn-sm">Regenerate Suggestions</button>
+          <button id="ai-action-save" class="btn btn-secondary btn-sm">Save Collection</button>
+          <button id="ai-action-compare" class="btn btn-secondary btn-sm">Compare Fonts</button>
+        </div>
+
+      </div>
     </div>
   </section>
 
@@ -296,8 +382,8 @@
     </div>
   </div>
 
-  <script src="fonts.js?v=5.10"></script>
-  <script src="shared.js?v=5.10"></script>
-  <script src="app.js?v=5.10"></script>
+  <script src="fonts.js?v=5.11"></script>
+  <script src="shared.js?v=5.11"></script>
+  <script src="app.js?v=5.11"></script>
 </body>
 </html>
