@@ -1703,3 +1703,41 @@ async function init() {
 }
 
 init();
+
+// ─────────────────────────────────────────────────
+//  HERO CURSOR GLOW — mouse-reactive spotlight
+// ─────────────────────────────────────────────────
+(function setupHeroCursorGlow() {
+  const hero = document.getElementById("hero");
+  const glow = document.getElementById("hero-cursor-glow");
+  if (!hero || !glow) return;
+
+  let raf;
+  let targetX = 0, targetY = 0;
+  let currentX = 0, currentY = 0;
+
+  hero.addEventListener("mousemove", (e) => {
+    const rect = hero.getBoundingClientRect();
+    targetX = e.clientX - rect.left;
+    targetY = e.clientY - rect.top;
+  });
+
+  hero.addEventListener("mouseleave", () => {
+    glow.style.opacity = "0";
+    cancelAnimationFrame(raf);
+  });
+
+  hero.addEventListener("mouseenter", () => {
+    glow.style.opacity = "1";
+    animate();
+  });
+
+  function animate() {
+    // Smooth lerp
+    currentX += (targetX - currentX) * 0.08;
+    currentY += (targetY - currentY) * 0.08;
+    glow.style.left = currentX + "px";
+    glow.style.top  = currentY + "px";
+    raf = requestAnimationFrame(animate);
+  }
+})();

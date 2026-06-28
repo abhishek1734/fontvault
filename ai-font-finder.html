@@ -7,7 +7,7 @@
   <meta name="description" content="Discover the perfect typeface using AI-powered recommendations tailored to your brand, style, and creative goals.">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=5.15">
-  <link rel="stylesheet" href="ai-finder.css?v=1.1">
+  <link rel="stylesheet" href="ai-finder.css?v=1.2">
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
@@ -25,6 +25,7 @@
   <header id="navbar">
     <a href="index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
+      <a href="index.html" class="nav-link" id="nav-home">Home</a>
       <a href="ai-font-finder.html" class="nav-link nav-link--active" id="nav-ai-finder">AI Font Finder</a>
       <button id="vault-btn" class="nav-btn">My Vault</button>
       <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
@@ -39,7 +40,7 @@
       </button>
     </div>
     <div id="mobile-menu" class="mobile-menu">
-      <a href="index.html" class="mobile-menu-item">Browse Fonts</a>
+      <a href="index.html" class="mobile-menu-item">Home</a>
       <a href="ai-font-finder.html" class="mobile-menu-item">AI Font Finder</a>
     </div>
   </header>
@@ -202,6 +203,6 @@
 
   <script src="fonts.js?v=5.15"></script>
   <script src="shared.js?v=5.15"></script>
-  <script src="ai-finder.js?v=1.1"></script>
+  <script src="ai-finder.js?v=1.2"></script>
 </body>
 </html>

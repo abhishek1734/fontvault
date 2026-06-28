@@ -6,8 +6,8 @@
   <title>FontVault — Premium Font Discovery and Licensing</title>
   <meta name="description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=5.17">
-  <script src="config.js?v=5.17"></script>
+  <link rel="stylesheet" href="style.css?v=5.18">
+  <script src="config.js?v=5.18"></script>
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
@@ -72,18 +72,47 @@
     </div>
   </header>
 
-  <!-- HERO SECTION -->
+  <!-- HERO SECTION — Liquid Glass Aurora -->
   <section class="hero" id="hero">
-    <div class="hero-bg-mesh"></div>
-    <div class="hero-bg-grid"></div>
+
+    <!-- Layer 1: Aurora gradient blobs -->
+    <div class="hero-blob hero-blob--1" aria-hidden="true"></div>
+    <div class="hero-blob hero-blob--2" aria-hidden="true"></div>
+    <div class="hero-blob hero-blob--3" aria-hidden="true"></div>
+
+    <!-- Layer 2: Grid pattern -->
+    <div class="hero-bg-grid" aria-hidden="true"></div>
+
+    <!-- Layer 3: Glass overlay -->
+    <div class="hero-glass-pane" aria-hidden="true"></div>
+
+    <!-- Layer 4: Radial spotlight -->
+    <div class="hero-spotlight" aria-hidden="true"></div>
+
+    <!-- Layer 5: Floating orbs -->
+    <div class="hero-orb hero-orb--a" aria-hidden="true"></div>
+    <div class="hero-orb hero-orb--b" aria-hidden="true"></div>
+    <div class="hero-orb hero-orb--c" aria-hidden="true"></div>
+    <div class="hero-orb hero-orb--d" aria-hidden="true"></div>
+    <div class="hero-orb hero-orb--e" aria-hidden="true"></div>
+
+    <!-- Layer 6: Noise texture -->
+    <div class="hero-noise" aria-hidden="true"></div>
+
+    <!-- Layer 7: Hero content -->
     <div class="hero-content">
       <div class="hero-badge">FONTVAULT V2.0</div>
       <h1 class="hero-headline">Your Next Favorite Font<br><span class="gradient-text">Is Already Here</span></h1>
       <p class="hero-subline">150+ curated typefaces. Test drive any font in real-world mockups — instantly, no installs.</p>
       <div class="hero-ctas">
-        <button class="btn btn-primary btn-glow" id="btn-browse-fonts">Explore The Vault</button>
+        <button class="btn btn-glass btn-glow" id="btn-browse-fonts">Explore The Vault</button>
+        <a href="ai-font-finder.html" class="btn btn-glass-outline">AI Font Finder ✦</a>
       </div>
     </div>
+
+    <!-- Cursor glow element -->
+    <div class="hero-cursor-glow" id="hero-cursor-glow" aria-hidden="true"></div>
+
     <div class="scroll-indicator" id="scroll-arrow">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -303,8 +332,8 @@
     </div>
   </div>
 
-  <script src="fonts.js?v=5.17"></script>
-  <script src="shared.js?v=5.17"></script>
-  <script src="app.js?v=5.17"></script>
+  <script src="fonts.js?v=5.18"></script>
+  <script src="shared.js?v=5.18"></script>
+  <script src="app.js?v=5.18"></script>
 </body>
 </html>
