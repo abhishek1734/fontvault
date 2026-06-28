@@ -4,3 +4,4 @@ gemini_usage.json
 .env.local
 test_gemini.html
 test_origin.py
+test_google_key.py
