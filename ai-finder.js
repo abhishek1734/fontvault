@@ -103,6 +103,9 @@ aiffSubmitBtn?.addEventListener("click", async () => {
   const prompt = aiffInput?.value.trim();
   if (!prompt) {
     aiffInput?.focus();
+    // Briefly shake the input to signal it's needed
+    aiffInput?.classList.add("aiff-input--shake");
+    setTimeout(() => aiffInput?.classList.remove("aiff-input--shake"), 400);
     return;
   }
 
@@ -113,7 +116,9 @@ aiffSubmitBtn?.addEventListener("click", async () => {
     return;
   }
 
-  // Show loading
+  // Show loading — only NOW disable the button
+  const aiffHero = document.getElementById("aiff-hero");
+  aiffHero?.classList.add("aiff-hero--searching");
   aiffLoading.style.display = "flex";
   aiffResults.style.display = "none";
   aiffErrorBox.style.display = "none";

@@ -79,7 +79,7 @@
   justify-content: center;
   text-align: center;
   overflow: hidden;
-  padding: 6rem 1.5rem 5rem;
+  padding: 6rem 1.5rem 3rem;
 }
 
 /* Subtle ambient orbs */
@@ -112,7 +112,11 @@
   background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
 }
 
-/* ── Hero content ── */
+.aiff-hero--searching {
+  min-height: unset;
+  padding-bottom: 0;
+}
+
 .aiff-hero-content {
   position: relative;
   z-index: 1;
@@ -369,7 +373,7 @@
 .aiff-loading {
   display: flex;
   justify-content: center;
-  padding: 6rem 1.5rem;
+  padding: 2.5rem 1.5rem 3rem;
 }
 
 .aiff-loading-inner {
@@ -413,6 +417,19 @@
   font-size: 0.875rem;
   color: var(--text-secondary);
   margin: 0;
+}
+
+/* Shake animation for empty search */
+@keyframes aiffInputShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+.aiff-input--shake {
+  animation: aiffInputShake 0.4s ease;
 }
 
 /* ─────────────────────────────────────────────────
