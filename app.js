@@ -1333,7 +1333,7 @@ JSON Schema:
 
     } catch (err) {
       console.error("AI Finder Error:", err);
-      showAiError();
+      showAiError(`Error: ${err.message}. Please check your browser console or network tab.`);
     } finally {
       clearInterval(msgInterval);
       loadingState.style.display = "none";
@@ -1535,11 +1535,12 @@ function renderAiResults(data) {
   }
 }
 
-function showAiError() {
+function showAiError(errMsg) {
   const headlineList = document.getElementById("headline-recommendations");
   const bodyList = document.getElementById("body-recommendations");
-  if (headlineList) headlineList.innerHTML = `<p style="color:var(--signal-red);">Unable to generate recommendations right now. Please try again.</p>`;
-  if (bodyList) bodyList.innerHTML = `<p style="color:var(--signal-red);">Unable to generate recommendations right now. Please try again.</p>`;
+  const msg = errMsg || "Unable to generate recommendations right now. Please try again.";
+  if (headlineList) headlineList.innerHTML = `<p style="color:var(--signal-red);">${msg}</p>`;
+  if (bodyList) bodyList.innerHTML = `<p style="color:var(--signal-red);">${msg}</p>`;
   
   const resultsContainer = document.getElementById("ai-finder-results");
   if (resultsContainer) {
