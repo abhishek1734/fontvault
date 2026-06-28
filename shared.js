@@ -413,7 +413,7 @@ function setupSharedEventListeners() {
       if (e.target === overlay) closeAuthModal();
     });
   }
-  const closeAuthBtn = document.getElementById("close-auth-btn");
+  const closeAuthBtn = document.getElementById("auth-close") || document.getElementById("close-auth-btn");
   if (closeAuthBtn) {
     closeAuthBtn.addEventListener("click", closeAuthModal);
   }

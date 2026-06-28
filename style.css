@@ -14,6 +14,8 @@
   --off-white: #161616;
   --border-grey: #222222;
   --signal-red: #FF3B00;
+  --font-sans: var(--font-body);
+  --text-primary: var(--near-black);
 
   /* Matte card backgrounds */
   --matte-0: #2A1E1E;
@@ -183,6 +185,43 @@ header.collapsed {
 
 .nav-link:hover {
   border-bottom-color: var(--near-black);
+}
+
+/* Navigation bar adaptive links and buttons */
+#vault-btn {
+  border-color: var(--border-grey) !important;
+  color: var(--near-black) !important;
+  background-color: transparent !important;
+  transition: var(--transition-smooth);
+}
+
+#vault-btn:hover {
+  background-color: var(--near-black) !important;
+  color: var(--pure-white) !important;
+}
+
+#submit-font-nav-btn {
+  color: var(--near-black) !important;
+  font-family: var(--font-body) !important;
+  font-weight: 500 !important;
+  font-size: var(--ts-sm) !important;
+  transition: var(--transition-smooth);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+
+#submit-font-nav-btn:hover {
+  color: var(--near-black) !important;
+  border-bottom-color: var(--near-black);
+}
+
+/* Uniform font-family and medium weight for nav actions */
+.nav-actions .nav-link,
+#vault-btn,
+#search-input {
+  font-family: var(--font-body) !important;
+  font-weight: 500 !important;
+  font-size: var(--ts-sm) !important;
 }
 
 /* --- HERO SECTION --- */
@@ -359,7 +398,7 @@ header.collapsed {
   background-color: transparent;
   border: none;
   border-radius: 0;
-  padding: 0 0 2rem 0; /* padding-right moved to inner elements */
+  padding: 0 0 2rem 2rem; /* padding-left set to 2rem */
   margin-top: 1rem;
   color: var(--near-black);
   max-height: calc(100vh - 120px);
@@ -392,7 +431,7 @@ header.collapsed + .main-container .sidebar-filters {
   align-items: center;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-grey);
-  padding: 0 3rem 0.8rem 0;
+  padding: 0 2rem 0.8rem 0; /* padding-right reduced to 2rem */
   box-sizing: border-box;
 }
 
@@ -409,7 +448,7 @@ header.collapsed + .main-container .sidebar-filters {
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding-right: 3rem;
+  padding-right: 2rem; /* padding-right reduced to 2rem */
   box-sizing: border-box;
 }
 
@@ -439,7 +478,11 @@ header.collapsed + .main-container .sidebar-filters {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  padding-bottom: 0.5rem;
+  padding: 0.8rem 0; /* padding above and below */
+  margin-top: 1.25rem; /* space between groups */
+  margin-bottom: 0.5rem;
+  border-top: 1px solid var(--border-grey); /* border line above */
+  border-bottom: 1px solid var(--border-grey); /* border line below */
   transition: opacity 0.2s ease;
 }
 
@@ -1525,6 +1568,7 @@ footer {
   --surface-dark: #F5F5F5;
   --off-white: #F5F5F5;
   --border-grey: #E0E0E0;
+  --text-primary: var(--near-black);
 
   /* Matte card backgrounds */
   --matte-0: #FDEBEC;

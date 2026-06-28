@@ -798,9 +798,16 @@ function setupEventListeners() {
         vaultBtn.style.background = "var(--signal-red)";
         vaultBtn.style.color = "#fff";
         vaultBtn.innerHTML = `My Vault`;
+        
+        // Smooth scroll to the font grid
+        if (el.fontGrid) {
+          setTimeout(() => {
+            el.fontGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
       } else {
         vaultBtn.style.background = "transparent";
-        vaultBtn.style.color = "var(--text-primary)";
+        vaultBtn.style.color = "var(--near-black)";
         vaultBtn.innerHTML = `My Vault`;
       }
       renderGrid(true);
