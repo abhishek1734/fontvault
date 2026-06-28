@@ -6,8 +6,8 @@
   <title>FontVault — Premium Font Discovery and Licensing</title>
   <meta name="description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=5.11">
-  <script src="config.js?v=5.11"></script>
+  <link rel="stylesheet" href="style.css?v=5.12">
+  <script src="config.js?v=5.12"></script>
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
@@ -47,11 +47,13 @@
           </div>
         </div>
       </div>
-      <button id="vault-btn" class="btn btn-outline" style="padding: 0.5rem 1rem; margin-left: 1rem; border-color: var(--border-grey); color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; background: transparent;">
+      <button id="vault-btn" class="nav-btn">
         My Vault
       </button>
-      <button class="nav-link" id="submit-font-nav-btn" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;">Submit a Font</button>
-      <button id="dark-toggle" class="dark-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <button id="submit-font-nav-btn" class="nav-btn">
+        Submit a Font
+      </button>
+      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -383,8 +385,8 @@
     </div>
   </div>
 
-  <script src="fonts.js?v=5.11"></script>
-  <script src="shared.js?v=5.11"></script>
-  <script src="app.js?v=5.11"></script>
+  <script src="fonts.js?v=5.12"></script>
+  <script src="shared.js?v=5.12"></script>
+  <script src="app.js?v=5.12"></script>
 </body>
 </html>
