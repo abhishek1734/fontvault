@@ -1322,8 +1322,13 @@ JSON Schema:
       const data = await response.json();
       const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!rawText) throw new Error("Empty response from AI");
-
-      const result = JSON.parse(rawText);
+      let cleanedText = rawText.trim();
+      if (cleanedText.startsWith("```")) {
+        cleanedText = cleanedText.replace(/^```(json)?/i, "");
+        cleanedText = cleanedText.replace(/```$/, "");
+        cleanedText = cleanedText.trim();
+      }
+      const result = JSON.parse(cleanedText);
       renderAiResults(result);
 
     } catch (err) {
