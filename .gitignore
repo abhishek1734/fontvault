@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 gemini_usage.json
 .env.local
+test_gemini.html
+test_origin.py
