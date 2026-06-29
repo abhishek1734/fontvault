@@ -120,43 +120,44 @@ function switchTab(tabId) {
   }
 }
 
-// --- EVENT LISTENERS ---
-function setupEventListeners() {
-  // Login Form
-  document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    
-    const submitBtn = document.getElementById('login-submit-btn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = 'Signing in...';
-    
-    try {
-      if (!ALLOWED_ADMIN_EMAILS.includes(email.toLowerCase())) {
-        showAuthError('You are not authorized to access this admin panel.');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Sign In';
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      
-      if (error) {
-        showAuthError(error.message);
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Sign In';
-      } else {
-        currentSession = data.session;
-        showDashboardView(data.user);
-      }
-    } catch (err) {
-      console.error('Login submit crash:', err);
-      showAuthError('Error: ' + err.message);
+// --- GLOBAL LOGIN HANDLER ---
+window.handleLogin = async function(e) {
+  if (e) e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  
+  const submitBtn = document.getElementById('login-submit-btn');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = 'Signing in...';
+  
+  try {
+    if (!ALLOWED_ADMIN_EMAILS.includes(email.toLowerCase())) {
+      showAuthError('You are not authorized to access this admin panel.');
       submitBtn.disabled = false;
       submitBtn.innerHTML = 'Sign In';
+      return;
     }
-  });
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    
+    if (error) {
+      showAuthError(error.message);
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Sign In';
+    } else {
+      currentSession = data.session;
+      showDashboardView(data.user);
+    }
+  } catch (err) {
+    console.error('Login submit crash:', err);
+    showAuthError('Error: ' + err.message);
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'Sign In';
+  }
+};
+
+// --- EVENT LISTENERS ---
+function setupEventListeners() {
 
   // Logout Button
   document.getElementById('logout-btn').addEventListener('click', async () => {

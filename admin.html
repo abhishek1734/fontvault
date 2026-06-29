@@ -96,7 +96,7 @@
       </div>
 
       <div class="glass-card rounded-2xl shadow-xl p-8 border">
-        <form id="login-form" class="space-y-5">
+        <form id="login-form" onsubmit="event.preventDefault(); handleLogin(event);" class="space-y-5">
           <div>
             <label class="block text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1.5">Email Address</label>
             <input
@@ -592,7 +592,7 @@
   </div>
 
   <!-- Supabase + Dashboard logic -->
-  <script src="config.js?v=1.4"></script>
-  <script src="admin.js?v=1.4"></script>
+  <script src="config.js?v=1.5"></script>
+  <script src="admin.js?v=1.5"></script>
 </body>
 </html>
