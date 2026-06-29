@@ -4,6 +4,64 @@ function getBadgeClass(a) {
   return ({Free:"badge-free","Free for Personal":"badge-personal",Trial:"badge-trial",Premium:"badge-premium",Paid:"badge-paid",Custom:"badge-custom"})[a] || "badge-free";
 }
 
+// ─────────────────────────────────────────────────
+//  SHARED: LOAD CUSTOM FONTS FROM SUPABASE
+//  Called on both index.html and font.html (detail page)
+//  so admin-uploaded fonts appear everywhere.
+// ─────────────────────────────────────────────────
+async function loadCustomFontsFromSupabase() {
+  // Fallback credentials — config.js may not be deployed (gitignored)
+  const url = window.SUPABASE_URL || "https://alvarlzjtdmkvbxehppt.supabase.co";
+  const key = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsdmFybHpqdGRta3ZieGVocHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MjA3MDIsImV4cCI6MjA5ODI5NjcwMn0.kopGopXghwNdHM6cawDhpjrYui0MzqpAROsYHHMZEeE";
+
+  if (!window.supabase) return;
+
+  try {
+    const sb = window.supabase.createClient(url, key);
+    const { data, error } = await sb.from('custom_fonts').select('*').order('created_at', { ascending: false });
+    if (error) { console.warn('[FontVault] Supabase fetch error:', error.message); return; }
+    if (!data || data.length === 0) return;
+
+    data.forEach(row => {
+      // Skip if already loaded (e.g. called twice)
+      if (fontsData.find(f => f.id === row.id)) return;
+
+      // Register @font-face so the font actually renders
+      if (row.css_family && row.file_url) {
+        const styleEl = document.createElement('style');
+        styleEl.textContent = `@font-face { font-family: '${row.css_family}'; src: url('${row.file_url}') format('${row.format || 'woff2'}'); font-display: swap; }`;
+        document.head.appendChild(styleEl);
+      }
+
+      fontsData.unshift({
+        id: row.id,
+        name: row.name,
+        provider: 'custom',
+        designer: row.designer || 'Unknown',
+        foundry: row.foundry || '—',
+        year: new Date(row.created_at).getFullYear().toString(),
+        stylesCount: 1,
+        languages: ['Latin'],
+        description: row.description || `Uploaded font: ${row.name}`,
+        availability: 'Custom',
+        mood: row.tags?.[0] || 'Modern',
+        useCase: 'Web',
+        style: row.category || 'Sans-Serif',
+        language: 'Latin',
+        downloadUrl: row.file_url,
+        price: row.is_free ? 'Free' : 'Paid',
+        fileSize: row.file_size || '—',
+        cssFamily: row.css_family ? `'${row.css_family}'` : `'${row.name}'`,
+        format: row.format,
+        slug: row.slug,
+        pairsWith: []
+      });
+    });
+  } catch (err) {
+    console.warn('[FontVault] Failed to load custom fonts:', err);
+  }
+}
+
 function loadExternalFont(font) {
   const linkId = `font-face-${font.id}`;
   if (document.getElementById(linkId)) return;

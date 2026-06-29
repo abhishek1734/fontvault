@@ -23,22 +23,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Show loading state while fetching API
+  // Show loading state while fetching
   const root = document.getElementById('font-detail-root');
   root.innerHTML = `
     <div style="text-align:center; padding:10rem 2rem; color:var(--signal-red);">
-      <p style="font-size:var(--ts-xl);font-family:var(--font-mono);animation:pulse 1.5s infinite;">CONNECTING TO GOOGLE FONTS API...</p>
+      <p style="font-size:var(--ts-xl);font-family:var(--font-mono);animation:pulse 1.5s infinite;">LOADING FONT...</p>
     </div>
   `;
 
-  // Wait for fonts to populate
-  await initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY');
+  // Load Google Fonts AND custom admin-uploaded fonts in parallel
+  await Promise.all([
+    initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY'),
+    loadCustomFontsFromSupabase()
+  ]);
 
   const font = fontsData.find(f => f.id === fontId);
   if (!font) {
     root.innerHTML = `
       <div style="text-align:center; padding:10rem 2rem;">
         <h2>Font not found in the database.</h2>
+        <p style="color:#888; margin-top:1rem;">The font may have been removed or the link is invalid.</p>
         <a href="index.html" class="btn btn-primary" style="margin-top:2rem;">Return to Home</a>
       </div>
     `;
