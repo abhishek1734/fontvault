@@ -1002,6 +1002,12 @@ header.collapsed ~ .main-container .sidebar-filters {
   color: var(--near-black);
   transition: font-size 0.1s ease;
   outline: none;
+  cursor: text;
+}
+/* When user has activated inline editing, don't clip text */
+.huge-preview-text[contenteditable="true"] {
+  text-overflow: clip;
+  cursor: text;
 }
 
 .card-footer-row {

@@ -300,7 +300,7 @@ function appendFontCard(font, delay) {
 
     <!-- Center Row: Huge Preview Text -->
     <div class="card-body-row">
-      <div class="huge-preview-text" contenteditable="true" spellcheck="false" style="font-family:${fam},sans-serif;">
+      <div class="huge-preview-text" contenteditable="false" spellcheck="false" data-font-name="${font.name.replace(/"/g,'&quot;')}" style="font-family:${fam},sans-serif;">
         ${titleText}
       </div>
     </div>
@@ -321,14 +321,6 @@ function appendFontCard(font, delay) {
     </div>
   `;
 
-  // Card click → open detail (Disabled - only open details page on View Family click)
-  /*
-  card.addEventListener("click", e => {
-    if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".custom-font-delete-btn") || e.target.closest(".huge-preview-text") || e.target.closest(".view-family-hover-btn")) return;
-    openDetailPanel(font);
-  });
-  */
-
   // Compare add/remove button
   card.querySelector(".compare-add-btn").addEventListener("click", e => {
     e.stopPropagation();
@@ -343,16 +335,37 @@ function appendFontCard(font, delay) {
     });
   }
 
-  // Prevent click propagation on preview text to allow inline editing
+  // Inline editing on card preview text
   const previewTextEl = card.querySelector(".huge-preview-text");
   if (previewTextEl) {
+    // Click: make editable and stop card navigation
     previewTextEl.addEventListener("click", e => {
       e.stopPropagation();
+      previewTextEl.contentEditable = "true";
+      // Move cursor to end
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents(previewTextEl);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
     });
+    // Enter key: commit and exit
     previewTextEl.addEventListener("keydown", e => {
       if (e.key === "Enter") {
         e.preventDefault();
         previewTextEl.blur();
+      }
+    });
+    // Blur: revert to non-editable if still showing default font name
+    previewTextEl.addEventListener("blur", () => {
+      if (!globalPreviewText) {
+        // If user cleared it back to empty, restore font name
+        const fontName = previewTextEl.dataset.fontName;
+        if (!previewTextEl.textContent.trim()) {
+          previewTextEl.textContent = fontName;
+        }
+        previewTextEl.contentEditable = "false";
       }
     });
   }
@@ -822,15 +835,15 @@ function setupEventListeners() {
 
     // Don't re-render the whole grid on every keystroke, just update the text in DOM
     document.querySelectorAll(".huge-preview-text").forEach(el => {
-      // Store original HTML if not stored yet
-      if (!el.hasAttribute('data-original-html')) {
-        el.setAttribute('data-original-html', el.innerHTML);
-      }
-      
       if (globalPreviewText) {
+        // Custom text: make editable so user can click & type
+        el.contentEditable = "true";
         el.textContent = globalPreviewText;
       } else {
-        el.innerHTML = el.getAttribute('data-original-html');
+        // No custom text: restore font name, make non-editable so CSS ellipsis kicks in
+        const fontName = el.dataset.fontName;
+        el.textContent = fontName || el.textContent;
+        el.contentEditable = "false";
       }
     });
   });
