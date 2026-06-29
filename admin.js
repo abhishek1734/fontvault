@@ -127,22 +127,29 @@ function setupEventListeners() {
     submitBtn.disabled = true;
     submitBtn.innerHTML = 'Signing in...';
     
-    if (!ALLOWED_ADMIN_EMAILS.includes(email.toLowerCase())) {
-      showAuthError('You are not authorized to access this admin panel.');
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = 'Sign In';
-      return;
-    }
+    try {
+      if (!ALLOWED_ADMIN_EMAILS.includes(email.toLowerCase())) {
+        showAuthError('You are not authorized to access this admin panel.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Sign In';
+        return;
+      }
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    
-    if (error) {
-      showAuthError(error.message);
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        showAuthError(error.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Sign In';
+      } else {
+        currentSession = data.session;
+        showDashboardView(data.user);
+      }
+    } catch (err) {
+      console.error('Login submit crash:', err);
+      showAuthError('Error: ' + err.message);
       submitBtn.disabled = false;
       submitBtn.innerHTML = 'Sign In';
-    } else {
-      currentSession = data.session;
-      showDashboardView(data.user);
     }
   });
 
