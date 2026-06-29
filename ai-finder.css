@@ -79,7 +79,8 @@
   justify-content: center;
   text-align: center;
   overflow: hidden;
-  padding: 6rem 1.5rem 3rem;
+  padding: 10rem 1.5rem 3rem;
+  margin-top: -64px;
 }
 
 /* Subtle ambient orbs */
@@ -114,6 +115,7 @@
 
 .aiff-hero--searching {
   min-height: unset;
+  padding-top: 8rem;
   padding-bottom: 0;
 }
 

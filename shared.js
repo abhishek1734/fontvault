@@ -566,3 +566,28 @@ window.toggleFavorite = function(fontId, btnElement) {
     renderGrid(true);
   }
 };
+
+// Navbar scroll effect
+(function setupNavbarScroll() {
+  const navbar = document.getElementById("navbar");
+  if (!navbar) return;
+  
+  const handleScroll = () => {
+    const hero = document.querySelector(".hero, .aiff-hero");
+    if (!hero) {
+      navbar.classList.add("navbar-scrolled");
+      return;
+    }
+    const heroHeight = hero.offsetHeight || 300;
+    if (window.scrollY > Math.max(80, heroHeight - 80)) {
+      navbar.classList.add("navbar-scrolled");
+    } else {
+      navbar.classList.remove("navbar-scrolled");
+    }
+  };
+  
+  window.addEventListener("scroll", handleScroll);
+  window.addEventListener("resize", handleScroll);
+  document.addEventListener("DOMContentLoaded", handleScroll);
+  setTimeout(handleScroll, 50);
+})();

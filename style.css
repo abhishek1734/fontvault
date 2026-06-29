@@ -100,15 +100,16 @@ header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(11, 11, 11, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-grey);
+  background-color: transparent;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 0 0 1.5rem;
-  transition: var(--transition-smooth);
+  transition: background-color 0.3s ease, border-color 0.3s ease, height 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 header.collapsed {
@@ -346,7 +347,8 @@ header.collapsed {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 7rem 2rem 6rem;
+  padding: 10rem 2rem 6rem;
+  margin-top: -64px;
   overflow: hidden;
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
@@ -1845,7 +1847,7 @@ footer {
   --thumbnail-bg: #1E1F21;
 }
 [data-theme="dark"] body { background-color:#0D0D0D; color:#F0F0F0; }
-[data-theme="dark"] header { background-color:rgba(13,13,13,0.95); border-color:#2A2A2A; }
+[data-theme="dark"] header.navbar-scrolled { background-color:rgba(13,13,13,0.95); border-color:#2A2A2A; }
 [data-theme="dark"] .grid-area { border-color:#2A2A2A; }
 [data-theme="dark"] .font-card { background:#141414; border-color:#2A2A2A; }
 [data-theme="dark"] .font-card:hover { border-color:#555; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
@@ -1914,7 +1916,7 @@ footer {
   --thumbnail-bg: #EAEAEA;
 }
 [data-theme="light"] body { background-color:#FFFFFF; color:#0A0A0A; }
-[data-theme="light"] header { background-color:rgba(255,255,255,0.95); border-color:#E0E0E0; }
+[data-theme="light"] header.navbar-scrolled { background-color:rgba(255,255,255,0.95); border-color:#E0E0E0; }
 [data-theme="light"] .grid-area { border-color:#E0E0E0; }
 [data-theme="light"] .font-card { background:transparent; border-color:#E0E0E0; }
 [data-theme="light"] .font-card:hover { background-color:#F9F9F9; border-color:#0A0A0A; }
@@ -4178,4 +4180,57 @@ input[type=number] {
 .api-key-modal-btn-cancel:hover {
   border-color: rgba(255,255,255,0.3);
   color: var(--text-primary, #fff);
+}
+
+/* --- HOMEPAGE HEADER OVERRIDES (when transparent over the dark aurora hero) --- */
+body:not(.ai-finder-page) header:not(.navbar-scrolled) {
+  background-color: transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .logo {
+  color: #ffffff;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link,
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn {
+  color: rgba(255, 255, 255, 0.8) !important;
+  border-left-color: rgba(255, 255, 255, 0.1) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link:hover,
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input {
+  color: #ffffff !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container svg {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown {
+  background: #0d0d0d !important;
+  border-color: #2a2a2a !important;
+  color: #f0f0f0 !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-item {
+  color: #f0f0f0 !important;
+  border-bottom-color: #2a2a2a !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-item:hover {
+  background: #1a1a1a !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-footer {
+  background: #111 !important;
+  color: #aaa !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
+  color: #ffffff !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link::after {
+  background: #ffffff !important;
 }

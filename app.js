@@ -278,7 +278,7 @@ function appendFontCard(font, delay) {
           <span style="opacity: 0.6;">SIZE</span>
           <input type="range" class="card-size-slider" min="20" max="200" value="${currentGlobalSize}" style="width: 60px; cursor: pointer; height: 3px; accent-color: var(--signal-red);" oninput="updateCardFontSize(this, '${font.id}')">
           <div style="display: flex; align-items: center; gap: 0.15rem;">
-            <input type="number" class="card-size-input" value="${currentGlobalSize}" min="20" max="200" style="width: 30px; background: transparent; border: none; border-bottom: 1px dashed var(--border-grey); color: inherit; font-family: var(--font-mono); font-size: 0.65rem; text-align: right;" oninput="updateCardFontSizeFromInput(this, '${font.id}')">
+            <input type="number" class="card-size-input" value="${currentGlobalSize}" min="20" max="200" style="width: 30px; background: transparent; border: none; border-bottom: 1px dashed var(--border-grey); color: inherit; font-family: var(--font-mono); font-size: 0.65rem; text-align: right;" oninput="updateCardFontSizeFromInput(this, '${font.id}')" onblur="finalizeCardFontSizeFromInput(this, '${font.id}')" onchange="finalizeCardFontSizeFromInput(this, '${font.id}')">
             <span style="opacity: 0.6;">px</span>
             <span class="card-size-reset size-reset-btn" style="margin-left: 0.3rem; display: none;" onclick="resetCardFontSize(this, '${font.id}')">Reset</span>
           </div>
@@ -887,9 +887,50 @@ function setupEventListeners() {
     globalSizeInput.addEventListener("input", e => {
       let val = parseInt(e.target.value);
       if (isNaN(val)) return;
-      if (val < 40) val = 40;
-      if (val > 220) val = 220;
-      syncGlobalSize(val);
+      
+      // Update preview and slider with clamped value, but DO NOT overwrite input value itself yet
+      let clampedVal = Math.min(220, Math.max(40, val));
+      if (fontSizeSlider) fontSizeSlider.value = clampedVal;
+      
+      if (el.fontGrid) {
+        el.fontGrid.style.setProperty("--preview-font-size", `${clampedVal}px`);
+        
+        // Sync all card-specific sliders (NOT inputs, to avoid interrupting typing)
+        const cardSliders = el.fontGrid.querySelectorAll(".card-size-slider");
+        cardSliders.forEach(slider => {
+          slider.value = clampedVal;
+        });
+        
+        // Remove individual font-size overrides on preview texts
+        const previews = el.fontGrid.querySelectorAll(".huge-preview-text");
+        previews.forEach(p => {
+          p.style.fontSize = "";
+        });
+      }
+      
+      if (globalSizeReset) {
+        globalSizeReset.style.display = (clampedVal === 120) ? "none" : "inline";
+      }
+    });
+
+    // Clamp and fully sync when user finished typing or leaves the field
+    globalSizeInput.addEventListener("change", e => {
+      let val = parseInt(e.target.value);
+      if (isNaN(val)) {
+        syncGlobalSize(120);
+      } else {
+        let clamped = Math.min(220, Math.max(40, val));
+        syncGlobalSize(clamped);
+      }
+    });
+    globalSizeInput.addEventListener("blur", e => {
+      let val = parseInt(e.target.value);
+      if (isNaN(val)) {
+        syncGlobalSize(120);
+      } else {
+        let clamped = Math.min(220, Math.max(40, val));
+        syncGlobalSize(clamped);
+      }
     });
   }
 
@@ -1169,20 +1210,40 @@ window.updateCardFontSizeFromInput = function(input, fontId) {
   if (card) {
     let size = parseInt(input.value);
     if (isNaN(size)) return;
-    if (size < 20) size = 20;
-    if (size > 200) size = 200;
+    
+    // Update preview and slider with clamped value, but DO NOT overwrite input.value yet
+    let clampedVal = Math.min(200, Math.max(20, size));
 
     const previewText = card.querySelector(".huge-preview-text");
-    if (previewText) previewText.style.fontSize = `${size}px`;
+    if (previewText) previewText.style.fontSize = `${clampedVal}px`;
 
     const slider = card.querySelector(".card-size-slider");
-    if (slider) slider.value = size;
+    if (slider) slider.value = clampedVal;
 
     const globalSize = parseInt(document.getElementById("font-size-slider")?.value || 120);
     const resetBtn = card.querySelector(".card-size-reset");
     if (resetBtn) {
-      resetBtn.style.display = (size === globalSize) ? "none" : "inline";
+      resetBtn.style.display = (clampedVal === globalSize) ? "none" : "inline";
     }
+  }
+};
+
+window.finalizeCardFontSizeFromInput = function(input, fontId) {
+  const card = input.closest(".font-card");
+  if (card) {
+    let size = parseInt(input.value);
+    if (isNaN(size)) {
+      resetCardFontSize(card.querySelector(".card-size-reset"), fontId);
+      return;
+    }
+    let clampedVal = Math.min(200, Math.max(20, size));
+    input.value = clampedVal;
+
+    const previewText = card.querySelector(".huge-preview-text");
+    if (previewText) previewText.style.fontSize = `${clampedVal}px`;
+
+    const slider = card.querySelector(".card-size-slider");
+    if (slider) slider.value = clampedVal;
   }
 };
 window.resetCardFontSize = function(btn, fontId) {
