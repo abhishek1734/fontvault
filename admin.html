@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FontVault — Admin CMS Dashboard</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: '#0a0a0a',
+            accent: '#7C3AED',
+            success: '#10B981',
+            danger: '#EF4444',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #e5e5e5;
+      border-radius: 2px;
+    }
+    .dark .custom-scroll::-webkit-scrollbar-thumb {
+      background: #2d2d2d;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #a3a3a3;
+    }
+    /* Simple glassmorphism classes */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .dark .glass-card {
+      background: rgba(18, 18, 18, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="h-full bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 transition-colors duration-200">
+
+  <!-- ================= AUTH VIEW ================= -->
+  <div id="auth-view" class="hidden min-h-screen flex items-center justify-center p-4 relative">
+    <!-- Grid pattern background -->
+    <div class="absolute inset-0 pointer-events-none opacity-20 dark:opacity-10" style="
+      background-image: linear-gradient(#ccc 1px, transparent 1px), linear-gradient(90deg, #ccc 1px, transparent 1px);
+      background-size: 30px 30px;
+    "></div>
+
+    <div class="relative w-full max-w-md animate-fade-in z-10">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
+            <span class="text-white dark:text-black font-extrabold text-sm tracking-tighter">FV</span>
+          </div>
+          <span class="font-bold text-xl tracking-tight">FontVault</span>
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight">Admin Login</h1>
+        <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-1.5">Manage your private font library</p>
+      </div>
+
+      <div class="glass-card rounded-2xl shadow-xl p-8 border">
+        <form id="login-form" class="space-y-5">
+          <div>
+            <label class="block text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1.5">Email Address</label>
+            <input
+              type="email"
+              id="login-email"
+              required
+              placeholder="admin@fontvault.com"
+              class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all text-neutral-900 dark:text-neutral-100"
+            />
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1.5">Password</label>
+            <input
+              type="password"
+              id="login-password"
+              required
+              placeholder="••••••••"
+              class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white transition-all text-neutral-900 dark:text-neutral-100"
+            />
+          </div>
+
+          <div id="login-error" class="hidden text-xs text-red-500 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 px-4 py-2.5 rounded-xl"></div>
+
+          <button
+            type="submit"
+            id="login-submit-btn"
+            class="w-full py-3 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+          >
+            <span>Sign In</span>
+          </button>
+        </form>
+      </div>
+      <p class="text-center text-[10px] text-neutral-400 mt-6 uppercase tracking-wider">Restricted Access Portal</p>
+    </div>
+  </div>
+
+  <!-- ================= DASHBOARD SYSTEM ================= -->
+  <div id="dashboard-view" class="hidden h-screen flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 flex flex-col shrink-0">
+      <div class="px-6 py-5 border-b border-neutral-100 dark:border-neutral-800/60 flex items-center gap-3">
+        <div class="w-7 h-7 bg-black dark:bg-white rounded-lg flex items-center justify-center">
+          <span class="text-white dark:text-black font-extrabold text-xs tracking-tighter">FV</span>
+        </div>
+        <div>
+          <span class="font-bold text-sm tracking-tight block">FontVault</span>
+          <span class="text-[9px] text-neutral-400 uppercase tracking-widest font-semibold block leading-none mt-0.5">Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="flex-1 px-4 py-6 space-y-1">
+        <button onclick="switchTab('overview')" id="tab-overview" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-850 hover:text-black dark:hover:text-white">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Overview
+        </button>
+        <button onclick="switchTab('fonts')" id="tab-fonts" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-850 hover:text-black dark:hover:text-white">
+          <i data-lucide="type" class="w-4 h-4"></i> Font Library
+        </button>
+        <button onclick="switchTab('upload')" id="tab-upload" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-850 hover:text-black dark:hover:text-white">
+          <i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload Font
+        </button>
+        <button onclick="switchTab('analytics')" id="tab-analytics" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-850 hover:text-black dark:hover:text-white">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Analytics
+        </button>
+      </nav>
+
+      <div class="p-4 border-t border-neutral-100 dark:border-neutral-800/60 space-y-2">
+        <div class="flex items-center gap-2 px-3 py-1">
+          <div class="w-6 h-6 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-[10px] font-bold" id="user-avatar">A</div>
+          <div class="overflow-hidden">
+            <p class="text-xs font-semibold truncate leading-tight" id="user-email">admin@fontvault.com</p>
+            <p class="text-[9px] text-neutral-400 tracking-wider">SUPER ADMIN</p>
+          </div>
+        </div>
+        <button id="logout-btn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content wrapper -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Top header -->
+      <header class="h-14 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between px-8 shrink-0">
+        <div class="text-[10px] text-neutral-400 uppercase tracking-widest font-semibold">
+          FontVault CMS System
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="index.html" target="_blank" class="text-xs font-medium text-neutral-500 hover:text-black dark:hover:text-white border border-neutral-200 dark:border-neutral-800 rounded-lg px-2.5 py-1 flex items-center gap-1 transition-all">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> View Website
+          </a>
+          <!-- Dark Toggle -->
+          <button id="theme-toggle" class="p-2 border border-neutral-200 dark:border-neutral-800 rounded-lg text-neutral-500 hover:text-black dark:hover:text-white transition-all">
+            <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+            <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dynamic Views -->
+      <main class="flex-1 overflow-y-auto p-8 custom-scroll bg-neutral-50 dark:bg-neutral-950">
+        <div class="max-w-6xl mx-auto space-y-8">
+
+          <!-- TAB: OVERVIEW -->
+          <div id="view-overview" class="space-y-6">
+            <div>
+              <h2 class="text-xl font-bold tracking-tight">Overview</h2>
+              <p class="text-xs text-neutral-400 mt-0.5">Quick summary of FontVault platform stats.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 hover:shadow-sm transition-all">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Total Fonts</span>
+                    <h3 class="text-3xl font-bold tracking-tight mt-1" id="stat-total-fonts">0</h3>
+                  </div>
+                  <div class="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg"><i data-lucide="database" class="w-4 h-4 text-neutral-500"></i></div>
+                </div>
+              </div>
+
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 hover:shadow-sm transition-all">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Categories</span>
+                    <h3 class="text-3xl font-bold tracking-tight mt-1" id="stat-categories">0</h3>
+                  </div>
+                  <div class="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg"><i data-lucide="grid" class="w-4 h-4 text-neutral-500"></i></div>
+                </div>
+              </div>
+
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 hover:shadow-sm transition-all">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Recently Added</span>
+                    <h3 class="text-3xl font-bold tracking-tight mt-1" id="stat-recent">0</h3>
+                  </div>
+                  <div class="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg"><i data-lucide="clock" class="w-4 h-4 text-neutral-500"></i></div>
+                </div>
+              </div>
+
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 hover:shadow-sm transition-all">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Storage Used</span>
+                    <h3 class="text-3xl font-bold tracking-tight mt-1" id="stat-storage">0 KB</h3>
+                  </div>
+                  <div class="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg"><i data-lucide="hard-drive" class="w-4 h-4 text-neutral-500"></i></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent list -->
+            <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm">
+              <div class="px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 flex justify-between items-center">
+                <h4 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Recently Uploaded</h4>
+                <button onclick="switchTab('fonts')" class="text-xs text-neutral-500 hover:text-black dark:hover:text-white underline">View Library</button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="text-[10px] text-neutral-400 uppercase tracking-wider bg-neutral-50/50 dark:bg-neutral-850 border-b border-neutral-100 dark:border-neutral-800">
+                      <th class="px-6 py-3.5 text-left font-semibold">Font</th>
+                      <th class="px-6 py-3.5 text-left font-semibold">Category</th>
+                      <th class="px-6 py-3.5 text-left font-semibold">Designer</th>
+                      <th class="px-6 py-3.5 text-left font-semibold">Uploaded</th>
+                      <th class="px-6 py-3.5 text-right font-semibold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recent-fonts-tbody" class="divide-y divide-neutral-100 dark:divide-neutral-800">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: FONTS -->
+          <div id="view-fonts" class="hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h2 class="text-xl font-bold tracking-tight">Font Library</h2>
+                <p class="text-xs text-neutral-400 mt-0.5">Manage and inspect all system fonts.</p>
+              </div>
+              <button onclick="switchTab('upload')" class="px-4 py-2.5 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl text-sm flex items-center gap-2 hover:opacity-90 transition-all">
+                <i data-lucide="plus" class="w-4 h-4"></i> Upload Font
+              </button>
+            </div>
+
+            <!-- Search + Filters -->
+            <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 flex flex-col md:flex-row gap-3 shadow-sm">
+              <div class="relative flex-1">
+                <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4"></i>
+                <input
+                  type="text"
+                  id="font-search"
+                  placeholder="Search fonts by name, designer..."
+                  class="w-full pl-10 pr-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all text-neutral-900 dark:text-neutral-100"
+                />
+              </div>
+              <select id="font-filter-category" class="px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none text-neutral-950 dark:text-neutral-50">
+                <option value="">All Categories</option>
+                <option value="Serif">Serif</option>
+                <option value="Sans-Serif">Sans-Serif</option>
+                <option value="Display">Display</option>
+                <option value="Script">Script</option>
+                <option value="Monospace">Monospace</option>
+              </select>
+            </div>
+
+            <!-- Fonts Table -->
+            <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="text-[10px] text-neutral-400 uppercase tracking-wider bg-neutral-50/50 dark:bg-neutral-850 border-b border-neutral-100 dark:border-neutral-800">
+                      <th class="px-6 py-3.5 text-left font-semibold">Font Name</th>
+                      <th class="px-6 py-3.5 text-left font-semibold">Category</th>
+                      <th class="px-6 py-3.5 text-left font-semibold">Designer & Foundry</th>
+                      <th class="px-6 py-3.5 text-left font-semibold">Technical</th>
+                      <th class="px-6 py-3.5 text-left font-semibold">License</th>
+                      <th class="px-6 py-3.5 text-right font-semibold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="library-fonts-tbody" class="divide-y divide-neutral-100 dark:divide-neutral-800">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB: UPLOAD -->
+          <div id="view-upload" class="hidden space-y-6 max-w-2xl">
+            <div>
+              <h2 class="text-xl font-bold tracking-tight">Upload New Font</h2>
+              <p class="text-xs text-neutral-400 mt-0.5">Scaffold new typeface files and register properties.</p>
+            </div>
+
+            <form id="upload-form" class="space-y-6">
+              <!-- Files -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Font File</h3>
+                <div
+                  id="dropzone"
+                  class="border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl p-8 text-center cursor-pointer hover:border-black dark:hover:border-white transition-all bg-neutral-50 dark:bg-neutral-950/20"
+                >
+                  <i data-lucide="upload-cloud" class="w-8 h-8 mx-auto mb-3 text-neutral-400 animate-pulse-soft"></i>
+                  <p class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Drag & drop font file here, or click to choose</p>
+                  <p class="text-[10px] text-neutral-400 mt-1">Accepts .ttf, .otf, .woff, .woff2 · Max 10MB</p>
+                  <input type="file" id="font-file-input" required class="hidden" accept=".ttf,.otf,.woff,.woff2" />
+                </div>
+                <div id="selected-file-banner" class="hidden flex items-center justify-between p-3.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-xs font-medium">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-success"></i>
+                    <span id="selected-file-name" class="font-semibold">font.woff2</span>
+                    <span id="selected-file-size" class="text-neutral-400">120 KB</span>
+                  </div>
+                  <button type="button" id="remove-file-btn" class="text-neutral-400 hover:text-red-500"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+              </div>
+
+              <!-- Metadata info -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-5">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Metadata Details</h3>
+                
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">Font Name *</label>
+                    <input type="text" id="up-name" required placeholder="e.g. Satoshi" class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all text-neutral-900 dark:text-neutral-100" />
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">Slug (Auto-generated)</label>
+                    <input type="text" id="up-slug" readonly class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm text-neutral-400 cursor-not-allowed" />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">Designer</label>
+                    <input type="text" id="up-designer" placeholder="e.g. Deni Anggara" class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all text-neutral-900 dark:text-neutral-100" />
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">Foundry</label>
+                    <input type="text" id="up-foundry" placeholder="e.g. Indian Type Foundry" class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all text-neutral-900 dark:text-neutral-100" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">Description</label>
+                  <textarea id="up-description" rows="3" placeholder="Describe the typography origins, details, pairing options..." class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all resize-none text-neutral-900 dark:text-neutral-100"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">Category *</label>
+                    <select id="up-category" required class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none text-neutral-900 dark:text-neutral-100 appearance-none">
+                      <option value="Serif">Serif</option>
+                      <option value="Sans-Serif">Sans-Serif</option>
+                      <option value="Display">Display</option>
+                      <option value="Script">Script</option>
+                      <option value="Monospace">Monospace</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">License Type</label>
+                    <select id="up-license" class="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none text-neutral-900 dark:text-neutral-100 appearance-none">
+                      <option value="Free">Free</option>
+                      <option value="Free for Personal">Free for Personal</option>
+                      <option value="Open Source (OFL)">Open Source (OFL)</option>
+                      <option value="Commercial">Commercial</option>
+                      <option value="Premium">Premium</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-6 pt-2">
+                  <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" id="up-is-variable" class="w-4 h-4 rounded border-neutral-300 dark:border-neutral-700 accent-black text-black dark:accent-white" />
+                    <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Variable Font</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" id="up-is-free" checked class="w-4 h-4 rounded border-neutral-300 dark:border-neutral-700 accent-black text-black dark:accent-white" />
+                    <span class="text-xs font-semibold uppercase tracking-wider text-neutral-500">Free Font</span>
+                  </label>
+                </div>
+
+                <!-- Tags multi select -->
+                <div>
+                  <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">Style/Mood Tags</label>
+                  <div class="flex flex-wrap gap-2" id="tags-picker">
+                    <!-- Filled dynamically -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Button -->
+              <button
+                type="submit"
+                id="upload-submit-btn"
+                class="w-full py-4 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <span>Upload & Publish Font</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- TAB: ANALYTICS -->
+          <div id="view-analytics" class="hidden space-y-6">
+            <div>
+              <h2 class="text-xl font-bold tracking-tight">Analytics & Usage</h2>
+              <p class="text-xs text-neutral-400 mt-0.5">Platform audit, database storage and classification statistics.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Category Distribution -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Library Category Distribution</h3>
+                <div class="space-y-4" id="analytics-categories-bar">
+                  <!-- Dynamic bar columns -->
+                </div>
+              </div>
+
+              <!-- General Stats -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">System Metrics</h3>
+                <div class="divide-y divide-neutral-100 dark:divide-neutral-800">
+                  <div class="py-3 flex justify-between text-xs">
+                    <span class="font-medium text-neutral-500">Supabase DB Status</span>
+                    <span class="font-semibold text-success flex items-center gap-1">Online <i data-lucide="check-circle" class="w-3.5 h-3.5"></i></span>
+                  </div>
+                  <div class="py-3 flex justify-between text-xs">
+                    <span class="font-medium text-neutral-500">Storage Bucket Path</span>
+                    <span class="font-mono text-neutral-400">font-files/</span>
+                  </div>
+                  <div class="py-3 flex justify-between text-xs">
+                    <span class="font-medium text-neutral-500">Average File Size</span>
+                    <span class="font-semibold" id="analytics-avg-size">0 KB</span>
+                  </div>
+                  <div class="py-3 flex justify-between text-xs">
+                    <span class="font-medium text-neutral-500">Allowed Formats</span>
+                    <span class="font-mono text-neutral-400">.woff2, .woff, .otf, .ttf</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= EDIT MODAL ================= -->
+  <div id="edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/45 backdrop-blur-sm" id="edit-modal-backdrop"></div>
+    <div class="relative bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl p-6 w-full max-w-xl animate-fade-in max-h-[90vh] overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-base font-semibold tracking-tight">Edit Font</h2>
+        <button id="close-edit-modal-btn" class="text-neutral-400 hover:text-black dark:hover:text-white transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="edit-form" class="space-y-4">
+        <input type="hidden" id="edit-id" />
+        
+        <div>
+          <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">Font Name</label>
+          <input type="text" id="edit-name" required class="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all text-black dark:text-white" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">Designer</label>
+            <input type="text" id="edit-designer" class="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all text-black dark:text-white" />
+          </div>
+          <div>
+            <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">Foundry</label>
+            <input type="text" id="edit-foundry" class="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all text-black dark:text-white" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">Description</label>
+          <textarea id="edit-description" rows="3" class="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:border-black dark:focus:border-white transition-all resize-none text-black dark:text-white"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">Category</label>
+            <select id="edit-category" class="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none text-black dark:text-white appearance-none">
+              <option value="Serif">Serif</option>
+              <option value="Sans-Serif">Sans-Serif</option>
+              <option value="Display">Display</option>
+              <option value="Script">Script</option>
+              <option value="Monospace">Monospace</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-1">License Type</label>
+            <select id="edit-license" class="w-full px-4 py-2.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none text-black dark:text-white appearance-none">
+              <option value="Free">Free</option>
+              <option value="Free for Personal">Free for Personal</option>
+              <option value="Open Source (OFL)">Open Source (OFL)</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Premium">Premium</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6 pt-2">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="edit-is-variable" class="w-4 h-4 rounded border-neutral-300 dark:border-neutral-700 accent-black text-black dark:accent-white" />
+            <span class="text-xs font-semibold tracking-wider text-neutral-500">Variable Font</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="edit-is-free" class="w-4 h-4 rounded border-neutral-300 dark:border-neutral-700 accent-black text-black dark:accent-white" />
+            <span class="text-xs font-semibold tracking-wider text-neutral-500">Free Font</span>
+          </label>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-semibold text-neutral-400 uppercase tracking-wider mb-2">Style/Mood Tags</label>
+          <div class="flex flex-wrap gap-2" id="edit-tags-picker"></div>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button type="button" id="cancel-edit-btn" class="flex-1 py-3 text-sm font-medium border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all text-black dark:text-white">Cancel</button>
+          <button type="submit" id="save-edit-btn" class="flex-1 py-3 bg-black dark:bg-white text-white dark:text-black font-semibold rounded-xl text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= DELETE CONFIRM MODAL ================= -->
+  <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/45 backdrop-blur-sm" id="delete-modal-backdrop"></div>
+    <div class="relative bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl p-6 w-full max-w-sm animate-fade-in">
+      <div class="w-10 h-10 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/50 rounded-xl flex items-center justify-center mb-4">
+        <i data-lucide="trash-2" class="w-5 h-5 text-danger"></i>
+      </div>
+      <h3 class="text-base font-semibold tracking-tight text-black dark:text-white">Delete Font</h3>
+      <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-2">Are you sure you want to permanently delete <span id="delete-font-name" class="font-bold text-neutral-900 dark:text-neutral-100">Satoshi</span> from the library?</p>
+      <p class="text-[10px] text-neutral-400 mt-1">This will delete both the database record and the storage file. This action is permanent.</p>
+      
+      <div class="flex gap-3 pt-6">
+        <button id="cancel-delete-btn" class="flex-1 py-2.5 text-xs font-medium border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-850 transition-all text-black dark:text-white">Cancel</button>
+        <button id="confirm-delete-btn" class="flex-1 py-2.5 text-xs font-medium bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all active:scale-[0.98]">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase + Dashboard logic -->
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
