@@ -9,7 +9,7 @@ window.onerror = function(message, source, lineno, colno, error) {
 
 // --- CONFIG & STATE ---
 const ALLOWED_ADMIN_EMAILS = ['admin@fontvault.com', 'abhishek7255384@gmail.com'];
-const FONT_BUCKET = 'Fonts';
+const FONT_BUCKET = 'fonts';
 const AVAILABLE_TAGS = ['Modern', 'Luxury', 'Editorial', 'Minimal', 'Playful', 'Corporate', 'Elegant', 'Bold', 'Vintage'];
 
 // Fallback Supabase credentials in case config.js is ignored

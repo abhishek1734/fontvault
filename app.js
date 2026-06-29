@@ -442,9 +442,12 @@ async function loadCustomFontsFromSupabase() {
 }
 
 // ─────────────────────────────────────────────────
-//  DYNAMIC DRAG-AND-DROP FONT UPLOADER
+//  DYNAMIC DRAG-AND-DROP FONT UPLOADER (LOCAL PREVIEW ONLY)
+//  Fonts dropped here are previewed temporarily in this session only.
+//  They are NOT uploaded to the server or saved to the database.
+//  Permanent fonts are managed via the Admin Dashboard.
 // ─────────────────────────────────────────────────
-async function handleFontFile(file) {
+function handleFontFile(file) {
   const name = file.name;
   const ext = name.substring(name.lastIndexOf('.')).toLowerCase();
   if (!['.ttf', '.otf', '.woff', '.woff2'].includes(ext)) {
@@ -453,74 +456,44 @@ async function handleFontFile(file) {
   }
 
   const cleanName = name.substring(0, name.lastIndexOf('.')).replace(/[_-]/g, ' ').trim();
-  const fontId = `custom-upload-${Date.now()}`;
+  const fontId = `preview-${Date.now()}`;
   const format = ext === '.ttf' ? 'truetype' : (ext === '.otf' ? 'opentype' : (ext === '.woff' ? 'woff' : 'woff2'));
-  const storagePath = `${fontId}/${name}`;
 
-  const sb = getSupabase();
-
-  // Show uploading state
+  // Show loading state
   const uploaderCard = document.getElementById('font-uploader-card');
   const dropzone = uploaderCard?.querySelector('.uploader-dropzone');
   const originalHTML = dropzone?.innerHTML;
-  if (dropzone) dropzone.innerHTML = `<p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--signal-red);animation:pulse 1.5s infinite;">UPLOADING TO CLOUD...</p>`;
+  if (dropzone) dropzone.innerHTML = `<p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--signal-red);animation:pulse 1.5s infinite;">LOADING PREVIEW...</p>`;
 
-  try {
-    // 1. Upload file to Supabase Storage
-    const { error: uploadError } = await sb.storage.from('fonts').upload(storagePath, file, {
-      cacheControl: '3600',
-      upsert: false,
-      contentType: `font/${format}`
-    });
-    if (uploadError) throw new Error('Storage upload failed: ' + uploadError.message);
+  // Read file locally using FileReader — no network request, no database
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
 
-    // 2. Get the public URL
-    const { data: urlData } = sb.storage.from('fonts').getPublicUrl(storagePath);
-    const publicUrl = urlData.publicUrl;
-
-    // 3. Insert metadata into custom_fonts table
-    const { error: dbError } = await sb.from('custom_fonts').insert({
-      id: fontId,
-      name: cleanName + ' (Uploaded)',
-      file_name: name,
-      storage_path: storagePath,
-      public_url: publicUrl,
-      css_family: cleanName,
-      style: ext === '.ttf' ? 'Sans-Serif' : (ext === '.otf' ? 'Serif' : 'Display'),
-      foundry: name,
-      designer: 'Self-Uploaded File',
-      availability: 'Custom',
-      styles_count: 1,
-      format: format,
-      file_size: `${Math.round(file.size / 1024)} KB`
-    });
-    if (dbError) throw new Error('DB insert failed: ' + dbError.message);
-
-    // 4. Register @font-face locally
+    // Register @font-face directly from local data URL
     const styleEl = document.createElement('style');
-    styleEl.textContent = `@font-face { font-family: '${cleanName}'; src: url('${publicUrl}') format('${format}'); font-display: swap; }`;
+    styleEl.textContent = `@font-face { font-family: '${cleanName}'; src: url('${dataUrl}') format('${format}'); font-display: swap; }`;
     document.head.appendChild(styleEl);
 
     const newFont = {
       id: fontId,
-      name: cleanName + ' (Uploaded)',
+      name: cleanName + ' (Preview)',
       provider: 'custom',
-      designer: 'Self-Uploaded File',
-      foundry: name,
+      designer: 'Local Preview',
+      foundry: 'Temporary — this session only',
       year: new Date().getFullYear().toString(),
       stylesCount: 1,
       languages: ['Latin'],
-      description: `Custom uploaded font: ${name}`,
-      availability: 'Custom',
+      description: `Local preview of ${name}. Not saved to the database.`,
+      availability: 'Preview',
       mood: 'Modern',
       useCase: 'Web',
-      style: ext === '.ttf' ? 'Sans-Serif' : (ext === '.otf' ? 'Serif' : 'Display'),
+      style: 'Sans-Serif',
       language: 'Latin',
-      downloadUrl: publicUrl,
+      downloadUrl: dataUrl,
       price: 'Free',
       fileSize: `${Math.round(file.size / 1024)} KB`,
       cssFamily: `'${cleanName}'`,
-      storagePath: storagePath,
       format: format,
       pairsWith: []
     };
@@ -528,21 +501,27 @@ async function handleFontFile(file) {
     fontsData.unshift(newFont);
     renderGrid(true);
 
+    // Scroll to and highlight the new preview card
     setTimeout(() => {
-      const newCard = el.fontGrid?.querySelector(`.font-card[aria-label*="${newFont.name}"]`);
+      const allCards = el.fontGrid?.querySelectorAll('.font-card');
+      const newCard = allCards?.[0]; // unshifted so it's first
       if (newCard) {
         newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         newCard.style.outline = '2px solid var(--signal-red)';
-        setTimeout(() => { newCard.style.outline = 'none'; }, 1500);
+        setTimeout(() => { newCard.style.outline = 'none'; }, 2000);
       }
     }, 300);
 
-  } catch (err) {
-    console.error('Font upload failed:', err);
-    alert(`Upload failed: ${err.message}`);
-  } finally {
+    // Restore dropzone
     if (dropzone && originalHTML) dropzone.innerHTML = originalHTML;
-  }
+  };
+
+  reader.onerror = function() {
+    alert('Failed to read font file. Please try again.');
+    if (dropzone && originalHTML) dropzone.innerHTML = originalHTML;
+  };
+
+  reader.readAsDataURL(file);
 }
 
 function setupFontUploader() {
