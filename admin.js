@@ -3,7 +3,7 @@
 // =============================================================
 
 // --- CONFIG & STATE ---
-const ALLOWED_ADMIN_EMAILS = ['admin@fontvault.com'];
+const ALLOWED_ADMIN_EMAILS = ['admin@fontvault.com', 'abhishek7255384@gmail.com'];
 const FONT_BUCKET = 'font-files';
 const AVAILABLE_TAGS = ['Modern', 'Luxury', 'Editorial', 'Minimal', 'Playful', 'Corporate', 'Elegant', 'Bold', 'Vintage'];
 
