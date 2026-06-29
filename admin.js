@@ -16,7 +16,7 @@ const AVAILABLE_TAGS = ['Modern', 'Luxury', 'Editorial', 'Minimal', 'Playful', '
 window.SUPABASE_URL = window.SUPABASE_URL || "https://alvarlzjtdmkvbxehppt.supabase.co";
 window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsdmFybHpqdGRta3ZieGVocHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MjA3MDIsImV4cCI6MjA5ODI5NjcwMn0.kopGopXghwNdHM6cawDhpjrYui0MzqpAROsYHHMZEeE";
 
-let supabase = null;
+let supabaseClient = null;
 let currentSession = null;
 let activeTab = 'overview';
 let selectedUploadFile = null;
@@ -29,7 +29,7 @@ function init() {
   try {
     // Initialize Supabase Client
     if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
-      supabase = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
     } else {
       console.warn('Supabase global not found or config parameters missing');
     }
@@ -63,14 +63,14 @@ function initTheme() {
 // --- AUTHENTICATION ---
 async function checkAuth() {
   try {
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const { data: { session }, error } = await supabaseClient.auth.getSession();
     
     if (error || !session) {
       showAuthView();
     } else {
       const email = session.user.email?.toLowerCase();
       if (!ALLOWED_ADMIN_EMAILS.includes(email)) {
-        await supabase.auth.signOut();
+        await supabaseClient.auth.signOut();
         showAuthError('You are not authorized to access this admin panel.');
         showAuthView();
       } else {
@@ -144,7 +144,7 @@ window.handleLogin = async function(e) {
   submitBtn.innerHTML = 'Signing in...';
   
   try {
-    if (!supabase) {
+    if (!supabaseClient) {
       throw new Error('Supabase client failed to initialize. Please check your config.js and network connectivity.');
     }
 
@@ -155,7 +155,7 @@ window.handleLogin = async function(e) {
       return;
     }
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
     
     if (error) {
       showAuthError(error.message);
@@ -178,7 +178,7 @@ function setupEventListeners() {
 
   // Logout Button
   document.getElementById('logout-btn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     currentSession = null;
     showAuthView();
   });
@@ -241,7 +241,7 @@ function setupEventListeners() {
 
 // --- DATA FETCHING & LISTING ---
 async function loadFontsData() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('fonts')
     .select('*')
     .order('created_at', { ascending: false });
@@ -413,7 +413,7 @@ async function handleUploadSubmit(e) {
 
   try {
     // 1. Upload to Supabase Storage
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabaseClient.storage
       .from(FONT_BUCKET)
       .upload(storagePath, selectedUploadFile, {
         cacheControl: '3600',
@@ -424,13 +424,13 @@ async function handleUploadSubmit(e) {
     if (uploadError) throw uploadError;
 
     // 2. Fetch public URL
-    const { data: urlData } = supabase.storage.from(FONT_BUCKET).getPublicUrl(storagePath);
+    const { data: urlData } = supabaseClient.storage.from(FONT_BUCKET).getPublicUrl(storagePath);
     const fileUrl = urlData.publicUrl;
 
     submitBtn.innerHTML = 'Inserting Database Record...';
 
     // 3. Write metadata to database
-    const { error: dbError } = await supabase.from('fonts').insert({
+    const { error: dbError } = await supabaseClient.from('fonts').insert({
       name: name,
       slug: slug,
       designer: designer || null,
@@ -555,7 +555,7 @@ async function handleEditSubmit(e) {
   saveBtn.innerHTML = 'Saving...';
 
   try {
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from('fonts')
       .update({
         name: name,
@@ -616,12 +616,12 @@ async function confirmDeleteFont() {
       // Find path matching storage structure
       const match = font.file_url.match(/font-files\/(.+)$/);
       if (match) {
-        await supabase.storage.from(FONT_BUCKET).remove([match[1]]);
+        await supabaseClient.storage.from(FONT_BUCKET).remove([match[1]]);
       }
     }
 
     // 2. Delete database row
-    const { error } = await supabase
+    const { error } = await supabaseClient
       .from('fonts')
       .delete()
       .eq('id', deleteTargetId);
