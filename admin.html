@@ -6,6 +6,18 @@
   <title>FontVault — Admin CMS Dashboard</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Global Error Logger -->
+  <script>
+    window.addEventListener('error', function(e) {
+      if (e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
+        alert("Resource Load Error: " + (e.target.src || e.target.href) + " failed to load.");
+      } else {
+        alert("Runtime Error: " + e.message + " at " + e.filename + ":" + e.lineno);
+      }
+    }, true);
+  </script>
+
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <!-- Tailwind CSS via CDN -->
@@ -597,8 +609,8 @@
   </div>
 
   <!-- Supabase + Dashboard logic -->
-  <script src="config.js?v=1.7"></script>
-  <script src="admin.js?v=1.7"></script>
+  <script src="config.js?v=1.8"></script>
+  <script src="admin.js?v=1.8"></script>
   
   <!-- Inline Diagnostics Engine -->
   <script>
