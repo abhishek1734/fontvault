@@ -597,12 +597,16 @@
   </div>
 
   <!-- Supabase + Dashboard logic -->
-  <script src="config.js?v=1.6"></script>
-  <script src="admin.js?v=1.6"></script>
+  <script src="config.js?v=1.7"></script>
+  <script src="admin.js?v=1.7"></script>
   
   <!-- Inline Diagnostics Engine -->
   <script>
     window.addEventListener('load', () => {
+      // Fallback Supabase credentials in case config.js is ignored
+      window.SUPABASE_URL = window.SUPABASE_URL || "https://alvarlzjtdmkvbxehppt.supabase.co";
+      window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsdmFybHpqdGRta3ZieGVocHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MjA3MDIsImV4cCI6MjA5ODI5NjcwMn0.kopGopXghwNdHM6cawDhpjrYui0MzqpAROsYHHMZEeE";
+
       const banner = document.getElementById('diagnostic-banner');
       if (!banner) return;
 
