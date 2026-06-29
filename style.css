@@ -983,8 +983,10 @@ header.collapsed ~ .main-container .sidebar-filters {
   align-items: center;
   justify-content: flex-start;
   width: 100%;
+  max-width: 100%;
   overflow: hidden;
   position: relative;
+  min-width: 0;
 }
 
 .huge-preview-text {
@@ -996,6 +998,7 @@ header.collapsed ~ .main-container .sidebar-filters {
   text-overflow: ellipsis;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
   color: var(--near-black);
   transition: font-size 0.1s ease;
