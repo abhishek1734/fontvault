@@ -379,6 +379,10 @@ function appendFontCard(font, delay) {
 // ─────────────────────────────────────────────────
 //  SUPABASE CLIENT
 // ─────────────────────────────────────────────────
+// Fallback credentials in case config.js is gitignored and not deployed
+window.SUPABASE_URL = window.SUPABASE_URL || "https://alvarlzjtdmkvbxehppt.supabase.co";
+window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsdmFybHpqdGRta3ZieGVocHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MjA3MDIsImV4cCI6MjA5ODI5NjcwMn0.kopGopXghwNdHM6cawDhpjrYui0MzqpAROsYHHMZEeE";
+
 let supabaseClient = null;
 function getSupabase() {
   if (!supabaseClient && window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
