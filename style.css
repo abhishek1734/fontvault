@@ -202,7 +202,6 @@ header.collapsed {
 .dark-toggle-btn {
   width: 64px;
   padding: 0;
-  border-right: 1px solid var(--border-grey);
 }
 
 .search-container {
