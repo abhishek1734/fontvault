@@ -11,7 +11,9 @@
   <script>
     window.addEventListener('error', function(e) {
       if (e.target && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
-        alert("Resource Load Error: " + (e.target.src || e.target.href) + " failed to load.");
+        const url = e.target.src || e.target.href;
+        if (url && url.includes('config.js')) return; // Ignore expected config.js load failures
+        alert("Resource Load Error: " + url + " failed to load.");
       } else {
         alert("Runtime Error: " + e.message + " at " + e.filename + ":" + e.lineno);
       }
@@ -609,8 +611,8 @@
   </div>
 
   <!-- Supabase + Dashboard logic -->
-  <script src="config.js?v=1.9"></script>
-  <script src="admin.js?v=1.9"></script>
+  <script src="config.js?v=2.0"></script>
+  <script src="admin.js?v=2.0"></script>
   
   <!-- Inline Diagnostics Engine -->
   <script>
