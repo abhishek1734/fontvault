@@ -377,93 +377,172 @@ function appendFontCard(font, delay) {
 }
 
 // ─────────────────────────────────────────────────
+//  SUPABASE CLIENT
+// ─────────────────────────────────────────────────
+let supabaseClient = null;
+function getSupabase() {
+  if (!supabaseClient && window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+    supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  }
+  return supabaseClient;
+}
+
+// ─────────────────────────────────────────────────
+//  LOAD CUSTOM FONTS FROM SUPABASE
+// ─────────────────────────────────────────────────
+async function loadCustomFontsFromSupabase() {
+  const sb = getSupabase();
+  if (!sb) return;
+
+  try {
+    const { data, error } = await sb.from('custom_fonts').select('*').order('created_at', { ascending: false });
+    if (error) { console.warn('Supabase fetch error:', error.message); return; }
+    if (!data || data.length === 0) return;
+
+    data.forEach(row => {
+      // Register @font-face using the public URL from Supabase Storage
+      const style = document.createElement('style');
+      style.textContent = `@font-face { font-family: '${row.css_family}'; src: url('${row.public_url}') format('${row.format}'); font-display: swap; }`;
+      document.head.appendChild(style);
+
+      const fontObj = {
+        id: row.id,
+        name: row.name,
+        provider: 'custom',
+        designer: row.designer || 'Self-Uploaded File',
+        foundry: row.foundry || row.file_name,
+        year: new Date(row.created_at).getFullYear().toString(),
+        stylesCount: row.styles_count || 1,
+        languages: ['Latin'],
+        description: `Custom uploaded font: ${row.file_name}`,
+        availability: 'Custom',
+        mood: 'Modern',
+        useCase: 'Web',
+        style: row.style || 'Sans-Serif',
+        language: 'Latin',
+        downloadUrl: row.public_url,
+        price: 'Free',
+        fileSize: row.file_size || '—',
+        cssFamily: `'${row.css_family}'`,
+        format: row.format,
+        storagePath: row.storage_path,
+        pairsWith: []
+      };
+
+      // Prepend so custom fonts appear first
+      if (!fontsData.find(f => f.id === row.id)) {
+        fontsData.unshift(fontObj);
+      }
+    });
+
+    renderGrid(true);
+  } catch (err) {
+    console.warn('Failed to load custom fonts from Supabase:', err);
+  }
+}
+
+// ─────────────────────────────────────────────────
 //  DYNAMIC DRAG-AND-DROP FONT UPLOADER
 // ─────────────────────────────────────────────────
-function handleFontFile(file) {
+async function handleFontFile(file) {
   const name = file.name;
   const ext = name.substring(name.lastIndexOf('.')).toLowerCase();
   if (!['.ttf', '.otf', '.woff', '.woff2'].includes(ext)) {
-    alert("Please upload a valid font file (.ttf, .otf, .woff, .woff2)");
+    alert('Please upload a valid font file (.ttf, .otf, .woff, .woff2)');
     return;
   }
 
-  // LocalStorage has a 5MB limit. Warn user if file is too large (1.5MB threshold)
-  if (file.size > 1.5 * 1024 * 1024) {
-    alert(`This font file is too large (${Math.round(file.size / 1024)} KB). To make it persist across pages, please upload a compressed webfont file (like .woff2, which is usually under 100KB).`);
-    return;
-  }
-
-  const cleanName = name
-    .substring(0, name.lastIndexOf('.'))
-    .replace(/[_-]/g, ' ')
-    .trim();
-  
+  const cleanName = name.substring(0, name.lastIndexOf('.')).replace(/[_-]/g, ' ').trim();
   const fontId = `custom-upload-${Date.now()}`;
   const format = ext === '.ttf' ? 'truetype' : (ext === '.otf' ? 'opentype' : (ext === '.woff' ? 'woff' : 'woff2'));
+  const storagePath = `${fontId}/${name}`;
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const base64Url = e.target.result;
+  const sb = getSupabase();
+
+  // Show uploading state
+  const uploaderCard = document.getElementById('font-uploader-card');
+  const dropzone = uploaderCard?.querySelector('.uploader-dropzone');
+  const originalHTML = dropzone?.innerHTML;
+  if (dropzone) dropzone.innerHTML = `<p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--signal-red);animation:pulse 1.5s infinite;">UPLOADING TO CLOUD...</p>`;
+
+  try {
+    // 1. Upload file to Supabase Storage
+    const { error: uploadError } = await sb.storage.from('fonts').upload(storagePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: `font/${format}`
+    });
+    if (uploadError) throw new Error('Storage upload failed: ' + uploadError.message);
+
+    // 2. Get the public URL
+    const { data: urlData } = sb.storage.from('fonts').getPublicUrl(storagePath);
+    const publicUrl = urlData.publicUrl;
+
+    // 3. Insert metadata into custom_fonts table
+    const { error: dbError } = await sb.from('custom_fonts').insert({
+      id: fontId,
+      name: cleanName + ' (Uploaded)',
+      file_name: name,
+      storage_path: storagePath,
+      public_url: publicUrl,
+      css_family: cleanName,
+      style: ext === '.ttf' ? 'Sans-Serif' : (ext === '.otf' ? 'Serif' : 'Display'),
+      foundry: name,
+      designer: 'Self-Uploaded File',
+      availability: 'Custom',
+      styles_count: 1,
+      format: format,
+      file_size: `${Math.round(file.size / 1024)} KB`
+    });
+    if (dbError) throw new Error('DB insert failed: ' + dbError.message);
+
+    // 4. Register @font-face locally
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `@font-face { font-family: '${cleanName}'; src: url('${publicUrl}') format('${format}'); font-display: swap; }`;
+    document.head.appendChild(styleEl);
 
     const newFont = {
       id: fontId,
-      name: cleanName + " (Uploaded)",
-      provider: "custom",
-      designer: "Self-Uploaded File",
-      foundry: file.name,
+      name: cleanName + ' (Uploaded)',
+      provider: 'custom',
+      designer: 'Self-Uploaded File',
+      foundry: name,
       year: new Date().getFullYear().toString(),
       stylesCount: 1,
-      languages: ["Latin"],
-      description: `This is your local font file "${file.name}" loaded dynamically in your browser.`,
-      availability: "Custom",
-      mood: "Modern",
-      useCase: "Web",
+      languages: ['Latin'],
+      description: `Custom uploaded font: ${name}`,
+      availability: 'Custom',
+      mood: 'Modern',
+      useCase: 'Web',
       style: ext === '.ttf' ? 'Sans-Serif' : (ext === '.otf' ? 'Serif' : 'Display'),
-      language: "Latin",
-      downloadUrl: "#",
-      price: "Free",
+      language: 'Latin',
+      downloadUrl: publicUrl,
+      price: 'Free',
       fileSize: `${Math.round(file.size / 1024)} KB`,
       cssFamily: `'${cleanName}'`,
-      localUrl: base64Url,
+      storagePath: storagePath,
       format: format,
       pairsWith: []
     };
 
-    // Save to localStorage so it persists across page navigations (like details page)
-    try {
-      const saved = localStorage.getItem("fontvault-uploads");
-      const currentUploads = saved ? JSON.parse(saved) : [];
-      currentUploads.unshift(newFont);
-      // Keep only last 3 custom uploads to avoid filling storage
-      if (currentUploads.length > 3) {
-        currentUploads.pop();
-      }
-      localStorage.setItem("fontvault-uploads", JSON.stringify(currentUploads));
-    } catch (err) {
-      console.warn("Storage quota exceeded:", err);
-      alert("Local storage is full. This font will work for this session but won't persist across page reloads.");
-    }
-
-    // Add to fontsData in the current session
     fontsData.unshift(newFont);
     renderGrid(true);
-    loadExternalFont(newFont);
 
     setTimeout(() => {
-      const newCard = el.fontGrid.querySelector(`.font-card[aria-label*="${newFont.name}"]`);
+      const newCard = el.fontGrid?.querySelector(`.font-card[aria-label*="${newFont.name}"]`);
       if (newCard) {
-        newCard.scrollIntoView({ behavior: "smooth", block: "center" });
-        newCard.style.outline = "2px solid var(--signal-red)";
-        setTimeout(() => { newCard.style.outline = "none"; }, 1500);
+        newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        newCard.style.outline = '2px solid var(--signal-red)';
+        setTimeout(() => { newCard.style.outline = 'none'; }, 1500);
       }
     }, 300);
-  };
 
-  reader.onerror = function() {
-    alert("Failed to read the font file.");
-  };
-
-  reader.readAsDataURL(file);
+  } catch (err) {
+    console.error('Font upload failed:', err);
+    alert(`Upload failed: ${err.message}`);
+  } finally {
+    if (dropzone && originalHTML) dropzone.innerHTML = originalHTML;
+  }
 }
 
 function setupFontUploader() {
@@ -1083,6 +1162,9 @@ async function init() {
   renderTrending();
   setupEventListeners();
 
+  // Load custom fonts from Supabase
+  await loadCustomFontsFromSupabase();
+
   if ((params.get("scroll") === "true" || params.get("vault") === "true") && el.fontGrid) {
     // Small timeout to allow grid to render
     setTimeout(() => {
@@ -1183,30 +1265,35 @@ async function init() {
   }
 }
 
-window.removeCustomFont = function(fontId) {
-  try {
-    const saved = localStorage.getItem("fontvault-uploads");
-    if (saved) {
-      let uploads = JSON.parse(saved);
-      uploads = uploads.filter(f => f.id !== fontId);
-      localStorage.setItem("fontvault-uploads", JSON.stringify(uploads));
+window.removeCustomFont = async function(fontId) {
+  const sb = getSupabase();
+
+  // Find the font in current fontsData to get storagePath
+  const font = fontsData.find(f => f.id === fontId);
+
+  if (sb && font?.storagePath) {
+    try {
+      // Delete file from Supabase Storage
+      await sb.storage.from('fonts').remove([font.storagePath]);
+      // Delete metadata row from DB
+      await sb.from('custom_fonts').delete().eq('id', fontId);
+    } catch (err) {
+      console.error('Failed to delete font from Supabase:', err);
     }
-  } catch (e) {
-    console.error("Failed to remove custom font from localStorage:", e);
   }
 
-  if (typeof fontsData !== "undefined") {
+  if (typeof fontsData !== 'undefined') {
     fontsData = fontsData.filter(f => f.id !== fontId);
   }
 
   if (window.favoritesSet) {
     window.favoritesSet.delete(fontId);
     try {
-      localStorage.setItem("fontvault-favorites", JSON.stringify(Array.from(window.favoritesSet)));
+      localStorage.setItem('fontvault-favorites', JSON.stringify(Array.from(window.favoritesSet)));
     } catch (e) {}
   }
 
-  if (typeof renderGrid === "function") {
+  if (typeof renderGrid === 'function') {
     renderGrid(true);
   }
 };
@@ -1766,6 +1853,9 @@ async function init() {
   renderTrending();
   setupEventListeners();
   setupAiFontFinder();
+
+  // Load custom fonts from Supabase
+  await loadCustomFontsFromSupabase();
 
   if ((params.get("scroll") === "true" || params.get("vault") === "true") && el.fontGrid) {
     // Small timeout to allow grid to render
