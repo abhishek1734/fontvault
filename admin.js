@@ -9,7 +9,7 @@ window.onerror = function(message, source, lineno, colno, error) {
 
 // --- CONFIG & STATE ---
 const ALLOWED_ADMIN_EMAILS = ['admin@fontvault.com', 'abhishek7255384@gmail.com'];
-const FONT_BUCKET = 'Fonts';
+const FONT_BUCKET = 'fonts';
 const AVAILABLE_TAGS = ['Modern', 'Luxury', 'Editorial', 'Minimal', 'Playful', 'Corporate', 'Elegant', 'Bold', 'Vintage'];
 
 // Fallback Supabase credentials in case config.js is ignored
@@ -242,7 +242,7 @@ function setupEventListeners() {
 // --- DATA FETCHING & LISTING ---
 async function loadFontsData() {
   const { data, error } = await supabaseClient
-    .from('fonts')
+    .from('custom_fonts')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -251,7 +251,16 @@ async function loadFontsData() {
     return;
   }
 
-  allFontsList = data || [];
+  // Map custom_fonts database schema to dashboard UI schema
+  allFontsList = (data || []).map(font => ({
+    ...font,
+    category: font.style || 'Serif',
+    slug: font.css_family || font.id,
+    license_type: 'Free',
+    is_free: true,
+    is_variable: false,
+    file_url: font.public_url
+  }));
   updateDashboardStats();
   
   if (activeTab === 'overview') {
@@ -429,20 +438,19 @@ async function handleUploadSubmit(e) {
 
     submitBtn.innerHTML = 'Inserting Database Record...';
 
-    // 3. Write metadata to database
-    const { error: dbError } = await supabaseClient.from('fonts').insert({
+    // 3. Write metadata to custom_fonts database table
+    const { error: dbError } = await supabaseClient.from('custom_fonts').insert({
+      id: `custom-upload-${Date.now()}`,
       name: name,
-      slug: slug,
-      designer: designer || null,
-      foundry: foundry || null,
-      description: description || null,
-      category: category,
-      tags: uploadTagsList,
-      license_type: license,
-      is_free: isFree,
-      is_variable: isVariable,
-      file_url: fileUrl,
-      css_family: name,
+      file_name: selectedUploadFile.name,
+      storage_path: storagePath,
+      public_url: fileUrl,
+      css_family: name.replace(/[^a-zA-Z0-9]/g, '').trim(),
+      style: category,
+      foundry: foundry || 'Self-Uploaded File',
+      designer: designer || 'Self-Uploaded File',
+      availability: 'Custom',
+      styles_count: 1,
       format: format,
       file_size: (selectedUploadFile.size / 1024).toFixed(1) + ' KB'
     });
@@ -556,18 +564,12 @@ async function handleEditSubmit(e) {
 
   try {
     const { error } = await supabaseClient
-      .from('fonts')
+      .from('custom_fonts')
       .update({
         name: name,
-        designer: designer || null,
-        foundry: foundry || null,
-        description: description || null,
-        category: category,
-        tags: editTagsList,
-        license_type: license,
-        is_free: isFree,
-        is_variable: isVariable,
-        updated_at: new Date().toISOString()
+        designer: designer || 'Self-Uploaded File',
+        foundry: foundry || 'Self-Uploaded File',
+        style: category
       })
       .eq('id', id);
 
@@ -612,9 +614,9 @@ async function confirmDeleteFont() {
 
   try {
     // 1. Delete Storage File if exists
-    if (font.file_url) {
-      // Find path matching storage structure
-      const match = font.file_url.match(/font-files\/(.+)$/);
+    if (font.public_url) {
+      // Find path matching storage structure (any bucket)
+      const match = font.public_url.match(/\/object\/public\/[^\/]+\/(.+)$/);
       if (match) {
         await supabaseClient.storage.from(FONT_BUCKET).remove([match[1]]);
       }
@@ -622,7 +624,7 @@ async function confirmDeleteFont() {
 
     // 2. Delete database row
     const { error } = await supabaseClient
-      .from('fonts')
+      .from('custom_fonts')
       .delete()
       .eq('id', deleteTargetId);
 
