@@ -2,6 +2,11 @@
 //  FONTVAULT — admin.js (Client-side Supabase Font CMS Dashboard)
 // =============================================================
 
+window.onerror = function(message, source, lineno, colno, error) {
+  alert("Startup Error: " + message + " at " + source + ":" + lineno);
+  return false;
+};
+
 // --- CONFIG & STATE ---
 const ALLOWED_ADMIN_EMAILS = ['admin@fontvault.com', 'abhishek7255384@gmail.com'];
 const FONT_BUCKET = 'font-files';
