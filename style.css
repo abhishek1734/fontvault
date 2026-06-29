@@ -2712,12 +2712,19 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  padding: 1rem 3rem;
   width: 100%;
-  position: relative;
-  padding-left: 3rem;
-  padding-right: 3rem;
+  position: sticky;
+  top: 64px;
+  z-index: 90;
+  background-color: var(--pure-white);
   box-sizing: border-box;
+  border-bottom: 1px solid var(--border-grey);
+  transition: top 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  margin-bottom: 2rem;
+}
+header.collapsed + .main-container .global-preview-bar {
+  top: 48px;
 }
 
 .global-preview-clear {
@@ -4180,7 +4187,13 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn:hover {
   background-color: rgba(255, 255, 255, 0.06) !important;
 }
 body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container {
-  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-left-color: rgba(255, 255, 255, 0.1) !important;
+  border-right-color: rgba(255, 255, 255, 0.1) !important;
+  border-bottom: none !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container:focus-within {
+  background-color: rgba(255, 255, 255, 0.15) !important;
 }
 body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input {
   color: #ffffff !important;

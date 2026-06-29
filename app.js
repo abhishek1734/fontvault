@@ -895,10 +895,15 @@ function setupEventListeners() {
       if (el.fontGrid) {
         el.fontGrid.style.setProperty("--preview-font-size", `${clampedVal}px`);
         
-        // Sync all card-specific sliders (NOT inputs, to avoid interrupting typing)
+        // Sync all card-specific sliders and inputs (safe since global input is focused, not card inputs)
         const cardSliders = el.fontGrid.querySelectorAll(".card-size-slider");
         cardSliders.forEach(slider => {
           slider.value = clampedVal;
+          const parentWrap = slider.closest(".card-size-slider-wrap");
+          if (parentWrap) {
+            const cardInput = parentWrap.querySelector(".card-size-input");
+            if (cardInput) cardInput.value = clampedVal;
+          }
         });
         
         // Remove individual font-size overrides on preview texts
@@ -931,6 +936,12 @@ function setupEventListeners() {
         let clamped = Math.min(220, Math.max(40, val));
         syncGlobalSize(clamped);
       }
+    });
+  }
+
+  if (globalSizeReset) {
+    globalSizeReset.addEventListener("click", () => {
+      syncGlobalSize(120);
     });
   }
 
