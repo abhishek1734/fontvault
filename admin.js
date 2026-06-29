@@ -44,20 +44,25 @@ function initTheme() {
 
 // --- AUTHENTICATION ---
 async function checkAuth() {
-  const { data: { session }, error } = await supabase.auth.getSession();
-  
-  if (error || !session) {
-    showAuthView();
-  } else {
-    const email = session.user.email?.toLowerCase();
-    if (!ALLOWED_ADMIN_EMAILS.includes(email)) {
-      await supabase.auth.signOut();
-      showAuthError('You are not authorized to access this admin panel.');
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error || !session) {
       showAuthView();
     } else {
-      currentSession = session;
-      showDashboardView(session.user);
+      const email = session.user.email?.toLowerCase();
+      if (!ALLOWED_ADMIN_EMAILS.includes(email)) {
+        await supabase.auth.signOut();
+        showAuthError('You are not authorized to access this admin panel.');
+        showAuthView();
+      } else {
+        currentSession = session;
+        showDashboardView(session.user);
+      }
     }
+  } catch (err) {
+    console.error('Auth check failed, showing login:', err);
+    showAuthView();
   }
 }
 
