@@ -21,20 +21,29 @@ let editTagsList = [];
 let uploadTagsList = [];
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialize Supabase Client
-  if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
-    supabase = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-  } else {
-    alert('Supabase credentials missing! Make sure config.js is configured.');
-    return;
-  }
+function init() {
+  try {
+    // Initialize Supabase Client
+    if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+      supabase = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    } else {
+      console.warn('Supabase global not found or config parameters missing');
+    }
 
-  // Setup UI elements
-  initTheme();
-  setupEventListeners();
-  checkAuth();
-});
+    initTheme();
+    setupEventListeners();
+    checkAuth();
+  } catch (err) {
+    alert('Init failed: ' + err.message);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  // DOM is already ready
+  init();
+}
 
 // --- THEME ---
 function initTheme() {
@@ -131,6 +140,10 @@ window.handleLogin = async function(e) {
   submitBtn.innerHTML = 'Signing in...';
   
   try {
+    if (!supabase) {
+      throw new Error('Supabase client failed to initialize. Please check your config.js and network connectivity.');
+    }
+
     if (!ALLOWED_ADMIN_EMAILS.includes(email.toLowerCase())) {
       showAuthError('You are not authorized to access this admin panel.');
       submitBtn.disabled = false;
