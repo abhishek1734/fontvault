@@ -4235,42 +4235,42 @@ input[type=number] {
   color: #ffffff !important;
 }
 
-/* Light mode — dark text over light hero background */
+/* Light mode — hero is always dark, so navbar text must be white for contrast */
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) {
   background-color: transparent;
-  border-bottom-color: rgba(0, 0, 0, 0.06);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .logo {
-  color: #0A0A0A !important;
+  color: #ffffff !important;
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link,
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn {
-  color: #0A0A0A !important;
-  border-left-color: rgba(0, 0, 0, 0.12) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  border-left-color: rgba(255, 255, 255, 0.1) !important;
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link:hover,
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn:hover {
-  color: #000000 !important;
-  background-color: rgba(0, 0, 0, 0.04) !important;
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container {
-  background-color: rgba(0, 0, 0, 0.04) !important;
-  border-left-color: rgba(0, 0, 0, 0.12) !important;
-  border-right-color: rgba(0, 0, 0, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-left-color: rgba(255, 255, 255, 0.1) !important;
+  border-right-color: rgba(255, 255, 255, 0.1) !important;
   border-bottom: none !important;
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container:focus-within {
-  background-color: rgba(0, 0, 0, 0.06) !important;
+  background-color: rgba(255, 255, 255, 0.12) !important;
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input {
-  color: #0A0A0A !important;
+  color: #ffffff !important;
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input::placeholder {
-  color: rgba(0, 0, 0, 0.35) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container svg {
-  color: rgba(0, 0, 0, 0.45) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
-  color: #0A0A0A !important;
+  color: #ffffff !important;
 }
