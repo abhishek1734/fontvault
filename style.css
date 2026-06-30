@@ -4234,6 +4234,26 @@ input[type=number] {
 [data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
   color: #ffffff !important;
 }
+/* Override hardcoded !important colors on specific nav buttons */
+body:not(.ai-finder-page) header:not(.navbar-scrolled) #vault-btn {
+  color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: transparent !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) #vault-btn:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn {
+  color: rgba(255, 255, 255, 0.85) !important;
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hover {
+  color: #ffffff !important;
+  border-bottom-color: rgba(255, 255, 255, 0.6) !important;
+}
 
 /* Light mode — hero is always dark, so navbar text must be white for contrast */
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) {
