@@ -4215,21 +4215,61 @@ input[type=number] {
 [data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container svg {
   color: rgba(255, 255, 255, 0.6) !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown {
-  background: #0d0d0d !important;
-  border-color: #2a2a2a !important;
+/* ── Search dropdown: frosted-glass dark hero treatment (both themes, hero is always dark) ── */
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown {
+  background: rgba(8, 8, 12, 0.82) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.06) !important;
   color: #f0f0f0 !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-item {
-  color: #f0f0f0 !important;
-  border-bottom-color: #2a2a2a !important;
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-item {
+  color: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.07) !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-item:hover {
-  background: #1a1a1a !important;
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-footer {
-  background: #111 !important;
-  color: #aaa !important;
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-name {
+  color: #ffffff !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-meta {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-provider {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-footer {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-top-color: rgba(255, 255, 255, 0.07) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-footer:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  color: #ffffff !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-recent-item {
+  color: rgba(255, 255, 255, 0.75) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.07) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-recent-item:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #ffffff !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .delete-recent-search-btn {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .delete-recent-search-btn:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+/* Section labels (e.g. "Recent Searches", "Results") */
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown .search-section-label,
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown [class*="section-label"],
+body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown [class*="recent-label"] {
+  color: rgba(255, 255, 255, 0.35) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.07) !important;
 }
 [data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
   color: #ffffff !important;
