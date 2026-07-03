@@ -1,12 +1,8 @@
 ﻿// api/download.js — Vercel Serverless Function
 // Downloads fonts directly from the google/fonts GitHub repo.
-// This gives the exact same files as the official Google Fonts ZIP:
-//   - Variable TTFs (contain ALL weights in a single file via font axes)
-//   - e.g. Inter[opsz,wght].ttf covers weights 100-900
-//
-// Falls back to the official Google Fonts download endpoint if font not in repo.
+// Falls back to Google's official zip endpoint, and then to a smart CSS parsing fallback.
 
-// ── Minimal pure-Node ZIP builder (no npm) ──────────────────────
+// ── Minimal pure-Node ZIP builder (no npm needed) ────────────────
 function buildZip(entries) {
   function crc32(buf) {
     if (!crc32._t) {
@@ -52,15 +48,10 @@ function buildZip(entries) {
   return Buffer.concat([...locals, cd, eocd]);
 }
 
-// ── Convert font family name to Google Fonts GitHub directory slug ──
-// "Instrument Serif" → "instrumentserif"
-// "DM Serif Display" → "dmserifdisplay"
-// "JetBrains Mono"   → "jetbrainsmono"
 function familyToSlug(family) {
   return family.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-// ── Try to find font in google/fonts GitHub repo ─────────────────
 async function fetchFromGitHub(family) {
   const slug    = familyToSlug(family);
   const folders = ['ofl', 'apache', 'ufl'];
@@ -78,14 +69,12 @@ async function fetchFromGitHub(family) {
     const files = await resp.json();
     if (!Array.isArray(files)) continue;
 
-    // Only take .ttf and .otf files (skip DESCRIPTION, METADATA, OFL, config, etc.)
     const fontFiles = files.filter(f =>
       f.type === 'file' && /\.(ttf|otf)$/i.test(f.name)
     );
 
     if (fontFiles.length === 0) continue;
 
-    // Download each font file in parallel
     const entries = (await Promise.all(
       fontFiles.map(async file => {
         try {
@@ -103,7 +92,6 @@ async function fetchFromGitHub(family) {
   return null;
 }
 
-// ── Main handler ──────────────────────────────────────────────────
 module.exports = async (req, res) => {
   const { family, url, filename } = req.query;
 
@@ -112,8 +100,7 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-
-    // ── Path A: Google Fonts family → TTF ZIP via GitHub ─────────
+    // ── Path A: Google Fonts family → TTF ZIP ────────────────────
     if (family) {
       const cleanFamily = family.trim();
       const zipName     = filename || `${cleanFamily.replace(/\s+/g, '_')}_fonts.zip`;
@@ -121,7 +108,7 @@ module.exports = async (req, res) => {
       // Strategy 1: google/fonts GitHub repo (variable TTFs — best quality)
       const github = await fetchFromGitHub(cleanFamily);
       if (github) {
-        console.log(`[download] GitHub: found ${github.entries.length} TTF files for "${cleanFamily}"`);
+        console.log(`[download] GitHub hit: found ${github.entries.length} TTF files for "${cleanFamily}"`);
         const zip = buildZip(github.entries);
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
@@ -130,7 +117,7 @@ module.exports = async (req, res) => {
         return res.status(200).send(zip);
       }
 
-      // Strategy 2: official Google Fonts download endpoint (fallback)
+      // Strategy 2: official Google Fonts download endpoint
       console.log(`[download] GitHub miss for "${cleanFamily}", trying official endpoint`);
       const googleZipUrl = `https://fonts.google.com/download?family=${encodeURIComponent(cleanFamily)}`;
       const zipResp = await fetch(googleZipUrl, {
@@ -149,6 +136,82 @@ module.exports = async (req, res) => {
         res.setHeader('Content-Length', buffer.length);
         res.setHeader('Cache-Control', 'public, max-age=86400');
         return res.status(200).send(buffer);
+      }
+
+      // Strategy 3: CSS v2 API parsing fallback (for Google Sans, etc.)
+      console.log(`[download] Official endpoint miss for "${cleanFamily}", falling back to CSS parse`);
+      
+      const weightsParam = 'ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900';
+      const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(cleanFamily)}:${weightsParam}`;
+      const cssResp = await fetch(cssUrl, {
+        headers: { 'User-Agent': '' } // Empty User-Agent forces TTF
+      });
+
+      if (cssResp.ok) {
+        const css = await cssResp.text();
+        const blocks = css.split('@font-face');
+        const filesToDownload = [];
+        
+        const weightNames = {
+          '100': 'Thin',
+          '200': 'ExtraLight',
+          '300': 'Light',
+          '400': 'Regular',
+          '500': 'Medium',
+          '600': 'SemiBold',
+          '700': 'Bold',
+          '800': 'ExtraBold',
+          '900': 'Black'
+        };
+
+        for (const block of blocks) {
+          if (!block.includes('src:')) continue;
+          const styleMatch = block.match(/font-style:\s*(\w+)/);
+          const weightMatch = block.match(/font-weight:\s*(\d+)/);
+          const urlMatch = block.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.ttf)\)/);
+          if (styleMatch && weightMatch && urlMatch) {
+            const style = styleMatch[1];
+            const weight = weightMatch[1];
+            const fontFileUrl = urlMatch[1];
+            
+            const weightName = weightNames[weight] || weight;
+            let fontFileName = '';
+            if (style === 'italic') {
+              fontFileName = weightName === 'Regular' ? 'Italic' : `${weightName}Italic`;
+            } else {
+              fontFileName = weightName;
+            }
+            
+            const name = `${cleanFamily.replace(/\s+/g, '')}-${fontFileName}.ttf`;
+            
+            if (!filesToDownload.find(f => f.name === name)) {
+              filesToDownload.push({ name, url: fontFileUrl });
+            }
+          }
+        }
+
+        if (filesToDownload.length > 0) {
+          console.log(`[download] CSS Parse fallback found ${filesToDownload.length} files`);
+          const entries = (await Promise.all(
+            filesToDownload.map(async f => {
+              try {
+                const r = await fetch(f.url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+                if (!r.ok) return null;
+                const data = Buffer.from(await r.arrayBuffer());
+                return { name: f.name, data };
+              } catch { return null; }
+            })
+          )).filter(Boolean);
+
+          if (entries.length > 0) {
+            const zip = buildZip(entries);
+            res.setHeader('Content-Type', 'application/zip');
+            res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
+            res.setHeader('Content-Length', zip.length);
+            res.setHeader('Cache-Control', 'public, max-age=86400');
+            return res.status(200).send(zip);
+          }
+        }
       }
 
       return res.status(404).json({
