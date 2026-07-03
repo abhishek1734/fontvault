@@ -316,7 +316,7 @@ function appendFontCard(font, delay) {
             ✕ REMOVE PREVIEW
           </button>
         ` : ''}
-        ${(font.downloadUrl && font.downloadUrl !== '#' && !font.id.startsWith('preview-')) ? `
+        ${(font.downloadUrl && font.downloadUrl !== '#') ? `
           <button
             class="card-download-btn"
             id="dl-btn-${font.id}"
@@ -1323,6 +1323,24 @@ window.downloadFont = async function(fontId, url, fontName, format) {
     btn.classList.add('downloading');
     if (countEl) countEl.textContent = '↓ FETCHING...';
     btn.style.pointerEvents = 'none';
+  }
+
+  // If the url is a data URL (base64 local custom font), download directly
+  if (url.startsWith('data:')) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = safeFilename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    if (btn) {
+      btn.classList.remove('downloading');
+      btn.classList.add('downloaded');
+      btn.style.pointerEvents = '';
+    }
+    return;
   }
 
   try {
