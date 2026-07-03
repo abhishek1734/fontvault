@@ -707,4 +707,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Bind Hero Button Get AI Suggestions
+  const heroAiBtn = document.getElementById("open-ai-generator-btn");
+  if (heroAiBtn) {
+    heroAiBtn.addEventListener("click", () => {
+      promptTextarea.focus();
+      document.querySelector(".fp-prompt-box").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }
+
 });
