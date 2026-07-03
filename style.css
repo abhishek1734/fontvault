@@ -722,6 +722,7 @@ header.collapsed {
 }
 
 .grid-area {
+  overflow-x: hidden; /* block any horizontal scroll from large preview text */
   border-left: 1px solid var(--border-grey);
 }
 
@@ -919,9 +920,10 @@ header.collapsed ~ .main-container .sidebar-filters {
   transition: background-color 0.25s ease, border-color 0.25s ease;
   cursor: text; /* Text edit cursor */
   width: 100%;
-  height: 320px;
+  min-height: 320px;  /* grows taller when large text wraps */
   padding: 2rem 1.5rem 2rem 3rem; /* Indented left padding to touch divider */
   box-sizing: border-box;
+  overflow-x: hidden; /* never produce horizontal scroll */
   
   /* Infinite scroll emerge animation */
   opacity: 0;
@@ -994,9 +996,10 @@ header.collapsed ~ .main-container .sidebar-filters {
   font-size: var(--preview-font-size, 120px);
   text-align: left;
   line-height: 1.1;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
   overflow: hidden;
-  text-overflow: ellipsis;
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -1008,7 +1011,6 @@ header.collapsed ~ .main-container .sidebar-filters {
 }
 /* When user has activated inline editing, don't clip text */
 .huge-preview-text[contenteditable="true"] {
-  text-overflow: clip;
   cursor: text;
 }
 
