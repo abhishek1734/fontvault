@@ -2109,6 +2109,57 @@ footer {
   color: #ffffff !important;
 }
 
+/* ── Download Button ── */
+.card-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 0 !important;
+  border: 1px solid var(--border-grey) !important;
+  background-color: transparent !important;
+  color: var(--near-black) !important;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-download-btn:hover {
+  border-color: var(--near-black) !important;
+  background-color: var(--near-black) !important;
+  color: var(--pure-white) !important;
+}
+
+.card-download-btn.downloading {
+  border-color: var(--signal-red) !important;
+  color: var(--signal-red) !important;
+  pointer-events: none;
+}
+
+.card-download-btn.downloaded {
+  border-color: #22c55e !important;
+  color: #22c55e !important;
+}
+
+[data-theme="dark"] .card-download-btn {
+  border-color: #333 !important;
+  color: #F0F0F0 !important;
+}
+
+[data-theme="dark"] .card-download-btn:hover {
+  border-color: #F0F0F0 !important;
+  background-color: #F0F0F0 !important;
+  color: #0D0D0D !important;
+}
+
 .favorite-add-btn {
   width: 32px; height: 32px;
   border-radius: 50%;

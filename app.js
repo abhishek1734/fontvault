@@ -314,6 +314,17 @@ function appendFontCard(font, delay) {
             ✕ REMOVE PREVIEW
           </button>
         ` : ''}
+        ${font.downloadUrl && !font.id.startsWith('preview-') ? `
+          <button
+            class="card-download-btn"
+            id="dl-btn-${font.id}"
+            title="Download ${font.name}"
+            onclick="event.stopPropagation(); downloadFont('${font.id}', '${font.downloadUrl}', '${font.name}', '${font.format || 'woff2'}')"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span class="dl-count" id="dl-count-${font.id}">${font.downloadCount > 0 ? formatDownloadCount(font.downloadCount) : 'DOWNLOAD'}</span>
+          </button>
+        ` : ''}
         <a class="view-family-hover-btn" href="font.html?id=${font.id}" target="_blank">
           VIEW FAMILY
         </a>
@@ -425,6 +436,7 @@ async function loadCustomFontsFromSupabase() {
         style: row.style || 'Sans-Serif',
         language: 'Latin',
         downloadUrl: row.public_url,
+        downloadCount: row.download_count || 0,
         price: 'Free',
         fileSize: row.file_size || '—',
         cssFamily: `'${row.css_family}'`,
@@ -1271,6 +1283,71 @@ window.removeCustomFont = function(fontId) {
 
   if (typeof renderGrid === 'function') {
     renderGrid(true);
+  }
+};
+
+// ─────────────────────────────────────────────────
+//  DOWNLOAD COUNT HELPERS
+// ─────────────────────────────────────────────────
+
+// Format number: 1234 → "1.2k", 999 → "999"
+window.formatDownloadCount = function(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1000)    return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return String(n);
+};
+
+// Trigger real font file download + increment DB counter
+window.downloadFont = async function(fontId, url, fontName, format) {
+  if (!url) return;
+
+  // ── Trigger browser download ──
+  const ext = format === 'truetype' ? 'ttf'
+            : format === 'opentype' ? 'otf'
+            : format || 'woff2';
+  const filename = `${fontName.replace(/\s+/g, '_')}.${ext}`;
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // ── Animate button: show downloading state ──
+  const btn = document.getElementById(`dl-btn-${fontId}`);
+  const countEl = document.getElementById(`dl-count-${fontId}`);
+  if (btn) {
+    btn.classList.add('downloading');
+    if (countEl) countEl.textContent = '↓ SAVING...';
+    setTimeout(() => {
+      btn.classList.remove('downloading');
+      btn.classList.add('downloaded');
+    }, 1200);
+  }
+
+  // ── Increment counter in Supabase via RPC ──
+  const sb = getSupabase();
+  if (sb) {
+    try {
+      await sb.rpc('increment_download_count', { font_id: fontId });
+
+      // Update local fontsData count
+      const fontObj = fontsData.find(f => f.id === fontId);
+      if (fontObj) {
+        fontObj.downloadCount = (fontObj.downloadCount || 0) + 1;
+        if (countEl) countEl.textContent = formatDownloadCount(fontObj.downloadCount);
+      }
+    } catch (err) {
+      console.warn('Failed to increment download count:', err);
+      // Still update locally even if RPC fails
+      const fontObj = fontsData.find(f => f.id === fontId);
+      if (fontObj) {
+        fontObj.downloadCount = (fontObj.downloadCount || 0) + 1;
+        if (countEl) countEl.textContent = formatDownloadCount(fontObj.downloadCount);
+      }
+    }
   }
 };
 
