@@ -911,65 +911,213 @@ header.collapsed ~ .main-container .sidebar-filters {
   width: 100%;
 }
 
-/* ── Grid Mode Layout (Multi-column) ── */
+/* ── Grid Mode Layout (Continuous Edge-to-Edge Grid) ── */
 .masonry-grid.grid-mode {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)) !important;
-  gap: 2rem !important;
-  padding: 2rem 3rem !important;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 0 !important; /* Touch edge-to-edge with no gaps */
+  padding: 0 !important; /* Go full width */
   width: 100% !important;
   box-sizing: border-box !important;
+  border-top: 1px solid var(--border-grey) !important;
+  border-left: 1px solid var(--border-grey) !important;
 }
 
 .masonry-grid.grid-mode .font-card {
-  min-height: 250px !important;
-  height: 250px !important;
-  border: 1px solid var(--border-grey) !important;
-  border-radius: 12px !important;
+  min-height: 280px !important;
+  height: 280px !important;
+  border-right: 1px solid var(--border-grey) !important;
+  border-bottom: 1px solid var(--border-grey) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-radius: 0 !important; /* Zero round corners, matching the layout guidelines */
   padding: 1.5rem !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
   background-color: var(--pure-white) !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+  transition: background-color 0.2s ease !important;
 }
 
 .masonry-grid.grid-mode .font-card:hover {
-  border-color: var(--near-black) !important;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important;
-  background-color: var(--pure-white) !important;
+  background-color: #fafafa !important; /* subtle gray hover */
+  border-color: var(--border-grey) !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .masonry-grid.grid-mode {
+  border-color: rgba(255,255,255,0.08) !important;
 }
 
 [data-theme="dark"] .masonry-grid.grid-mode .font-card {
-  background-color: #141414 !important;
-  border-color: #2A2A2A !important;
+  background-color: #050505 !important;
+  border-color: rgba(255,255,255,0.08) !important;
 }
 
 [data-theme="dark"] .masonry-grid.grid-mode .font-card:hover {
-  border-color: #555 !important;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.4) !important;
-  background-color: #1a1a1a !important;
+  background-color: #0c0c0c !important;
 }
 
 /* Adjust card content structure in Grid Mode */
 .masonry-grid.grid-mode .huge-preview-text {
-  font-size: clamp(20px, 3.5vw, 36px) !important;
+  font-size: clamp(24px, 3.2vw, 42px) !important;
   line-height: 1.2 !important;
-  max-height: 85px !important;
+  max-height: 120px !important;
   overflow: hidden !important;
-  margin: 1.25rem 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem 0 !important;
 }
 
 .masonry-grid.grid-mode .card-header-row {
   margin-bottom: 0 !important;
 }
 
-.masonry-grid.grid-mode .card-size-slider-wrap {
-  display: none !important; /* Hide individual size slider in grid mode to save space */
+/* Structure header left (name & provider) in grid mode */
+.card-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.font-name-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--near-black);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.font-provider-sub {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--near-black);
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+/* Hide header elements only used in list view */
+.masonry-grid.grid-mode .card-size-slider-wrap,
+.masonry-grid.grid-mode .list-only-meta {
+  display: none !important;
+}
+
+/* Card option buttons visibility and transitions in grid mode */
+.grid-stack-btn {
+  display: none;
+}
+
+.grid-metadata-badges {
+  display: none;
+}
+
+.card-size-slider-wrap-grid {
+  display: none;
+}
+
+.masonry-grid.grid-mode .grid-stack-btn {
+  display: inline-flex !important;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.65rem !important;
+  font-weight: 600 !important;
+  color: var(--near-black);
+  opacity: 0.5;
+  padding: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.2s;
+}
+
+.masonry-grid.grid-mode .grid-stack-btn:hover {
+  opacity: 1;
+}
+
+.masonry-grid.grid-mode .grid-metadata-badges {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--near-black);
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+/* Hover reveals options in grid mode */
+.masonry-grid.grid-mode .card-action-buttons {
+  position: absolute;
+  right: 1rem;
+  bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: translateY(4px);
+}
+
+.masonry-grid.grid-mode .font-card:hover .card-action-buttons {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.masonry-grid.grid-mode .font-card:hover .grid-metadata-badges {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.masonry-grid.grid-mode .card-size-slider-wrap-grid {
+  display: flex !important;
+  align-items: center;
+}
+
+.masonry-grid.grid-mode .card-action-buttons .card-download-btn {
+  padding: 4px 8px !important;
+  font-size: 0.65rem !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.masonry-grid.grid-mode .card-action-buttons .view-family-hover-btn {
+  font-size: 0.65rem !important;
+  padding: 4px 8px !important;
+  border: 1px solid var(--border-grey) !important;
+  border-radius: 0 !important;
 }
 
 /* Responsive grid overrides */
 @media (max-width: 768px) {
   .masonry-grid.grid-mode {
     grid-template-columns: 1fr !important;
-    padding: 1.5rem !important;
-    gap: 1.5rem !important;
+    border-top: none !important;
+    border-left: none !important;
+  }
+  .masonry-grid.grid-mode .font-card {
+    border: 1px solid var(--border-grey) !important;
+    margin-bottom: 1rem !important;
   }
 }
 
@@ -1015,6 +1163,16 @@ header.collapsed ~ .main-container .sidebar-filters {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+}
+
+.font-name-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--near-black);
+  text-transform: none;
+  letter-spacing: normal;
+  display: block;
 }
 
 .font-name-label {
