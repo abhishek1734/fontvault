@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Font Pairing Studio — FontVault</title>
+  <meta name="description" content="Intelligent AI typography assistant that recommends and visualizes premium font pairings for your design projects.">
+  <link rel="canonical" href="https://fontvault.com/font-pairing.html">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fontvault.com/font-pairing.html">
+  <meta property="og:title" content="AI Font Pairing Studio — FontVault">
+  <meta property="og:description" content="Intelligent typography assistant for designers.">
+  <meta property="og:image" content="https://fontvault.com/assets/branding.png">
+
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css?v=5.15">
+  <link rel="stylesheet" href="font-pairing.css?v=2.0">
+  
+  <script>
+    (function() {
+      const savedDark = localStorage.getItem("fontvault-dark");
+      if (savedDark === "1") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+</head>
+<body class="font-pairing-page">
+
+  <!-- NAVIGATION BAR -->
+  <header id="navbar">
+    <a href="index.html" class="logo">FONTVAULT</a>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-link" id="nav-home">Home</a>
+      <a href="font-pairing.html" class="nav-link nav-link--active" id="nav-font-pairing">Font Pairing</a>
+      <button id="vault-btn" class="nav-btn">My Vault</button>
+      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button id="hamburger-btn" class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+    <div id="mobile-menu" class="mobile-menu">
+      <a href="index.html" class="mobile-menu-item">Home</a>
+      <a href="font-pairing.html" class="mobile-menu-item">Font Pairing</a>
+    </div>
+  </header>
+
+  <!-- BACKGROUND GRADIENT GLOW -->
+  <div class="fp-glow-bg" aria-hidden="true"></div>
+
+  <div class="fp-app-container">
+    
+    <!-- 1. HERO SECTION -->
+    <section class="fp-hero-section">
+      <div class="fp-hero-content">
+        <h1 class="fp-hero-title">Find the Perfect<br>Font Pair with AI</h1>
+        <p class="fp-hero-subtitle">Describe your project, brand, or design vision and get intelligent, professionally scored font combinations in seconds.</p>
+        
+        <div class="fp-hero-chips">
+          <button class="fp-hero-chip" data-prompt="Luxury skincare brand with an organic feel">Luxury</button>
+          <button class="fp-hero-chip" data-prompt="Enterprise SaaS tech startup">Startup</button>
+          <button class="fp-hero-chip" data-prompt="Editorial fashion magazine layout">Editorial</button>
+          <button class="fp-hero-chip" data-prompt="Retro console gaming community channel">Gaming</button>
+          <button class="fp-hero-chip" data-prompt="Minimalist portfolio website for an architect">Minimal</button>
+          <button class="fp-hero-chip" data-prompt="Futuristic space exploration startup logo">Futuristic</button>
+          <button class="fp-hero-chip" data-prompt="Modern apparel brand focused on sustainability">Modern</button>
+          <button class="fp-hero-chip" data-prompt="Artistic book publisher focusing on classical literature">Artistic</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. AI INPUT SECTION (ChatGPT style prompt box) -->
+    <section class="fp-input-section">
+      <div class="fp-prompt-box">
+        <div class="fp-prompt-input-wrapper">
+          <textarea id="fp-prompt-textarea" placeholder="Describe your project, audience, style, and mood..." rows="1"></textarea>
+          <div class="fp-prompt-actions">
+            <button class="fp-action-btn" id="fp-random-inspiration-btn" title="Random Inspiration">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Random Vibe</span>
+            </button>
+            <button class="fp-action-btn" id="fp-clear-btn" title="Clear Prompt">Clear</button>
+            <button class="fp-submit-btn" id="fp-generate-btn">
+              <span>Generate Pairing</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Suggestions below prompt box -->
+        <div class="fp-suggestions-bar">
+          <span class="fp-suggestions-label">Suggestions:</span>
+          <button class="fp-suggestion-link" data-prompt="Enterprise fintech SaaS app, minimal and corporate">Modern Fintech</button>
+          <span class="fp-suggestion-dot">•</span>
+          <button class="fp-suggestion-link" data-prompt="Luxury organic wine packaging, heritage branding">Luxury Wine</button>
+          <span class="fp-suggestion-dot">•</span>
+          <button class="fp-suggestion-link" data-prompt="Sleek architecture portfolio with high contrast title">Architect Portfolio</button>
+          <span class="fp-suggestion-dot">•</span>
+          <button class="fp-suggestion-link" data-prompt="Indie developer studio devblog with code samples">Dev Blog</button>
+        </div>
+      </div>
+
+      <!-- COLLAPSIBLE STRUCTURED ADVANCED FILTERS -->
+      <div class="fp-advanced-filters">
+        <button class="fp-collapse-toggle" id="fp-advanced-toggle">
+          <span>Structured Project Parameters (Optional)</span>
+          <svg class="fp-collapse-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        
+        <div class="fp-collapse-content" id="fp-advanced-content">
+          <div class="fp-filters-grid">
+            <!-- Project Type -->
+            <div class="fp-filter-group">
+              <label class="fp-filter-label">Project Type</label>
+              <select class="fp-filter-select" id="fp-filter-project-type">
+                <option value="any">Any Layout</option>
+                <option value="website">Website</option>
+                <option value="app">Mobile App</option>
+                <option value="branding">Brand Identity</option>
+                <option value="packaging">Packaging Design</option>
+                <option value="poster">Poster / Print</option>
+                <option value="social">Social Media</option>
+              </select>
+            </div>
+
+            <!-- Industry -->
+            <div class="fp-filter-group">
+              <label class="fp-filter-label">Industry</label>
+              <select class="fp-filter-select" id="fp-filter-industry">
+                <option value="any">Any Industry</option>
+                <option value="tech">Technology</option>
+                <option value="fashion">Fashion & Editorial</option>
+                <option value="finance">Finance & Corporate</option>
+                <option value="food">Food & Beverage</option>
+                <option value="healthcare">Healthcare & Science</option>
+                <option value="luxury">Luxury Goods</option>
+                <option value="gaming">Gaming & Media</option>
+              </select>
+            </div>
+
+            <!-- Target Audience -->
+            <div class="fp-filter-group">
+              <label class="fp-filter-label">Audience</label>
+              <select class="fp-filter-select" id="fp-filter-audience">
+                <option value="any">All Audiences</option>
+                <option value="genz">Gen Z (Modern, Bold)</option>
+                <option value="millennials">Millennials (Clean, Minimal)</option>
+                <option value="professionals">Corporate / Professionals</option>
+                <option value="luxury">High-End Luxury Buyers</option>
+                <option value="creatives">Artists & Creatives</option>
+              </select>
+            </div>
+
+            <!-- Language support -->
+            <div class="fp-filter-group">
+              <label class="fp-filter-label">Language Support</label>
+              <select class="fp-filter-select" id="fp-filter-language">
+                <option value="latin">Latin Character Set</option>
+                <option value="hindi">Hindi / Devanagari</option>
+                <option value="arabic">Arabic Characters</option>
+                <option value="japanese">Japanese Characters</option>
+                <option value="multilingual">Global Multilingual</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Multi-select Tone Tags -->
+          <div class="fp-filter-group" style="margin-top: 1.5rem;">
+            <label class="fp-filter-label">Design Tone (Select Multiple)</label>
+            <div class="fp-tone-tags">
+              <button class="fp-tone-tag" data-tone="elegant">Elegant</button>
+              <button class="fp-tone-tag" data-tone="bold">Bold</button>
+              <button class="fp-tone-tag" data-tone="minimal">Minimalist</button>
+              <button class="fp-tone-tag" data-tone="friendly">Friendly</button>
+              <button class="fp-tone-tag" data-tone="futuristic">Futuristic</button>
+              <button class="fp-tone-tag" data-tone="premium">Premium</button>
+              <button class="fp-tone-tag" data-tone="playful">Playful</button>
+              <button class="fp-tone-tag" data-tone="corporate">Corporate</button>
+              <button class="fp-tone-tag" data-tone="artistic">Artistic</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. AI PROCESSING STATE (LOADER) -->
+    <section class="fp-loading-section" id="fp-processing-state" style="display: none;">
+      <div class="fp-loader-card">
+        <div class="fp-loader-glow"></div>
+        <div class="fp-loader-spinner-wrapper">
+          <div class="fp-spinner-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+        <h3 class="fp-loader-title" id="fp-loader-status-text">Analyzing brand intent...</h3>
+        <p class="fp-loader-desc">Gemini is querying catalog metrics and layout compatibility models.</p>
+      </div>
+    </section>
+
+    <!-- 4. AI ANALYSIS REPORT SECTION (Extracted insights) -->
+    <section class="fp-analysis-section" id="fp-analysis-report" style="display: none;">
+      <div class="fp-analysis-card">
+        <div class="fp-analysis-header">
+          <div class="fp-score-badge">
+            <span class="score-num" id="fp-analysis-confidence">96%</span>
+            <span class="score-label">Confidence</span>
+          </div>
+          <div>
+            <h3 class="fp-analysis-title">Typography Strategy Formulation</h3>
+            <p class="fp-analysis-subtitle">AI model analysis based on your target branding prompt.</p>
+          </div>
+        </div>
+        
+        <div class="fp-analysis-grid">
+          <div class="fp-analysis-column">
+            <h4>Detected Tone & Style</h4>
+            <div class="fp-analysis-tags" id="fp-tags-detected-style">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+          <div class="fp-analysis-column">
+            <h4>Layout Requirements</h4>
+            <div class="fp-analysis-tags" id="fp-tags-detected-reqs">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <div class="fp-analysis-explanation">
+          <strong>AI Strategy:</strong> <span id="fp-analysis-explanation-text">Your prompt implies a luxury brand focusing on editorial and premium aesthetics. We suggest combining elegant serifs that convey heritage with geometric sans-serifs for modern digital UI clarity.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- STICKY CONTROL & FILTER TOOLBAR -->
+    <div class="fp-sticky-toolbar" id="fp-sticky-toolbar" style="display: none;">
+      <div class="fp-toolbar-content">
+        <!-- Results Filter -->
+        <div class="fp-toolbar-section">
+          <span class="fp-toolbar-label">Pair Filter:</span>
+          <div class="fp-toolbar-btn-group" id="fp-pair-filters">
+            <button class="fp-tb-btn active" data-filter="all">All</button>
+            <button class="fp-tb-btn" data-filter="serif-sans">Serif + Sans</button>
+            <button class="fp-tb-btn" data-filter="sans-sans">Sans + Sans</button>
+            <button class="fp-tb-btn" data-filter="serif-serif">Serif + Serif</button>
+            <button class="fp-tb-btn" data-filter="display-sans">Display + Sans</button>
+          </div>
+        </div>
+
+        <!-- Custom Preview Text Input -->
+        <div class="fp-toolbar-section fp-flex-grow">
+          <span class="fp-toolbar-label">Custom Preview Text:</span>
+          <input type="text" id="fp-custom-text-input" value="FontVault is the future of typography" class="fp-toolbar-input" placeholder="Type preview text...">
+        </div>
+
+        <!-- Live Controls (Sliders) -->
+        <div class="fp-toolbar-section">
+          <span class="fp-toolbar-label">Size:</span>
+          <input type="range" id="fp-size-slider" min="20" max="64" value="38" class="fp-toolbar-slider" title="Title Size">
+        </div>
+        <div class="fp-toolbar-section">
+          <span class="fp-toolbar-label">Spacing:</span>
+          <input type="range" id="fp-spacing-slider" min="-3" max="5" value="0" class="fp-toolbar-slider" title="Letter Spacing">
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. FONT PAIR RESULTS SECTION -->
+    <section class="fp-results-section" id="fp-results-area" style="display: none;">
+      <div class="fp-results-grid" id="fp-results-grid">
+        <!-- Pairing Specimen Cards injected dynamically -->
+      </div>
+    </section>
+
+    <!-- 7. SAVED PAIRINGS SECTION -->
+    <section class="fp-saved-section" id="fp-saved-section" style="display: none;">
+      <h2 class="fp-section-title">Your Saved Pairings</h2>
+      <p class="fp-section-subtitle">Bookmarks and custom editorial font collections stored in your browser.</p>
+      
+      <div class="fp-saved-grid" id="fp-saved-grid">
+        <!-- Saved cards injected dynamically -->
+      </div>
+    </section>
+
+    <!-- 8. RECOMMENDATIONS SECTION (Curated recommendations default state) -->
+    <section class="fp-recommendations-section" id="fp-default-showcase">
+      <h2 class="fp-section-title">Popular Typographic Combinations</h2>
+      <p class="fp-section-subtitle">Explore classic, highly-compatible font combinations selected by professional typographers.</p>
+      
+      <div class="fp-results-grid" id="fp-curated-showcase-grid">
+        <!-- Standard premium specimen cards loaded by default -->
+      </div>
+    </section>
+
+    <!-- 10. OPTIONAL PREMIUM FEATURES BANNER -->
+    <section class="fp-premium-banner">
+      <div class="fp-premium-banner-content">
+        <span class="fp-premium-badge">PRO PLAN</span>
+        <h3>Unlock Advanced AI Typography Consultant Capabilities</h3>
+        <p>Gain unlimited AI generations, competitor font analytics, moodboard image analysis, and exporting full brand typography systems.</p>
+        <button class="fp-premium-btn" onclick="alert('PRO tier features are currently under development. Stay tuned!');">Upgrade to Pro</button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 6. COMPARE DRAWER (slides from right) -->
+  <div class="fp-compare-drawer" id="fp-compare-drawer">
+    <div class="fp-drawer-header">
+      <h3>Compare Font Pairings</h3>
+      <button class="fp-drawer-close" id="fp-drawer-close-btn" aria-label="Close Comparison Panel">&times;</button>
+    </div>
+    <div class="fp-drawer-body" id="fp-compare-body">
+      <!-- Side by side comparisons injected here -->
+    </div>
+  </div>
+
+  <!-- API KEY MODAL (Reused from AI Finder) -->
+  <div id="api-key-modal" class="ai-modal-overlay">
+    <div class="ai-modal api-key-modal">
+      <button class="ai-modal-close" id="close-api-key-modal">&times;</button>
+      <div class="ai-modal-header">
+        <h2 class="ai-modal-title">Enter Gemini API Key</h2>
+        <p class="ai-modal-subtitle">To request live AI pairings, paste your Gemini API Key. Your key is stored locally in your browser.</p>
+      </div>
+      <div class="ai-modal-body">
+        <div class="ai-form-group">
+          <input type="password" id="api-key-input" class="ai-form-input" placeholder="AIzaSy...">
+          <p class="api-key-help">Get a free API key in <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>.</p>
+        </div>
+        <button class="btn btn-primary w-full" id="save-api-key-btn">Save Key & Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-branding">
+        <a href="#" class="logo">FONTVAULT</a>
+        <p style="margin-top: 1rem;">The premium font discovery and licensing platform. Built for modern designers, brand builders, and type lovers.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html#hero" id="footer-browse-link">Browse Fonts</a></li>
+          <li><a href="index.html#submit-font">Submit a Font</a></li>
+          <li><a href="admin.html" target="_blank">Admin Panel</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter" id="submit-font">
+        <h4>Submit a Font</h4>
+        <p>Found or designed a stunning typeface? Let us know.</p>
+        <form class="newsletter-form" id="newsletter-form" onsubmit="event.preventDefault(); alert('Submission sent! Thank you for supporting the typography community.'); this.reset();">
+          <input type="email" placeholder="Enter foundry URL or font name" required>
+          <button type="submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FontVault. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="fonts.js"></script>
+  <script src="shared.js"></script>
+  <script src="font-pairing.js"></script>
+</body>
+</html>
