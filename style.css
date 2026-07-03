@@ -4582,3 +4582,121 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hove
 [data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
   color: #ffffff !important;
 }
+
+/* ========================================
+   SPECIMEN HERO REDESIGN
+======================================== */
+.hero {
+  background-color: #0a0a0d !important;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Hide background elements for the specimen design */
+.hero .hero-blob,
+.hero .hero-bg-grid,
+.hero .hero-glass-pane,
+.hero .hero-spotlight,
+.hero .hero-orb,
+.hero .hero-noise {
+  display: none !important;
+}
+
+.hero-content {
+  max-width: 920px !important;
+  text-align: center;
+  padding: 40px 24px 100px;
+}
+
+.hero-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: #8a8a92;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.hero-headline-fraunces {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-optical-sizing: auto;
+  font-size: clamp(52px, 7.2vw, 110px);
+  line-height: .98;
+  color: #f0efec;
+  letter-spacing: -.01em;
+  max-width: 920px;
+  margin-bottom: 0;
+  text-shadow: none !important;
+}
+
+.hero-headline-fraunces em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+.hero-subline-fraunces {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: #8a8a92;
+  max-width: 440px;
+  margin: 32px auto 0;
+  line-height: 1.6;
+}
+
+.hero-ctas-fraunces {
+  margin-top: 40px;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-ctas-fraunces a {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 14px 26px;
+  text-decoration: none;
+  border-radius: 0;
+  transition: opacity 0.2s ease;
+}
+
+.hero-ctas-fraunces a:hover {
+  opacity: 0.9;
+}
+
+.hero-ctas-fraunces .btn-fill {
+  background: #f0efec;
+  color: #0a0a0d;
+}
+
+.hero-ctas-fraunces .btn-ghost {
+  border: 1px solid #2a2a30;
+  color: #f0efec;
+}
+
+.hero-count {
+  position: absolute;
+  bottom: 36px;
+  left: 48px;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #8a8a92;
+}
+
+.hero-count b {
+  color: #f0efec;
+  font-style: normal;
+}
+
+@media (max-width: 640px) {
+  .hero-count {
+    left: 24px;
+    bottom: 24px;
+  }
+}
