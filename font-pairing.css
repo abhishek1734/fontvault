@@ -1278,7 +1278,7 @@
   border: 1px solid rgba(255, 255, 255, 0.07) !important;
   border-radius: 12px !important;
   box-shadow: 0 30px 100px rgba(0, 0, 0, 0.5) !important;
-  padding: 28px !important;
+  padding: 0 !important; /* Row-based padding handles horizontal lines */
   overflow: hidden;
   transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease !important;
 }
@@ -1299,89 +1299,186 @@
   margin: 0 !important;
 }
 
-#hero .fp-prompt-input-wrapper textarea {
-  color: #f0efec !important;
-  font-size: 1.15rem !important;
-  padding-bottom: 12px !important;
+/* Row 1 Layout */
+.fp-input-row-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: padding 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-#hero .fp-prompt-input-wrapper textarea::placeholder {
-  color: rgba(255, 255, 255, 0.35) !important;
-}
-
-#hero .fp-prompt-actions {
-  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-  padding-top: 16px !important;
-}
-
-#hero .fp-action-btn {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  color: rgba(255, 255, 255, 0.55) !important;
+.fp-input-row-wrapper textarea {
+  flex: 1;
   background: transparent !important;
-  border-radius: 4px !important;
-  transition: all 0.2s ease !important;
-}
-
-#hero .fp-action-btn:hover {
-  border-color: #f0efec !important;
+  border: none !important;
   color: #f0efec !important;
-  background: rgba(255, 255, 255, 0.05) !important;
+  font-family: var(--font-body);
+  font-size: 1.15rem !important;
+  line-height: 1.5;
+  outline: none;
+  resize: none;
+  padding: 8px 0;
+  min-height: 36px;
 }
 
-#hero .fp-submit-btn {
-  background-color: #f0efec !important;
-  color: #0a0a0d !important;
-  border: 1px solid #f0efec !important;
-  font-weight: 700 !important;
-  border-radius: 4px !important;
-  transition: all 0.2s ease !important;
-}
-
-#hero .fp-submit-btn:hover {
-  background-color: transparent !important;
-  color: #f0efec !important;
-  border-color: #f0efec !important;
-}
-
-#hero .fp-suggestions-bar {
-  border-top-color: rgba(255, 255, 255, 0.05) !important;
-  padding-top: 14px !important;
-}
-
-#hero .fp-suggestions-label {
+.fp-input-row-wrapper textarea::placeholder {
   color: rgba(255, 255, 255, 0.35) !important;
 }
 
+/* Mic button style */
+.fp-mic-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  margin-left: 12px;
+}
+
+.fp-mic-btn:hover {
+  color: #f0efec;
+}
+
+/* Orange Send Button (with white arrow pointing up) */
+.fp-send-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 54px;
+  background-color: #ff3d00 !important; /* Red-Orange fill */
+  color: white !important;
+  border: none !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(100%); /* Slides in from right */
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+              background-color 0.2s ease;
+  z-index: 10;
+}
+
+.fp-send-btn:hover {
+  background-color: #ff5522 !important;
+}
+
+/* Slide in orange button and adjust padding when typing */
+.fp-input-row-wrapper.typing {
+  padding-right: 78px; /* Extra spacing to fit the flush orange send button */
+}
+
+.fp-input-row-wrapper.typing .fp-send-btn {
+  transform: translateX(0); /* Slides in from right to left */
+}
+
+/* Row 2 Layout (Suggestions & Actions) */
+.fp-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 1.5rem;
+}
+
+.fp-suggestions-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.75rem;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border: none !important;
+}
+
+.fp-suggestions-label {
+  color: rgba(255, 255, 255, 0.35) !important;
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+/* Filled Rectangular Suggestion Chips */
 #hero .fp-suggestion-link {
-  color: #fbbf24 !important; /* Elegant gold links */
-  transition: color 0.2s ease !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  padding: 6px 14px !important;
+  font-size: 0.72rem !important;
+  border-radius: 4px !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
 }
 
 #hero .fp-suggestion-link:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
   color: #f0efec !important;
-  text-decoration: underline !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
-#hero .fp-suggestion-dot {
+.fp-suggestion-dot {
   color: rgba(255, 255, 255, 0.1) !important;
 }
 
+/* Action buttons outline group */
+.fp-prompt-actions {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 4px !important;
+  overflow: hidden;
+  padding: 0 !important;
+  border-top: none !important;
+}
+
+.fp-action-btn {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  padding: 8px 16px !important;
+  font-size: 0.78rem !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.2s, color 0.2s !important;
+  border-radius: 0 !important;
+}
+
+.fp-action-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #f0efec !important;
+}
+
+#fp-random-inspiration-btn {
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
 /* ──────────────────────────────────────────────────
-   Sleek Collapsible Toggle (Left-aligned, text-based)
+   Row 3 Layout (Collapsible parameters toggle)
    ────────────────────────────────────────────────── */
 #hero .fp-collapse-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 16px 24px !important;
+  margin-top: 0 !important;
+  border-top: none !important;
   background: transparent !important;
   color: rgba(255, 255, 255, 0.45) !important;
-  border: none !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-  padding: 16px 0 0 0 !important; /* Flush horizontal alignment */
-  margin-top: 22px !important;
   font-family: var(--font-body) !important;
   font-size: 0.8rem !important;
   font-weight: 600 !important;
   letter-spacing: 0.03em !important;
-  justify-content: flex-start !important; /* Align left */
-  gap: 8px !important;
+  cursor: pointer;
   transition: color 0.2s ease !important;
 }
 
@@ -1390,8 +1487,32 @@
   background: transparent !important;
 }
 
-#hero .fp-collapse-toggle .fp-collapse-icon {
-  order: -1; /* Icon appears before the text labels */
+/* Chevron box inside toggle */
+.fp-collapse-chevron-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s, border-color 0.2s;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#hero .fp-collapse-toggle:hover .fp-collapse-chevron-box {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f0efec;
+}
+
+.fp-collapse-icon {
+  transition: transform 0.3s ease;
+}
+
+.fp-advanced-filters.open .fp-collapse-icon {
+  transform: rotate(180deg);
 }
 
 /* ──────────────────────────────────────────────────
@@ -1453,6 +1574,26 @@
   color: #0a0a0d !important;
   border-color: #f0efec !important;
   font-weight: 700 !important;
+}
+
+/* Expanded Collapsible content padding inside the card */
+.fp-collapse-content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0 24px;
+  border-top: 1px solid transparent;
+  transition: max-height 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+              opacity 0.35s ease,
+              padding 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+              border-color 0.4s ease;
+}
+
+.fp-advanced-filters.open .fp-collapse-content {
+  max-height: 600px;
+  opacity: 1;
+  padding: 24px 24px 32px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* ──────────────────────────────────────────────────

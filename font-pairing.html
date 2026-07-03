@@ -72,25 +72,36 @@
       <h1 class="fp-hero-title">Find the Perfect<br>Font Pair with <em>AI</em></h1>
       <p class="fp-hero-subtitle">Describe your project, brand, or design vision and get intelligent, professionally scored font combinations in seconds.</p>
 
-      <!-- 2. AI INPUT SECTION (Moved inside Hero Section) -->
-      <div class="fp-input-section" style="width: 100%; margin-bottom: 0;">
-        <div class="fp-prompt-box">
-          <div class="fp-prompt-input-wrapper">
-            <textarea id="fp-prompt-textarea" placeholder="Describe your project, audience, style, and mood..." rows="1"></textarea>
-            <div class="fp-prompt-actions">
-              <button class="fp-action-btn" id="fp-random-inspiration-btn" title="Random Inspiration">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                <span>Random Vibe</span>
-              </button>
-              <button class="fp-action-btn" id="fp-clear-btn" title="Clear Prompt">Clear</button>
-              <button class="fp-submit-btn" id="fp-generate-btn">
-                <span>Generate Pairing</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              </button>
-            </div>
+      <!-- 2. AI INPUT SECTION (Sleek Row-Based Glass Container) -->
+      <div class="fp-input-section" style="width: 100%; margin-bottom: 0; padding: 0 !important;">
+        
+        <!-- Row 1: Textarea & Mic & Orange Send Button -->
+        <div class="fp-input-row-wrapper">
+          <textarea id="fp-prompt-textarea" placeholder="Describe your project, audience, style, and mood..." rows="1"></textarea>
+          
+          <div class="fp-input-right-actions">
+            <!-- Microphone Icon Button -->
+            <button class="fp-mic-btn" type="button" aria-label="Voice input">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                <path d="M19 10v1a7 7 0 0 1-14 0v-1"></path>
+                <line x1="12" y1="19" x2="12" y2="22"></line>
+              </svg>
+            </button>
           </div>
 
-          <!-- Suggestions below prompt box -->
+          <!-- Orange Send Button (slides in from right) -->
+          <button class="fp-send-btn" id="fp-generate-btn" type="button" aria-label="Generate Pairing">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="19" x2="12" y2="5"></line>
+              <polyline points="5 12 12 5 19 12"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Row 2: Suggestions & Actions (Random Vibe + Clear) -->
+        <div class="fp-meta-row">
+          <!-- Suggestions -->
           <div class="fp-suggestions-bar">
             <span class="fp-suggestions-label">Suggestions:</span>
             <button class="fp-suggestion-link" data-prompt="Enterprise fintech SaaS app, minimal and corporate">Modern Fintech</button>
@@ -101,13 +112,24 @@
             <span class="fp-suggestion-dot">•</span>
             <button class="fp-suggestion-link" data-prompt="Indie developer studio devblog with code samples">Dev Blog</button>
           </div>
+
+          <!-- Unified Action Button Group -->
+          <div class="fp-prompt-actions">
+            <button class="fp-action-btn" id="fp-random-inspiration-btn" title="Random Inspiration">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: middle;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Random Vibe</span>
+            </button>
+            <button class="fp-action-btn" id="fp-clear-btn" title="Clear Prompt">Clear</button>
+          </div>
         </div>
 
-        <!-- COLLAPSIBLE STRUCTURED ADVANCED FILTERS -->
+        <!-- Row 3: Collapsible advanced filters -->
         <div class="fp-advanced-filters">
           <button class="fp-collapse-toggle" id="fp-advanced-toggle">
             <span>Structured Project Parameters (Optional)</span>
-            <svg class="fp-collapse-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <span class="fp-collapse-chevron-box">
+              <svg class="fp-collapse-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
           </button>
           
           <div class="fp-collapse-content" id="fp-advanced-content">
@@ -472,11 +494,24 @@
       hero.addEventListener("mousemove", handleMouseMove);
       hero.addEventListener("mouseleave", handleMouseLeave);
 
-      // ── 2. SCROLL INDICATOR ARROW CLICK ──
-      const scrollArrow = document.getElementById("scroll-arrow");
-      if (scrollArrow) {
-        scrollArrow.addEventListener("click", () => {
-          document.querySelector(".fp-input-section").scrollIntoView({ behavior: "smooth" });
+      // ── 3. ORANGE SEND BUTTON SLIDE IN DETECTOR ──
+      const promptTextarea = document.getElementById("fp-prompt-textarea");
+      const inputRowWrapper = document.querySelector(".fp-input-row-wrapper");
+      if (promptTextarea && inputRowWrapper) {
+        const checkContent = () => {
+          if (promptTextarea.value.trim().length > 0) {
+            inputRowWrapper.classList.add("typing");
+          } else {
+            inputRowWrapper.classList.remove("typing");
+          }
+        };
+        promptTextarea.addEventListener("input", checkContent);
+        promptTextarea.addEventListener("keyup", checkContent);
+        promptTextarea.addEventListener("change", checkContent);
+        
+        // Watch for suggestion clicks and other triggers
+        document.addEventListener("click", () => {
+          setTimeout(checkContent, 50);
         });
       }
     });
