@@ -1,9 +1,12 @@
 ﻿// api/download.js — Vercel Serverless Function
-// Downloads fonts as installable files:
-//   Google Fonts → uses official ZIP download endpoint (contains TTF files)
-//   Direct URL   → proxies file as-is (TTF/OTF/WOFF2)
+// Downloads fonts directly from the google/fonts GitHub repo.
+// This gives the exact same files as the official Google Fonts ZIP:
+//   - Variable TTFs (contain ALL weights in a single file via font axes)
+//   - e.g. Inter[opsz,wght].ttf covers weights 100-900
+//
+// Falls back to the official Google Fonts download endpoint if font not in repo.
 
-// Minimal pure-Node ZIP builder (no npm needed) — used only for fallback
+// ── Minimal pure-Node ZIP builder (no npm) ──────────────────────
 function buildZip(entries) {
   function crc32(buf) {
     if (!crc32._t) {
@@ -24,7 +27,7 @@ function buildZip(entries) {
   const locals = [], central = [];
   let offset = 0;
   for (const { name, data } of entries) {
-    const nb = Buffer.from(name, 'utf8');
+    const nb  = Buffer.from(name, 'utf8');
     const crc = crc32(data);
     const local = Buffer.concat([
       Buffer.from([0x50,0x4b,0x03,0x04]), u16(20), u16(0), u16(0),
@@ -49,6 +52,58 @@ function buildZip(entries) {
   return Buffer.concat([...locals, cd, eocd]);
 }
 
+// ── Convert font family name to Google Fonts GitHub directory slug ──
+// "Instrument Serif" → "instrumentserif"
+// "DM Serif Display" → "dmserifdisplay"
+// "JetBrains Mono"   → "jetbrainsmono"
+function familyToSlug(family) {
+  return family.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// ── Try to find font in google/fonts GitHub repo ─────────────────
+async function fetchFromGitHub(family) {
+  const slug    = familyToSlug(family);
+  const folders = ['ofl', 'apache', 'ufl'];
+  const GH_API  = 'https://api.github.com/repos/google/fonts/contents';
+  const headers = {
+    'User-Agent': 'FontVault/1.0',
+    'Accept': 'application/vnd.github.v3+json',
+  };
+
+  for (const folder of folders) {
+    const apiUrl = `${GH_API}/${folder}/${slug}`;
+    const resp   = await fetch(apiUrl, { headers });
+    if (!resp.ok) continue;
+
+    const files = await resp.json();
+    if (!Array.isArray(files)) continue;
+
+    // Only take .ttf and .otf files (skip DESCRIPTION, METADATA, OFL, config, etc.)
+    const fontFiles = files.filter(f =>
+      f.type === 'file' && /\.(ttf|otf)$/i.test(f.name)
+    );
+
+    if (fontFiles.length === 0) continue;
+
+    // Download each font file in parallel
+    const entries = (await Promise.all(
+      fontFiles.map(async file => {
+        try {
+          const r = await fetch(file.download_url, { headers: { 'User-Agent': 'FontVault/1.0' } });
+          if (!r.ok) return null;
+          const data = Buffer.from(await r.arrayBuffer());
+          return { name: file.name, data };
+        } catch { return null; }
+      })
+    )).filter(Boolean);
+
+    if (entries.length > 0) return { entries, source: 'github' };
+  }
+
+  return null;
+}
+
+// ── Main handler ──────────────────────────────────────────────────
 module.exports = async (req, res) => {
   const { family, url, filename } = req.query;
 
@@ -58,24 +113,34 @@ module.exports = async (req, res) => {
 
   try {
 
-    // ── Path A: Google Fonts family → TTF ZIP ────────────────────
+    // ── Path A: Google Fonts family → TTF ZIP via GitHub ─────────
     if (family) {
       const cleanFamily = family.trim();
-      const zipName = filename || `${cleanFamily.replace(/\s+/g, '_')}_fonts.zip`;
+      const zipName     = filename || `${cleanFamily.replace(/\s+/g, '_')}_fonts.zip`;
 
-      // Strategy 1: official Google Fonts ZIP download (contains TTF files)
+      // Strategy 1: google/fonts GitHub repo (variable TTFs — best quality)
+      const github = await fetchFromGitHub(cleanFamily);
+      if (github) {
+        console.log(`[download] GitHub: found ${github.entries.length} TTF files for "${cleanFamily}"`);
+        const zip = buildZip(github.entries);
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
+        res.setHeader('Content-Length', zip.length);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        return res.status(200).send(zip);
+      }
+
+      // Strategy 2: official Google Fonts download endpoint (fallback)
+      console.log(`[download] GitHub miss for "${cleanFamily}", trying official endpoint`);
       const googleZipUrl = `https://fonts.google.com/download?family=${encodeURIComponent(cleanFamily)}`;
-
       const zipResp = await fetch(googleZipUrl, {
         redirect: 'follow',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.5',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124',
+          'Accept': '*/*',
         },
       });
 
-      // Check we got a valid ZIP back (not an HTML error page)
       const ct = zipResp.headers.get('content-type') || '';
       if (zipResp.ok && (ct.includes('zip') || ct.includes('octet-stream'))) {
         const buffer = Buffer.from(await zipResp.arrayBuffer());
@@ -86,53 +151,9 @@ module.exports = async (req, res) => {
         return res.status(200).send(buffer);
       }
 
-      // Strategy 2 fallback: parse CSS API with no UA to get TTF URLs
-      console.log('[download] Google ZIP endpoint failed (ct:', ct, '), falling back to CSS parse');
-
-      // Empty / minimal UA forces Google Fonts to return TTF format
-      const cssUrl = `https://fonts.googleapis.com/css?family=${encodeURIComponent(cleanFamily)}:100,300,400,500,700,900`;
-      const cssResp = await fetch(cssUrl, {
-        headers: { 'User-Agent': '' },   // no UA → TTF
+      return res.status(404).json({
+        error: `Font "${cleanFamily}" not found. Check the family name spelling.`,
       });
-
-      if (!cssResp.ok) {
-        return res.status(502).json({ error: `Google Fonts CSS API: ${cssResp.status}` });
-      }
-
-      const css = await cssResp.text();
-      console.log('[download] CSS sample:', css.substring(0, 400));
-
-      // Match all font file URLs (any format)
-      const allUrls = [...css.matchAll(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/g)];
-      if (allUrls.length === 0) {
-        return res.status(404).json({ error: 'No font URLs found in Google Fonts CSS' });
-      }
-
-      // Fetch all font files
-      const CHROME_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124';
-      const entries = (await Promise.all(
-        allUrls.map(async ([, fontUrl], i) => {
-          try {
-            const r = await fetch(fontUrl, { headers: { 'User-Agent': CHROME_UA } });
-            if (!r.ok) return null;
-            const data = Buffer.from(await r.arrayBuffer());
-            const ext = fontUrl.split('.').pop().split('?')[0].toLowerCase() || 'ttf';
-            const name = `${cleanFamily.replace(/\s+/g, '_')}_${i + 1}.${ext}`;
-            return { name, data };
-          } catch { return null; }
-        })
-      )).filter(Boolean);
-
-      if (entries.length === 0) {
-        return res.status(502).json({ error: 'Failed to download any font files' });
-      }
-
-      const zip = buildZip(entries);
-      res.setHeader('Content-Type', 'application/zip');
-      res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
-      res.setHeader('Content-Length', zip.length);
-      res.setHeader('Cache-Control', 'public, max-age=86400');
-      return res.status(200).send(zip);
     }
 
     // ── Path B: Direct font file URL ─────────────────────────────
@@ -146,12 +167,11 @@ module.exports = async (req, res) => {
       const fontResp = await fetch(url, {
         headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124' },
       });
-
       if (!fontResp.ok) {
         return res.status(502).json({ error: `Failed to fetch font: ${fontResp.status}` });
       }
 
-      const buffer = Buffer.from(await fontResp.arrayBuffer());
+      const buffer      = Buffer.from(await fontResp.arrayBuffer());
       const contentType = fontResp.headers.get('content-type') || 'application/octet-stream';
       res.setHeader('Content-Type', contentType);
       res.setHeader('Content-Disposition', `attachment; filename="${outputFilename}"`);
