@@ -1112,16 +1112,35 @@ function setupEventListeners() {
   const displayGridBtn = document.getElementById("display-grid-btn");
   const displayListBtn = document.getElementById("display-list-btn");
 
-  function setDisplayMode(mode) {
-    if (mode === "grid") {
-      el.fontGrid.classList.add("grid-mode");
-      displayGridBtn?.classList.add("active");
-      displayListBtn?.classList.remove("active");
-    } else {
-      el.fontGrid.classList.remove("grid-mode");
-      displayListBtn?.classList.add("active");
-      displayGridBtn?.classList.remove("active");
+  function setDisplayMode(mode, instant = false) {
+    if (instant) {
+      if (mode === "grid") {
+        el.fontGrid.classList.add("grid-mode");
+        displayGridBtn?.classList.add("active");
+        displayListBtn?.classList.remove("active");
+      } else {
+        el.fontGrid.classList.remove("grid-mode");
+        displayListBtn?.classList.add("active");
+        displayGridBtn?.classList.remove("active");
+      }
+      localStorage.setItem("fontvault-display", mode);
+      return;
     }
+
+    // Smooth transition
+    el.fontGrid.style.opacity = "0";
+    setTimeout(() => {
+      if (mode === "grid") {
+        el.fontGrid.classList.add("grid-mode");
+        displayGridBtn?.classList.add("active");
+        displayListBtn?.classList.remove("active");
+      } else {
+        el.fontGrid.classList.remove("grid-mode");
+        displayListBtn?.classList.add("active");
+        displayGridBtn?.classList.remove("active");
+      }
+      el.fontGrid.style.opacity = "1";
+    }, 200);
     localStorage.setItem("fontvault-display", mode);
   }
 
@@ -1130,7 +1149,7 @@ function setupEventListeners() {
 
   // Load initial display mode (default to grid to match screenshot style)
   const savedDisplay = localStorage.getItem("fontvault-display") || "grid";
-  setDisplayMode(savedDisplay);
+  setDisplayMode(savedDisplay, true);
 
   // Clear filters
   el.clearFiltersBtn.addEventListener("click", clearAllFilters);

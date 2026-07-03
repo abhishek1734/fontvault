@@ -55,6 +55,7 @@
 
 html, body {
   max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -722,7 +723,7 @@ header.collapsed {
 }
 
 .grid-area {
-  overflow-x: hidden; /* block any horizontal scroll from large preview text */
+  overflow: visible !important;
   border-left: 1px solid var(--border-grey);
 }
 
@@ -909,12 +910,13 @@ header.collapsed ~ .main-container .sidebar-filters {
   flex-direction: column;
   gap: 0; /* Continuous grid layout */
   width: 100%;
+  transition: opacity 0.2s ease-in-out !important;
 }
 
-/* ── Grid Mode Layout (Continuous Edge-to-Edge Grid) ── */
+/* ── Grid Mode Layout (Continuous Edge-to-Edge Grid - 4 Columns) ── */
 .masonry-grid.grid-mode {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  grid-template-columns: repeat(4, 1fr) !important;
   gap: 0 !important; /* Touch edge-to-edge with no gaps */
   padding: 0 !important; /* Go full width */
   width: 100% !important;
@@ -1109,7 +1111,19 @@ header.collapsed ~ .main-container .sidebar-filters {
 }
 
 /* Responsive grid overrides */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
+  .masonry-grid.grid-mode {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .masonry-grid.grid-mode {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 600px) {
   .masonry-grid.grid-mode {
     grid-template-columns: 1fr !important;
     border-top: none !important;
