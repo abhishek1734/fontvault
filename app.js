@@ -215,7 +215,7 @@ function getMockupHTML(font) {
 //  FILTERING
 // ─────────────────────────────────────────────────
 function getFilteredFonts() {
-  return fontsData.filter(font => {
+  const filtered = fontsData.filter(font => {
     if (activeFilters["Favorites"] && !window.favoritesSet.has(font.id)) return false;
     if (window.searchQuery) {
       const q = window.searchQuery.toLowerCase();
@@ -239,6 +239,37 @@ function getFilteredFonts() {
     if (activeFilters["Use Case"] && font.useCase !== activeFilters["Use Case"]) return false;
     return true;
   });
+
+  // ── SORTING LOGIC ──
+  const sortSelector = document.getElementById("sort-selector");
+  const sortMethod = sortSelector ? sortSelector.value : "popular";
+
+  if (sortMethod === "popular") {
+    const trendingIndices = {};
+    trendingFontIds.forEach((id, idx) => { trendingIndices[id] = idx; });
+
+    const getPopularityScore = font => {
+      if (font.id in trendingIndices) {
+        return 10000 - trendingIndices[font.id];
+      }
+      return font.downloadCount || 0;
+    };
+    filtered.sort((a, b) => getPopularityScore(b) - getPopularityScore(a));
+  } 
+  else if (sortMethod === "az") {
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+  } 
+  else if (sortMethod === "za") {
+    filtered.sort((a, b) => b.name.localeCompare(a.name));
+  } 
+  else if (sortMethod === "newest") {
+    filtered.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0));
+  } 
+  else if (sortMethod === "downloads") {
+    filtered.sort((a, b) => (b.downloadCount || 0) - (a.downloadCount || 0));
+  }
+
+  return filtered;
 }
 
 // ─────────────────────────────────────────────────
@@ -1036,8 +1067,40 @@ function setupEventListeners() {
     syncGlobalSize(120);
   };
 
+  // ── SORT AND DISPLAY CONTROLS ──
+  const sortSelector = document.getElementById("sort-selector");
+  if (sortSelector) {
+    sortSelector.addEventListener("change", () => {
+      renderGrid(true);
+    });
+  }
+
+  const displayGridBtn = document.getElementById("display-grid-btn");
+  const displayListBtn = document.getElementById("display-list-btn");
+
+  function setDisplayMode(mode) {
+    if (mode === "grid") {
+      el.fontGrid.classList.add("grid-mode");
+      displayGridBtn?.classList.add("active");
+      displayListBtn?.classList.remove("active");
+    } else {
+      el.fontGrid.classList.remove("grid-mode");
+      displayListBtn?.classList.add("active");
+      displayGridBtn?.classList.remove("active");
+    }
+    localStorage.setItem("fontvault-display", mode);
+  }
+
+  displayGridBtn?.addEventListener("click", () => setDisplayMode("grid"));
+  displayListBtn?.addEventListener("click", () => setDisplayMode("list"));
+
+  // Load initial display mode (default to grid to match screenshot style)
+  const savedDisplay = localStorage.getItem("fontvault-display") || "grid";
+  setDisplayMode(savedDisplay);
+
   // Clear filters
   el.clearFiltersBtn.addEventListener("click", clearAllFilters);
+
 
   // Hero browse button
   el.browseBtn?.addEventListener("click", () =>
