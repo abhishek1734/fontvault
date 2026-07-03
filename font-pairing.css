@@ -1268,35 +1268,41 @@
 }
 
 /* ========================================
-   MODERN GLASSMORPHIC STYLES FOR HERO AI INPUT
+   MODERN SLEEK GLASSMORPHIC STYLES FOR HERO AI INPUT
 ======================================== */
+/* Single Unified Container */
+#hero .fp-input-section {
+  background: rgba(255, 255, 255, 0.02) !important;
+  backdrop-filter: blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.5) !important;
+  padding: 28px !important;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease !important;
+}
+
+#hero .fp-input-section:focus-within {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background-color: rgba(255, 255, 255, 0.035) !important;
+}
+
+/* Reset inner stacked cards backgrounds and borders */
 #hero .fp-prompt-box,
 #hero .fp-advanced-filters {
-  background: rgba(255, 255, 255, 0.02) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45) !important;
-  transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s !important;
-}
-
-#hero .fp-prompt-box {
-  border-radius: 8px 8px 0 0 !important;
-  border-bottom: none !important;
-}
-
-#hero .fp-advanced-filters {
-  border-radius: 0 0 8px 8px !important;
-  margin-top: 0 !important; /* Connected flush with prompt box */
-}
-
-#hero .fp-prompt-box:focus-within {
-  border-color: rgba(255, 255, 255, 0.22) !important;
-  background: rgba(255, 255, 255, 0.035) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
 }
 
 #hero .fp-prompt-input-wrapper textarea {
   color: #f0efec !important;
+  font-size: 1.15rem !important;
+  padding-bottom: 12px !important;
 }
 
 #hero .fp-prompt-input-wrapper textarea::placeholder {
@@ -1304,13 +1310,16 @@
 }
 
 #hero .fp-prompt-actions {
-  border-top-color: rgba(255, 255, 255, 0.06) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding-top: 16px !important;
 }
 
 #hero .fp-action-btn {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.55) !important;
   background: transparent !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
 }
 
 #hero .fp-action-btn:hover {
@@ -1324,6 +1333,8 @@
   color: #0a0a0d !important;
   border: 1px solid #f0efec !important;
   font-weight: 700 !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
 }
 
 #hero .fp-submit-btn:hover {
@@ -1333,15 +1344,17 @@
 }
 
 #hero .fp-suggestions-bar {
-  border-top-color: rgba(255, 255, 255, 0.06) !important;
+  border-top-color: rgba(255, 255, 255, 0.05) !important;
+  padding-top: 14px !important;
 }
 
 #hero .fp-suggestions-label {
-  color: rgba(255, 255, 255, 0.4) !important;
+  color: rgba(255, 255, 255, 0.35) !important;
 }
 
 #hero .fp-suggestion-link {
   color: #fbbf24 !important; /* Elegant gold links */
+  transition: color 0.2s ease !important;
 }
 
 #hero .fp-suggestion-link:hover {
@@ -1353,61 +1366,86 @@
   color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Collapsible filters customization */
+/* ──────────────────────────────────────────────────
+   Sleek Collapsible Toggle (Left-aligned, text-based)
+   ────────────────────────────────────────────────── */
 #hero .fp-collapse-toggle {
-  background: rgba(255, 255, 255, 0.01) !important;
-  color: rgba(255, 255, 255, 0.7) !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.45) !important;
   border: none !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-radius: 0 0 8px 8px !important;
-  padding: 1.1rem 1.5rem !important;
-  transition: background-color 0.2s, color 0.2s !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding: 16px 0 0 0 !important; /* Flush horizontal alignment */
+  margin-top: 22px !important;
+  font-family: var(--font-body) !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+  justify-content: flex-start !important; /* Align left */
+  gap: 8px !important;
+  transition: color 0.2s ease !important;
 }
 
 #hero .fp-collapse-toggle:hover {
-  background: rgba(255, 255, 255, 0.04) !important;
   color: #f0efec !important;
+  background: transparent !important;
 }
 
-#hero .fp-advanced-filters.open .fp-collapse-toggle {
-  border-radius: 0 !important; /* Keep sharp transition inside when open */
+#hero .fp-collapse-toggle .fp-collapse-icon {
+  order: -1; /* Icon appears before the text labels */
 }
 
+/* ──────────────────────────────────────────────────
+   Luxury bottom-line only selects inside advanced grid
+   ────────────────────────────────────────────────── */
 #hero .fp-filter-label {
-  color: rgba(255, 255, 255, 0.45) !important;
-  font-size: 0.72rem !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
 }
 
 #hero .fp-filter-select {
-  background: rgba(255, 255, 255, 0.03) !important;
+  background: transparent !important;
   color: #f0efec !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 4px !important;
-  padding: 11px 12px !important;
-  transition: border-color 0.2s !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 0 !important; /* Clean underline look */
+  padding: 8px 0 !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  transition: border-color 0.3s ease !important;
+  appearance: none !important; /* Hide default select arrow */
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right center !important;
+  padding-right: 18px !important;
 }
 
 #hero .fp-filter-select option {
-  background-color: #0d0d12 !important; /* Readable dark select options list */
+  background-color: #0d0d12 !important; /* Ensure options list is readable on dark themes */
   color: #f0efec !important;
 }
 
 #hero .fp-filter-select:focus {
-  border-color: rgba(255, 255, 255, 0.25) !important;
+  border-color: #fbbf24 !important; /* Accent gold line */
 }
 
+/* Pill-shaped Tone Tags options */
 #hero .fp-tone-tag {
-  background: rgba(255, 255, 255, 0.02) !important;
+  background: transparent !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  color: rgba(255, 255, 255, 0.6) !important;
-  border-radius: 4px !important;
-  transition: all 0.2s !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  border-radius: 100px !important; /* Fully rounded pill shape */
+  padding: 6px 14px !important;
+  font-size: 0.72rem !important;
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
 #hero .fp-tone-tag:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
   color: #f0efec !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
 }
 
 #hero .fp-tone-tag.active {
@@ -1415,4 +1453,49 @@
   color: #0a0a0d !important;
   border-color: #f0efec !important;
   font-weight: 700 !important;
+}
+
+/* ──────────────────────────────────────────────────
+   Smooth Staggered Animations when dropdown opens
+   ────────────────────────────────────────────────── */
+#hero .fp-filters-grid > * {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+              transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+#hero .fp-advanced-filters.open .fp-filters-grid > :nth-child(1) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.08s !important;
+}
+#hero .fp-advanced-filters.open .fp-filters-grid > :nth-child(2) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.14s !important;
+}
+#hero .fp-advanced-filters.open .fp-filters-grid > :nth-child(3) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.2s !important;
+}
+#hero .fp-advanced-filters.open .fp-filters-grid > :nth-child(4) {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.26s !important;
+}
+
+/* Stagger tone tags container */
+#hero .fp-advanced-filters .fp-filter-group[style*="margin-top"] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1),
+              transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+#hero .fp-advanced-filters.open .fp-filter-group[style*="margin-top"] {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.32s !important;
 }
