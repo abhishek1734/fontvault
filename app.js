@@ -314,7 +314,7 @@ function appendFontCard(font, delay) {
             ✕ REMOVE PREVIEW
           </button>
         ` : ''}
-        ${font.downloadUrl && !font.id.startsWith('preview-') ? `
+        ${(font.downloadUrl && font.downloadUrl !== '#' && !font.id.startsWith('preview-')) ? `
           <button
             class="card-download-btn"
             id="dl-btn-${font.id}"
@@ -1297,59 +1297,91 @@ window.formatDownloadCount = function(n) {
   return String(n);
 };
 
-// Trigger real font file download + increment DB counter
+// Trigger real font file download via our /api/download proxy + increment DB counter
 window.downloadFont = async function(fontId, url, fontName, format) {
-  if (!url) return;
+  if (!url || url === '#') return;
 
-  // ── Trigger browser download ──
   const ext = format === 'truetype' ? 'ttf'
             : format === 'opentype' ? 'otf'
             : format || 'woff2';
-  const filename = `${fontName.replace(/\s+/g, '_')}.${ext}`;
+  const safeFilename = `${fontName.replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_')}.${ext}`;
 
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  // ── Animate button: show downloading state ──
-  const btn = document.getElementById(`dl-btn-${fontId}`);
+  // ── Animate button: downloading state ────────────────────────
+  const btn  = document.getElementById(`dl-btn-${fontId}`);
   const countEl = document.getElementById(`dl-count-${fontId}`);
   if (btn) {
     btn.classList.add('downloading');
-    if (countEl) countEl.textContent = '↓ SAVING...';
-    setTimeout(() => {
+    if (countEl) countEl.textContent = '↓ FETCHING...';
+    btn.style.pointerEvents = 'none';
+  }
+
+  try {
+    // ── Build the proxy URL ───────────────────────────────────
+    let proxyUrl;
+
+    if (url.includes('fonts.google.com')) {
+      // Extract family name from Google Fonts specimen URL
+      // e.g. https://fonts.google.com/specimen/Instrument+Serif → "Instrument Serif"
+      const familyMatch = url.match(/specimen\/([^?#]+)/);
+      const family = familyMatch
+        ? decodeURIComponent(familyMatch[1].replace(/\+/g, ' '))
+        : fontName;
+      proxyUrl = `/api/download?family=${encodeURIComponent(family)}&filename=${encodeURIComponent(safeFilename)}`;
+    } else {
+      // Direct font file URL (Supabase, gstatic, Fontshare, etc.)
+      proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(safeFilename)}`;
+    }
+
+    // ── Fetch blob through proxy ──────────────────────────────
+    const resp = await fetch(proxyUrl);
+    if (!resp.ok) throw new Error(`Proxy returned ${resp.status}`);
+    const blob = await resp.blob();
+
+    // ── Trigger browser save dialog ───────────────────────────
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = safeFilename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+
+    // ── Success state on button ───────────────────────────────
+    if (btn) {
       btn.classList.remove('downloading');
       btn.classList.add('downloaded');
-    }, 1200);
-  }
+      btn.style.pointerEvents = '';
+    }
 
-  // ── Increment counter in Supabase via RPC ──
-  const sb = getSupabase();
-  if (sb) {
-    try {
-      await sb.rpc('increment_download_count', { font_id: fontId });
-
-      // Update local fontsData count
-      const fontObj = fontsData.find(f => f.id === fontId);
-      if (fontObj) {
-        fontObj.downloadCount = (fontObj.downloadCount || 0) + 1;
-        if (countEl) countEl.textContent = formatDownloadCount(fontObj.downloadCount);
-      }
-    } catch (err) {
-      console.warn('Failed to increment download count:', err);
-      // Still update locally even if RPC fails
-      const fontObj = fontsData.find(f => f.id === fontId);
-      if (fontObj) {
-        fontObj.downloadCount = (fontObj.downloadCount || 0) + 1;
-        if (countEl) countEl.textContent = formatDownloadCount(fontObj.downloadCount);
-      }
+  } catch (err) {
+    console.warn('[FontVault] Download failed:', err);
+    if (btn) {
+      btn.classList.remove('downloading');
+      btn.style.pointerEvents = '';
+      if (countEl) countEl.textContent = 'RETRY';
     }
   }
+
+  // ── Increment counter in Supabase via RPC (non-blocking) ─────
+  const sb = getSupabase();
+  if (sb) {
+    sb.rpc('increment_download_count', { font_id: fontId })
+      .then(() => {
+        const fontObj = fontsData.find(f => f.id === fontId);
+        if (fontObj) {
+          fontObj.downloadCount = (fontObj.downloadCount || 0) + 1;
+          const el = document.getElementById(`dl-count-${fontId}`);
+          if (el && !el.textContent.includes('RETRY')) {
+            el.textContent = formatDownloadCount(fontObj.downloadCount);
+          }
+        }
+      })
+      .catch(() => {}); // silently ignore RPC errors for non-Supabase fonts
+  }
 };
+
 
 window.updateCardFontSize = function(slider, fontId) {
   const card = slider.closest(".font-card");

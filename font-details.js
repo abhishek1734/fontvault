@@ -371,11 +371,48 @@ function renderFontDetails(font) {
     </div>
   `;
 
-  // Download Button Logic
+  // Download Button Logic — uses /api/download proxy (no external redirects)
   const downloadBtn = document.getElementById("btn-fd-download");
   if (downloadBtn) {
-    downloadBtn.addEventListener("click", () => {
-      window.open(font.downloadUrl, "_blank", "noopener,noreferrer");
+    downloadBtn.addEventListener("click", async () => {
+      const url = font.downloadUrl;
+      if (!url || url === '#') return;
+
+      const safeFilename = `${(font.name || 'font').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_')}.woff2`;
+      downloadBtn.textContent = '↓ Fetching...';
+      downloadBtn.disabled = true;
+
+      try {
+        let proxyUrl;
+        if (url.includes('fonts.google.com')) {
+          const familyMatch = url.match(/specimen\/([^?#]+)/);
+          const family = familyMatch
+            ? decodeURIComponent(familyMatch[1].replace(/\+/g, ' '))
+            : font.name;
+          proxyUrl = `/api/download?family=${encodeURIComponent(family)}&filename=${encodeURIComponent(safeFilename)}`;
+        } else {
+          proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(safeFilename)}`;
+        }
+
+        const resp = await fetch(proxyUrl);
+        if (!resp.ok) throw new Error(`${resp.status}`);
+        const blob = await resp.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = safeFilename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+        downloadBtn.textContent = `✓ Downloaded`;
+        downloadBtn.style.borderColor = '#22c55e';
+        downloadBtn.style.color = '#22c55e';
+      } catch (err) {
+        console.warn('[FontVault] Detail page download failed:', err);
+        downloadBtn.textContent = 'Download Failed — Retry';
+        downloadBtn.disabled = false;
+      }
     });
   }
 
