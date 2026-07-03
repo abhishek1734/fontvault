@@ -53,7 +53,44 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadExternalFont(font);
 
   renderFontDetails(font);
+  updateDynamicSEO(font);
 });
+
+function updateDynamicSEO(font) {
+  const pageTitle = `${font.name} — Premium Font Discovery and Licensing — FontVault`;
+  const pageDesc = font.description || `Discover, test, and license ${font.name} on FontVault. Premium font discovery and dynamic mockups.`;
+  const pageUrl = window.location.href;
+
+  document.title = pageTitle;
+
+  // Meta Description
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute("content", pageDesc);
+
+  // Canonical Link
+  const canonicalLink = document.querySelector('link[rel="canonical"]');
+  if (canonicalLink) canonicalLink.setAttribute("href", pageUrl);
+
+  // Open Graph / Facebook
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute("content", pageTitle);
+
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.setAttribute("content", pageDesc);
+
+  const ogUrl = document.querySelector('meta[property="og:url"]');
+  if (ogUrl) ogUrl.setAttribute("content", pageUrl);
+
+  // Twitter Cards
+  const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+  if (twitterTitle) twitterTitle.setAttribute("content", pageTitle);
+
+  const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+  if (twitterDesc) twitterDesc.setAttribute("content", pageDesc);
+
+  const twitterUrl = document.querySelector('meta[name="twitter:url"]');
+  if (twitterUrl) twitterUrl.setAttribute("content", pageUrl);
+}
 
 function renderFontDetails(font) {
   const root = document.getElementById('font-detail-root');
@@ -761,7 +798,7 @@ window.setGlyphFillMode = function(mode) {
       largeGlyph.style.color = "var(--near-black)";
     }
   }
-
+  
   renderGlyphGrid();
 };
 
@@ -952,4 +989,3 @@ window.updateGlyphGuidelines = function(fontName) {
   if (baselineLine) baselineLine.style.top = `${baselineTop}%`;
   if (descenderLine) descenderLine.style.top = `${baselineTop - (metrics.descender * scale)}%`;
 };
-
