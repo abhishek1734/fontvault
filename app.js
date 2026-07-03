@@ -309,9 +309,9 @@ function appendFontCard(font, delay) {
     <div class="card-footer-row">
       <span class="foundry-label">by ${font.foundry || font.designer || 'Independent'} &middot; <span style="opacity:0.6;font-family:var(--font-mono);">${providerLabel}</span></span>
       <div class="card-footer-right" style="display:flex; align-items:center; gap:1rem;">
-        ${(font.availability === 'Custom' || font.id.startsWith('custom-upload-')) ? `
-          <button class="custom-font-delete-btn" title="Remove custom font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')" style="background:none; border:none; cursor:pointer; color:var(--signal-red); font-family:var(--font-mono); font-size:10px; font-weight:700;">
-            ✕ REMOVE
+        ${(font.provider === 'custom' && font.id.startsWith('preview-')) ? `
+          <button class="custom-font-delete-btn" title="Remove preview font" onclick="event.stopPropagation(); removeCustomFont('${font.id}')" style="background:none; border:none; cursor:pointer; color:var(--signal-red); font-family:var(--font-mono); font-size:10px; font-weight:700;">
+            ✕ REMOVE PREVIEW
           </button>
         ` : ''}
         <a class="view-family-hover-btn" href="font.html?id=${font.id}" target="_blank">
@@ -1248,26 +1248,19 @@ async function init() {
   }
 }
 
-window.removeCustomFont = async function(fontId) {
-  const sb = getSupabase();
-
-  // Find the font in current fontsData to get storagePath
+// removeCustomFont: only removes LOCAL preview fonts (those dragged & dropped this session).
+// Admin-uploaded fonts (from Supabase) can only be deleted via the Admin Dashboard.
+// This function never touches Supabase storage or database.
+window.removeCustomFont = function(fontId) {
+  // Safety: only allow removing session-preview fonts, never DB-backed ones
   const font = fontsData.find(f => f.id === fontId);
-
-  if (sb && font?.storagePath) {
-    try {
-      // Delete file from Supabase Storage
-      await sb.storage.from('fonts').remove([font.storagePath]);
-      // Delete metadata row from DB
-      await sb.from('custom_fonts').delete().eq('id', fontId);
-    } catch (err) {
-      console.error('Failed to delete font from Supabase:', err);
-    }
+  if (!font || !font.id.startsWith('preview-')) {
+    console.warn('[FontVault] removeCustomFont: refusing to remove non-preview font', fontId);
+    return;
   }
 
-  if (typeof fontsData !== 'undefined') {
-    fontsData = fontsData.filter(f => f.id !== fontId);
-  }
+  // Remove from in-memory array only (no Supabase calls)
+  fontsData = fontsData.filter(f => f.id !== fontId);
 
   if (window.favoritesSet) {
     window.favoritesSet.delete(fontId);
