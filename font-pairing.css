@@ -132,6 +132,7 @@
 .fp-hero-content {
   position: relative;
   z-index: 6;
+  width: 100%;
   max-width: 900px;
   display: flex;
   flex-direction: column;
@@ -374,13 +375,22 @@
 }
 
 .fp-collapse-content {
-  display: none;
-  padding: 2rem 1.5rem;
-  border-top: 1px solid var(--fp-border);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  padding: 0 1.5rem;
+  border-top: 1px solid transparent;
+  transition: max-height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              opacity 0.3s ease,
+              padding 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              border-color 0.4s ease;
 }
 
 .fp-advanced-filters.open .fp-collapse-content {
-  display: block;
+  max-height: 600px; /* Large enough to prevent clipping advanced options list */
+  opacity: 1;
+  padding: 2rem 1.5rem;
+  border-top: 1px solid var(--fp-border);
 }
 
 .fp-filters-grid {
@@ -1255,4 +1265,154 @@
 .btn-feedback:hover {
   border-color: var(--fp-text);
   color: var(--fp-text);
+}
+
+/* ========================================
+   MODERN GLASSMORPHIC STYLES FOR HERO AI INPUT
+======================================== */
+#hero .fp-prompt-box,
+#hero .fp-advanced-filters {
+  background: rgba(255, 255, 255, 0.02) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45) !important;
+  transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s !important;
+}
+
+#hero .fp-prompt-box {
+  border-radius: 8px 8px 0 0 !important;
+  border-bottom: none !important;
+}
+
+#hero .fp-advanced-filters {
+  border-radius: 0 0 8px 8px !important;
+  margin-top: 0 !important; /* Connected flush with prompt box */
+}
+
+#hero .fp-prompt-box:focus-within {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+}
+
+#hero .fp-prompt-input-wrapper textarea {
+  color: #f0efec !important;
+}
+
+#hero .fp-prompt-input-wrapper textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+#hero .fp-prompt-actions {
+  border-top-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+#hero .fp-action-btn {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  background: transparent !important;
+}
+
+#hero .fp-action-btn:hover {
+  border-color: #f0efec !important;
+  color: #f0efec !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+#hero .fp-submit-btn {
+  background-color: #f0efec !important;
+  color: #0a0a0d !important;
+  border: 1px solid #f0efec !important;
+  font-weight: 700 !important;
+}
+
+#hero .fp-submit-btn:hover {
+  background-color: transparent !important;
+  color: #f0efec !important;
+  border-color: #f0efec !important;
+}
+
+#hero .fp-suggestions-bar {
+  border-top-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+#hero .fp-suggestions-label {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+#hero .fp-suggestion-link {
+  color: #fbbf24 !important; /* Elegant gold links */
+}
+
+#hero .fp-suggestion-link:hover {
+  color: #f0efec !important;
+  text-decoration: underline !important;
+}
+
+#hero .fp-suggestion-dot {
+  color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Collapsible filters customization */
+#hero .fp-collapse-toggle {
+  background: rgba(255, 255, 255, 0.01) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  border: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 0 0 8px 8px !important;
+  padding: 1.1rem 1.5rem !important;
+  transition: background-color 0.2s, color 0.2s !important;
+}
+
+#hero .fp-collapse-toggle:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #f0efec !important;
+}
+
+#hero .fp-advanced-filters.open .fp-collapse-toggle {
+  border-radius: 0 !important; /* Keep sharp transition inside when open */
+}
+
+#hero .fp-filter-label {
+  color: rgba(255, 255, 255, 0.45) !important;
+  font-size: 0.72rem !important;
+}
+
+#hero .fp-filter-select {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: #f0efec !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 4px !important;
+  padding: 11px 12px !important;
+  transition: border-color 0.2s !important;
+}
+
+#hero .fp-filter-select option {
+  background-color: #0d0d12 !important; /* Readable dark select options list */
+  color: #f0efec !important;
+}
+
+#hero .fp-filter-select:focus {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+#hero .fp-tone-tag {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  border-radius: 4px !important;
+  transition: all 0.2s !important;
+}
+
+#hero .fp-tone-tag:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #f0efec !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+#hero .fp-tone-tag.active {
+  background: #f0efec !important;
+  color: #0a0a0d !important;
+  border-color: #f0efec !important;
+  font-weight: 700 !important;
 }
