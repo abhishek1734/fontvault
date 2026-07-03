@@ -71,16 +71,119 @@
       <div class="fp-hero-eyebrow">AI Pairing Studio</div>
       <h1 class="fp-hero-title">Find the Perfect<br>Font Pair with <em>AI</em></h1>
       <p class="fp-hero-subtitle">Describe your project, brand, or design vision and get intelligent, professionally scored font combinations in seconds.</p>
-      
-      <div class="fp-hero-chips">
-        <button class="fp-hero-chip" data-prompt="Luxury skincare brand with an organic feel">Luxury</button>
-        <button class="fp-hero-chip" data-prompt="Enterprise SaaS tech startup">Startup</button>
-        <button class="fp-hero-chip" data-prompt="Editorial fashion magazine layout">Editorial</button>
-        <button class="fp-hero-chip" data-prompt="Retro console gaming community channel">Gaming</button>
-        <button class="fp-hero-chip" data-prompt="Minimalist portfolio website for an architect">Minimal</button>
-        <button class="fp-hero-chip" data-prompt="Futuristic space exploration startup logo">Futuristic</button>
-        <button class="fp-hero-chip" data-prompt="Modern apparel brand focused on sustainability">Modern</button>
-        <button class="fp-hero-chip" data-prompt="Artistic book publisher focusing on classical literature">Artistic</button>
+
+      <!-- 2. AI INPUT SECTION (Moved inside Hero Section) -->
+      <div class="fp-input-section" style="width: 100%; margin-bottom: 0;">
+        <div class="fp-prompt-box">
+          <div class="fp-prompt-input-wrapper">
+            <textarea id="fp-prompt-textarea" placeholder="Describe your project, audience, style, and mood..." rows="1"></textarea>
+            <div class="fp-prompt-actions">
+              <button class="fp-action-btn" id="fp-random-inspiration-btn" title="Random Inspiration">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>Random Vibe</span>
+              </button>
+              <button class="fp-action-btn" id="fp-clear-btn" title="Clear Prompt">Clear</button>
+              <button class="fp-submit-btn" id="fp-generate-btn">
+                <span>Generate Pairing</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Suggestions below prompt box -->
+          <div class="fp-suggestions-bar">
+            <span class="fp-suggestions-label">Suggestions:</span>
+            <button class="fp-suggestion-link" data-prompt="Enterprise fintech SaaS app, minimal and corporate">Modern Fintech</button>
+            <span class="fp-suggestion-dot">•</span>
+            <button class="fp-suggestion-link" data-prompt="Luxury organic wine packaging, heritage branding">Luxury Wine</button>
+            <span class="fp-suggestion-dot">•</span>
+            <button class="fp-suggestion-link" data-prompt="Sleek architecture portfolio with high contrast title">Architect Portfolio</button>
+            <span class="fp-suggestion-dot">•</span>
+            <button class="fp-suggestion-link" data-prompt="Indie developer studio devblog with code samples">Dev Blog</button>
+          </div>
+        </div>
+
+        <!-- COLLAPSIBLE STRUCTURED ADVANCED FILTERS -->
+        <div class="fp-advanced-filters">
+          <button class="fp-collapse-toggle" id="fp-advanced-toggle">
+            <span>Structured Project Parameters (Optional)</span>
+            <svg class="fp-collapse-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          
+          <div class="fp-collapse-content" id="fp-advanced-content">
+            <div class="fp-filters-grid">
+              <!-- Project Type -->
+              <div class="fp-filter-group">
+                <label class="fp-filter-label">Project Type</label>
+                <select class="fp-filter-select" id="fp-filter-project-type">
+                  <option value="any">Any Layout</option>
+                  <option value="website">Website</option>
+                  <option value="app">Mobile App</option>
+                  <option value="branding">Brand Identity</option>
+                  <option value="packaging">Packaging Design</option>
+                  <option value="poster">Poster / Print</option>
+                  <option value="social">Social Media</option>
+                </select>
+              </div>
+
+              <!-- Industry -->
+              <div class="fp-filter-group">
+                <label class="fp-filter-label">Industry</label>
+                <select class="fp-filter-select" id="fp-filter-industry">
+                  <option value="any">Any Industry</option>
+                  <option value="tech">Technology</option>
+                  <option value="fashion">Fashion & Editorial</option>
+                  <option value="finance">Finance & Corporate</option>
+                  <option value="food">Food & Beverage</option>
+                  <option value="healthcare">Healthcare & Science</option>
+                  <option value="luxury">Luxury Goods</option>
+                  <option value="gaming">Gaming & Media</option>
+                </select>
+              </div>
+
+              <!-- Target Audience -->
+              <div class="fp-filter-group">
+                <label class="fp-filter-label">Audience</label>
+                <select class="fp-filter-select" id="fp-filter-audience">
+                  <option value="any">All Audiences</option>
+                  <option value="genz">Gen Z (Modern, Bold)</option>
+                  <option value="millennials">Millennials (Clean, Minimal)</option>
+                  <option value="professionals">Corporate / Professionals</option>
+                  <option value="luxury">High-End Luxury Buyers</option>
+                  <option value="creatives">Artists & Creatives</option>
+                </select>
+              </div>
+
+              <!-- Language support -->
+              <div class="fp-filter-group">
+                <label class="fp-filter-label">Language Support</label>
+                <select class="fp-filter-select" id="fp-filter-language">
+                  <option value="latin">Latin Character Set</option>
+                  <option value="hindi">Hindi / Devanagari</option>
+                  <option value="arabic">Arabic Characters</option>
+                  <option value="japanese">Japanese Characters</option>
+                  <option value="multilingual">Global Multilingual</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Multi-select Tone Tags -->
+            <div class="fp-filter-group" style="margin-top: 1.5rem;">
+              <label class="fp-filter-label">Design Tone (Select Multiple)</label>
+              <div class="fp-tone-tags">
+                <button class="fp-tone-tag" data-tone="elegant">Elegant</button>
+                <button class="fp-tone-tag" data-tone="bold">Bold</button>
+                <button class="fp-tone-tag" data-tone="minimal">Minimalist</button>
+                <button class="fp-tone-tag" data-tone="friendly">Friendly</button>
+                <button class="fp-tone-tag" data-tone="futuristic">Futuristic</button>
+                <button class="fp-tone-tag" data-tone="premium">Premium</button>
+                <button class="fp-tone-tag" data-tone="playful">Playful</button>
+                <button class="fp-tone-tag" data-tone="corporate">Corporate</button>
+                <button class="fp-tone-tag" data-tone="artistic">Artistic</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -92,120 +195,6 @@
   </section>
 
   <div class="fp-app-container">
-
-    <!-- 2. AI INPUT SECTION (ChatGPT style prompt box) -->
-    <section class="fp-input-section">
-      <div class="fp-prompt-box">
-        <div class="fp-prompt-input-wrapper">
-          <textarea id="fp-prompt-textarea" placeholder="Describe your project, audience, style, and mood..." rows="1"></textarea>
-          <div class="fp-prompt-actions">
-            <button class="fp-action-btn" id="fp-random-inspiration-btn" title="Random Inspiration">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-              <span>Random Vibe</span>
-            </button>
-            <button class="fp-action-btn" id="fp-clear-btn" title="Clear Prompt">Clear</button>
-            <button class="fp-submit-btn" id="fp-generate-btn">
-              <span>Generate Pairing</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Suggestions below prompt box -->
-        <div class="fp-suggestions-bar">
-          <span class="fp-suggestions-label">Suggestions:</span>
-          <button class="fp-suggestion-link" data-prompt="Enterprise fintech SaaS app, minimal and corporate">Modern Fintech</button>
-          <span class="fp-suggestion-dot">•</span>
-          <button class="fp-suggestion-link" data-prompt="Luxury organic wine packaging, heritage branding">Luxury Wine</button>
-          <span class="fp-suggestion-dot">•</span>
-          <button class="fp-suggestion-link" data-prompt="Sleek architecture portfolio with high contrast title">Architect Portfolio</button>
-          <span class="fp-suggestion-dot">•</span>
-          <button class="fp-suggestion-link" data-prompt="Indie developer studio devblog with code samples">Dev Blog</button>
-        </div>
-      </div>
-
-      <!-- COLLAPSIBLE STRUCTURED ADVANCED FILTERS -->
-      <div class="fp-advanced-filters">
-        <button class="fp-collapse-toggle" id="fp-advanced-toggle">
-          <span>Structured Project Parameters (Optional)</span>
-          <svg class="fp-collapse-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        
-        <div class="fp-collapse-content" id="fp-advanced-content">
-          <div class="fp-filters-grid">
-            <!-- Project Type -->
-            <div class="fp-filter-group">
-              <label class="fp-filter-label">Project Type</label>
-              <select class="fp-filter-select" id="fp-filter-project-type">
-                <option value="any">Any Layout</option>
-                <option value="website">Website</option>
-                <option value="app">Mobile App</option>
-                <option value="branding">Brand Identity</option>
-                <option value="packaging">Packaging Design</option>
-                <option value="poster">Poster / Print</option>
-                <option value="social">Social Media</option>
-              </select>
-            </div>
-
-            <!-- Industry -->
-            <div class="fp-filter-group">
-              <label class="fp-filter-label">Industry</label>
-              <select class="fp-filter-select" id="fp-filter-industry">
-                <option value="any">Any Industry</option>
-                <option value="tech">Technology</option>
-                <option value="fashion">Fashion & Editorial</option>
-                <option value="finance">Finance & Corporate</option>
-                <option value="food">Food & Beverage</option>
-                <option value="healthcare">Healthcare & Science</option>
-                <option value="luxury">Luxury Goods</option>
-                <option value="gaming">Gaming & Media</option>
-              </select>
-            </div>
-
-            <!-- Target Audience -->
-            <div class="fp-filter-group">
-              <label class="fp-filter-label">Audience</label>
-              <select class="fp-filter-select" id="fp-filter-audience">
-                <option value="any">All Audiences</option>
-                <option value="genz">Gen Z (Modern, Bold)</option>
-                <option value="millennials">Millennials (Clean, Minimal)</option>
-                <option value="professionals">Corporate / Professionals</option>
-                <option value="luxury">High-End Luxury Buyers</option>
-                <option value="creatives">Artists & Creatives</option>
-              </select>
-            </div>
-
-            <!-- Language support -->
-            <div class="fp-filter-group">
-              <label class="fp-filter-label">Language Support</label>
-              <select class="fp-filter-select" id="fp-filter-language">
-                <option value="latin">Latin Character Set</option>
-                <option value="hindi">Hindi / Devanagari</option>
-                <option value="arabic">Arabic Characters</option>
-                <option value="japanese">Japanese Characters</option>
-                <option value="multilingual">Global Multilingual</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Multi-select Tone Tags -->
-          <div class="fp-filter-group" style="margin-top: 1.5rem;">
-            <label class="fp-filter-label">Design Tone (Select Multiple)</label>
-            <div class="fp-tone-tags">
-              <button class="fp-tone-tag" data-tone="elegant">Elegant</button>
-              <button class="fp-tone-tag" data-tone="bold">Bold</button>
-              <button class="fp-tone-tag" data-tone="minimal">Minimalist</button>
-              <button class="fp-tone-tag" data-tone="friendly">Friendly</button>
-              <button class="fp-tone-tag" data-tone="futuristic">Futuristic</button>
-              <button class="fp-tone-tag" data-tone="premium">Premium</button>
-              <button class="fp-tone-tag" data-tone="playful">Playful</button>
-              <button class="fp-tone-tag" data-tone="corporate">Corporate</button>
-              <button class="fp-tone-tag" data-tone="artistic">Artistic</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- 3. AI PROCESSING STATE (LOADER) -->
     <section class="fp-loading-section" id="fp-processing-state" style="display: none;">
