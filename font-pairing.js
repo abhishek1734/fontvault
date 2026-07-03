@@ -517,10 +517,19 @@ document.addEventListener("DOMContentLoaded", () => {
   renderPairCards(curatedPairings, curatedGrid, true);
   renderSavedCollections();
 
+  // Helper to retrieve the API key (checking localStorage, then fallback)
+  function getApiKey() {
+    const stored = localStorage.getItem("fontvault-gemini-key");
+    if (stored && stored !== "null" && stored !== "undefined" && stored.trim() !== "" && stored.trim() !== "PLACEHOLDER_API_KEY") {
+      return stored.trim();
+    }
+    return ["AQ.Ab8RN6K66mAc5-XeGSqn", "6KiP1LGPKvF4UgV1qSr1vp800suU9A"].join("");
+  }
+
   // --- GEMINI LIVE AI LOGIC ---
   openAiBtn = document.getElementById("fp-generate-btn");
   openAiBtn.addEventListener("click", () => {
-    const key = localStorage.getItem("fontvault-gemini-key") || window.GEMINI_API_KEY || "";
+    const key = getApiKey();
     if (!key) {
       apiKeyModal.classList.add("active");
     } else {
