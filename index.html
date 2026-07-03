@@ -285,6 +285,11 @@
     </div>
   </div>
 
+  <!-- FLOATING SCROLL TO TOP BUTTON -->
+  <button id="scroll-to-top-btn" class="scroll-to-top-btn" aria-label="Scroll to top">
+    Scroll To Top
+  </button>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="fonts.js?v=5.28"></script>
   <script src="shared.js?v=5.29"></script>
@@ -399,6 +404,24 @@
 
       hero.addEventListener("mousemove", handleMouseMove);
       hero.addEventListener("mouseleave", handleMouseLeave);
+
+      // ── Scroll To Top Button Logic ──
+      const scrollToTopBtn = document.getElementById("scroll-to-top-btn");
+      if (scrollToTopBtn) {
+        window.addEventListener("scroll", () => {
+          if (window.scrollY > 300) {
+            scrollToTopBtn.classList.add("visible");
+          } else {
+            scrollToTopBtn.classList.remove("visible");
+          }
+        });
+        scrollToTopBtn.addEventListener("click", () => {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+        });
+      }
     });
   </script>
 </body>
