@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Font Pairing Visualizer & Generator — FontVault</title>
+  <meta name="description" content="Discover, visualize, and generate beautiful font combinations. Use our interactive pairings visualizer or get AI-powered pairings tailored to your design project.">
+  <link rel="canonical" href="https://fontvault.com/font-pairing.html">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fontvault.com/font-pairing.html">
+  <meta property="og:title" content="Font Pairing Visualizer & Generator — FontVault">
+  <meta property="og:description" content="Discover, visualize, and generate beautiful font pairings live.">
+  <meta property="og:image" content="https://fontvault.com/assets/branding.png">
+
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css?v=5.15">
+  <link rel="stylesheet" href="font-pairing.css?v=1.0">
+  
+  <script>
+    (function() {
+      const savedDark = localStorage.getItem("fontvault-dark");
+      if (savedDark === "1") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+</head>
+<body class="font-pairing-page">
+
+  <!-- NAVIGATION BAR -->
+  <header id="navbar">
+    <a href="index.html" class="logo">FONTVAULT</a>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-link" id="nav-home">Home</a>
+      <a href="ai-font-finder.html" class="nav-link" id="nav-ai-finder">AI Font Finder</a>
+      <a href="font-pairing.html" class="nav-link nav-link--active" id="nav-font-pairing">Font Pairing</a>
+      <button id="vault-btn" class="nav-btn">My Vault</button>
+      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button id="hamburger-btn" class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+    <div id="mobile-menu" class="mobile-menu">
+      <a href="index.html" class="mobile-menu-item">Home</a>
+      <a href="ai-font-finder.html" class="mobile-menu-item">AI Font Finder</a>
+      <a href="font-pairing.html" class="mobile-menu-item">Font Pairing</a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION (DARK THEME) -->
+  <section class="fp-hero" id="fp-hero">
+    <!-- Ambient Aurora Blobs -->
+    <div class="fp-orb fp-orb-1" aria-hidden="true"></div>
+    <div class="fp-orb fp-orb-2" aria-hidden="true"></div>
+
+    <!-- Smooth Floating Letters -->
+    <div class="fp-float fp-float-1">Aa</div>
+    <div class="fp-float fp-float-2">Qp</div>
+    <div class="fp-float fp-float-3">Tt</div>
+    <div class="fp-float fp-float-4">Ff</div>
+    <div class="fp-float fp-float-5">Kk</div>
+    <div class="fp-float fp-float-6">Gg</div>
+    <div class="fp-float fp-float-7">Rr</div>
+    <div class="fp-float fp-float-8">Mm</div>
+
+    <div class="fp-hero-content">
+      <span class="fp-hero-tag">— AI-POWERED TYPOGRAPHY</span>
+      <h1 class="fp-hero-title">Find Your Perfect<br>Font Pairing</h1>
+      <p class="fp-hero-subtitle">Intelligent suggestions from an AI trained on typographic tradition. Curated collections. A live visualizer. All in one place.</p>
+      
+      <div class="fp-hero-ctas">
+        <button class="btn btn-primary" id="open-ai-generator-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z"/></svg>
+          Get AI Suggestions
+        </button>
+        <button class="btn btn-outline" id="scroll-to-visualizer-btn">Open Visualizer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN MAIN SECTION (LIGHT THEME BELOW HERO) -->
+  <main class="fp-main-section" id="fp-main">
+    <div class="fp-container">
+      
+      <!-- SECTION 1: INTERACTIVE VISUALIZER -->
+      <section class="visualizer-section" id="visualizer">
+        <h2 class="fp-section-title">Live Font Pairing Visualizer</h2>
+        <p class="fp-section-subtitle">Experiment with header and body combinations, adjust spacing, sizes, and alignments on a live editorial layout.</p>
+        
+        <div class="visualizer-layout">
+          <!-- Controls Panel -->
+          <div class="visualizer-controls">
+            <div class="control-group">
+              <label for="header-font-select" class="control-label">Header Font</label>
+              <select id="header-font-select" class="control-select">
+                <!-- Populated dynamically by JS -->
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="body-font-select" class="control-label">Body Font</label>
+              <select id="body-font-select" class="control-select">
+                <!-- Populated dynamically by JS -->
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+              <button class="btn-control-utility" id="swap-fonts-btn" title="Swap Header and Body Fonts">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><polyline points="16 3 21 8 16 13"/><line x1="21" y1="8" x2="9" y2="8"/><polyline points="8 21 3 16 8 11"/><line x1="3" y1="16" x2="15" y2="16"/></svg>
+                Swap Fonts
+              </button>
+              <button class="btn-control-utility" id="randomize-fonts-btn" title="Randomize Combination">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Random Pair
+              </button>
+            </div>
+
+            <hr class="control-divider">
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label for="header-size-slider">Header Size</label>
+                <span id="header-size-val">42px</span>
+              </div>
+              <input type="range" id="header-size-slider" min="24" max="72" value="42" class="control-slider">
+            </div>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label for="body-size-slider">Body Size</label>
+                <span id="body-size-val">16px</span>
+              </div>
+              <input type="range" id="body-size-slider" min="12" max="24" value="16" class="control-slider">
+            </div>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label for="lh-slider">Body Line Height</label>
+                <span id="lh-val">1.6</span>
+              </div>
+              <input type="range" id="lh-slider" min="1.2" max="2.0" step="0.1" value="1.6" class="control-slider">
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">Alignment</label>
+              <div class="align-button-group">
+                <button class="align-btn active" data-align="left" title="Align Left">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+                </button>
+                <button class="align-btn" data-align="center" title="Align Center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+                </button>
+                <button class="align-btn" data-align="right" title="Align Right">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <hr class="control-divider">
+
+            <div class="control-group">
+              <label class="control-label">Try Preset Categories</label>
+              <div class="category-preset-group">
+                <button class="preset-cat-btn" data-preset="serif-sans">Serif + Sans</button>
+                <button class="preset-cat-btn" data-preset="sans-sans">Sans + Sans</button>
+                <button class="preset-cat-btn" data-preset="display-serif">Display + Serif</button>
+                <button class="preset-cat-btn" data-preset="mono-sans">Mono + Sans</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Preview Canvas -->
+          <div class="visualizer-canvas-wrapper">
+            <div class="visualizer-canvas" id="preview-canvas">
+              <span class="preview-layout-tag" id="preview-tag">DESIGN & STYLE</span>
+              <h3 class="preview-layout-title" id="preview-title" contenteditable="true">A Study in Minimal Typography and Composition</h3>
+              <span class="preview-layout-subtitle" id="preview-subtitle" contenteditable="true">An interactive specimen demonstrating editorial copy layout hierarchy.</span>
+              <div class="preview-layout-meta">By Stephen Blake · June 21, 2026</div>
+              <p class="preview-layout-text" id="preview-body-1" contenteditable="true">
+                Selecting the perfect pair of typefaces is both an art and a science. It establishes the immediate tone, pace, and rhythm of your brand or content. A classic guideline is to pair a high-contrast display serif header with a highly-legible geometric sans-serif body font, creating clear contrast in both style and voice.
+              </p>
+              <p class="preview-layout-text" id="preview-body-2" contenteditable="true">
+                Adjust the sizes and line height in the left panel to find the optimal typographic sweet spot. You can edit any block of text directly in this preview canvas to see how your own content matches up!
+              </p>
+              <ul class="preview-layout-list" id="preview-list">
+                <li contenteditable="true">Contrast in weight defines structural hierarchy.</li>
+                <li contenteditable="true">Clean line-spacing prevents cognitive visual strain.</li>
+                <li contenteditable="true">Maintain type size harmony across all devices.</li>
+              </ul>
+            </div>
+            <div class="canvas-actions">
+              <button class="btn btn-outline" id="dl-header-font-btn">Download Header Font</button>
+              <button class="btn btn-outline" id="dl-body-font-btn">Download Body Font</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: CURATED PAIRINGS GRID -->
+      <section class="curated-pairings-section" id="curated">
+        <h2 class="fp-section-title">Curated Font Pairings</h2>
+        <p class="fp-section-subtitle">Hand-picked combinations selected by professional typographers for optimal readability and impact.</p>
+        
+        <div class="curated-grid">
+          <!-- Card 1 -->
+          <div class="curated-pair-card">
+            <div class="pair-meta">
+              <span class="pair-tag">Editorial & Classic</span>
+              <span class="badge-ratio">Serif + Sans</span>
+            </div>
+            <div class="pair-preview">
+              <span class="pair-preview-title font-preview-playfair">Playfair Display</span>
+              <p class="pair-preview-body font-preview-inter">Inter is a clean geometric sans-serif designed for high-resolution screens. It pairs beautifully with Playfair Display's elegance.</p>
+            </div>
+            <div class="pair-footer">
+              <span class="pair-names">Playfair Display / Inter</span>
+              <button class="btn-apply-pair" data-header="playfair-display" data-body="inter">Use Pairing</button>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="curated-pair-card">
+            <div class="pair-meta">
+              <span class="pair-tag">Modern & Tech</span>
+              <span class="badge-ratio">Sans + Sans</span>
+            </div>
+            <div class="pair-preview">
+              <span class="pair-preview-title font-preview-satoshi">Satoshi Bold</span>
+              <p class="pair-preview-body font-preview-switzer">Switzer is a clean neo-grotesque sans-serif. When combined with Satoshi, they create a highly modern and professional interface layout.</p>
+            </div>
+            <div class="pair-footer">
+              <span class="pair-names">Satoshi / Switzer</span>
+              <button class="btn-apply-pair" data-header="satoshi" data-body="switzer">Use Pairing</button>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="curated-pair-card">
+            <div class="pair-meta">
+              <span class="pair-tag">Corporate & Book</span>
+              <span class="badge-ratio">Classical Serif + Sans</span>
+            </div>
+            <div class="pair-preview">
+              <span class="pair-preview-title font-preview-cinzel">Cinzel Regular</span>
+              <p class="pair-preview-body font-preview-lato">Lato provides a friendly, warm sans-serif feel that balances the academic, historical Roman aesthetics of Cinzel.</p>
+            </div>
+            <div class="pair-footer">
+              <span class="pair-names">Cinzel / Lato</span>
+              <button class="btn-apply-pair" data-header="cinzel" data-body="lato">Use Pairing</button>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="curated-pair-card">
+            <div class="pair-meta">
+              <span class="pair-tag">Branding & Logo</span>
+              <span class="badge-ratio">Display + Sans</span>
+            </div>
+            <div class="pair-preview">
+              <span class="pair-preview-title font-preview-clash">Clash Display</span>
+              <p class="pair-preview-body font-preview-cabin">Cabin is a humanist sans-serif with rounded geometries. It offsets the rigid, geometric terminals of Clash Display.</p>
+            </div>
+            <div class="pair-footer">
+              <span class="pair-names">Clash Display / Cabin</span>
+              <button class="btn-apply-pair" data-header="clash-display" data-body="cabin">Use Pairing</button>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="curated-pair-card">
+            <div class="pair-meta">
+              <span class="pair-tag">Technical & Developer</span>
+              <span class="badge-ratio">Monospace + Sans</span>
+            </div>
+            <div class="pair-preview">
+              <span class="pair-preview-title font-preview-jetbrains">JetBrains Mono</span>
+              <p class="pair-preview-body font-preview-opensans">Open Sans is one of the most readable body fonts. Paired with JetBrains Mono, it is ideal for technical blogs and documentation.</p>
+            </div>
+            <div class="pair-footer">
+              <span class="pair-names">JetBrains Mono / Open Sans</span>
+              <button class="btn-apply-pair" data-header="jetbrains-mono" data-body="open-sans">Use Pairing</button>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="curated-pair-card">
+            <div class="pair-meta">
+              <span class="pair-tag">Friendly UI</span>
+              <span class="badge-ratio">Sans + Sans</span>
+            </div>
+            <div class="pair-preview">
+              <span class="pair-preview-title font-preview-nunito">Nunito Bold</span>
+              <p class="pair-preview-body font-preview-roboto">Roboto is Google's system sans-serif. Using Nunito for headings adds rounded playfulness without losing readability in paragraphs.</p>
+            </div>
+            <div class="pair-footer">
+              <span class="pair-names">Nunito / Roboto</span>
+              <button class="btn-apply-pair" data-header="nunito" data-body="roboto">Use Pairing</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-branding">
+        <a href="#" class="logo">FONTVAULT</a>
+        <p style="margin-top: 1rem;">The premium font discovery and licensing platform. Built for modern designers, brand builders, and type lovers.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html#hero" id="footer-browse-link">Browse Fonts</a></li>
+          <li><a href="index.html#submit-font">Submit a Font</a></li>
+          <li><a href="admin.html" target="_blank">Admin Panel</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter" id="submit-font">
+        <h4>Submit a Font</h4>
+        <p>Found or designed a stunning typeface? Let us know.</p>
+        <form class="newsletter-form" id="newsletter-form" onsubmit="event.preventDefault(); alert('Submission sent! Thank you for supporting the typography community.'); this.reset();">
+          <input type="email" placeholder="Enter foundry URL or font name" required>
+          <button type="submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FontVault. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- AI SUGGESTIONS MODAL -->
+  <div id="ai-modal" class="ai-modal-overlay">
+    <div class="ai-modal">
+      <button class="ai-modal-close" id="close-ai-modal" aria-label="Close modal">&times;</button>
+      
+      <div class="ai-modal-header">
+        <div class="ai-modal-spark-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <h2 class="ai-modal-title">AI Font Pairing Suggestions</h2>
+        <p class="ai-modal-subtitle">Describe your design project and let Gemini recommend professional font pairings.</p>
+      </div>
+
+      <div class="ai-modal-body">
+        <div class="ai-form-group">
+          <label for="ai-prompt-input" class="ai-form-label">Project Description</label>
+          <textarea id="ai-prompt-input" class="ai-form-textarea" placeholder="e.g. A high-end organic skincare brand that wants an elegant, warm, and natural style..."></textarea>
+        </div>
+
+        <div class="ai-form-row">
+          <div class="ai-form-group flex-1">
+            <label for="ai-category-select" class="ai-form-label">Primary Heading Style</label>
+            <select id="ai-category-select" class="ai-form-select">
+              <option value="any">Any Style</option>
+              <option value="serif">Serif (Elegant, Classic)</option>
+              <option value="sans-serif">Sans-Serif (Modern, Clean)</option>
+              <option value="display">Display (Bold, Unique)</option>
+              <option value="monospace">Monospace (Technical, Minimal)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary w-full" id="ai-generate-submit-btn">
+          Generate Pairings
+        </button>
+
+        <div id="ai-loading" class="ai-loading-container" style="display: none;">
+          <div class="ai-spinner"></div>
+          <span class="ai-loading-text">Gemini is curating typographic matches...</span>
+        </div>
+
+        <div id="ai-results" class="ai-results-container" style="display: none;">
+          <!-- Results injected by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API KEY MODAL (Reused from AI Finder) -->
+  <div id="api-key-modal" class="ai-modal-overlay">
+    <div class="ai-modal api-key-modal">
+      <button class="ai-modal-close" id="close-api-key-modal">&times;</button>
+      <div class="ai-modal-header">
+        <h2 class="ai-modal-title">Enter Gemini API Key</h2>
+        <p class="ai-modal-subtitle">To get AI suggestions, paste your Gemini API Key. Your key is stored locally in your browser.</p>
+      </div>
+      <div class="ai-modal-body">
+        <div class="ai-form-group">
+          <input type="password" id="api-key-input" class="ai-form-input" placeholder="AIzaSy...">
+          <p class="api-key-help">Get a free API key in <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>.</p>
+        </div>
+        <button class="btn btn-primary w-full" id="save-api-key-btn">Save Key & Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="fonts.js"></script>
+  <script src="shared.js"></script>
+  <script src="font-pairing.js"></script>
+</body>
+</html>
