@@ -23,7 +23,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=5.29">
   <script src="config.js?v=5.25"></script>
@@ -96,7 +96,18 @@
     <!-- Hero content -->
     <div class="hero-content">
       <div class="hero-eyebrow">150+ curated typefaces</div>
-      <h1 class="hero-headline-fraunces">Type is <em>the</em> voice<br>your work never gets to raise</h1>
+      <h1 class="hero-headline-fraunces">
+        <span class="hero-word">Type</span>
+        <span class="hero-word">is</span>
+        <span class="hero-word"><em>the</em></span>
+        <span class="hero-word">voice</span><br>
+        <span class="hero-word">your</span>
+        <span class="hero-word">work</span>
+        <span class="hero-word">never</span>
+        <span class="hero-word">gets</span>
+        <span class="hero-word">to</span>
+        <span class="hero-word">raise</span>
+      </h1>
       <p class="hero-subline-fraunces">Preview every face on real layouts before you commit — headlines, body copy, UI, all at once.</p>
       <div class="hero-ctas-fraunces">
         <a class="btn-fill" href="#" id="btn-browse-fonts">Browse the vault</a>
@@ -289,5 +300,57 @@
   <script src="fonts.js?v=5.28"></script>
   <script src="shared.js?v=5.29"></script>
   <script src="app.js?v=5.29"></script>
+  <!-- INTERACTIVE SPECIMEN HERO LETTER ANIMATION -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const hero = document.getElementById("hero");
+      const words = document.querySelectorAll(".hero-word");
+      if (!hero || words.length === 0) return;
+
+      const maxDist = 220; // Active radius in pixels
+      const defaultWeight = 250;
+      const hoverWeight = 750;
+
+      // Track mouse position and update word properties
+      function handleMouseMove(e) {
+        const mx = e.clientX;
+        const my = e.clientY;
+
+        words.forEach(word => {
+          const rect = word.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dist = Math.sqrt(Math.pow(mx - cx, 2) + Math.pow(my - cy, 2));
+
+          if (dist < maxDist) {
+            const pct = (maxDist - dist) / maxDist; // 0 to 1
+            const weight = Math.round(defaultWeight + pct * (hoverWeight - defaultWeight));
+            const ty = -pct * 12; // Rises up slightly
+            const tx = (cx - mx) * pct * 0.08; // Subtle drift away from cursor
+
+            word.style.fontWeight = weight;
+            word.style.transform = `translate(${tx}px, ${ty}px) scale(${1 + pct * 0.04})`;
+            word.style.color = `rgb(${Math.round(240 + pct * 15)}, ${Math.round(239 + pct * 16)}, ${Math.round(236 + pct * 19)})`;
+          } else {
+            word.style.fontWeight = defaultWeight;
+            word.style.transform = "none";
+            word.style.color = "";
+          }
+        });
+      }
+
+      // Smooth reset when mouse leaves the hero section
+      function handleMouseLeave() {
+        words.forEach(word => {
+          word.style.fontWeight = defaultWeight;
+          word.style.transform = "none";
+          word.style.color = "";
+        });
+      }
+
+      hero.addEventListener("mousemove", handleMouseMove);
+      hero.addEventListener("mouseleave", handleMouseLeave);
+    });
+  </script>
 </body>
 </html>

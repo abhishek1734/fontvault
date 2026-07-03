@@ -4700,3 +4700,14 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hove
     bottom: 24px;
   }
 }
+
+.hero-word {
+  display: inline-block;
+  font-weight: 250;
+  transition: font-weight 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-origin: center bottom;
+  will-change: font-weight, transform, color;
+  white-space: nowrap;
+}
