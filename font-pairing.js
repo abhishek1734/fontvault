@@ -520,7 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- GEMINI LIVE AI LOGIC ---
   openAiBtn = document.getElementById("fp-generate-btn");
   openAiBtn.addEventListener("click", () => {
-    const key = localStorage.getItem("fontvault-gemini-key") || "";
+    const key = localStorage.getItem("fontvault-gemini-key") || window.GEMINI_API_KEY || "";
     if (!key) {
       apiKeyModal.classList.add("active");
     } else {

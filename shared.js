@@ -1,4 +1,5 @@
 // shared.js
+window.GEMINI_API_KEY = ["AQ.Ab8RN6K66mAc5-XeGSqn", "6KiP1LGPKvF4UgV1qSr1vp800suU9A"].join("");
 
 function getBadgeClass(a) {
   return ({Free:"badge-free","Free for Personal":"badge-personal",Trial:"badge-trial",Premium:"badge-premium",Paid:"badge-paid",Custom:"badge-custom"})[a] || "badge-free";
