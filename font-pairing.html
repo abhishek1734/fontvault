@@ -14,6 +14,9 @@
   <meta property="og:description" content="Intelligent typography assistant for designers.">
   <meta property="og:image" content="https://fontvault.com/assets/branding.png">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=5.15">
   <link rel="stylesheet" href="font-pairing.css?v=2.0">
@@ -64,9 +67,40 @@
   <div class="fp-app-container">
     
     <!-- 1. HERO SECTION -->
-    <section class="fp-hero-section">
+    <section class="fp-hero-section" id="hero">
+      
+      <!-- Liquid Glass Aurora Background Layers -->
+      <!-- Layer 1: Aurora gradient blobs -->
+      <div class="hero-blob hero-blob--1" aria-hidden="true"></div>
+      <div class="hero-blob hero-blob--2" aria-hidden="true"></div>
+      <div class="hero-blob hero-blob--3" aria-hidden="true"></div>
+
+      <!-- Layer 2: Grid pattern -->
+      <div class="hero-bg-grid" aria-hidden="true"></div>
+
+      <!-- Layer 3: Glass overlay -->
+      <div class="hero-glass-pane" aria-hidden="true"></div>
+
+      <!-- Layer 4: Radial spotlight -->
+      <div class="hero-spotlight" aria-hidden="true"></div>
+
+      <!-- Layer 5: Floating orbs -->
+      <div class="hero-orb hero-orb--a" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb--b" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb--c" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb--d" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb--e" aria-hidden="true"></div>
+
+      <!-- Layer 6: Noise texture -->
+      <div class="hero-noise" aria-hidden="true"></div>
+
+      <!-- Cursor glow element -->
+      <div class="hero-cursor-glow" id="hero-cursor-glow" aria-hidden="true"></div>
+
+      <!-- Content wrapper -->
       <div class="fp-hero-content">
-        <h1 class="fp-hero-title">Find the Perfect<br>Font Pair with AI</h1>
+        <div class="fp-hero-eyebrow">AI Pairing Studio</div>
+        <h1 class="fp-hero-title">Find the Perfect<br>Font Pair with <em>AI</em></h1>
         <p class="fp-hero-subtitle">Describe your project, brand, or design vision and get intelligent, professionally scored font combinations in seconds.</p>
         
         <div class="fp-hero-chips">
@@ -368,5 +402,140 @@
   <script src="fonts.js?v=2.3"></script>
   <script src="shared.js?v=2.3"></script>
   <script src="font-pairing.js?v=2.3"></script>
+  <!-- INTERACTIVE SPECIMEN HERO LETTER ANIMATION & CURSOR GLOW -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const hero = document.getElementById("hero");
+      const headline = document.querySelector(".fp-hero-title");
+      const glow = document.getElementById("hero-cursor-glow");
+      if (!hero || !headline) return;
+
+      // ── 1. DYNAMIC CHARACTER WRAPPING ──
+      function wrapCharacters(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent;
+          const tokens = text.split(/(\s+)/);
+          const fragment = document.createDocumentFragment();
+
+          tokens.forEach(token => {
+            if (token.trim() === "") {
+              fragment.appendChild(document.createTextNode(token));
+            } else if (token.length > 0) {
+              const wordSpan = document.createElement("span");
+              wordSpan.className = "hero-word";
+              
+              for (let i = 0; i < token.length; i++) {
+                const charSpan = document.createElement("span");
+                charSpan.className = "hero-char";
+                charSpan.textContent = token[i];
+                wordSpan.appendChild(charSpan);
+              }
+              fragment.appendChild(wordSpan);
+            }
+          });
+          node.parentNode.replaceChild(fragment, node);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const children = Array.from(node.childNodes);
+          children.forEach(wrapCharacters);
+        }
+      }
+
+      wrapCharacters(headline);
+
+      const chars = document.querySelectorAll(".hero-char");
+      const maxDist = 200; // Active radius in pixels
+      const defaultWeight = 250;
+      const hoverWeight = 750;
+
+      // Cache center coordinates relative to the document
+      function cacheCoordinates() {
+        chars.forEach(char => {
+          char.style.transform = "none";
+        });
+        
+        setTimeout(() => {
+          chars.forEach(char => {
+            const rect = char.getBoundingClientRect();
+            char.dataset.cx = rect.left + rect.width / 2 + window.scrollX;
+            char.dataset.cy = rect.top + rect.height / 2 + window.scrollY;
+          });
+        }, 30);
+      }
+
+      cacheCoordinates();
+      window.addEventListener("resize", cacheCoordinates);
+
+      // Track mouse position and update character properties
+      function handleMouseMove(e) {
+        const mx = e.pageX;
+        const my = e.pageY;
+
+        chars.forEach(char => {
+          const cx = parseFloat(char.dataset.cx);
+          const cy = parseFloat(char.dataset.cy);
+          if (isNaN(cx) || isNaN(cy)) return;
+
+          const dist = Math.sqrt(Math.pow(mx - cx, 2) + Math.pow(my - cy, 2));
+
+          if (dist < maxDist) {
+            const pct = (maxDist - dist) / maxDist; // 0 to 1
+            const weight = Math.round(defaultWeight + pct * (hoverWeight - defaultWeight));
+            const ty = -pct * 14; // Rises up smoothly
+            const tx = (cx - mx) * pct * 0.08; // Subtle drift away from cursor
+
+            char.style.fontWeight = weight;
+            char.style.transform = `translate(${tx}px, ${ty}px) scale(${1 + pct * 0.06})`;
+            char.style.color = `rgb(${Math.round(240 + pct * 15)}, ${Math.round(239 + pct * 16)}, ${Math.round(236 + pct * 19)})`;
+          } else {
+            char.style.fontWeight = defaultWeight;
+            char.style.transform = "none";
+            char.style.color = "";
+          }
+        });
+      }
+
+      // Smooth reset when mouse leaves the hero section
+      function handleMouseLeave() {
+        chars.forEach(char => {
+          char.style.fontWeight = defaultWeight;
+          char.style.transform = "none";
+          char.style.color = "";
+        });
+      }
+
+      hero.addEventListener("mousemove", handleMouseMove);
+      hero.addEventListener("mouseleave", handleMouseLeave);
+
+      // ── 2. MOUSE REACTIVE SPOTLIGHT (CURSOR GLOW) ──
+      if (glow) {
+        let targetX = 0, targetY = 0;
+        let currentX = 0, currentY = 0;
+        let raf;
+
+        hero.addEventListener("mousemove", (e) => {
+          const rect = hero.getBoundingClientRect();
+          targetX = e.clientX - rect.left;
+          targetY = e.clientY - rect.top;
+        });
+
+        hero.addEventListener("mouseenter", () => {
+          glow.style.opacity = "1";
+        });
+
+        hero.addEventListener("mouseleave", () => {
+          glow.style.opacity = "0";
+        });
+
+        function updateGlowPosition() {
+          currentX += (targetX - currentX) * 0.15;
+          currentY += (targetY - currentY) * 0.15;
+          glow.style.left = currentX + "px";
+          glow.style.top = currentY + "px";
+          raf = requestAnimationFrame(updateGlowPosition);
+        }
+        updateGlowPosition();
+      }
+    });
+  </script>
 </body>
 </html>
