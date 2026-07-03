@@ -322,25 +322,49 @@
       wrapCharacters(headline);
 
       const chars = document.querySelectorAll(".hero-char");
-      const maxDist = 180; // Active radius in pixels (smaller for individual characters)
+      const maxDist = 200; // Active radius in pixels
       const defaultWeight = 250;
       const hoverWeight = 750;
 
+      // Cache center coordinates relative to the document
+      function cacheCoordinates() {
+        // Temporarily reset styles to get pristine coordinates
+        chars.forEach(char => {
+          char.style.transform = "none";
+        });
+        
+        // Let browser paint to compute coordinates accurately
+        setTimeout(() => {
+          chars.forEach(char => {
+            const rect = char.getBoundingClientRect();
+            char.dataset.cx = rect.left + rect.width / 2 + window.scrollX;
+            char.dataset.cy = rect.top + rect.height / 2 + window.scrollY;
+          });
+        }, 30);
+      }
+
+      // Initial cache after load
+      cacheCoordinates();
+
+      // Recalculate on window resize
+      window.addEventListener("resize", cacheCoordinates);
+
       // Track mouse position and update character properties
       function handleMouseMove(e) {
-        const mx = e.clientX;
-        const my = e.clientY;
+        const mx = e.pageX;
+        const my = e.pageY;
 
         chars.forEach(char => {
-          const rect = char.getBoundingClientRect();
-          const cx = rect.left + rect.width / 2;
-          const cy = rect.top + rect.height / 2;
+          const cx = parseFloat(char.dataset.cx);
+          const cy = parseFloat(char.dataset.cy);
+          if (isNaN(cx) || isNaN(cy)) return;
+
           const dist = Math.sqrt(Math.pow(mx - cx, 2) + Math.pow(my - cy, 2));
 
           if (dist < maxDist) {
             const pct = (maxDist - dist) / maxDist; // 0 to 1
             const weight = Math.round(defaultWeight + pct * (hoverWeight - defaultWeight));
-            const ty = -pct * 14; // Rises up slightly
+            const ty = -pct * 14; // Rises up smoothly
             const tx = (cx - mx) * pct * 0.08; // Subtle drift away from cursor
 
             char.style.fontWeight = weight;
