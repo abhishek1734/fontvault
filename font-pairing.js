@@ -520,19 +520,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // Helper to retrieve the API key (checking localStorage, then fallback)
   function getApiKey() {
     const stored = localStorage.getItem("fontvault-gemini-key");
+    console.log("DEBUG: localStorage key =", stored);
     if (stored && stored !== "null" && stored !== "undefined" && stored.trim() !== "" && stored.trim() !== "PLACEHOLDER_API_KEY") {
       return stored.trim();
     }
-    return ["AQ.Ab8RN6K66mAc5-XeGSqn", "6KiP1LGPKvF4UgV1qSr1vp800suU9A"].join("");
+    const fallback = ["AQ.Ab8RN6K66mAc5-XeGSqn", "6KiP1LGPKvF4UgV1qSr1vp800suU9A"].join("");
+    console.log("DEBUG: Using fallback key =", fallback);
+    return fallback;
   }
 
   // --- GEMINI LIVE AI LOGIC ---
   openAiBtn = document.getElementById("fp-generate-btn");
   openAiBtn.addEventListener("click", () => {
     const key = getApiKey();
+    console.log("DEBUG: getApiKey() resolved to =", key);
     if (!key) {
+      console.log("DEBUG: Showing API Key Modal because key is falsy");
       apiKeyModal.classList.add("active");
     } else {
+      console.log("DEBUG: Triggering AI generation with key");
       triggerAIGeneration(key);
     }
   });
