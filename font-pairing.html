@@ -68,35 +68,6 @@
     
     <!-- 1. HERO SECTION -->
     <section class="fp-hero-section" id="hero">
-      
-      <!-- Liquid Glass Aurora Background Layers -->
-      <!-- Layer 1: Aurora gradient blobs -->
-      <div class="hero-blob hero-blob--1" aria-hidden="true"></div>
-      <div class="hero-blob hero-blob--2" aria-hidden="true"></div>
-      <div class="hero-blob hero-blob--3" aria-hidden="true"></div>
-
-      <!-- Layer 2: Grid pattern -->
-      <div class="hero-bg-grid" aria-hidden="true"></div>
-
-      <!-- Layer 3: Glass overlay -->
-      <div class="hero-glass-pane" aria-hidden="true"></div>
-
-      <!-- Layer 4: Radial spotlight -->
-      <div class="hero-spotlight" aria-hidden="true"></div>
-
-      <!-- Layer 5: Floating orbs -->
-      <div class="hero-orb hero-orb--a" aria-hidden="true"></div>
-      <div class="hero-orb hero-orb--b" aria-hidden="true"></div>
-      <div class="hero-orb hero-orb--c" aria-hidden="true"></div>
-      <div class="hero-orb hero-orb--d" aria-hidden="true"></div>
-      <div class="hero-orb hero-orb--e" aria-hidden="true"></div>
-
-      <!-- Layer 6: Noise texture -->
-      <div class="hero-noise" aria-hidden="true"></div>
-
-      <!-- Cursor glow element -->
-      <div class="hero-cursor-glow" id="hero-cursor-glow" aria-hidden="true"></div>
-
       <!-- Content wrapper -->
       <div class="fp-hero-content">
         <div class="fp-hero-eyebrow">AI Pairing Studio</div>
@@ -113,6 +84,12 @@
           <button class="fp-hero-chip" data-prompt="Modern apparel brand focused on sustainability">Modern</button>
           <button class="fp-hero-chip" data-prompt="Artistic book publisher focusing on classical literature">Artistic</button>
         </div>
+      </div>
+
+      <div class="scroll-indicator" id="scroll-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
     </section>
 
@@ -506,34 +483,12 @@
       hero.addEventListener("mousemove", handleMouseMove);
       hero.addEventListener("mouseleave", handleMouseLeave);
 
-      // ── 2. MOUSE REACTIVE SPOTLIGHT (CURSOR GLOW) ──
-      if (glow) {
-        let targetX = 0, targetY = 0;
-        let currentX = 0, currentY = 0;
-        let raf;
-
-        hero.addEventListener("mousemove", (e) => {
-          const rect = hero.getBoundingClientRect();
-          targetX = e.clientX - rect.left;
-          targetY = e.clientY - rect.top;
+      // ── 2. SCROLL INDICATOR ARROW CLICK ──
+      const scrollArrow = document.getElementById("scroll-arrow");
+      if (scrollArrow) {
+        scrollArrow.addEventListener("click", () => {
+          document.querySelector(".fp-input-section").scrollIntoView({ behavior: "smooth" });
         });
-
-        hero.addEventListener("mouseenter", () => {
-          glow.style.opacity = "1";
-        });
-
-        hero.addEventListener("mouseleave", () => {
-          glow.style.opacity = "0";
-        });
-
-        function updateGlowPosition() {
-          currentX += (targetX - currentX) * 0.15;
-          currentY += (targetY - currentY) * 0.15;
-          glow.style.left = currentX + "px";
-          glow.style.top = currentY + "px";
-          raf = requestAnimationFrame(updateGlowPosition);
-        }
-        updateGlowPosition();
       }
     });
   </script>
