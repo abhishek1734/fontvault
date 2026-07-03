@@ -1047,10 +1047,10 @@ function setupEventListeners() {
   el.clearFiltersBtn.addEventListener("click", clearAllFilters);
 
 
-  // Hero browse button
-  el.browseBtn?.addEventListener("click", () =>
-    document.getElementById("main-content").scrollIntoView({ behavior: "smooth" })
-  );
+  el.browseBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("main-content").scrollIntoView({ behavior: "smooth" });
+  });
 
   // Scroll arrow
   el.scrollArrow?.addEventListener("click", () =>
