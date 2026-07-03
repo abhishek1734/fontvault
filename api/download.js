@@ -1,12 +1,10 @@
 ﻿// api/download.js — Vercel Serverless Function
-// Downloads fonts as installable files:
-//   Google Fonts:
-//     - Strategy 1: Official Google Fonts ZIP endpoint (contains variable + static TTFs)
-//     - Strategy 2: CSS parsing fallback (for Google Sans/unlisted fonts, maps and downloads all TTFs)
-//   Direct URL:
-//     - Proxies the file as-is (TTF/OTF/WOFF2)
+// Generates a ZIP file matching Google Fonts official download format:
+//   - Root of ZIP: Variable TTF files (from google/fonts GitHub repo) + OFL.txt license file
+//   - static/ folder inside ZIP: Individual static TTF files for all weights (scraped from Google Fonts CSS API)
+//   - Falls back to CSS parse only (putting TTFs in root) if not found in GitHub.
 
-// ── Minimal pure-Node ZIP builder (no npm needed) — used for CSS parsing fallback ──
+// ── Minimal pure-Node ZIP builder (no npm needed) ────────────────
 function buildZip(entries) {
   function crc32(buf) {
     if (!crc32._t) {
@@ -52,6 +50,126 @@ function buildZip(entries) {
   return Buffer.concat([...locals, cd, eocd]);
 }
 
+function familyToSlug(family) {
+  return family.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// ── Fetch variable fonts & OFL license from GitHub ──────────────
+async function fetchMetadataFromGitHub(family) {
+  const slug    = familyToSlug(family);
+  const folders = ['ofl', 'apache', 'ufl'];
+  const GH_API  = 'https://api.github.com/repos/google/fonts/contents';
+  const headers = {
+    'User-Agent': 'FontVault/1.0',
+    'Accept': 'application/vnd.github.v3+json',
+  };
+
+  for (const folder of folders) {
+    const apiUrl = `${GH_API}/${folder}/${slug}`;
+    const resp   = await fetch(apiUrl, { headers });
+    if (!resp.ok) continue;
+
+    const files = await resp.json();
+    if (!Array.isArray(files)) continue;
+
+    // We want variable TTF files (they have bracket axes in filename, e.g. Montserrat[wght].ttf)
+    // and LICENSE or OFL text files
+    const targets = files.filter(f =>
+      f.type === 'file' && (
+        (/\.(ttf|otf)$/i.test(f.name) && f.name.includes('[') && f.name.includes(']')) ||
+        /^(ofl|license|readme)\.txt$/i.test(f.name)
+      )
+    );
+
+    if (targets.length === 0) continue;
+
+    const entries = (await Promise.all(
+      targets.map(async file => {
+        try {
+          const r = await fetch(file.download_url, { headers: { 'User-Agent': 'FontVault/1.0' } });
+          if (!r.ok) return null;
+          const data = Buffer.from(await r.arrayBuffer());
+          return { name: file.name, data };
+        } catch { return null; }
+      })
+    )).filter(Boolean);
+
+    if (entries.length > 0) return entries;
+  }
+
+  return [];
+}
+
+// ── Fetch individual static TTF files from Google Fonts CSS API ──
+async function fetchStaticFontsFromCSS(family) {
+  const cleanFamily = family.trim();
+  const weightsParam = 'ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900';
+  const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(cleanFamily)}:${weightsParam}`;
+  
+  try {
+    const cssResp = await fetch(cssUrl, {
+      headers: { 'User-Agent': '' } // Empty User-Agent forces TTF format instead of WOFF2
+    });
+
+    if (!cssResp.ok) return [];
+
+    const css = await cssResp.text();
+    const blocks = css.split('@font-face');
+    const filesToDownload = [];
+    
+    const weightNames = {
+      '100': 'Thin', '200': 'ExtraLight', '300': 'Light', '400': 'Regular',
+      '500': 'Medium', '600': 'SemiBold', '700': 'Bold', '800': 'ExtraBold', '900': 'Black'
+    };
+
+    for (const block of blocks) {
+      if (!block.includes('src:')) continue;
+      const styleMatch = block.match(/font-style:\s*(\w+)/);
+      const weightMatch = block.match(/font-weight:\s*(\d+)/);
+      const urlMatch = block.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.ttf)\)/);
+      
+      if (styleMatch && weightMatch && urlMatch) {
+        const style = styleMatch[1];
+        const weight = weightMatch[1];
+        const fontFileUrl = urlMatch[1];
+        
+        const weightName = weightNames[weight] || weight;
+        let fontFileName = '';
+        if (style === 'italic') {
+          fontFileName = weightName === 'Regular' ? 'Italic' : `${weightName}Italic`;
+        } else {
+          fontFileName = weightName;
+        }
+        
+        const name = `${cleanFamily.replace(/\s+/g, '')}-${fontFileName}.ttf`;
+        
+        if (!filesToDownload.find(f => f.name === name)) {
+          filesToDownload.push({ name, url: fontFileUrl });
+        }
+      }
+    }
+
+    if (filesToDownload.length === 0) return [];
+
+    const entries = (await Promise.all(
+      filesToDownload.map(async f => {
+        try {
+          const r = await fetch(f.url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+          if (!r.ok) return null;
+          const data = Buffer.from(await r.arrayBuffer());
+          return { name: f.name, data };
+        } catch { return null; }
+      })
+    )).filter(Boolean);
+
+    return entries;
+
+  } catch (err) {
+    console.warn('[download] fetchStaticFontsFromCSS failed:', err.message);
+    return [];
+  }
+}
+
 module.exports = async (req, res) => {
   const { family, url, filename } = req.query;
 
@@ -65,106 +183,48 @@ module.exports = async (req, res) => {
       const cleanFamily = family.trim();
       const zipName     = filename || `${cleanFamily.replace(/\s+/g, '_')}_fonts.zip`;
 
-      // Strategy 1: Official Google Fonts download endpoint (direct zip with static + variable TTFs)
-      console.log(`[download] Trying official endpoint for "${cleanFamily}"`);
-      const googleZipUrl = `https://fonts.google.com/download?family=${encodeURIComponent(cleanFamily)}`;
-      
-      try {
-        const zipResp = await fetch(googleZipUrl, {
-          redirect: 'follow',
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,application/zip,*/*;q=0.8',
-          },
+      console.log(`[download] Generating ZIP bundle for Google Font: "${cleanFamily}"`);
+
+      // 1. Fetch Variable TTFs & OFL license from GitHub
+      const githubEntries = await fetchMetadataFromGitHub(cleanFamily);
+
+      // 2. Fetch Static TTFs from CSS API
+      const staticEntries = await fetchStaticFontsFromCSS(cleanFamily);
+
+      // 3. Assemble entries following Google Fonts official structure:
+      //   - Variable fonts & OFL.txt go to the root folder
+      //   - Static fonts go to the "static/" subfolder (if variable fonts exist)
+      //   - If NO variable fonts found (e.g. Google Sans), put all static fonts in the root.
+      const hasVariableFonts = githubEntries.some(e => e.name.includes('[') && e.name.includes(']'));
+      const finalEntries = [];
+
+      // Add license / readme files to root
+      githubEntries.forEach(entry => {
+        finalEntries.push(entry);
+      });
+
+      // Add static files
+      staticEntries.forEach(entry => {
+        const entryName = hasVariableFonts ? `static/${entry.name}` : entry.name;
+        // Avoid duplicate files
+        if (!finalEntries.some(e => e.name === entryName)) {
+          finalEntries.push({ name: entryName, data: entry.data });
+        }
+      });
+
+      if (finalEntries.length === 0) {
+        return res.status(404).json({
+          error: `Font "${cleanFamily}" not found. Check the family name spelling.`,
         });
-
-        const ct = zipResp.headers.get('content-type') || '';
-        if (zipResp.ok && (ct.includes('zip') || ct.includes('octet-stream'))) {
-          const buffer = Buffer.from(await zipResp.arrayBuffer());
-          console.log(`[download] Official endpoint success for "${cleanFamily}"`);
-          res.setHeader('Content-Type', 'application/zip');
-          res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
-          res.setHeader('Content-Length', buffer.length);
-          res.setHeader('Cache-Control', 'public, max-age=86400');
-          return res.status(200).send(buffer);
-        }
-      } catch (e) {
-        console.warn(`[download] Official endpoint request failed for "${cleanFamily}":`, e.message);
       }
 
-      // Strategy 2: CSS v2 API parsing fallback (for Google Sans / unlisted fonts)
-      console.log(`[download] Official endpoint miss, falling back to CSS parse for "${cleanFamily}"`);
-      
-      const weightsParam = 'ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900';
-      const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(cleanFamily)}:${weightsParam}`;
-      const cssResp = await fetch(cssUrl, {
-        headers: { 'User-Agent': '' } // Empty User-Agent forces TTF format instead of WOFF2
-      });
-
-      if (cssResp.ok) {
-        const css = await cssResp.text();
-        const blocks = css.split('@font-face');
-        const filesToDownload = [];
-        
-        const weightNames = {
-          '100': 'Thin', '200': 'ExtraLight', '300': 'Light', '400': 'Regular',
-          '500': 'Medium', '600': 'SemiBold', '700': 'Bold', '800': 'ExtraBold', '900': 'Black'
-        };
-
-        for (const block of blocks) {
-          if (!block.includes('src:')) continue;
-          const styleMatch = block.match(/font-style:\s*(\w+)/);
-          const weightMatch = block.match(/font-weight:\s*(\d+)/);
-          const urlMatch = block.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.ttf)\)/);
-          
-          if (styleMatch && weightMatch && urlMatch) {
-            const style = styleMatch[1];
-            const weight = weightMatch[1];
-            const fontFileUrl = urlMatch[1];
-            
-            const weightName = weightNames[weight] || weight;
-            let fontFileName = '';
-            if (style === 'italic') {
-              fontFileName = weightName === 'Regular' ? 'Italic' : `${weightName}Italic`;
-            } else {
-              fontFileName = weightName;
-            }
-            
-            const name = `${cleanFamily.replace(/\s+/g, '')}-${fontFileName}.ttf`;
-            
-            if (!filesToDownload.find(f => f.name === name)) {
-              filesToDownload.push({ name, url: fontFileUrl });
-            }
-          }
-        }
-
-        if (filesToDownload.length > 0) {
-          console.log(`[download] CSS Parse found ${filesToDownload.length} files`);
-          const entries = (await Promise.all(
-            filesToDownload.map(async f => {
-              try {
-                const r = await fetch(f.url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-                if (!r.ok) return null;
-                const data = Buffer.from(await r.arrayBuffer());
-                return { name: f.name, data };
-              } catch { return null; }
-            })
-          )).filter(Boolean);
-
-          if (entries.length > 0) {
-            const zip = buildZip(entries);
-            res.setHeader('Content-Type', 'application/zip');
-            res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
-            res.setHeader('Content-Length', zip.length);
-            res.setHeader('Cache-Control', 'public, max-age=86400');
-            return res.status(200).send(zip);
-          }
-        }
-      }
-
-      return res.status(404).json({
-        error: `Font "${cleanFamily}" not found. Check the family name spelling.`,
-      });
+      console.log(`[download] ZIP generated with ${finalEntries.length} items (hasVariable: ${hasVariableFonts})`);
+      const zip = buildZip(finalEntries);
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
+      res.setHeader('Content-Length', zip.length);
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.status(200).send(zip);
     }
 
     // ── Path B: Direct font file URL ─────────────────────────────
