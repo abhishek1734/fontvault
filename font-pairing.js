@@ -531,32 +531,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- GEMINI LIVE AI LOGIC ---
   openAiBtn = document.getElementById("fp-generate-btn");
-  openAiBtn.addEventListener("click", () => {
-    const key = getApiKey();
-    console.log("DEBUG: getApiKey() resolved to =", key);
-    if (!key) {
-      console.log("DEBUG: Showing API Key Modal because key is falsy");
-      apiKeyModal.classList.add("active");
-    } else {
-      console.log("DEBUG: Triggering AI generation with key");
-      triggerAIGeneration(key);
-    }
-  });
+  if (openAiBtn) {
+    openAiBtn.addEventListener("click", () => {
+      const key = getApiKey();
+      console.log("DEBUG: getApiKey() resolved to =", key);
+      if (!key) {
+        console.log("DEBUG: Showing API Key Modal because key is falsy");
+        if (apiKeyModal) apiKeyModal.classList.add("active");
+      } else {
+        console.log("DEBUG: Triggering AI generation with key");
+        triggerAIGeneration(key);
+      }
+    });
+  }
 
-  closeApiKeyBtn.addEventListener("click", () => {
-    apiKeyModal.classList.remove("active");
-  });
-
-  saveApiKeyBtn.addEventListener("click", () => {
-    const val = apiKeyInput.value.trim();
-    if (val) {
-      localStorage.setItem("fontvault-gemini-key", val);
+  if (closeApiKeyBtn && apiKeyModal) {
+    closeApiKeyBtn.addEventListener("click", () => {
       apiKeyModal.classList.remove("active");
-      triggerAIGeneration(val);
-    } else {
-      alert("Please enter a valid Gemini API Key.");
-    }
-  });
+    });
+  }
+
+  if (saveApiKeyBtn && apiKeyInput && apiKeyModal) {
+    saveApiKeyBtn.addEventListener("click", () => {
+      const val = apiKeyInput.value.trim();
+      if (val) {
+        localStorage.setItem("fontvault-gemini-key", val);
+        apiKeyModal.classList.remove("active");
+        triggerAIGeneration(val);
+      } else {
+        alert("Please enter a valid Gemini API Key.");
+      }
+    });
+  }
 
   // Main loader flow and API processing
   async function triggerAIGeneration(apiKey) {
