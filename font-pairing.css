@@ -1268,15 +1268,15 @@
 }
 
 /* ========================================
-   MODERN SLEEK GLASSMORPHIC STYLES FOR HERO AI INPUT
+   MODERN SLEEK GLASSMORPHIC STYLES FOR HERO AI INPUT (SHARP EDITION)
 ======================================== */
-/* Single Unified Container */
+/* Single Unified Container (Sharp Corners) */
 #hero .fp-input-section {
   background: rgba(255, 255, 255, 0.02) !important;
   backdrop-filter: blur(28px) !important;
   -webkit-backdrop-filter: blur(28px) !important;
   border: 1px solid rgba(255, 255, 255, 0.07) !important;
-  border-radius: 12px !important;
+  border-radius: 0 !important; /* Strict sharp corners */
   box-shadow: 0 30px 100px rgba(0, 0, 0, 0.5) !important;
   padding: 0 !important; /* Row-based padding handles horizontal lines */
   overflow: hidden;
@@ -1355,6 +1355,7 @@
   background-color: #ff3d00 !important; /* Red-Orange fill */
   color: white !important;
   border: none !important;
+  border-radius: 0 !important; /* Strict sharp corners */
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1405,14 +1406,14 @@
   margin-right: 4px;
 }
 
-/* Filled Rectangular Suggestion Chips */
+/* Filled Rectangular Suggestion Chips (Sharp Corners) */
 #hero .fp-suggestion-link {
   background: rgba(255, 255, 255, 0.04) !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   color: rgba(255, 255, 255, 0.65) !important;
   padding: 6px 14px !important;
   font-size: 0.72rem !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important; /* Strict sharp corners */
   cursor: pointer;
   transition: all 0.2s ease !important;
   text-decoration: none !important;
@@ -1428,12 +1429,12 @@
   color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Action buttons outline group */
+/* Action buttons outline group (Sharp Corners) */
 .fp-prompt-actions {
   display: flex;
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important; /* Strict sharp corners */
   overflow: hidden;
   padding: 0 !important;
   border-top: none !important;
@@ -1469,7 +1470,8 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 16px 24px !important;
+  padding: 0 0 0 24px !important; /* Flush right alignment for chevron box */
+  height: 50px !important;
   margin-top: 0 !important;
   border-top: none !important;
   background: transparent !important;
@@ -1480,6 +1482,7 @@
   letter-spacing: 0.03em !important;
   cursor: pointer;
   transition: color 0.2s ease !important;
+  border-radius: 0 !important;
 }
 
 #hero .fp-collapse-toggle:hover {
@@ -1487,23 +1490,22 @@
   background: transparent !important;
 }
 
-/* Chevron box inside toggle */
+/* Chevron box inside toggle (Sharp Corners & Flush right) */
 .fp-collapse-chevron-box {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
+  width: 50px;
+  height: 50px;
+  border-radius: 0 !important; /* Strict sharp corners */
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
   transition: background-color 0.2s, border-color 0.2s;
   color: rgba(255, 255, 255, 0.5);
 }
 
 #hero .fp-collapse-toggle:hover .fp-collapse-chevron-box {
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
   color: #f0efec;
 }
 
@@ -1516,7 +1518,7 @@
 }
 
 /* ──────────────────────────────────────────────────
-   Luxury bottom-line only selects inside advanced grid
+   Selects inside advanced grid (Sharp Corners)
    ────────────────────────────────────────────────── */
 #hero .fp-filter-label {
   color: rgba(255, 255, 255, 0.35) !important;
@@ -1526,21 +1528,20 @@
 }
 
 #hero .fp-filter-select {
-  background: transparent !important;
+  background: rgba(255, 255, 255, 0.03) !important;
   color: #f0efec !important;
-  border: none !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 0 !important; /* Clean underline look */
-  padding: 8px 0 !important;
-  font-size: 0.85rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 0 !important; /* Strict sharp corners */
+  padding: 10px 12px !important;
+  font-size: 0.82rem !important;
   font-weight: 500 !important;
   transition: border-color 0.3s ease !important;
   appearance: none !important; /* Hide default select arrow */
   -webkit-appearance: none !important;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
-  background-position: right center !important;
-  padding-right: 18px !important;
+  background-position: right 12px center !important;
+  padding-right: 32px !important;
 }
 
 #hero .fp-filter-select option {
@@ -1549,16 +1550,16 @@
 }
 
 #hero .fp-filter-select:focus {
-  border-color: #fbbf24 !important; /* Accent gold line */
+  border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Pill-shaped Tone Tags options */
+/* Sharp Tone Tags options (Sharp Corners) */
 #hero .fp-tone-tag {
   background: transparent !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: rgba(255, 255, 255, 0.5) !important;
-  border-radius: 100px !important; /* Fully rounded pill shape */
-  padding: 6px 14px !important;
+  border-radius: 0 !important; /* Strict sharp corners */
+  padding: 8px 16px !important;
   font-size: 0.72rem !important;
   transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
