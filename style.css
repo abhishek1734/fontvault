@@ -4701,7 +4701,7 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hove
   }
 }
 
-.hero-word {
+.hero-char {
   display: inline-block;
   font-weight: 250;
   transition: font-weight 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
@@ -4709,5 +4709,5 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hove
               color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform-origin: center bottom;
   will-change: font-weight, transform, color;
-  white-space: nowrap;
+  white-space: pre;
 }

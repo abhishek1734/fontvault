@@ -96,18 +96,7 @@
     <!-- Hero content -->
     <div class="hero-content">
       <div class="hero-eyebrow">150+ curated typefaces</div>
-      <h1 class="hero-headline-fraunces">
-        <span class="hero-word">Type</span>
-        <span class="hero-word">is</span>
-        <span class="hero-word"><em>the</em></span>
-        <span class="hero-word">voice</span><br>
-        <span class="hero-word">your</span>
-        <span class="hero-word">work</span>
-        <span class="hero-word">never</span>
-        <span class="hero-word">gets</span>
-        <span class="hero-word">to</span>
-        <span class="hero-word">raise</span>
-      </h1>
+      <h1 class="hero-headline-fraunces">Type is <em>the</em> voice<br>your work never gets to raise</h1>
       <p class="hero-subline-fraunces">Preview every face on real layouts before you commit — headlines, body copy, UI, all at once.</p>
       <div class="hero-ctas-fraunces">
         <a class="btn-fill" href="#" id="btn-browse-fonts">Browse the vault</a>
@@ -304,20 +293,46 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const hero = document.getElementById("hero");
-      const words = document.querySelectorAll(".hero-word");
-      if (!hero || words.length === 0) return;
+      const headline = document.querySelector(".hero-headline-fraunces");
+      if (!hero || !headline) return;
 
-      const maxDist = 220; // Active radius in pixels
+      // Dynamically wrap text nodes in spans for character-by-character animation
+      function wrapCharacters(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent;
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            if (char.trim() === "") {
+              fragment.appendChild(document.createTextNode(char));
+            } else {
+              const span = document.createElement("span");
+              span.className = "hero-char";
+              span.textContent = char;
+              fragment.appendChild(span);
+            }
+          }
+          node.parentNode.replaceChild(fragment, node);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const children = Array.from(node.childNodes);
+          children.forEach(wrapCharacters);
+        }
+      }
+
+      wrapCharacters(headline);
+
+      const chars = document.querySelectorAll(".hero-char");
+      const maxDist = 180; // Active radius in pixels (smaller for individual characters)
       const defaultWeight = 250;
       const hoverWeight = 750;
 
-      // Track mouse position and update word properties
+      // Track mouse position and update character properties
       function handleMouseMove(e) {
         const mx = e.clientX;
         const my = e.clientY;
 
-        words.forEach(word => {
-          const rect = word.getBoundingClientRect();
+        chars.forEach(char => {
+          const rect = char.getBoundingClientRect();
           const cx = rect.left + rect.width / 2;
           const cy = rect.top + rect.height / 2;
           const dist = Math.sqrt(Math.pow(mx - cx, 2) + Math.pow(my - cy, 2));
@@ -325,26 +340,26 @@
           if (dist < maxDist) {
             const pct = (maxDist - dist) / maxDist; // 0 to 1
             const weight = Math.round(defaultWeight + pct * (hoverWeight - defaultWeight));
-            const ty = -pct * 12; // Rises up slightly
+            const ty = -pct * 14; // Rises up slightly
             const tx = (cx - mx) * pct * 0.08; // Subtle drift away from cursor
 
-            word.style.fontWeight = weight;
-            word.style.transform = `translate(${tx}px, ${ty}px) scale(${1 + pct * 0.04})`;
-            word.style.color = `rgb(${Math.round(240 + pct * 15)}, ${Math.round(239 + pct * 16)}, ${Math.round(236 + pct * 19)})`;
+            char.style.fontWeight = weight;
+            char.style.transform = `translate(${tx}px, ${ty}px) scale(${1 + pct * 0.06})`;
+            char.style.color = `rgb(${Math.round(240 + pct * 15)}, ${Math.round(239 + pct * 16)}, ${Math.round(236 + pct * 19)})`;
           } else {
-            word.style.fontWeight = defaultWeight;
-            word.style.transform = "none";
-            word.style.color = "";
+            char.style.fontWeight = defaultWeight;
+            char.style.transform = "none";
+            char.style.color = "";
           }
         });
       }
 
       // Smooth reset when mouse leaves the hero section
       function handleMouseLeave() {
-        words.forEach(word => {
-          word.style.fontWeight = defaultWeight;
-          word.style.transform = "none";
-          word.style.color = "";
+        chars.forEach(char => {
+          char.style.fontWeight = defaultWeight;
+          char.style.transform = "none";
+          char.style.color = "";
         });
       }
 
