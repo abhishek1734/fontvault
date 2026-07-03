@@ -2124,18 +2124,18 @@ footer {
 [data-theme="dark"] .pairing-card { background:#1A1A1A; border-color:#2A2A2A; }
 [data-theme="dark"] .pairing-card:hover { background:#222; border-color:#555; }
 [data-theme="dark"] .compare-add-btn {
-  background: transparent;
+  background: #1A1A1A;
   border-color: #333;
   color: #F0F0F0;
 }
 [data-theme="dark"] .compare-add-btn:hover {
-  background: #F5F2E8;
-  color: #0B0B0B;
-  border-color: #F5F2E8;
+  background: #252525;
+  border-color: #555;
+  color: #FFFFFF;
 }
 [data-theme="dark"] .compare-add-btn.in-compare {
-  background: var(--signal-red);
-  color: #FFF;
+  background: #1A1A1A;
+  color: var(--signal-red);
   border-color: var(--signal-red);
 }
 [data-theme="dark"] .compare-tray { background:#1A1A1A; }
@@ -2193,18 +2193,18 @@ footer {
 [data-theme="light"] .pairing-card { background:#F5F5F5; border-color:#E0E0E0; }
 [data-theme="light"] .pairing-card:hover { background:#EAEAEA; border-color:#0A0A0A; }
 [data-theme="light"] .compare-add-btn {
-  background: transparent;
-  border-color: #E0E0E0;
-  color: #0A0A0A;
+  background: var(--pure-white);
+  border-color: var(--border-grey);
+  color: var(--text-secondary);
 }
 [data-theme="light"] .compare-add-btn:hover {
-  background: #0A0A0A;
-  color: #FFFFFF;
-  border-color: #0A0A0A;
+  background: #f5f5f5;
+  border-color: var(--near-black);
+  color: var(--near-black);
 }
 [data-theme="light"] .compare-add-btn.in-compare {
-  background: var(--signal-red);
-  color: #FFF;
+  background: var(--pure-white);
+  color: var(--signal-red);
   border-color: var(--signal-red);
 }
 [data-theme="light"] .compare-tray { background:#FFFFFF; }
@@ -2308,34 +2308,28 @@ footer {
 .font-card { position:relative; overflow:hidden; }
 
 .compare-add-btn {
-  height: 28px;
-  padding: 0 12px;
-  border-radius: 14px;
-  background: transparent;
+  width: 32px;
+  height: 32px;
+  border-radius: 50% !important;
+  background: var(--pure-white);
   border: 1px solid var(--border-grey);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--near-black);
-  transition: all 0.2s ease;
-  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--text-secondary);
 }
 .compare-add-btn:hover {
-  background: var(--near-black);
-  color: var(--pure-white);
+  background: #f5f5f5;
   border-color: var(--near-black);
+  color: var(--near-black);
 }
 .compare-add-btn.in-compare {
   opacity: 1;
   transform: scale(1);
-  background: var(--signal-red);
-  color: #fff;
+  background: var(--pure-white);
+  color: var(--signal-red);
   border-color: var(--signal-red);
 }
 

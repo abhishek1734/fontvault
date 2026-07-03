@@ -324,15 +324,22 @@ function appendFontCard(font, delay) {
         <span class="meta-item list-only-meta">${font.variants ? 'Variable' : 'Static'}</span>
         <span class="meta-item list-only-meta">${font.availability}</span>
         
-        <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="background:none; border:none; cursor:pointer; color:${inFavorites ? 'var(--signal-red)' : 'var(--text-secondary)'}; padding:0; display:flex; align-items:center;">
-          <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-        </button>
-        
-        <button class="compare-add-btn list-only-meta ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}">
-          ${isInCompare ? '✕ COMPARE' : '+ COMPARE'}
-        </button>
+        <!-- Top-Right Circular Action Icons -->
+        <div class="card-header-actions" style="display: flex; align-items: center; gap: 0.5rem;">
+          <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="background:none; border:none; cursor:pointer; color:${inFavorites ? 'var(--signal-red)' : 'var(--text-secondary)'}; padding:0; display:flex; align-items:center;">
+            <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+          
+          <button class="compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from stack' : 'Add to stack'}" data-id="${font.id}" onclick="event.stopPropagation();" style="background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center;">
+            <svg class="stack-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+              ${isInCompare 
+                ? '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>' 
+                : '<line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>'}
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -347,11 +354,6 @@ function appendFontCard(font, delay) {
     <div class="card-footer-row">
       <div class="card-footer-left">
         <span class="foundry-label list-only-meta">by ${font.foundry || font.designer || 'Independent'} &middot; <span style="opacity:0.6;font-family:var(--font-mono);">${providerLabel}</span></span>
-        
-        <!-- Grid Mode Compare/Stack Button -->
-        <button class="grid-stack-btn compare-add-btn ${isInCompare ? 'in-compare' : ''}" title="${isInCompare ? 'Remove from compare' : 'Add to compare'}" data-id="${font.id}">
-          ${isInCompare ? '— STACK' : '+ STACK'}
-        </button>
       </div>
       
       <div class="card-footer-right">
@@ -685,11 +687,11 @@ function appendUploaderCard() {
 // ─────────────────────────────────────────────────
 //  GRID RENDER
 // ─────────────────────────────────────────────────
-let currentRenderLimit = 30;
+let currentRenderLimit = 8;
 
 function renderGrid(resetLimit = true) {
   el.fontGrid.innerHTML = "";
-  if (resetLimit) currentRenderLimit = 30;
+  if (resetLimit) currentRenderLimit = 8;
   
   const filtered = getFilteredFonts();
 
@@ -744,7 +746,7 @@ function updateLoadMoreBtn(totalFiltered, currentLimit) {
     btn.style.display = "block";
     btn.textContent = "Load More Fonts";
     btn.addEventListener("click", () => {
-      currentRenderLimit += 30;
+      currentRenderLimit += 8;
       renderGrid(false);
     });
     el.fontGrid.parentElement.appendChild(btn);
