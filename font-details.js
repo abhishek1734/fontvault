@@ -378,13 +378,20 @@ function renderFontDetails(font) {
       const url = font.downloadUrl;
       if (!url || url === '#') return;
 
-      const safeFilename = `${(font.name || 'font').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_')}.woff2`;
+      const isGoogleFont = url.includes('fonts.google.com');
+      const ext = isGoogleFont ? 'zip'
+                : (font.format === 'truetype' ? 'ttf'
+                : font.format === 'opentype' ? 'otf'
+                : font.format || 'woff2');
+      const safeName = (font.name || 'font').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_');
+      const safeFilename = `${safeName}${isGoogleFont ? '_fonts' : ''}.${ext}`;
+
       downloadBtn.textContent = '↓ Fetching...';
       downloadBtn.disabled = true;
 
       try {
         let proxyUrl;
-        if (url.includes('fonts.google.com')) {
+        if (isGoogleFont) {
           const familyMatch = url.match(/specimen\/([^?#]+)/);
           const family = familyMatch
             ? decodeURIComponent(familyMatch[1].replace(/\+/g, ' '))
@@ -405,7 +412,9 @@ function renderFontDetails(font) {
         a.click();
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-        downloadBtn.textContent = `✓ Downloaded`;
+        downloadBtn.textContent = isGoogleFont
+          ? `✓ Downloaded ZIP (${font.name})`
+          : `✓ Downloaded ${ext.toUpperCase()}`;
         downloadBtn.style.borderColor = '#22c55e';
         downloadBtn.style.color = '#22c55e';
       } catch (err) {

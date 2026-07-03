@@ -1301,10 +1301,12 @@ window.formatDownloadCount = function(n) {
 window.downloadFont = async function(fontId, url, fontName, format) {
   if (!url || url === '#') return;
 
-  const ext = format === 'truetype' ? 'ttf'
+  const isGoogleFont = url.includes('fonts.google.com');
+  const ext = isGoogleFont ? 'zip'
+            : format === 'truetype' ? 'ttf'
             : format === 'opentype' ? 'otf'
-            : format || 'woff2';
-  const safeFilename = `${fontName.replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_')}.${ext}`;
+            : (format || 'woff2');
+  const safeFilename = `${fontName.replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_')}${isGoogleFont ? '_fonts' : ''}.${ext}`;
 
   // ── Animate button: downloading state ────────────────────────
   const btn  = document.getElementById(`dl-btn-${fontId}`);
@@ -1319,9 +1321,8 @@ window.downloadFont = async function(fontId, url, fontName, format) {
     // ── Build the proxy URL ───────────────────────────────────
     let proxyUrl;
 
-    if (url.includes('fonts.google.com')) {
+    if (isGoogleFont) {
       // Extract family name from Google Fonts specimen URL
-      // e.g. https://fonts.google.com/specimen/Instrument+Serif → "Instrument Serif"
       const familyMatch = url.match(/specimen\/([^?#]+)/);
       const family = familyMatch
         ? decodeURIComponent(familyMatch[1].replace(/\+/g, ' '))
