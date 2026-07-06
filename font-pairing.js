@@ -583,6 +583,10 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedTones.push(tag.dataset.tone);
     });
 
+    if (window.FontVaultAnalytics) {
+      window.FontVaultAnalytics.trackAISearch(promptText, projectType);
+    }
+
     // Show processing state, hide active areas
     curatedShowcase.style.display = "none";
     resultsArea.style.display = "none";

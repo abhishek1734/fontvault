@@ -4790,3 +4790,63 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hove
   opacity: 1;
   margin-right: 8px;
 }
+
+/* ==========================================================================
+   SEO BREADCRUMBS DESIGN SYSTEM
+   ========================================================================== */
+.seo-breadcrumbs {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--ts-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.seo-breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.seo-breadcrumbs li {
+  display: flex;
+  align-items: center;
+  color: #888;
+}
+
+.seo-breadcrumbs a {
+  color: #888;
+  text-decoration: none;
+  transition: color var(--transition-smooth);
+}
+
+.seo-breadcrumbs a:hover {
+  color: var(--near-black);
+}
+
+.seo-breadcrumbs li.active a {
+  color: var(--near-black);
+  pointer-events: none;
+  font-weight: 500;
+}
+
+.seo-breadcrumbs .sep {
+  margin: 0 0.75rem;
+  color: #ccc;
+  font-size: 0.9em;
+  user-select: none;
+}
+
+[data-theme="dark"] .seo-breadcrumbs a:hover,
+[data-theme="dark"] .seo-breadcrumbs li.active a {
+  color: #fff;
+}
+
+[data-theme="dark"] .seo-breadcrumbs .sep {
+  color: #333;
+}
+

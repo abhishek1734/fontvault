@@ -1,0 +1,27 @@
+{
+  "rewrites": [
+    { "source": "/fonts/:id", "destination": "/font.html?id=:id" },
+    { "source": "/category/:category", "destination": "/index.html?category=:category" },
+    { "source": "/collections/:collection", "destination": "/collections.html?collection=:collection" },
+    { "source": "/blog", "destination": "/blog.html" },
+    { "source": "/blog/:post", "destination": "/blog-post.html?post=:post" },
+    { "source": "/ai/font-pair-generator", "destination": "/font-pairing.html" },
+    { "source": "/ai/font-finder", "destination": "/index.html" },
+    { "source": "/ai/font-recommender", "destination": "/font-pairing.html" },
+    { "source": "/ai/font-similarity-search", "destination": "/index.html" },
+    { "source": "/ai/logo-font-generator", "destination": "/font-pairing.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; img-src 'self' https: data: blob:; font-src 'self' https: data:;" }
+      ]
+    }
+  ]
+}

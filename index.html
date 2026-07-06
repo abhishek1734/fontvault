@@ -3,23 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FontVault — Premium Font Discovery and Licensing</title>
-  <meta name="description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
-  <link rel="canonical" href="https://fontvault.com/">
+  <title>FontVault — Discover, Preview &amp; Pair Fonts with AI</title>
+  <meta name="description" content="Explore thousands of premium and free fonts, AI-powered font pairing studio, typography collections, and designer resources.">
+  <link rel="canonical" href="https://fontvault.vercel.app/">
   
+  <!-- Robots & Theme Color -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="theme-color" content="#0B0B0B">
+
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://fontvault.com/">
-  <meta property="og:title" content="FontVault — Premium Font Discovery and Licensing">
-  <meta property="og:description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
-  <meta property="og:image" content="https://fontvault.com/assets/branding.png">
+  <meta property="og:url" content="https://fontvault.vercel.app/">
+  <meta property="og:title" content="FontVault — Discover, Preview &amp; Pair Fonts with AI">
+  <meta property="og:description" content="Explore thousands of premium and free fonts, AI-powered font pairing studio, typography collections, and designer resources.">
+  <meta property="og:image" content="https://fontvault.vercel.app/assets/branding.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="FontVault">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://fontvault.com/">
-  <meta name="twitter:title" content="FontVault — Premium Font Discovery and Licensing">
-  <meta name="twitter:description" content="Discover, test, and license 50+ premium and free fonts with real-world design mockups.">
-  <meta name="twitter:image" content="https://fontvault.com/assets/branding.png">
+  <meta name="twitter:url" content="https://fontvault.vercel.app/">
+  <meta name="twitter:title" content="FontVault — Discover, Preview &amp; Pair Fonts with AI">
+  <meta name="twitter:description" content="Explore thousands of premium and free fonts, AI-powered font pairing studio, typography collections, and designer resources.">
+  <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,6 +34,8 @@
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=5.29">
   <script src="config.js?v=5.25"></script>
+  <script src="seo.js?v=1.0"></script>
+  <script src="analytics.js?v=1.0"></script>
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
@@ -204,6 +213,29 @@
       <!-- Injected by JS -->
     </div>
   </div>
+
+  <!-- HOME FAQ SECTION -->
+  <section class="home-faq-section" style="max-width: 1400px; margin: 0 auto; padding: 6rem 4rem; border-top: 1px solid var(--border-grey);">
+    <h2 class="section-title" style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 3rem;">Frequently Asked Questions</h2>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 2.5rem; max-width: 900px;">
+      <div class="faq-item">
+        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--near-black);">What is FontVault?</h3>
+        <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">FontVault is a curated typography platform that allows designers to explore, test, and pair premium and free typefaces inside real-world design mockups.</p>
+      </div>
+      <div class="faq-item">
+        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--near-black);">How does the AI Font Pairing Studio work?</h3>
+        <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">The AI Font Pairing Studio analyzes the design parameters, tone, and style tags of your project description using Gemini AI to recommend harmonious pairing combinations.</p>
+      </div>
+      <div class="faq-item">
+        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--near-black);">Are the fonts on FontVault free to use?</h3>
+        <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">We feature a mix of open-source, free for personal use, and commercial typefaces. Each font detail page lists the designer, foundry, and license type.</p>
+      </div>
+      <div class="faq-item">
+        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--near-black);">How do I download a font?</h3>
+        <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">Simply click the download button on any font specimen page. FontVault proxies and packages the files directly for quick deployment.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- FOOTER -->
   <footer>
