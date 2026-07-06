@@ -732,10 +732,35 @@ window.saveVercelCredentials = function() {
   loadPerformanceTab();
 };
 
-function clearVercelCredentials() {
+window.clearVercelCredentials = function() {
   localStorage.removeItem(VERCEL_CRED_KEY);
+  // Clear the input fields so old values don't persist
+  const tokenInput   = document.getElementById('perf-token-input');
+  const projectInput = document.getElementById('perf-project-input');
+  const teamInput    = document.getElementById('perf-team-input');
+  if (tokenInput)   tokenInput.value   = '';
+  if (projectInput) projectInput.value = '';
+  if (teamInput)    teamInput.value    = '';
   loadPerformanceTab();
-}
+};
+
+window.showVercelCredentialsBanner = function() {
+  const banner = document.getElementById('perf-setup-banner');
+  const changeBtn = document.getElementById('perf-change-creds-btn');
+  if (banner) banner.classList.remove('hidden');
+  if (changeBtn) changeBtn.classList.add('hidden');
+  // Pre-fill with existing saved values so user can correct them
+  const creds = getVercelCreds();
+  if (creds) {
+    const tokenInput   = document.getElementById('perf-token-input');
+    const projectInput = document.getElementById('perf-project-input');
+    const teamInput    = document.getElementById('perf-team-input');
+    if (tokenInput)   tokenInput.value   = creds.token   || '';
+    if (projectInput) projectInput.value = creds.project || '';
+    if (teamInput)    teamInput.value    = creds.team    || '';
+  }
+  lucide.createIcons();
+};
 
 // --- Date range helpers ---
 function getDateRange(range) {
@@ -769,15 +794,19 @@ window.loadPerformanceTab = async function() {
   if (icon) icon.classList.add('animate-spin');
 
   if (!creds) {
-    // Show setup banner, pre-fill nothing
+    // Show setup banner, hide Change Credentials button
     banner.classList.remove('hidden');
+    const changeBtn = document.getElementById('perf-change-creds-btn');
+    if (changeBtn) changeBtn.classList.add('hidden');
     setKPILoading();
     if (icon) icon.classList.remove('animate-spin');
     return;
   }
 
-  // Credentials exist — hide banner, pre-fill inputs for editing
+  // Credentials exist — hide banner, show Change Credentials button
   banner.classList.add('hidden');
+  const changeBtn = document.getElementById('perf-change-creds-btn');
+  if (changeBtn) changeBtn.classList.remove('hidden');
   document.getElementById('perf-token-input').value  = creds.token;
   document.getElementById('perf-project-input').value = creds.project;
   document.getElementById('perf-team-input').value   = creds.team || '';
