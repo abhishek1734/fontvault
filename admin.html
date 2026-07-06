@@ -468,6 +468,47 @@
             </form>
           </div>
 
+          <!-- TAB: ANALYTICS -->
+          <div id="view-analytics" class="hidden space-y-6">
+            <div>
+              <h2 class="text-xl font-bold tracking-tight">Analytics &amp; Usage</h2>
+              <p class="text-xs text-neutral-400 mt-0.5">Platform audit, database storage and classification statistics.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Category Distribution -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Library Category Distribution</h3>
+                <div class="space-y-4" id="analytics-categories-bar">
+                  <!-- Dynamic bar columns -->
+                </div>
+              </div>
+
+              <!-- General Stats -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">System Metrics</h3>
+                <div class="divide-y divide-neutral-100 dark:divide-neutral-800">
+                  <div class="py-3 flex justify-between text-xs">
+                    <span class="font-medium text-neutral-500">Supabase DB Status</span>
+                    <span class="font-semibold text-success flex items-center gap-1">Online <i data-lucide="check-circle" class="w-3.5 h-3.5"></i></span>
+                  </div>
+                  <div class="py-3 flex justify-between text-xs">
+                    <span class="font-medium text-neutral-500">Storage Bucket Path</span>
+                    <span class="font-mono text-neutral-400">Fonts/</span>
+                  </div>
+                  <div class="py-3 flex justify-between text-xs">
+                    <span class="font-medium text-neutral-500">Average File Size</span>
+                    <span class="font-semibold" id="analytics-avg-size">0 KB</span>
+                  </div>
+                  <div class="py-3 flex justify-between text-xs">
+                    <span class="font-medium text-neutral-500">Allowed Formats</span>
+                    <span class="font-mono text-neutral-400">.woff2, .woff, .otf, .ttf</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- TAB: PERFORMANCE (Vercel Analytics + Speed Insights) -->
           <div id="view-performance" class="hidden space-y-6">
             <!-- Header -->
