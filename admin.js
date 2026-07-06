@@ -832,18 +832,19 @@ window.loadPerformanceTab = async function() {
       browsersRes,
     ] = await Promise.allSettled([
       vercelFetch(`/v1/query/web-analytics/visits/count?from=${from}&to=${to}`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=day&from=${from}&to=${to}`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=requestPath&from=${from}&to=${to}&limit=10`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=country&from=${from}&to=${to}&limit=10`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=deviceType&from=${from}&to=${to}`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=browserName&from=${from}&to=${to}&limit=8`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=day&from=${from}&to=${to}`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=page&from=${from}&to=${to}&limit=10`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=country&from=${from}&to=${to}&limit=10`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=device&from=${from}&to=${to}`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=browser&from=${from}&to=${to}&limit=8`, creds),
     ]);
 
     // ─── KPI Cards ───
     if (pageViewsRes.status === 'fulfilled') {
       const d = pageViewsRes.value;
+      // Vercel count API returns { data: { pageViews, sessions, visitors } }
       const views    = d?.data?.pageViews ?? d?.pageViews ?? d?.count ?? '—';
-      const visitors = d?.data?.visitors  ?? d?.visitors  ?? '—';
+      const visitors = d?.data?.visitors  ?? d?.visitors  ?? d?.data?.sessions ?? '—';
       document.getElementById('kpi-pageviews').textContent      = formatNum(views);
       document.getElementById('kpi-pageviews-sub').textContent  = `Total page views · ${range}`;
       document.getElementById('kpi-visitors').textContent       = formatNum(visitors);
@@ -865,10 +866,11 @@ window.loadPerformanceTab = async function() {
     // ─── Top Pages ───
     if (topPagesRes.status === 'fulfilled') {
       const rows = topPagesRes.value?.data ?? [];
-      renderTopList('top-pages-list', rows, 'requestPath', r => r.visitors || r.pageViews || r.value);
+      // Vercel aggregate response rows: { key, page, visitors, pageViews }
+      renderTopList('top-pages-list', rows, 'page', r => r.visitors || r.pageViews || r.total || 0);
       if (rows.length > 0) {
-        document.getElementById('kpi-top-page').textContent     = rows[0].requestPath || '/';
-        document.getElementById('kpi-top-page-sub').textContent = `${formatNum(rows[0].visitors ?? rows[0].value ?? 0)} visitors`;
+        document.getElementById('kpi-top-page').textContent     = rows[0].page || '/';
+        document.getElementById('kpi-top-page-sub').textContent = `${formatNum(rows[0].visitors ?? rows[0].pageViews ?? 0)} visitors`;
       }
     } else {
       document.getElementById('top-pages-list').innerHTML = renderError(topPagesRes.reason?.message);
@@ -877,11 +879,11 @@ window.loadPerformanceTab = async function() {
     // ─── Top Countries ───
     if (topCountriesRes.status === 'fulfilled') {
       const rows = topCountriesRes.value?.data ?? [];
-      renderTopList('top-countries-list', rows, 'country', r => r.visitors || r.value);
+      renderTopList('top-countries-list', rows, 'country', r => r.visitors || r.total || 0);
       if (rows.length > 0) {
         const flag = countryFlag(rows[0].country);
         document.getElementById('kpi-top-country').textContent     = `${flag} ${rows[0].country || '—'}`;
-        document.getElementById('kpi-top-country-sub').textContent = `${formatNum(rows[0].visitors ?? rows[0].value ?? 0)} visitors`;
+        document.getElementById('kpi-top-country-sub').textContent = `${formatNum(rows[0].visitors ?? rows[0].total ?? 0)} visitors`;
       }
     } else {
       document.getElementById('top-countries-list').innerHTML = renderError(topCountriesRes.reason?.message);
@@ -889,14 +891,14 @@ window.loadPerformanceTab = async function() {
 
     // ─── Devices ───
     if (devicesRes.status === 'fulfilled') {
-      renderTopList('device-breakdown-list', devicesRes.value?.data ?? [], 'deviceType', r => r.visitors || r.value);
+      renderTopList('device-breakdown-list', devicesRes.value?.data ?? [], 'device', r => r.visitors || r.total || 0);
     } else {
       document.getElementById('device-breakdown-list').innerHTML = renderError(devicesRes.reason?.message);
     }
 
     // ─── Browsers ───
     if (browsersRes.status === 'fulfilled') {
-      renderTopList('browser-breakdown-list', browsersRes.value?.data ?? [], 'browserName', r => r.visitors || r.value);
+      renderTopList('browser-breakdown-list', browsersRes.value?.data ?? [], 'browser', r => r.visitors || r.total || 0);
     } else {
       document.getElementById('browser-breakdown-list').innerHTML = renderError(browsersRes.reason?.message);
     }
@@ -966,7 +968,7 @@ function renderTopList(containerId, rows, labelKey, valueFn) {
     const val   = valueFn(r) || 0;
     const pct   = Math.round((val / max) * 100);
     const flag  = labelKey === 'country' ? countryFlag(r.country) + ' ' : '';
-    const icon  = labelKey === 'deviceType' ? getDeviceIcon(label) : '';
+    const icon  = labelKey === 'device' ? getDeviceIcon(label) : '';
     return `
       <div class="flex items-center gap-3">
         <span class="text-[10px] font-semibold text-neutral-400 w-4 shrink-0">${i + 1}</span>
