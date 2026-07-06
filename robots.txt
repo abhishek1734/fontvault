@@ -2,5 +2,12 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /api/
+Disallow: /debug.js
+Disallow: /debug_ai.py
+Disallow: /gemini_tracker.py
+Disallow: /generate_fonts.js
+Disallow: /generate_sitemap.js
+Disallow: /test_*.py
+Disallow: /test_*.html
 
-Sitemap: https://fontvault.com/sitemap.xml
+Sitemap: https://fontvault.vercel.app/sitemap.xml

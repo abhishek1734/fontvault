@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Post — FontVault</title>
+  <meta name="description" content="Read typography tutorials and guides on FontVault.">
+  <link rel="canonical" href="https://fontvault.com/blog-post.html">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css?v=5.29">
+  <script src="config.js?v=5.28"></script>
+  <script src="seo.js?v=1.0"></script>
+  <script src="analytics.js?v=1.0"></script>
+  <script src="blog-data.js?v=1.0"></script>
+  <script>
+    (function() {
+      const savedDark = localStorage.getItem("fontvault-dark");
+      if (savedDark === "1") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+  <style>
+    .post-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+    .post-header {
+      margin-bottom: 3rem;
+      border-bottom: 1px solid var(--border-grey);
+      padding-bottom: 2rem;
+    }
+    .post-meta {
+      font-family: var(--font-mono), monospace;
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+    .post-body {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--near-black);
+    }
+    .post-body p {
+      margin-bottom: 1.5rem;
+    }
+    .share-container {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-grey);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .share-btn {
+      background: transparent;
+      border: 1px solid var(--border-grey);
+      padding: 0.5rem 1rem;
+      font-family: var(--font-mono), monospace;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .share-btn:hover {
+      background: var(--near-black);
+      color: white;
+    }
+    [data-theme="dark"] .share-btn:hover {
+      background: white;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION BAR -->
+  <header id="navbar">
+    <a href="index.html" class="logo">FONTVAULT</a>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="font-pairing.html" class="nav-link">Font Pairing</a>
+      <a href="blog.html" class="nav-link">Blog</a>
+      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="post-container">
+    <!-- Breadcrumbs -->
+    <div id="breadcrumbs-injection-point" style="margin-bottom: 2rem;"></div>
+
+    <article id="post-root">
+      <!-- Injected Dynamically -->
+    </article>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-branding">
+        <a href="index.html" class="logo">FONTVAULT</a>
+        <p style="margin-top: 1rem;">Curated typography discovery. Built for designers.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 FontVault. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Dark toggle setup
+      const toggle = document.getElementById('dark-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+          document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+          localStorage.setItem("fontvault-dark", isDark ? "0" : "1");
+        });
+      }
+
+      // Resolve post slug
+      const urlParams = new URLSearchParams(window.location.search);
+      let postSlug = urlParams.get('post') || window.location.pathname.split("/blog/")[1] || "best-fonts-for-ui-design";
+
+      const post = blogPosts.find(p => p.slug === postSlug);
+      if (!post) {
+        document.getElementById('post-root').innerHTML = `<div style="text-align:center; padding:10rem 0;"><h2>Article Not Found</h2><a href="blog.html">Return to Blog</a></div>`;
+        return;
+      }
+
+      // Render Dynamic SEO & Canonical
+      if (window.FontVaultSEO) {
+        const canonical = `${window.FontVaultSEO.CANONICAL_HOST}/blog/${postSlug}`;
+        const title = `${post.title} | FontVault Blog`;
+        window.FontVaultSEO.updateMetadata(title, post.description, canonical, "blog-post");
+
+        // Schema JSON-LD Article + Breadcrumbs
+        const crumbs = [
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog" },
+          { name: post.title, url: `/blog/${post.slug}` }
+        ];
+        document.getElementById('breadcrumbs-injection-point').innerHTML = window.FontVaultSEO.renderBreadcrumbs(crumbs);
+
+        const breadcrumbSchema = {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": crumbs.map((c, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "name": c.name,
+            "item": c.url.startsWith("http") ? c.url : `${window.FontVaultSEO.CANONICAL_HOST}${c.url}`
+          }))
+        };
+
+        const articleSchema = {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": post.title,
+          "description": post.description,
+          "author": {
+            "@type": "Person",
+            "name": post.author
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "FontVault",
+            "logo": {
+              "@type": "ImageObject",
+              "url": `${window.FontVaultSEO.CANONICAL_HOST}/favicon.png`
+            }
+          },
+          "datePublished": post.datePublished,
+          "dateModified": post.dateModified || post.datePublished,
+          "mainEntityOfPage": canonical,
+          "image": `${window.FontVaultSEO.CANONICAL_HOST}/assets/branding.png`
+        };
+
+        window.FontVaultSEO.injectSchema(breadcrumbSchema, "breadcrumb-schema");
+        window.FontVaultSEO.injectSchema(articleSchema, "article-schema");
+      }
+
+      // Render Layout
+      document.getElementById('post-root').innerHTML = `
+        <header class="post-header">
+          <div class="post-meta">
+            <span>${post.category}</span>
+            <span>&middot;</span>
+            <span>Published: ${post.datePublished}</span>
+            <span>&middot;</span>
+            <span>${post.readTime} Read</span>
+          </div>
+          <h1 style="font-family: var(--font-display); font-size: clamp(2.2rem, 5vw, 3.5rem); line-height: 1.1; margin-bottom: 1.5rem;">${post.title}</h1>
+          <p style="color: #666; font-size: 1.1rem; line-height: 1.6; font-style: italic;">${post.description}</p>
+        </header>
+
+        <section class="post-body">
+          <p>${post.content}</p>
+          <p>Effective typography is critical. When designing brand experiences, selecting typography requires focusing on readability, visual personality, and cross-platform technical rendering. In future guides, we will detail other typeface categories in depth.</p>
+        </section>
+
+        <div class="share-container">
+          <span style="font-size:0.85rem; color:#666;">Written by <strong>${post.author}</strong></span>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!');">Copy Link</button>
+            <button class="share-btn" onclick="window.open('https://twitter.com/intent/tweet?url='+encodeURIComponent(window.location.href)+'&text='+encodeURI('${post.title}'), '_blank')">Share on X</button>
+          </div>
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>

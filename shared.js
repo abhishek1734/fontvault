@@ -377,8 +377,12 @@ function setupSharedEventListeners() {
         searchDropdownList.querySelectorAll(".search-dropdown-item").forEach(item => {
           item.addEventListener("click", () => {
             const font = fontsData.find(f => f.id === item.dataset.id);
-            saveRecentSearch(searchInput.value.trim());
-            if (font) window.location.href = `font.html?id=${font.id}`;
+            const query = searchInput.value.trim();
+            saveRecentSearch(query);
+            if (window.FontVaultAnalytics) {
+              window.FontVaultAnalytics.trackSearch(query, 1);
+            }
+            if (font) window.location.href = `/fonts/${font.id}`;
             searchDropdown.classList.remove("visible");
           });
         });
@@ -405,6 +409,15 @@ function setupSharedEventListeners() {
       if (e.key === "Enter") {
         const query = searchInput.value.trim();
         saveRecentSearch(query);
+        
+        if (window.FontVaultAnalytics) {
+          const matchesCount = typeof fontsData !== "undefined" ? fontsData.filter(font => {
+            return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
+              .some(v => v && v.toLowerCase().includes(query.toLowerCase()));
+          }).length : 0;
+          window.FontVaultAnalytics.trackSearch(query, matchesCount);
+        }
+
         e.preventDefault();
         searchDropdown.classList.remove("visible");
         if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
@@ -621,6 +634,12 @@ window.toggleFavorite = function(fontId, btnElement) {
     }
   }
   localStorage.setItem('fontvault-favorites', JSON.stringify([...window.favoritesSet]));
+  
+  if (window.FontVaultAnalytics) {
+    const fontObj = typeof fontsData !== "undefined" ? fontsData.find(f => f.id === fontId) : null;
+    const fontName = fontObj ? fontObj.name : fontId;
+    window.FontVaultAnalytics.trackFavorite(fontName, window.favoritesSet.has(fontId));
+  }
   
   if (typeof activeFilters !== 'undefined' && activeFilters["Favorites"] && typeof renderGrid === 'function') {
     renderGrid(true);

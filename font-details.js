@@ -11,7 +11,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setupSharedEventListeners();
   const urlParams = new URLSearchParams(window.location.search);
-  const fontId = urlParams.get('id');
+  let fontId = urlParams.get('id');
+  if (!fontId) {
+    const pathParts = window.location.pathname.split('/');
+    const fontsIndex = pathParts.indexOf('fonts');
+    if (fontsIndex !== -1 && pathParts[fontsIndex + 1]) {
+      fontId = decodeURIComponent(pathParts[fontsIndex + 1]);
+    }
+  }
   
   if (!fontId) {
     document.getElementById('font-detail-root').innerHTML = `
@@ -57,39 +64,85 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function updateDynamicSEO(font) {
-  const pageTitle = `${font.name} — Premium Font Discovery and Licensing — FontVault`;
-  const pageDesc = font.description || `Discover, test, and license ${font.name} on FontVault. Premium font discovery and dynamic mockups.`;
-  const pageUrl = window.location.href;
+  if (!window.FontVaultSEO) return;
 
-  document.title = pageTitle;
+  const fontId = font.id || font.slug || font.name.toLowerCase().replace(/\s+/g, '-');
+  const title = `${font.name} Font — Preview, Alternatives & Best Font Pairings | FontVault`;
+  const desc = font.description || `Preview ${font.name}, discover design alternatives, pair it with beautiful fonts, and use it in your next projects.`;
+  const canonicalUrl = `${window.FontVaultSEO.CANONICAL_HOST}/fonts/${fontId}`;
 
-  // Meta Description
-  const metaDesc = document.querySelector('meta[name="description"]');
-  if (metaDesc) metaDesc.setAttribute("content", pageDesc);
+  window.FontVaultSEO.updateMetadata(title, desc, canonicalUrl, "font");
 
-  // Canonical Link
-  const canonicalLink = document.querySelector('link[rel="canonical"]');
-  if (canonicalLink) canonicalLink.setAttribute("href", pageUrl);
+  // Injections
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${window.FontVaultSEO.CANONICAL_HOST}/` },
+      { "@type": "ListItem", "position": 2, "name": "Fonts", "item": `${window.FontVaultSEO.CANONICAL_HOST}/#hero` },
+      { "@type": "ListItem", "position": 3, "name": font.name, "item": canonicalUrl }
+    ]
+  };
 
-  // Open Graph / Facebook
-  const ogTitle = document.querySelector('meta[property="og:title"]');
-  if (ogTitle) ogTitle.setAttribute("content", pageTitle);
+  const creativeWorkSchema = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": font.name,
+    "author": { "@type": "Person", "name": font.designer || "Unknown Designer" },
+    "publisher": { "@type": "Organization", "name": font.foundry || "Independent" },
+    "dateCreated": font.year || "N/A",
+    "description": desc,
+    "genre": "Typography",
+    "license": font.availability || "Free",
+    "fileSize": font.fileSize || "Unknown"
+  };
 
-  const ogDesc = document.querySelector('meta[property="og:description"]');
-  if (ogDesc) ogDesc.setAttribute("content", pageDesc);
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `Is the ${font.name} font free for commercial use?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `${font.name} is available under the license status: ${font.availability || 'Free'}. Please verify the license terms before using it commercially.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Who is the designer of ${font.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `${font.name} was designed by ${font.designer || 'Unknown Designer'} and released through ${font.foundry || 'Independent'}.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `What category of typeface is ${font.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `It belongs to the ${font.style || 'Display'} category, with a visual mood described as ${font.mood || 'Modern'}.`
+        }
+      }
+    ]
+  };
 
-  const ogUrl = document.querySelector('meta[property="og:url"]');
-  if (ogUrl) ogUrl.setAttribute("content", pageUrl);
+  window.FontVaultSEO.injectSchema(breadcrumbSchema, "breadcrumb-schema");
+  window.FontVaultSEO.injectSchema(creativeWorkSchema, "font-schema");
+  window.FontVaultSEO.injectSchema(faqSchema, "faq-schema");
 
-  // Twitter Cards
-  const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-  if (twitterTitle) twitterTitle.setAttribute("content", pageTitle);
-
-  const twitterDesc = document.querySelector('meta[name="twitter:description"]');
-  if (twitterDesc) twitterDesc.setAttribute("content", pageDesc);
-
-  const twitterUrl = document.querySelector('meta[name="twitter:url"]');
-  if (twitterUrl) twitterUrl.setAttribute("content", pageUrl);
+  // Inject visual breadcrumbs
+  const crumbs = [
+    { name: "Home", url: "/" },
+    { name: "Fonts", url: "/#hero" },
+    { name: font.name, url: `/fonts/${fontId}` }
+  ];
+  const breadcrumbHtml = window.FontVaultSEO.renderBreadcrumbs(crumbs);
+  const breadcrumbContainer = document.getElementById('breadcrumbs-injection-point');
+  if (breadcrumbContainer) {
+    breadcrumbContainer.innerHTML = breadcrumbHtml;
+  }
 }
 
 function renderFontDetails(font) {
@@ -399,7 +452,7 @@ function renderFontDetails(font) {
                   <span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">${pair.role}</span>
                   <span style="font-size:1rem; font-weight:500;">${pairFont.name}</span>
                 </div>
-                <a href="font.html?id=${pairFont.id}" style="color:var(--signal-red); text-decoration:none; font-size:0.8rem; font-weight:500;">View →</a>
+                <a href="/fonts/${pairFont.id}" style="color:var(--signal-red); text-decoration:none; font-size:0.8rem; font-weight:500;">View →</a>
               </div>`;
             }).join('') : '<p style="color:#888; font-size:0.9rem;">No specific pairings suggested.</p>'}
           </div>
@@ -420,6 +473,10 @@ function renderFontDetails(font) {
                 : (font.format === 'truetype' ? 'ttf'
                 : font.format === 'opentype' ? 'otf'
                 : font.format || 'woff2');
+
+      if (window.FontVaultAnalytics) {
+        window.FontVaultAnalytics.trackDownload(font.name, ext);
+      }
       const safeName = (font.name || 'font').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_');
       const safeFilename = `${safeName}${isGoogleFont ? '_fonts' : ''}.${ext}`;
 

@@ -738,12 +738,14 @@ async function initGoogleFonts(apiKey) {
 }
 
 // Load persisted user-uploaded fonts from localStorage
-try {
-  const saved = localStorage.getItem("fontvault-uploads");
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    fontsData = [...parsed, ...fontsData];
+if (typeof localStorage !== 'undefined') {
+  try {
+    const saved = localStorage.getItem("fontvault-uploads");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      fontsData = [...parsed, ...fontsData];
+    }
+  } catch (e) {
+    console.error("Failed to load uploaded fonts from localStorage:", e);
   }
-} catch (e) {
-  console.error("Failed to load uploaded fonts from localStorage:", e);
 }

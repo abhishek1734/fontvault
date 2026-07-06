@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typography &amp; Design Blog | FontVault</title>
+  <meta name="description" content="Read expert tutorials, design guides, and research studies on typography, brand fonts, and UI/UX legibility.">
+  <link rel="canonical" href="https://fontvault.com/blog.html">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css?v=5.29">
+  <script src="config.js?v=5.28"></script>
+  <script src="seo.js?v=1.0"></script>
+  <script src="analytics.js?v=1.0"></script>
+  <script src="blog-data.js?v=1.0"></script>
+  <script>
+    (function() {
+      const savedDark = localStorage.getItem("fontvault-dark");
+      if (savedDark === "1") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+  <style>
+    .blog-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6rem 4rem;
+    }
+    .blog-header {
+      border-bottom: 1px solid var(--border-grey);
+      padding-bottom: 3rem;
+      margin-bottom: 4rem;
+    }
+    .blog-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+    @media (min-width: 768px) {
+      .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .blog-card {
+      border: 1px solid var(--border-grey);
+      border-radius: 4px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform var(--transition-smooth);
+    }
+    .blog-card:hover {
+      transform: translateY(-2px);
+    }
+    .blog-meta {
+      font-family: var(--font-mono), monospace;
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVIGATION BAR -->
+  <header id="navbar">
+    <a href="index.html" class="logo">FONTVAULT</a>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="font-pairing.html" class="nav-link">Font Pairing</a>
+      <a href="blog.html" class="nav-link active">Blog</a>
+      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="blog-container">
+    <!-- Breadcrumbs -->
+    <div id="breadcrumbs-injection-point" style="margin-bottom: 2rem;"></div>
+
+    <div class="blog-header">
+      <h1 style="font-family: var(--font-display); font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem;">FontVault Blog</h1>
+      <p style="color: #666; font-size: 1.1rem; max-width: 600px;">Typography wisdom, layout guidelines, legibility studies, and brand identity checklists.</p>
+    </div>
+
+    <div class="blog-grid" id="blog-posts-grid">
+      <!-- Injected Dynamically -->
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-branding">
+        <a href="index.html" class="logo">FONTVAULT</a>
+        <p style="margin-top: 1rem;">Curated typography discovery. Built for designers.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 FontVault. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Dark toggle setup
+      const toggle = document.getElementById('dark-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+          document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+          localStorage.setItem("fontvault-dark", isDark ? "0" : "1");
+        });
+      }
+
+      // Inject Breadcrumbs
+      if (window.FontVaultSEO) {
+        const crumbs = [
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog" }
+        ];
+        document.getElementById('breadcrumbs-injection-point').innerHTML = window.FontVaultSEO.renderBreadcrumbs(crumbs);
+        
+        // Inject schema
+        const schema = {
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "FontVault Blog",
+          "url": `${window.FontVaultSEO.CANONICAL_HOST}/blog`,
+          "description": "Tutorials, guidelines and resources about web typography and design."
+        };
+        window.FontVaultSEO.injectSchema(schema, "blog-schema");
+      }
+
+      // Render posts
+      const postsHtml = blogPosts.map(p => `
+        <article class="blog-card">
+          <div>
+            <div class="blog-meta">
+              <span>${p.category}</span>
+              <span>&middot;</span>
+              <span>${p.readTime}</span>
+            </div>
+            <h2 style="font-family: var(--font-display); font-size: 1.8rem; line-height: 1.2; margin-bottom: 1rem;">
+              <a href="/blog/${p.slug}" style="text-decoration:none; color:inherit;">${p.title}</a>
+            </h2>
+            <p style="color:#555; font-size:0.95rem; line-height:1.6; margin-bottom:2rem;">${p.description}</p>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed var(--border-grey); padding-top:1.5rem; margin-top:auto;">
+            <span style="font-size:0.8rem; color:#888;">By ${p.author}</span>
+            <a href="/blog/${p.slug}" style="font-family: var(--font-mono); font-size:0.8rem; font-weight:bold; color:var(--near-black); text-decoration:none;">READ POST &rarr;</a>
+          </div>
+        </article>
+      `).join('');
+
+      document.getElementById('blog-posts-grid').innerHTML = postsHtml;
+    });
+  </script>
+</body>
+</html>

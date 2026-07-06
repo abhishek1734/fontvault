@@ -327,7 +327,7 @@ function appendFontCard(font, delay) {
             <span class="dl-count" id="dl-count-${font.id}">${font.downloadCount > 0 ? formatDownloadCount(font.downloadCount) : 'DOWNLOAD'}</span>
           </button>
         ` : ''}
-        <a class="view-family-hover-btn" href="font.html?id=${font.id}" target="_blank">
+        <a class="view-family-hover-btn" href="/fonts/${font.id}" target="_blank">
           VIEW FAMILY
         </a>
       </div>
@@ -1316,6 +1316,10 @@ window.downloadFont = async function(fontId, url, fontName, format) {
             : (format || 'woff2');
   const safeFilename = `${fontName.replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_')}${isGoogleFont ? '_fonts' : ''}.${ext}`;
 
+  if (window.FontVaultAnalytics) {
+    window.FontVaultAnalytics.trackDownload(fontName, ext);
+  }
+
   // ── Animate button: downloading state ────────────────────────
   const btn  = document.getElementById(`dl-btn-${fontId}`);
   const countEl = document.getElementById(`dl-count-${fontId}`);
@@ -1583,6 +1587,10 @@ function setupAiFontFinder() {
   submitBtn.addEventListener("click", async () => {
     const prompt = finderInput.value.trim();
     if (!prompt) return;
+
+    if (window.FontVaultAnalytics) {
+      window.FontVaultAnalytics.trackAISearch(prompt, "ai-finder");
+    }
 
     // Show loading state, hide results
     loadingState.style.display = "block";

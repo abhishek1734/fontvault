@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typography Collections — FontVault</title>
+  <meta name="description" content="Explore curated typography collections organized by style, mood, and industry applications.">
+  <link rel="canonical" href="https://fontvault.com/collections.html">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css?v=5.29">
+  <script src="config.js?v=5.28"></script>
+  <script src="seo.js?v=1.0"></script>
+  <script src="analytics.js?v=1.0"></script>
+  <script src="collections-data.js?v=1.0"></script>
+  <script>
+    (function() {
+      const savedDark = localStorage.getItem("fontvault-dark");
+      if (savedDark === "1") {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme-theme", "light"); // fallback
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+  <style>
+    .col-hero {
+      padding: 6rem 4rem 4rem;
+      border-bottom: 1px solid var(--border-grey);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .col-grid {
+      display: grid;
+      grid-cols: 1;
+      gap: 2rem;
+      padding: 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    @media (min-width: 768px) {
+      .col-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (min-width: 1024px) {
+      .col-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .col-benefits {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .col-benefits {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .benefit-card {
+      background: var(--card-bg, rgba(0,0,0,0.02));
+      border: 1px solid var(--border-grey);
+      padding: 1.5rem;
+      border-radius: 4px;
+    }
+    .faq-sec {
+      padding: 4rem;
+      background: var(--card-bg, rgba(0,0,0,0.01));
+      border-top: 1px solid var(--border-grey);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      margin-bottom: 2rem;
+    }
+    .faq-item h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SCROLL PROGRESS BAR -->
+  <div id="progress-bar" class="progress-bar"></div>
+
+  <!-- NAVIGATION BAR -->
+  <header id="navbar">
+    <a href="index.html" class="logo">FONTVAULT</a>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="font-pairing.html" class="nav-link">Font Pairing</a>
+      <a href="blog.html" class="nav-link">Blog</a>
+      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode">
+        <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main style="min-height: 80vh; padding-top: 4rem;">
+    <!-- Breadcrumbs Point -->
+    <div id="breadcrumbs-injection-point" style="max-width: 1400px; margin: 0 auto; padding: 2rem 4rem 0;"></div>
+
+    <div id="collection-root">
+      <!-- Injected Dynamically -->
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-branding">
+        <a href="index.html" class="logo">FONTVAULT</a>
+        <p style="margin-top: 1rem;">Curated typography discovery. Built for designers.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html#hero">Browse Fonts</a></li>
+          <li><a href="font-pairing.html">Font Pairing</a></li>
+          <li><a href="blog.html">Blog</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 FontVault. All rights reserved.</span>
+      <span>BUILT FOR TYPE LOVERS</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="fonts.js"></script>
+  <script src="shared.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Setup dark toggle
+      const toggle = document.getElementById('dark-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+          document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+          localStorage.setItem("fontvault-dark", isDark ? "0" : "1");
+        });
+      }
+
+      await loadCustomFontsFromSupabase();
+
+      // Resolve Active Collection
+      const urlParams = new URLSearchParams(window.location.search);
+      let colId = urlParams.get('collection') || window.location.pathname.split("/collections/")[1] || "minimal-fonts";
+      
+      const col = collectionsData[colId];
+      if (!col) {
+        document.getElementById('collection-root').innerHTML = `<div style="padding:10rem; text-align:center;"><h2>Collection Not Found</h2><a href="index.html">Back to Home</a></div>`;
+        return;
+      }
+
+      // Filter Fonts
+      const filteredFonts = fontsData.filter(f => f.mood === col.tagFilter || f.style === col.tagFilter);
+
+      // Render Dynamic SEO
+      if (window.FontVaultSEO) {
+        const canonical = `${window.FontVaultSEO.CANONICAL_HOST}/collections/${colId}`;
+        window.FontVaultSEO.updateMetadata(col.title + " | FontVault", col.desc, canonical, "collection");
+
+        // Schema JSON-LD
+        const breadcrumbs = {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": `${window.FontVaultSEO.CANONICAL_HOST}/` },
+            { "@type": "ListItem", "position": 2, "name": "Collections", "item": `${window.FontVaultSEO.CANONICAL_HOST}/collections.html` },
+            { "@type": "ListItem", "position": 3, "name": col.title, "item": canonical }
+          ]
+        };
+        const faqList = col.faqs.map(f => ({
+          "@type": "Question",
+          "name": f.q,
+          "acceptedAnswer": { "@type": "Answer", "text": f.a }
+        }));
+        const faqSchema = {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqList
+        };
+
+        window.FontVaultSEO.injectSchema(breadcrumbs, "breadcrumb-schema");
+        window.FontVaultSEO.injectSchema(faqSchema, "faq-schema");
+
+        // Inject visual breadcrumbs
+        const crumbs = [
+          { name: "Home", url: "/" },
+          { name: "Collections", url: "#" },
+          { name: col.title, url: `/collections/${colId}` }
+        ];
+        document.getElementById('breadcrumbs-injection-point').innerHTML = window.FontVaultSEO.renderBreadcrumbs(crumbs);
+      }
+
+      // Render Layout
+      let html = `
+        <div class="col-hero">
+          <p style="font-family:var(--font-mono); color:#888; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem;">CURATED COLLECTION</p>
+          <h1 style="font-family:var(--font-display); font-size:clamp(2.5rem, 5vw, 4.5rem); line-height:1.1; margin-bottom:1.5rem;">${col.title}</h1>
+          <p style="font-size:1.2rem; line-height:1.6; color:#555; max-width:800px; margin-bottom:2.5rem;">${col.introduction}</p>
+          
+          <h3>Key Benefits</h3>
+          <div class="col-benefits">
+            ${col.benefits.map((b, idx) => `
+              <div class="benefit-card">
+                <span style="font-family:var(--font-mono); color:var(--signal-red); font-weight:bold; font-size:1.1rem; display:block; margin-bottom:0.5rem;">0${idx+1}</span>
+                <p style="font-size:0.95rem; line-height:1.5;">${b}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="col-grid">
+          ${filteredFonts.map(f => {
+            const fontId = f.id || f.slug;
+            return `
+              <div class="font-card" style="border:1px solid var(--border-grey); padding:2rem; display:flex; flex-direction:column; justify-content:between; min-height:220px; transition:all 0.2s ease;">
+                <div>
+                  <div style="display:flex; justify-content:between; align-items:start; margin-bottom:1rem;">
+                    <span style="font-family:var(--font-mono); font-size:0.75rem; color:#888; text-transform:uppercase;">${f.provider} / ${f.style}</span>
+                  </div>
+                  <h3 style="font-family:${f.cssFamily}; font-size:2.2rem; margin:1rem 0; font-weight:normal;">${f.name}</h3>
+                  <p style="font-size:0.85rem; color:#666; margin-bottom:1.5rem; line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${f.description || ''}</p>
+                </div>
+                <div style="display:flex; justify-content:between; align-items:center; margin-top:auto; padding-top:1rem; border-top:1px dashed var(--border-grey);">
+                  <span style="font-size:0.8rem; color:#888;">By ${f.designer || 'Unknown'}</span>
+                  <a href="/fonts/${fontId}" class="btn-text" style="font-family:var(--font-mono); font-size:0.8rem; font-weight:bold; text-decoration:none; color:var(--near-black);">VIEW SPECIMEN &rarr;</a>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="faq-sec">
+          <h3 style="font-family:var(--font-display); font-size:2rem; margin-bottom:2.5rem;">Frequently Asked Questions</h3>
+          <div style="max-width:800px;">
+            ${col.faqs.map(f => `
+              <div class="faq-item">
+                <h4 style="font-weight:600; color:var(--near-black);">${f.q}</h4>
+                <p style="color:#555; line-height:1.6; font-size:0.95rem; margin-top:0.5rem;">${f.a}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('collection-root').innerHTML = html;
+    });
+  </script>
+</body>
+</html>
