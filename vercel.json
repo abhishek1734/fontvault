@@ -1,4 +1,5 @@
 {
+  "outputDirectory": ".",
   "rewrites": [
     { "source": "/fonts/:id", "destination": "/font.html?id=:id" },
     { "source": "/category/:category", "destination": "/index.html?category=:category" },
