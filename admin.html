@@ -181,6 +181,9 @@
         <button onclick="switchTab('analytics')" id="tab-analytics" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-850 hover:text-black dark:hover:text-white">
           <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Analytics
         </button>
+        <button onclick="switchTab('performance')" id="tab-performance" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-850 hover:text-black dark:hover:text-white">
+          <i data-lucide="zap" class="w-4 h-4"></i> Performance
+        </button>
       </nav>
 
       <div class="p-4 border-t border-neutral-100 dark:border-neutral-800/60 space-y-2">
@@ -465,45 +468,219 @@
             </form>
           </div>
 
-          <!-- TAB: ANALYTICS -->
-          <div id="view-analytics" class="hidden space-y-6">
-            <div>
-              <h2 class="text-xl font-bold tracking-tight">Analytics & Usage</h2>
-              <p class="text-xs text-neutral-400 mt-0.5">Platform audit, database storage and classification statistics.</p>
+          <!-- TAB: PERFORMANCE (Vercel Analytics + Speed Insights) -->
+          <div id="view-performance" class="hidden space-y-6">
+            <!-- Header -->
+            <div class="flex items-start justify-between">
+              <div>
+                <h2 class="text-xl font-bold tracking-tight">Performance & Analytics</h2>
+                <p class="text-xs text-neutral-400 mt-0.5">Live data from Vercel Web Analytics and Speed Insights.</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <select id="perf-range" onchange="loadPerformanceTab()" class="px-3 py-2 text-xs bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg focus:outline-none text-neutral-700 dark:text-neutral-300">
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d" selected>Last 30 days</option>
+                  <option value="90d">Last 90 days</option>
+                </select>
+                <button onclick="loadPerformanceTab()" class="p-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg text-neutral-500 hover:text-black dark:hover:text-white transition-all" title="Refresh">
+                  <i data-lucide="refresh-cw" class="w-4 h-4" id="perf-refresh-icon"></i>
+                </button>
+              </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Category Distribution -->
-              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-4">
-                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Library Category Distribution</h3>
-                <div class="space-y-4" id="analytics-categories-bar">
-                  <!-- Dynamic bar columns -->
+            <!-- Credentials Setup Banner (shown when not configured) -->
+            <div id="perf-setup-banner" class="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded-2xl p-5">
+              <div class="flex items-start gap-3">
+                <div class="p-1.5 bg-amber-100 dark:bg-amber-900/40 rounded-lg shrink-0 mt-0.5">
+                  <i data-lucide="key" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-amber-900 dark:text-amber-300">Vercel API credentials not configured</p>
+                  <p class="text-xs text-amber-700 dark:text-amber-400 mt-1">Enter your Vercel Access Token and Project ID below to fetch live analytics. These are stored locally in your browser only.</p>
+                  <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                      <label class="block text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 mb-1.5">Vercel Access Token</label>
+                      <input type="password" id="perf-token-input" placeholder="ver_xxxxxxxxxxxx" class="w-full px-3 py-2 text-xs bg-white dark:bg-neutral-900 border border-amber-200 dark:border-amber-800 rounded-lg focus:outline-none focus:border-amber-500 text-neutral-800 dark:text-neutral-200" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 mb-1.5">Project ID</label>
+                      <input type="text" id="perf-project-input" placeholder="prj_xxxxxxxxxxxx" class="w-full px-3 py-2 text-xs bg-white dark:bg-neutral-900 border border-amber-200 dark:border-amber-800 rounded-lg focus:outline-none focus:border-amber-500 text-neutral-800 dark:text-neutral-200" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 mb-1.5">Team ID <span class="font-normal normal-case opacity-60">(optional)</span></label>
+                      <input type="text" id="perf-team-input" placeholder="team_xxxx or leave blank" class="w-full px-3 py-2 text-xs bg-white dark:bg-neutral-900 border border-amber-200 dark:border-amber-800 rounded-lg focus:outline-none focus:border-amber-500 text-neutral-800 dark:text-neutral-200" />
+                    </div>
+                  </div>
+                  <div class="mt-3 flex items-center gap-3">
+                    <button onclick="saveVercelCredentials()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-all">Save & Connect</button>
+                    <a href="https://vercel.com/account/tokens" target="_blank" class="text-xs text-amber-700 dark:text-amber-400 underline">Get Access Token →</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KPI Cards Row -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="perf-kpi-grid">
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5">
+                <span class="text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Page Views</span>
+                <div class="flex items-end justify-between mt-2">
+                  <h3 class="text-3xl font-bold tracking-tight" id="kpi-pageviews">—</h3>
+                  <div class="p-2 bg-violet-50 dark:bg-violet-950/30 rounded-lg"><i data-lucide="eye" class="w-4 h-4 text-violet-500"></i></div>
+                </div>
+                <p class="text-[10px] text-neutral-400 mt-1" id="kpi-pageviews-sub">Loading...</p>
+              </div>
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5">
+                <span class="text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Unique Visitors</span>
+                <div class="flex items-end justify-between mt-2">
+                  <h3 class="text-3xl font-bold tracking-tight" id="kpi-visitors">—</h3>
+                  <div class="p-2 bg-blue-50 dark:bg-blue-950/30 rounded-lg"><i data-lucide="users" class="w-4 h-4 text-blue-500"></i></div>
+                </div>
+                <p class="text-[10px] text-neutral-400 mt-1" id="kpi-visitors-sub">Loading...</p>
+              </div>
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5">
+                <span class="text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Top Country</span>
+                <div class="flex items-end justify-between mt-2">
+                  <h3 class="text-3xl font-bold tracking-tight" id="kpi-top-country">—</h3>
+                  <div class="p-2 bg-green-50 dark:bg-green-950/30 rounded-lg"><i data-lucide="globe" class="w-4 h-4 text-green-500"></i></div>
+                </div>
+                <p class="text-[10px] text-neutral-400 mt-1" id="kpi-top-country-sub">Loading...</p>
+              </div>
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5">
+                <span class="text-[9px] font-semibold text-neutral-400 uppercase tracking-widest">Top Page</span>
+                <div class="flex items-end justify-between mt-2">
+                  <h3 class="text-xl font-bold tracking-tight truncate mr-2" id="kpi-top-page">—</h3>
+                  <div class="p-2 bg-orange-50 dark:bg-orange-950/30 rounded-lg shrink-0"><i data-lucide="file-text" class="w-4 h-4 text-orange-500"></i></div>
+                </div>
+                <p class="text-[10px] text-neutral-400 mt-1" id="kpi-top-page-sub">Loading...</p>
+              </div>
+            </div>
+
+            <!-- Visitors Over Time Chart -->
+            <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Visitors Over Time</h3>
+                  <p class="text-[10px] text-neutral-400 mt-0.5">Daily unique visitors for selected period</p>
+                </div>
+                <div id="chart-legend" class="flex items-center gap-4 text-[10px] text-neutral-400">
+                  <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-500 inline-block"></span> Visitors</span>
+                </div>
+              </div>
+              <div id="visitors-chart" class="h-40 flex items-end gap-1" style="min-height: 160px;">
+                <!-- Bar chart rendered by JS -->
+                <div class="w-full flex items-center justify-center h-full text-xs text-neutral-400">
+                  <i data-lucide="loader" class="w-4 h-4 animate-spin mr-2"></i> Loading chart data...
+                </div>
+              </div>
+              <div id="visitors-chart-labels" class="flex gap-1 mt-2 text-[9px] text-neutral-400 overflow-hidden"></div>
+            </div>
+
+            <!-- Top Pages + Countries Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Top Pages -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-5">Top Pages</h3>
+                <div class="space-y-3" id="top-pages-list">
+                  <div class="flex items-center justify-center h-20 text-xs text-neutral-400">
+                    <i data-lucide="loader" class="w-4 h-4 animate-spin mr-2"></i> Loading...
+                  </div>
                 </div>
               </div>
 
-              <!-- General Stats -->
-              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-4">
-                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">System Metrics</h3>
-                <div class="divide-y divide-neutral-100 dark:divide-neutral-800">
-                  <div class="py-3 flex justify-between text-xs">
-                    <span class="font-medium text-neutral-500">Supabase DB Status</span>
-                    <span class="font-semibold text-success flex items-center gap-1">Online <i data-lucide="check-circle" class="w-3.5 h-3.5"></i></span>
-                  </div>
-                  <div class="py-3 flex justify-between text-xs">
-                    <span class="font-medium text-neutral-500">Storage Bucket Path</span>
-                    <span class="font-mono text-neutral-400">Fonts/</span>
-                  </div>
-                  <div class="py-3 flex justify-between text-xs">
-                    <span class="font-medium text-neutral-500">Average File Size</span>
-                    <span class="font-semibold" id="analytics-avg-size">0 KB</span>
-                  </div>
-                  <div class="py-3 flex justify-between text-xs">
-                    <span class="font-medium text-neutral-500">Allowed Formats</span>
-                    <span class="font-mono text-neutral-400">.woff2, .woff, .otf, .ttf</span>
+              <!-- Top Countries -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-5">Top Countries</h3>
+                <div class="space-y-3" id="top-countries-list">
+                  <div class="flex items-center justify-center h-20 text-xs text-neutral-400">
+                    <i data-lucide="loader" class="w-4 h-4 animate-spin mr-2"></i> Loading...
                   </div>
                 </div>
               </div>
             </div>
+
+            <!-- Device + Browser Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Device Breakdown -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-5">Device Types</h3>
+                <div class="space-y-3" id="device-breakdown-list">
+                  <div class="flex items-center justify-center h-20 text-xs text-neutral-400">
+                    <i data-lucide="loader" class="w-4 h-4 animate-spin mr-2"></i> Loading...
+                  </div>
+                </div>
+              </div>
+
+              <!-- Browser Breakdown -->
+              <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-5">Browsers</h3>
+                <div class="space-y-3" id="browser-breakdown-list">
+                  <div class="flex items-center justify-center h-20 text-xs text-neutral-400">
+                    <i data-lucide="loader" class="w-4 h-4 animate-spin mr-2"></i> Loading...
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Speed Insights Section -->
+            <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden">
+              <div class="px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Core Web Vitals / Speed Insights</h3>
+                  <p class="text-[10px] text-neutral-400 mt-0.5">Powered by Vercel Speed Insights — LCP, FCP, CLS, TTFB, INP</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 text-neutral-500 rounded-full">Embedded View</span>
+                  <a id="speed-insights-link" href="#" target="_blank" class="text-xs text-neutral-500 hover:text-black dark:hover:text-white flex items-center gap-1 transition-all">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Open in Vercel
+                  </a>
+                </div>
+              </div>
+              <!-- Core Web Vitals Manual Cards (since Vercel has no public Speed Insights API) -->
+              <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="cwv-cards">
+                  <!-- LCP -->
+                  <div class="border border-neutral-100 dark:border-neutral-800 rounded-xl p-4 text-center">
+                    <div class="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-2">LCP</div>
+                    <div class="text-xl font-bold tracking-tight" id="cwv-lcp">—</div>
+                    <div class="text-[9px] text-neutral-400 mt-1">Largest Contentful Paint</div>
+                    <div class="mt-2 text-[9px] px-2 py-0.5 rounded-full font-semibold" id="cwv-lcp-badge">—</div>
+                  </div>
+                  <!-- FCP -->
+                  <div class="border border-neutral-100 dark:border-neutral-800 rounded-xl p-4 text-center">
+                    <div class="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-2">FCP</div>
+                    <div class="text-xl font-bold tracking-tight" id="cwv-fcp">—</div>
+                    <div class="text-[9px] text-neutral-400 mt-1">First Contentful Paint</div>
+                    <div class="mt-2 text-[9px] px-2 py-0.5 rounded-full font-semibold" id="cwv-fcp-badge">—</div>
+                  </div>
+                  <!-- CLS -->
+                  <div class="border border-neutral-100 dark:border-neutral-800 rounded-xl p-4 text-center">
+                    <div class="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-2">CLS</div>
+                    <div class="text-xl font-bold tracking-tight" id="cwv-cls">—</div>
+                    <div class="text-[9px] text-neutral-400 mt-1">Cumulative Layout Shift</div>
+                    <div class="mt-2 text-[9px] px-2 py-0.5 rounded-full font-semibold" id="cwv-cls-badge">—</div>
+                  </div>
+                  <!-- TTFB -->
+                  <div class="border border-neutral-100 dark:border-neutral-800 rounded-xl p-4 text-center">
+                    <div class="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-2">TTFB</div>
+                    <div class="text-xl font-bold tracking-tight" id="cwv-ttfb">—</div>
+                    <div class="text-[9px] text-neutral-400 mt-1">Time to First Byte</div>
+                    <div class="mt-2 text-[9px] px-2 py-0.5 rounded-full font-semibold" id="cwv-ttfb-badge">—</div>
+                  </div>
+                  <!-- INP -->
+                  <div class="border border-neutral-100 dark:border-neutral-800 rounded-xl p-4 text-center">
+                    <div class="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-2">INP</div>
+                    <div class="text-xl font-bold tracking-tight" id="cwv-inp">—</div>
+                    <div class="text-[9px] text-neutral-400 mt-1">Interaction to Next Paint</div>
+                    <div class="mt-2 text-[9px] px-2 py-0.5 rounded-full font-semibold" id="cwv-inp-badge">—</div>
+                  </div>
+                </div>
+                <div class="mt-4 p-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-100 dark:border-neutral-800 rounded-xl flex items-center gap-3">
+                  <i data-lucide="info" class="w-4 h-4 text-neutral-400 shrink-0"></i>
+                  <p class="text-[10px] text-neutral-500">Vercel does not expose a public REST API for Speed Insights. These metrics are collected client-side by the <code class="font-mono bg-neutral-100 dark:bg-neutral-800 px-1 rounded">@vercel/speed-insights</code> package and shown in your <a id="speed-insights-link-2" href="#" target="_blank" class="underline hover:text-black dark:hover:text-white">Vercel dashboard</a>. The values above will populate once you connect your Vercel project.</p>
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </div>

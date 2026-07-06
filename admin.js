@@ -110,10 +110,12 @@ function switchTab(tabId) {
   activeTab = tabId;
   
   // Update nav buttons style
-  ['overview', 'fonts', 'upload', 'analytics'].forEach(t => {
+  ['overview', 'fonts', 'upload', 'analytics', 'performance'].forEach(t => {
     const btn = document.getElementById(`tab-${t}`);
     const view = document.getElementById(`view-${t}`);
     
+    if (!btn || !view) return;
+
     if (t === tabId) {
       btn.className = 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-black dark:bg-white text-white dark:text-black transition-all';
       view.classList.remove('hidden');
@@ -130,6 +132,8 @@ function switchTab(tabId) {
     loadFontsData();
   } else if (tabId === 'upload') {
     resetUploadForm();
+  } else if (tabId === 'performance') {
+    loadPerformanceTab();
   }
 }
 
@@ -698,4 +702,293 @@ function slugify(text) {
 
 function toastSuccess(message) {
   alert(message); // simple notification fallback
+}
+
+
+// ================================================================
+// VERCEL ANALYTICS & PERFORMANCE DASHBOARD
+// ================================================================
+
+// --- Credential management (localStorage) ---
+const VERCEL_CRED_KEY = 'fv_vercel_creds';
+
+function getVercelCreds() {
+  try {
+    return JSON.parse(localStorage.getItem(VERCEL_CRED_KEY) || 'null');
+  } catch { return null; }
+}
+
+window.saveVercelCredentials = function() {
+  const token   = document.getElementById('perf-token-input').value.trim();
+  const project = document.getElementById('perf-project-input').value.trim();
+  const team    = document.getElementById('perf-team-input').value.trim();
+
+  if (!token || !project) {
+    alert('Please enter both Vercel Access Token and Project ID.');
+    return;
+  }
+
+  localStorage.setItem(VERCEL_CRED_KEY, JSON.stringify({ token, project, team }));
+  loadPerformanceTab();
+};
+
+function clearVercelCredentials() {
+  localStorage.removeItem(VERCEL_CRED_KEY);
+  loadPerformanceTab();
+}
+
+// --- Date range helpers ---
+function getDateRange(range) {
+  const now  = new Date();
+  const days = range === '7d' ? 7 : range === '90d' ? 90 : 30;
+  const from = new Date(now - days * 864e5);
+  return {
+    from: from.toISOString().split('T')[0],
+    to:   now.toISOString().split('T')[0],
+  };
+}
+
+// --- Core Vercel API fetch wrapper ---
+async function vercelFetch(path, creds) {
+  const teamParam = creds.team ? `&teamId=${creds.team}` : '';
+  const url = `https://api.vercel.com${path}${path.includes('?') ? '&' : '?'}projectId=${creds.project}${teamParam}`;
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${creds.token}` },
+  });
+  if (!res.ok) throw new Error(`Vercel API error ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+// --- Main load function ---
+window.loadPerformanceTab = async function() {
+  const creds = getVercelCreds();
+  const banner = document.getElementById('perf-setup-banner');
+
+  // Spin refresh icon
+  const icon = document.getElementById('perf-refresh-icon');
+  if (icon) icon.classList.add('animate-spin');
+
+  if (!creds) {
+    // Show setup banner, pre-fill nothing
+    banner.classList.remove('hidden');
+    setKPILoading();
+    if (icon) icon.classList.remove('animate-spin');
+    return;
+  }
+
+  // Credentials exist — hide banner, pre-fill inputs for editing
+  banner.classList.add('hidden');
+  document.getElementById('perf-token-input').value  = creds.token;
+  document.getElementById('perf-project-input').value = creds.project;
+  document.getElementById('perf-team-input').value   = creds.team || '';
+
+  // Update Speed Insights deep-links
+  const siPath = creds.team
+    ? `https://vercel.com/t/${creds.team}/${creds.project}/speed-insights`
+    : `https://vercel.com/dashboard`;
+  document.getElementById('speed-insights-link').href   = siPath;
+  document.getElementById('speed-insights-link-2').href = siPath;
+
+  const range = document.getElementById('perf-range')?.value || '30d';
+  const { from, to } = getDateRange(range);
+
+  try {
+    // Fire all requests in parallel
+    const [
+      pageViewsRes,
+      visitorsTimeRes,
+      topPagesRes,
+      topCountriesRes,
+      devicesRes,
+      browsersRes,
+    ] = await Promise.allSettled([
+      vercelFetch(`/v1/query/web-analytics/visits/count?from=${from}&to=${to}`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=day&from=${from}&to=${to}`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=requestPath&from=${from}&to=${to}&limit=10`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=country&from=${from}&to=${to}&limit=10`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=deviceType&from=${from}&to=${to}`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?groupBy=browserName&from=${from}&to=${to}&limit=8`, creds),
+    ]);
+
+    // ─── KPI Cards ───
+    if (pageViewsRes.status === 'fulfilled') {
+      const d = pageViewsRes.value;
+      const views    = d?.data?.pageViews ?? d?.pageViews ?? d?.count ?? '—';
+      const visitors = d?.data?.visitors  ?? d?.visitors  ?? '—';
+      document.getElementById('kpi-pageviews').textContent      = formatNum(views);
+      document.getElementById('kpi-pageviews-sub').textContent  = `Total page views · ${range}`;
+      document.getElementById('kpi-visitors').textContent       = formatNum(visitors);
+      document.getElementById('kpi-visitors-sub').textContent   = `Unique visitors · ${range}`;
+    } else {
+      setKPIError('kpi-pageviews', pageViewsRes.reason?.message);
+      setKPIError('kpi-visitors',  pageViewsRes.reason?.message);
+    }
+
+    // ─── Visitors Over Time Chart ───
+    if (visitorsTimeRes.status === 'fulfilled') {
+      const rows = visitorsTimeRes.value?.data ?? [];
+      renderBarChart(rows);
+    } else {
+      document.getElementById('visitors-chart').innerHTML =
+        `<div class="w-full flex items-center justify-center h-full text-xs text-red-400">Chart error: ${visitorsTimeRes.reason?.message}</div>`;
+    }
+
+    // ─── Top Pages ───
+    if (topPagesRes.status === 'fulfilled') {
+      const rows = topPagesRes.value?.data ?? [];
+      renderTopList('top-pages-list', rows, 'requestPath', r => r.visitors || r.pageViews || r.value);
+      if (rows.length > 0) {
+        document.getElementById('kpi-top-page').textContent     = rows[0].requestPath || '/';
+        document.getElementById('kpi-top-page-sub').textContent = `${formatNum(rows[0].visitors ?? rows[0].value ?? 0)} visitors`;
+      }
+    } else {
+      document.getElementById('top-pages-list').innerHTML = renderError(topPagesRes.reason?.message);
+    }
+
+    // ─── Top Countries ───
+    if (topCountriesRes.status === 'fulfilled') {
+      const rows = topCountriesRes.value?.data ?? [];
+      renderTopList('top-countries-list', rows, 'country', r => r.visitors || r.value);
+      if (rows.length > 0) {
+        const flag = countryFlag(rows[0].country);
+        document.getElementById('kpi-top-country').textContent     = `${flag} ${rows[0].country || '—'}`;
+        document.getElementById('kpi-top-country-sub').textContent = `${formatNum(rows[0].visitors ?? rows[0].value ?? 0)} visitors`;
+      }
+    } else {
+      document.getElementById('top-countries-list').innerHTML = renderError(topCountriesRes.reason?.message);
+    }
+
+    // ─── Devices ───
+    if (devicesRes.status === 'fulfilled') {
+      renderTopList('device-breakdown-list', devicesRes.value?.data ?? [], 'deviceType', r => r.visitors || r.value);
+    } else {
+      document.getElementById('device-breakdown-list').innerHTML = renderError(devicesRes.reason?.message);
+    }
+
+    // ─── Browsers ───
+    if (browsersRes.status === 'fulfilled') {
+      renderTopList('browser-breakdown-list', browsersRes.value?.data ?? [], 'browserName', r => r.visitors || r.value);
+    } else {
+      document.getElementById('browser-breakdown-list').innerHTML = renderError(browsersRes.reason?.message);
+    }
+
+  } catch (err) {
+    console.error('[Performance Tab] Fatal error:', err);
+    banner.classList.remove('hidden');
+    banner.querySelector('p').textContent = 'API error: ' + err.message;
+  } finally {
+    if (icon) icon.classList.remove('animate-spin');
+    lucide.createIcons();
+  }
+};
+
+// --- Render helpers ---
+
+function setKPILoading() {
+  ['kpi-pageviews','kpi-visitors','kpi-top-country','kpi-top-page'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '—';
+  });
+  ['kpi-pageviews-sub','kpi-visitors-sub','kpi-top-country-sub','kpi-top-page-sub'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = 'Connect Vercel to load data';
+  });
+  document.getElementById('visitors-chart').innerHTML =
+    '<div class="w-full flex items-center justify-center h-full text-xs text-neutral-400">Connect Vercel to load chart</div>';
+  ['top-pages-list','top-countries-list','device-breakdown-list','browser-breakdown-list'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '<div class="text-xs text-neutral-400 text-center py-6">Connect Vercel to load data</div>';
+  });
+}
+
+function setKPIError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = 'Err'; el.title = msg; }
+}
+
+function formatNum(n) {
+  if (n === null || n === undefined || n === '—') return '—';
+  const num = Number(n);
+  if (isNaN(num)) return String(n);
+  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + 'M';
+  if (num >= 1_000)     return (num / 1_000).toFixed(1) + 'K';
+  return num.toLocaleString();
+}
+
+function countryFlag(code) {
+  if (!code || code.length !== 2) return '🌐';
+  return String.fromCodePoint(...[...code.toUpperCase()].map(c => 0x1F1E0 + c.charCodeAt(0) - 65));
+}
+
+function renderError(msg) {
+  return `<div class="text-xs text-red-400 text-center py-6">Error: ${msg || 'Unknown error'}</div>`;
+}
+
+function renderTopList(containerId, rows, labelKey, valueFn) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!rows || rows.length === 0) {
+    el.innerHTML = '<div class="text-xs text-neutral-400 text-center py-6">No data for this period.</div>';
+    return;
+  }
+  const max = Math.max(...rows.map(r => valueFn(r) || 0)) || 1;
+  el.innerHTML = rows.map((r, i) => {
+    const label = r[labelKey] || '(unknown)';
+    const val   = valueFn(r) || 0;
+    const pct   = Math.round((val / max) * 100);
+    const flag  = labelKey === 'country' ? countryFlag(r.country) + ' ' : '';
+    const icon  = labelKey === 'deviceType' ? getDeviceIcon(label) : '';
+    return `
+      <div class="flex items-center gap-3">
+        <span class="text-[10px] font-semibold text-neutral-400 w-4 shrink-0">${i + 1}</span>
+        <div class="flex-1 min-w-0">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-medium truncate">${flag}${icon}${label}</span>
+            <span class="text-xs font-semibold text-neutral-500 ml-2 shrink-0">${formatNum(val)}</span>
+          </div>
+          <div class="h-1 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
+            <div class="h-full bg-violet-500 rounded-full transition-all duration-700" style="width: ${pct}%"></div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function getDeviceIcon(type) {
+  const t = (type || '').toLowerCase();
+  if (t.includes('mobile'))  return '📱 ';
+  if (t.includes('tablet'))  return '📟 ';
+  if (t.includes('desktop')) return '🖥️ ';
+  return '';
+}
+
+function renderBarChart(rows) {
+  const chart  = document.getElementById('visitors-chart');
+  const labels = document.getElementById('visitors-chart-labels');
+  if (!chart) return;
+
+  if (!rows || rows.length === 0) {
+    chart.innerHTML = '<div class="w-full flex items-center justify-center h-full text-xs text-neutral-400">No data for this period.</div>';
+    return;
+  }
+
+  const vals = rows.map(r => r.visitors || r.value || 0);
+  const max  = Math.max(...vals) || 1;
+
+  chart.innerHTML = rows.map((r, i) => {
+    const h   = Math.max(4, Math.round((vals[i] / max) * 100));
+    const tip = `${r.day || r.date || i}: ${vals[i]} visitors`;
+    return `<div class="flex-1 flex flex-col justify-end group cursor-default" title="${tip}">
+      <div class="w-full bg-violet-500 hover:bg-violet-400 transition-all rounded-t-sm"
+           style="height: ${h}%; min-height: 4px; transition: height 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)"></div>
+    </div>`;
+  }).join('');
+
+  // Sparse labels — show every Nth
+  const step = Math.ceil(rows.length / 8);
+  labels.innerHTML = rows.map((r, i) => {
+    const d = r.day || r.date || '';
+    const short = d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+    return `<span class="flex-1 text-center overflow-hidden">${i % step === 0 ? short : ''}</span>`;
+  }).join('');
 }
