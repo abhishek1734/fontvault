@@ -820,9 +820,13 @@ window.loadPerformanceTab = async function() {
 
   const range = document.getElementById('perf-range')?.value || '30d';
   const { from, to } = getDateRange(range);
+  // Vercel API uses 'since' and 'until' (ISO 8601 timestamps)
+  const since = from + 'T00:00:00.000Z';
+  const until = to   + 'T23:59:59.999Z';
 
   try {
     // Fire all requests in parallel
+    // Allowed 'by' values: hour|day|week|month|year|country|deviceType|requestPath|browserName|osName|route|referrerHostname
     const [
       pageViewsRes,
       visitorsTimeRes,
@@ -831,12 +835,12 @@ window.loadPerformanceTab = async function() {
       devicesRes,
       browsersRes,
     ] = await Promise.allSettled([
-      vercelFetch(`/v1/query/web-analytics/visits/count?from=${from}&to=${to}`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=day&from=${from}&to=${to}`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=page&from=${from}&to=${to}&limit=10`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=country&from=${from}&to=${to}&limit=10`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=device&from=${from}&to=${to}`, creds),
-      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=browser&from=${from}&to=${to}&limit=8`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/count?since=${since}&until=${until}`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=day&since=${since}&until=${until}`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=requestPath&since=${since}&until=${until}&limit=10`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=country&since=${since}&until=${until}&limit=10`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=deviceType&since=${since}&until=${until}`, creds),
+      vercelFetch(`/v1/query/web-analytics/visits/aggregate?by=browserName&since=${since}&until=${until}&limit=8`, creds),
     ]);
 
     // ─── KPI Cards ───
@@ -866,10 +870,10 @@ window.loadPerformanceTab = async function() {
     // ─── Top Pages ───
     if (topPagesRes.status === 'fulfilled') {
       const rows = topPagesRes.value?.data ?? [];
-      // Vercel aggregate response rows: { key, page, visitors, pageViews }
-      renderTopList('top-pages-list', rows, 'page', r => r.visitors || r.pageViews || r.total || 0);
+      // Vercel returns { requestPath, visitors, pageViews } per row
+      renderTopList('top-pages-list', rows, 'requestPath', r => r.visitors || r.pageViews || r.total || 0);
       if (rows.length > 0) {
-        document.getElementById('kpi-top-page').textContent     = rows[0].page || '/';
+        document.getElementById('kpi-top-page').textContent     = rows[0].requestPath || '/';
         document.getElementById('kpi-top-page-sub').textContent = `${formatNum(rows[0].visitors ?? rows[0].pageViews ?? 0)} visitors`;
       }
     } else {
@@ -891,14 +895,14 @@ window.loadPerformanceTab = async function() {
 
     // ─── Devices ───
     if (devicesRes.status === 'fulfilled') {
-      renderTopList('device-breakdown-list', devicesRes.value?.data ?? [], 'device', r => r.visitors || r.total || 0);
+      renderTopList('device-breakdown-list', devicesRes.value?.data ?? [], 'deviceType', r => r.visitors || r.total || 0);
     } else {
       document.getElementById('device-breakdown-list').innerHTML = renderError(devicesRes.reason?.message);
     }
 
     // ─── Browsers ───
     if (browsersRes.status === 'fulfilled') {
-      renderTopList('browser-breakdown-list', browsersRes.value?.data ?? [], 'browser', r => r.visitors || r.total || 0);
+      renderTopList('browser-breakdown-list', browsersRes.value?.data ?? [], 'browserName', r => r.visitors || r.total || 0);
     } else {
       document.getElementById('browser-breakdown-list').innerHTML = renderError(browsersRes.reason?.message);
     }
@@ -968,7 +972,7 @@ function renderTopList(containerId, rows, labelKey, valueFn) {
     const val   = valueFn(r) || 0;
     const pct   = Math.round((val / max) * 100);
     const flag  = labelKey === 'country' ? countryFlag(r.country) + ' ' : '';
-    const icon  = labelKey === 'device' ? getDeviceIcon(label) : '';
+    const icon  = labelKey === 'deviceType' ? getDeviceIcon(label) : '';
     return `
       <div class="flex items-center gap-3">
         <span class="text-[10px] font-semibold text-neutral-400 w-4 shrink-0">${i + 1}</span>
