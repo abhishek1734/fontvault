@@ -2043,6 +2043,9 @@ async function init() {
 
   // Initialize display layout toggles (List/Grid)
   setupLayoutToggles();
+
+  // Initialize FAQ accordion functionality
+  setupFaqAccordion();
 }
 
 // ─────────────────────────────────────────────────
@@ -2174,3 +2177,37 @@ init();
     raf = requestAnimationFrame(animate);
   }
 })();
+
+// ─────────────────────────────────────────────────
+//  FAQ ACCORDION INTERACTIVITY
+// ─────────────────────────────────────────────────
+function setupFaqAccordion() {
+  const items = document.querySelectorAll(".faq-accordion-item");
+  items.forEach(item => {
+    const trigger = item.querySelector(".faq-trigger");
+    const content = item.querySelector(".faq-content");
+    
+    if (trigger && content) {
+      trigger.addEventListener("click", () => {
+        const isActive = item.classList.contains("active");
+        
+        // Close all other accordion items
+        items.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.classList.remove("active");
+            otherItem.querySelector(".faq-content").style.maxHeight = null;
+          }
+        });
+        
+        // Toggle current item
+        if (isActive) {
+          item.classList.remove("active");
+          content.style.maxHeight = null;
+        } else {
+          item.classList.add("active");
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+  });
+}

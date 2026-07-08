@@ -438,24 +438,67 @@
   </div>
 
   <!-- HOME FAQ SECTION -->
-  <section class="home-faq-section" style="max-width: 1400px; margin: 0 auto; padding: 6rem 4rem; border-top: 1px solid var(--border-grey);">
-    <h2 class="section-title" style="font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 3rem;">Frequently Asked Questions</h2>
-    <div style="display: grid; grid-template-columns: 1fr; gap: 2.5rem; max-width: 900px;">
-      <div class="faq-item">
-        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--near-black);">What is FontVault?</h3>
-        <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">FontVault is a curated typography platform that allows designers to explore, test, and pair premium and free typefaces inside real-world design mockups.</p>
+  <section class="home-faq-section">
+    <div class="faq-container">
+      <!-- Left side: Title block -->
+      <div class="faq-info-col">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
+          <span style="display: inline-block; width: 6px; height: 6px; background-color: var(--signal-red); border-radius: 50%;"></span>
+          <span style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-secondary);">SUPPORT</span>
+        </div>
+        <h2 style="font-family: var(--font-display); font-size: 2.75rem; font-weight: 400; line-height: 1.1; margin-bottom: 1.5rem; color: var(--near-black); letter-spacing: -0.02em;">Frequently Asked Questions</h2>
+        <p style="color: var(--text-secondary); opacity: 0.8; font-size: 0.95rem; line-height: 1.6; max-width: 320px;">Have a question about licensing, downloads, or our pairing studio? Find quick answers here or contact our support.</p>
       </div>
-      <div class="faq-item">
-        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--near-black);">How does the AI Font Pairing Studio work?</h3>
-        <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">The AI Font Pairing Studio analyzes the design parameters, tone, and style tags of your project description using Gemini AI to recommend harmonious pairing combinations.</p>
-      </div>
-      <div class="faq-item">
-        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--near-black);">Are the fonts on FontVault free to use?</h3>
-        <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">We feature a mix of open-source, free for personal use, and commercial typefaces. Each font detail page lists the designer, foundry, and license type.</p>
-      </div>
-      <div class="faq-item">
-        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--near-black);">How do I download a font?</h3>
-        <p style="color: #666; line-height: 1.6; font-size: 0.95rem;">Simply click the download button on any font specimen page. FontVault proxies and packages the files directly for quick deployment.</p>
+
+      <!-- Right side: Accordion list -->
+      <div class="faq-accordion-col">
+        <div class="faq-accordion-item">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>What is FontVault?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <div class="faq-content-inner">
+              <p>FontVault is a curated typography platform that allows designers to explore, test, and pair premium and free typefaces inside real-world design mockups.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-accordion-item">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>How does the AI Font Pairing Studio work?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <div class="faq-content-inner">
+              <p>The AI Font Pairing Studio analyzes the design parameters, tone, and style tags of your project description using Gemini AI to recommend harmonious pairing combinations.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-accordion-item">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>Are the fonts on FontVault free to use?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <div class="faq-content-inner">
+              <p>We feature a mix of open-source, free for personal use, and commercial typefaces. Each font detail page lists the designer, foundry, and license type.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-accordion-item">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>How do I download a font?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <div class="faq-content-inner">
+              <p>Simply click the download button on any font specimen page. FontVault proxies and packages the files directly for quick deployment.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
