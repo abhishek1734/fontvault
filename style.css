@@ -4964,8 +4964,11 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hove
 html, body {
   max-width: 100%;
 }
-.main-container, .hero, footer, header#navbar, #mobile-menu {
+.hero, footer, header#navbar, #mobile-menu {
   overflow-x: hidden;
+}
+.main-container {
+  overflow: visible !important;
 }
 
 /* ── Tablet (≤768px) ── */
