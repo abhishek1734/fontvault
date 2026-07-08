@@ -5433,6 +5433,7 @@ html, body {
   align-items: stretch !important;
   justify-content: space-between !important;
   transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  will-change: transform, opacity, box-shadow; /* GPU rendering hint for buttery smooth transitions */
   box-sizing: border-box !important;
   cursor: pointer;
 }
@@ -5451,20 +5452,57 @@ html, body {
   z-index: 10;
 }
 
-/* Hide original List-view rows completely */
-#font-grid.layout-grid-active .card-header-row,
-#font-grid.layout-grid-active .card-footer-row {
+/* Hide original List-view rows completely on normal font cards */
+#font-grid.layout-grid-active .font-card:not(.uploader-card) .card-header-row,
+#font-grid.layout-grid-active .font-card:not(.uploader-card) .card-footer-row {
   display: none !important;
 }
 
-/* Show custom Grid-view header and footer structures */
-#font-grid.layout-grid-active .grid-card-header,
-#font-grid.layout-grid-active .grid-card-footer {
+/* Show custom Grid-view header and footer structures on normal font cards */
+#font-grid.layout-grid-active .font-card:not(.uploader-card) .grid-card-header,
+#font-grid.layout-grid-active .font-card:not(.uploader-card) .grid-card-footer {
   display: flex !important;
 }
 
-/* Specimen rendering inside grid font card */
-#font-grid.layout-grid-active .card-body-row {
+/* Specific uploader card styling in grid view (preventing text/icon misalignment) */
+#font-grid.layout-grid-active .uploader-card {
+  padding: 1.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: stretch !important;
+  min-height: 290px !important;
+  cursor: default !important;
+}
+
+#font-grid.layout-grid-active .uploader-card .card-header-row,
+#font-grid.layout-grid-active .uploader-card .card-footer-row {
+  display: none !important; /* Hide original rows inside uploader */
+}
+
+#font-grid.layout-grid-active .uploader-card .card-body-row.uploader-dropzone {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 100% !important;
+  width: 100% !important;
+  border: 2px dashed var(--trending-border) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.01) !important;
+  padding: 1.5rem !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+[data-theme="light"] #font-grid.layout-grid-active .uploader-card .uploader-dropzone {
+  background: rgba(0, 0, 0, 0.01) !important;
+}
+
+/* Specimen rendering inside normal grid font cards (explicitly excluding uploader) */
+#font-grid.layout-grid-active .font-card:not(.uploader-card) .card-body-row {
   flex: 1 !important;
   display: flex !important;
   align-items: flex-end !important;
