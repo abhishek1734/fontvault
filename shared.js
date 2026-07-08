@@ -202,7 +202,84 @@ function closeAuthModal() {
   }
 }
 
+function renderUniversalNavbar() {
+  const navbar = document.getElementById("navbar");
+  if (!navbar) return;
+
+  navbar.innerHTML = `
+    <a href="index.html" class="logo">FONTVAULT</a>
+    <div class="nav-actions">
+      <div class="search-container" id="search-container">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input type="text" id="search-input" placeholder="Search fonts, categories, designers..." autocomplete="off">
+        <svg id="search-clear-btn" class="search-clear-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        
+        <!-- MYFONTS-STYLE SEARCH DROPDOWN -->
+        <div class="search-dropdown" id="search-dropdown">
+          <div class="search-dropdown-list" id="search-dropdown-list">
+            <!-- Results injected here -->
+          </div>
+          <div class="search-dropdown-footer" id="search-dropdown-footer">
+            See all results for "<span id="search-dropdown-term"></span>" &rarr;
+          </div>
+        </div>
+      </div>
+      <a href="font-pairing.html" class="nav-link" id="nav-font-pairing">Font Pairing</a>
+      <button id="vault-btn" class="nav-btn">
+        My Vault
+      </button>
+      <button id="submit-font-nav-btn" class="nav-btn">
+        Submit a Font
+      </button>
+      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button id="hamburger-btn" class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+    <div id="mobile-menu" class="mobile-menu">
+      <!-- Search inside mobile menu -->
+      <div class="mobile-search-wrap">
+        <div class="mobile-search-input-row">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" id="mobile-search-input" placeholder="Search fonts..." autocomplete="off">
+        </div>
+      </div>
+      <!-- Nav links -->
+      <a href="font-pairing.html" class="mobile-menu-item">Font Pairing</a>
+      <a href="blog.html" class="mobile-menu-item">Blog</a>
+      <a href="collections.html" class="mobile-menu-item">Collections</a>
+      <div class="mobile-menu-divider"></div>
+      <button id="mobile-submit-btn" class="mobile-menu-item">Submit a Font</button>
+      <button id="mobile-login-btn" class="mobile-menu-item accent-item">My Vault</button>
+    </div>
+  `;
+
+  // Dynamically hide Font Pairing tab if we are on the Font Pairing page
+  if (window.location.pathname.includes("font-pairing.html")) {
+    const fontPairingBtn = navbar.querySelector("#nav-font-pairing");
+    if (fontPairingBtn) fontPairingBtn.remove();
+    const mobileFontPairingBtn = navbar.querySelector('.mobile-menu-item[href="font-pairing.html"]');
+    if (mobileFontPairingBtn) mobileFontPairingBtn.remove();
+  }
+}
+
+let sharedEventListenersSetup = false;
 function setupSharedEventListeners() {
+  if (sharedEventListenersSetup) return;
+  sharedEventListenersSetup = true;
+
   const darkToggle = document.getElementById("dark-toggle");
   if (darkToggle) darkToggle.addEventListener("click", toggleDarkMode);
 
@@ -698,4 +775,18 @@ window.toggleFavorite = function(fontId, btnElement) {
   window.addEventListener("resize", handleScroll);
   document.addEventListener("DOMContentLoaded", handleScroll);
   setTimeout(handleScroll, 50);
+})();
+
+// Automatically initialize dynamic navbar and listeners on load
+(function initSharedNavbar() {
+  const runInit = () => {
+    renderUniversalNavbar();
+    setupSharedEventListeners();
+  };
+  
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runInit);
+  } else {
+    runInit();
+  }
 })();
