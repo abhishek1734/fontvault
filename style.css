@@ -718,7 +718,7 @@ header.collapsed {
   color: var(--near-black);
   max-height: calc(100vh - 120px);
   overflow-y: auto;
-  transition: var(--transition-smooth);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
 }
 
 .grid-area {
@@ -2932,7 +2932,7 @@ footer {
   background-color: var(--pure-white);
   box-sizing: border-box;
   border-bottom: 1px solid var(--border-grey);
-  transition: top 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
   margin-bottom: 2rem;
 }
 
