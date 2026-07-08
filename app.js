@@ -721,7 +721,12 @@ function updateLoadMoreBtn(totalFiltered, currentLimit) {
       currentRenderLimit += 30;
       renderGrid(false);
     });
-    el.fontGrid.parentElement.appendChild(btn);
+    const layout = el.fontGrid.closest(".content-layout");
+    if (layout && layout.parentElement) {
+      layout.parentElement.appendChild(btn);
+    } else {
+      el.fontGrid.parentElement.appendChild(btn);
+    }
   } else {
     btn.style.display = "block";
   }

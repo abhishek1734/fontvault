@@ -701,7 +701,8 @@ header.collapsed {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 0;
-  align-items: start;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border-grey);
 }
 
 .sidebar-filters {
