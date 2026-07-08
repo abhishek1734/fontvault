@@ -139,7 +139,7 @@
   <!-- AI FONT FINDER SECTION REMOVED — now on /ai-font-finder.html -->
 
   <!-- TRENDING THIS WEEK -->
-  <section class="trending-section-new" id="trending-section" style="width: 100%; padding: 4rem 3rem 2rem; box-sizing: border-box;">
+  <section class="trending-section-new" id="trending-section" style="width: 100%; padding: 4rem 3rem 0; box-sizing: border-box;">
     <!-- Mood filter chips -->
     <div class="trending-mood-row" style="margin-bottom: 1.5rem; display: flex; gap: 8px; flex-wrap: wrap;">
       <button class="trending-mood-chip active" data-mood="all">All</button>
@@ -371,6 +371,30 @@
                 <input type="number" id="global-size-input" value="120" min="40" max="220">
                 <span>px</span>
                 <span id="global-size-reset" class="size-reset-btn">Reset</span>
+              </div>
+            </div>
+            <!-- View / Layout Toggle -->
+            <div class="toolbar-display-wrap">
+              <span class="display-label">VIEW</span>
+              <div class="display-pill-toggle">
+                <button class="display-toggle-btn active" id="layout-list-btn" title="List View" aria-label="List View">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                </button>
+                <button class="display-toggle-btn" id="layout-grid-btn" title="Grid View" aria-label="Grid View">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>

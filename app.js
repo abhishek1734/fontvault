@@ -1998,6 +1998,9 @@ async function init() {
   
   // Initialize new trending section grid and mood filter
   setupTrendingNew();
+
+  // Initialize display layout toggles (List/Grid)
+  setupLayoutToggles();
 }
 
 // ─────────────────────────────────────────────────
@@ -2054,6 +2057,39 @@ function setupTrendingNew() {
         }
       });
     });
+  });
+}
+
+// ─────────────────────────────────────────────────
+//  DISPLAY LAYOUT VIEW TOGGLES (LIST / GRID)
+// ─────────────────────────────────────────────────
+function setupLayoutToggles() {
+  const listBtn = document.getElementById("layout-list-btn");
+  const gridBtn = document.getElementById("layout-grid-btn");
+  const grid = document.getElementById("font-grid");
+
+  if (!listBtn || !gridBtn || !grid) return;
+
+  // Restore saved layout mode
+  const savedLayout = localStorage.getItem("fontvault-layout") || "list";
+  if (savedLayout === "grid") {
+    grid.classList.add("layout-grid-active");
+    listBtn.classList.remove("active");
+    gridBtn.classList.add("active");
+  }
+
+  listBtn.addEventListener("click", () => {
+    grid.classList.remove("layout-grid-active");
+    gridBtn.classList.remove("active");
+    listBtn.classList.add("active");
+    localStorage.setItem("fontvault-layout", "list");
+  });
+
+  gridBtn.addEventListener("click", () => {
+    grid.classList.add("layout-grid-active");
+    listBtn.classList.remove("active");
+    gridBtn.classList.add("active");
+    localStorage.setItem("fontvault-layout", "grid");
   });
 }
 

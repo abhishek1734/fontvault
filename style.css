@@ -2991,7 +2991,7 @@ footer {
   background: var(--pure-white);
   color: var(--near-black);
   border: 1px solid var(--border-grey);
-  border-radius: 6px;
+  border-radius: 0;
   padding: 5px 28px 5px 12px;
   font-family: var(--font-body);
   font-size: 0.75rem;
@@ -3029,9 +3029,9 @@ footer {
   display: flex;
   align-items: center;
   gap: 2px;
-  background: #f1f3f5;
+  background: var(--off-white);
   padding: 3px;
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid var(--border-grey);
 }
 
@@ -3043,9 +3043,9 @@ footer {
   height: 26px;
   border: none;
   background: transparent;
-  color: #777;
+  color: var(--text-secondary);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0;
   transition: all 0.2s ease;
 }
 
@@ -3055,8 +3055,8 @@ footer {
 
 .display-toggle-btn.active {
   background: var(--pure-white);
-  color: #4f46e5;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  color: var(--near-black);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 /* Dark theme overrides */
@@ -3082,7 +3082,7 @@ footer {
 
 [data-theme="dark"] .display-toggle-btn.active {
   background: #2d2d2d;
-  color: #a5b4fc;
+  color: var(--pure-white);
 }
 
 header.collapsed ~ .main-container .global-preview-bar {
@@ -3122,7 +3122,7 @@ header.collapsed ~ .main-container .global-preview-bar {
   width: 100%;
   padding: 1rem 1.5rem;
   border: 1px solid var(--border-grey);
-  border-radius: 8px;
+  border-radius: 0;
   background-color: var(--pure-white);
   font-family: var(--font-body);
   font-size: 1rem;
@@ -5180,6 +5180,10 @@ html, body {
   --trending-tag-border: rgba(0,0,0,0.08);
 }
 
+.trending-section-new + .main-container {
+  padding-top: 0.5rem !important;
+}
+
 .trending-section-new {
   width: 100%;
   box-sizing: border-box;
@@ -5207,7 +5211,7 @@ html, body {
   flex-wrap: nowrap !important;
   width: max-content !important;
   gap: 0 !important; /* No spacing between cards */
-  padding: 1.5rem 0 3.5rem !important; /* Padding for hover translation floating */
+  padding: 1.25rem 0 2.25rem !important; /* Padding for hover translation floating - reduced bottom spacing */
   animation: scrollMarqueeNew 38s linear infinite;
   will-change: transform;
 }
@@ -5393,6 +5397,124 @@ html, body {
   .trending-new-card {
     flex: 0 0 220px !important; /* Narrower on mobile for peek scrolling */
   }
+}
+
+/* ============================================================
+   DISPLAY LAYOUT: GRID VIEW ACTIVE (MAIN FONT LISTINGS)
+============================================================ */
+#font-grid.layout-grid-active {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 1px !important;
+  background: var(--border-grey) !important;
+  border: 1px solid var(--border-grey) !important;
+  border-radius: 0 !important; /* Sharp corners like trending cards */
+  overflow: hidden !important;
+  width: 100% !important;
+  flex-direction: row !important;
+  margin-top: 1.5rem !important;
+  box-sizing: border-box !important;
+}
+
+#font-grid.layout-grid-active .font-card {
+  background: var(--pure-white) !important; /* Matches site theme surface */
+  padding: 1.5rem 1.5rem 2rem !important;
+  border: none !important;
+  border-radius: 0 !important;
+  min-height: 290px !important;
+  margin: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-shadow: none !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: space-between !important;
+  transition: background 0.2s, box-shadow 0.2s !important;
+  box-sizing: border-box !important;
+}
+
+#font-grid.layout-grid-active .font-card:hover {
+  background: var(--off-white) !important; /* Subtle highlight */
+}
+
+/* Make grid card contents stack and look like trending cards */
+#font-grid.layout-grid-active .card-header-row {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 0.75rem !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+#font-grid.layout-grid-active .card-meta-left {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 4px !important;
+  flex: 1 !important;
+}
+
+#font-grid.layout-grid-active .card-meta-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* Hide the individual card font size slider/range inputs in grid view */
+#font-grid.layout-grid-active .card-size-slider-wrapper {
+  display: none !important;
+}
+
+/* Specimen rendering inside grid font card */
+#font-grid.layout-grid-active .specimen-preview {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  padding: 1rem 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  line-height: 1.1 !important;
+  min-height: 100px !important;
+  font-size: clamp(24px, 4vw, 40px) !important; /* Scale down so preview fits grid card */
+}
+
+/* Footer details: designer + tags */
+#font-grid.layout-grid-active .card-footer-row {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  margin-top: 1rem !important;
+  width: 100% !important;
+  padding: 0 !important;
+  border-top: none !important;
+}
+
+#font-grid.layout-grid-active .card-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+#font-grid.layout-grid-active .font-tags-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+/* Dark mode adjustments for main active grid */
+[data-theme="dark"] #font-grid.layout-grid-active {
+  background: var(--border-grey) !important;
+  border-color: var(--border-grey) !important;
+}
+[data-theme="dark"] #font-grid.layout-grid-active .font-card {
+  background: var(--trending-surface) !important;
+}
+[data-theme="dark"] #font-grid.layout-grid-active .font-card:hover {
+  background: var(--trending-surface-2) !important;
 }
 
 
