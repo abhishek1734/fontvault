@@ -1995,6 +1995,60 @@ async function init() {
 
   // Collection cards
   setupCollectionCards();
+  
+  // Initialize new trending section grid and mood filter
+  setupTrendingNew();
+}
+
+// ─────────────────────────────────────────────────
+//  NEW TRENDING SECTION BINDINGS & FILTERING
+// ─────────────────────────────────────────────────
+function setupTrendingNew() {
+  const cards = document.querySelectorAll(".trending-new-card");
+  const chips = document.querySelectorAll(".trending-mood-chip");
+
+  // Click on cards to open detail panel
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      const fontId = card.dataset.id;
+      if (!fontId) return;
+      
+      let font = fontsData.find(f => f.id === fontId);
+      if (!font) {
+        // Fallback case-insensitive / space match
+        font = fontsData.find(f => f.name.toLowerCase() === fontId.replace(/-/g, ' '));
+      }
+
+      if (font) {
+        openDetailPanel(font);
+      } else {
+        // Direct redirection fallback
+        window.location.href = `font.html?id=${fontId}`;
+      }
+    });
+  });
+
+  // Mood filter chip toggles & list filtering
+  chips.forEach(chip => {
+    chip.addEventListener("click", () => {
+      chips.forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+
+      const mood = chip.dataset.mood;
+      if (!mood) return;
+
+      cards.forEach(card => {
+        const tags = Array.from(card.querySelectorAll(".trending-new-tag"))
+          .map(t => t.textContent.trim().toLowerCase());
+
+        if (mood === "all" || tags.includes(mood)) {
+          card.style.display = "flex";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+  });
 }
 
 init();

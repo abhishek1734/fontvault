@@ -31,7 +31,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Space+Grotesk:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&family=Lora:ital,wght@0,400;1,400;1,600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=5.29">
   <script src="config.js?v=5.25"></script>
@@ -139,15 +139,198 @@
   <!-- AI FONT FINDER SECTION REMOVED — now on /ai-font-finder.html -->
 
   <!-- TRENDING THIS WEEK -->
-  <section class="trending-section" id="trending-section">
-    <div class="trending-header">
-      <h2 class="section-title" style="margin-bottom:0;">Trending This Week</h2>
-      <span class="trending-badge">Live</span>
+  <section class="trending-section-new" id="trending-section" style="max-width: 1400px; margin: 0 auto; padding: 4rem 1.5rem 2rem;">
+    <!-- Mood filter chips -->
+    <div class="trending-mood-row" style="margin-bottom: 1.5rem; display: flex; gap: 8px; flex-wrap: wrap;">
+      <button class="trending-mood-chip active" data-mood="all">All</button>
+      <button class="trending-mood-chip" data-mood="editorial">Editorial</button>
+      <button class="trending-mood-chip" data-mood="minimal">Minimal</button>
+      <button class="trending-mood-chip" data-mood="display">Display</button>
+      <button class="trending-mood-chip" data-mood="artisan">Artisan</button>
+      <button class="trending-mood-chip" data-mood="corporate">Corporate</button>
+      <button class="trending-mood-chip" data-mood="playful">Playful</button>
     </div>
-    <div class="trending-outer" id="trending-outer">
-      <div class="trending-track" id="trending-strip">
-        <!-- Cards injected + duplicated by JS -->
+
+    <!-- Section header -->
+    <div class="trending-section-header" style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2rem;">
+      <span class="trending-section-title" style="font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+        <span class="trending-live-dot" style="width: 6px; height: 6px; border-radius: 50%; background: #4CAF82; box-shadow: 0 0 0 3px rgba(76,175,130,0.2); display: inline-block; animation: pulseLiveDot 2s ease-in-out infinite;"></span>
+        Trending This Week
+      </span>
+      <a href="#main-content" class="trending-see-all" style="font-size: 12px; color: var(--text-muted); text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s;">View all fonts &rarr;</a>
+    </div>
+
+    <!-- Font grid -->
+    <div class="trending-new-grid">
+
+      <!-- 1. Playfair Display -->
+      <div class="trending-new-card" data-id="playfair-display">
+        <div class="trending-new-meta">
+          <span class="trending-new-rank">No. 001</span>
+          <span class="trending-new-badge free">Free</span>
+        </div>
+        <div class="trending-new-specimen">
+          <span class="s-playfair">Aa <em>Bb</em></span>
+        </div>
+        <div class="trending-new-footer">
+          <p class="trending-new-name">Playfair Display</p>
+          <p class="trending-new-foundry">Claus Eggers Sørensen</p>
+          <div class="trending-new-tag-row">
+            <span class="trending-new-tag">Editorial</span>
+            <span class="trending-new-tag">Serif</span>
+            <span class="trending-new-tag">Display</span>
+          </div>
+        </div>
+        <span class="trending-new-cta">Preview &rarr;</span>
       </div>
+
+      <!-- 2. Cormorant Garamond -->
+      <div class="trending-new-card" data-id="cormorant-garamond">
+        <div class="trending-new-meta">
+          <span class="trending-new-rank">No. 002</span>
+          <span class="trending-new-badge free">Free</span>
+        </div>
+        <div class="trending-new-specimen">
+          <span class="s-cormorant">Luxury</span>
+        </div>
+        <div class="trending-new-footer">
+          <p class="trending-new-name">Cormorant Garamond</p>
+          <p class="trending-new-foundry">Christian Thalmann</p>
+          <div class="trending-new-tag-row">
+            <span class="trending-new-tag">Artisan</span>
+            <span class="trending-new-tag">Serif</span>
+            <span class="trending-new-tag">Italic</span>
+          </div>
+        </div>
+        <span class="trending-new-cta">Preview &rarr;</span>
+      </div>
+
+      <!-- 3. Syne -->
+      <div class="trending-new-card" data-id="syne">
+        <div class="trending-new-meta">
+          <span class="trending-new-rank">No. 003</span>
+          <span class="trending-new-badge free">Free</span>
+        </div>
+        <div class="trending-new-specimen">
+          <span class="s-syne">Vault</span>
+        </div>
+        <div class="trending-new-footer">
+          <p class="trending-new-name">Syne</p>
+          <p class="trending-new-foundry">Bonjour Monde</p>
+          <div class="trending-new-tag-row">
+            <span class="trending-new-tag">Display</span>
+            <span class="trending-new-tag">Sans-serif</span>
+            <span class="trending-new-tag">Bold</span>
+          </div>
+        </div>
+        <span class="trending-new-cta">Preview &rarr;</span>
+      </div>
+
+      <!-- 4. Fraunces -->
+      <div class="trending-new-card" data-id="fraunces">
+        <div class="trending-new-meta">
+          <span class="trending-new-rank">No. 004</span>
+          <span class="trending-new-badge free">Free</span>
+        </div>
+        <div class="trending-new-specimen">
+          <span class="s-fraunces">Craft</span>
+        </div>
+        <div class="trending-new-footer">
+          <p class="trending-new-name">Fraunces</p>
+          <p class="trending-new-foundry">Undercase Type</p>
+          <div class="trending-new-tag-row">
+            <span class="trending-new-tag">Artisan</span>
+            <span class="trending-new-tag">Serif</span>
+            <span class="trending-new-tag">Variable</span>
+          </div>
+        </div>
+        <span class="trending-new-cta">Preview &rarr;</span>
+      </div>
+
+      <!-- 5. Space Grotesk -->
+      <div class="trending-new-card" data-id="space-grotesk">
+        <div class="trending-new-meta">
+          <span class="trending-new-rank">No. 005</span>
+          <span class="trending-new-badge free">Free</span>
+        </div>
+        <div class="trending-new-specimen">
+          <span class="s-space">Interface</span>
+        </div>
+        <div class="trending-new-footer">
+          <p class="trending-new-name">Space Grotesk</p>
+          <p class="trending-new-foundry">Florian Karsten</p>
+          <div class="trending-new-tag-row">
+            <span class="trending-new-tag">Minimal</span>
+            <span class="trending-new-tag">Sans-serif</span>
+            <span class="trending-new-tag">UI</span>
+          </div>
+        </div>
+        <span class="trending-new-cta">Preview &rarr;</span>
+      </div>
+
+      <!-- 6. Lora -->
+      <div class="trending-new-card" data-id="lora">
+        <div class="trending-new-meta">
+          <span class="trending-new-rank">No. 006</span>
+          <span class="trending-new-badge free">Free</span>
+        </div>
+        <div class="trending-new-specimen">
+          <span class="s-lora">Story</span>
+        </div>
+        <div class="trending-new-footer">
+          <p class="trending-new-name">Lora</p>
+          <p class="trending-new-foundry">Cyreal</p>
+          <div class="trending-new-tag-row">
+            <span class="trending-new-tag">Editorial</span>
+            <span class="trending-new-tag">Serif</span>
+            <span class="trending-new-tag">Body</span>
+          </div>
+        </div>
+        <span class="trending-new-cta">Preview &rarr;</span>
+      </div>
+
+      <!-- 7. Libre Baskerville -->
+      <div class="trending-new-card" data-id="libre-baskerville">
+        <div class="trending-new-meta">
+          <span class="trending-new-rank">No. 007</span>
+          <span class="trending-new-badge free">Free</span>
+        </div>
+        <div class="trending-new-specimen">
+          <span class="s-baskerville">Bold</span>
+        </div>
+        <div class="trending-new-footer">
+          <p class="trending-new-name">Libre Baskerville</p>
+          <p class="trending-new-foundry">Pablo Impallari</p>
+          <div class="trending-new-tag-row">
+            <span class="trending-new-tag">Corporate</span>
+            <span class="trending-new-tag">Serif</span>
+            <span class="trending-new-tag">Classic</span>
+          </div>
+        </div>
+        <span class="trending-new-cta">Preview &rarr;</span>
+      </div>
+
+      <!-- 8. DM Sans -->
+      <div class="trending-new-card" data-id="dm-sans">
+        <div class="trending-new-meta">
+          <span class="trending-new-rank">No. 008</span>
+          <span class="trending-new-badge free">Free</span>
+        </div>
+        <div class="trending-new-specimen">
+          <span class="s-dm">Modern</span>
+        </div>
+        <div class="trending-new-footer">
+          <p class="trending-new-name">DM Sans</p>
+          <p class="trending-new-foundry">Colophon Foundry</p>
+          <div class="trending-new-tag-row">
+            <span class="trending-new-tag">Minimal</span>
+            <span class="trending-new-tag">Sans-serif</span>
+            <span class="trending-new-tag">Geometric</span>
+          </div>
+        </div>
+        <span class="trending-new-cta">Preview &rarr;</span>
+      </div>
+
     </div>
   </section>
 
