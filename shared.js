@@ -603,6 +603,32 @@ function setupSharedEventListeners() {
       openAuthModal();
     });
   }
+
+  // Mobile search input — redirect to homepage with query, or wire to main search
+  const mobileSearchInput = document.getElementById("mobile-search-input");
+  if (mobileSearchInput) {
+    mobileSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const q = mobileSearchInput.value.trim();
+        if (!q) return;
+        // If main search input exists on this page, sync and trigger it
+        const mainSearch = document.getElementById("search-input");
+        if (mainSearch) {
+          mainSearch.value = q;
+          mainSearch.dispatchEvent(new Event("input", { bubbles: true }));
+          // Close mobile menu
+          if (mobileMenu && hamburgerBtn) {
+            mobileMenu.classList.remove("open");
+            hamburgerBtn.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
+          }
+        } else {
+          // Navigate to home with search query
+          window.location.href = `index.html?search=${encodeURIComponent(q)}`;
+        }
+      }
+    });
+  }
 }
 
 // Global Favorites Logic

@@ -86,11 +86,30 @@
       <a href="index.html" class="nav-link">Home</a>
       <a href="font-pairing.html" class="nav-link">Font Pairing</a>
       <a href="blog.html" class="nav-link">Blog</a>
-      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode">
+      <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
+      <button id="hamburger-btn" class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+    <div id="mobile-menu" class="mobile-menu">
+      <div class="mobile-search-wrap">
+        <div class="mobile-search-input-row">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" id="mobile-search-input" placeholder="Search fonts..." autocomplete="off">
+        </div>
+      </div>
+      <a href="index.html" class="mobile-menu-item">Home</a>
+      <a href="font-pairing.html" class="mobile-menu-item">Font Pairing</a>
+      <a href="blog.html" class="mobile-menu-item active">Blog</a>
+      <a href="collections.html" class="mobile-menu-item">Collections</a>
     </div>
   </header>
 
