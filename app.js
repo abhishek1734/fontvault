@@ -276,7 +276,7 @@ function appendFontCard(font, delay, index) {
     <div class="grid-card-header" style="display: none; justify-content: space-between; align-items: center; width: 100%;">
       <span class="grid-card-rank" style="font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--text-secondary); opacity: 0.6; letter-spacing: 0.08em;">${rankStr}</span>
       <div style="display: flex; align-items: center; gap: 10px;">
-        <span class="grid-card-badge ${font.availability.toLowerCase().includes('free') ? 'free' : ''}" style="font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; border: 0.5px solid var(--trending-tag-border); background: var(--trending-tag-bg); color: var(--text-secondary);">${font.availability}</span>
+        <span class="grid-card-badge ${font.availability.toLowerCase().includes('free') ? 'free' : ''}">${font.availability}</span>
         <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="background:none; border:none; cursor:pointer; color:${inFavorites ? 'var(--signal-red)' : 'var(--text-secondary)'}; padding:0; display:flex; align-items:center; transition: color 0.2s;">
           <svg class="heart-icon" width="14" height="14" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
@@ -301,7 +301,7 @@ function appendFontCard(font, delay, index) {
         </div>
         <span class="meta-item">${font.stylesCount || 1} Style${(font.stylesCount || 1) > 1 ? 's' : ''}</span>
         <span class="meta-item">${font.variants ? 'Variable' : 'Static'}</span>
-        <span class="meta-item">${font.availability}</span>
+        <span class="meta-item availability-badge ${font.availability.toLowerCase().includes('free') ? 'free' : ''}">${font.availability}</span>
         
         <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="background:none; border:none; cursor:pointer; color:${inFavorites ? 'var(--signal-red)' : 'var(--text-secondary)'}; padding:0; display:flex; align-items:center;">
           <svg class="heart-icon" width="16" height="16" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">

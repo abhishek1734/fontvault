@@ -5526,5 +5526,33 @@ html, body {
   display: inline !important;
 }
 
+/* Availability Pill Badges (Grid and List View) */
+.availability-badge,
+.grid-card-badge {
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  padding: 3px 8px !important;
+  border-radius: 20px !important;
+  border: 0.5px solid var(--trending-tag-border) !important;
+  background: var(--trending-tag-bg) !important;
+  color: var(--text-secondary) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  height: fit-content !important;
+}
+
+.availability-badge.free,
+.grid-card-badge.free,
+.trending-new-badge.free {
+  background: rgba(76, 175, 130, 0.08) !important;
+  border-color: rgba(76, 175, 130, 0.3) !important;
+  color: #4caf82 !important;
+}
+
 
 
