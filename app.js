@@ -2004,6 +2004,12 @@ async function init() {
 //  NEW TRENDING SECTION BINDINGS & FILTERING
 // ─────────────────────────────────────────────────
 function setupTrendingNew() {
+  const grid = document.querySelector(".trending-new-grid");
+  if (grid) {
+    // Duplicate innerHTML to create a seamless infinite marquee scroll loop
+    grid.innerHTML += grid.innerHTML;
+  }
+
   const cards = document.querySelectorAll(".trending-new-card");
   const chips = document.querySelectorAll(".trending-mood-chip");
 
