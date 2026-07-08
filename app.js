@@ -1138,11 +1138,9 @@ function setupEventListeners() {
   // Compare overlay — close
   el.compareCloseBtn?.addEventListener("click", closeComparison);
 
-  // Scroll — navbar collapse + progress bar
+  // Scroll — progress bar
   window.addEventListener("scroll", () => {
     updateScrollProgress();
-    const navbar = document.getElementById("navbar");
-    if (navbar) navbar.classList.toggle("collapsed", window.scrollY > 80);
   }, { passive: true });
 
   // Mobile Collapsible Filters

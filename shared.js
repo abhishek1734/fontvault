@@ -678,6 +678,9 @@ window.toggleFavorite = function(fontId, btnElement) {
   if (!navbar) return;
   
   const handleScroll = () => {
+    // Height collapse globally on scroll
+    navbar.classList.toggle("collapsed", window.scrollY > 80);
+
     const hero = document.querySelector(".hero, .aiff-hero");
     if (!hero) {
       navbar.classList.add("navbar-scrolled");
