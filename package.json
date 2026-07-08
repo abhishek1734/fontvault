@@ -1,0 +1,16 @@
+{
+  "name": "fontvault",
+  "version": "1.0.0",
+  "description": "Premium Font Discovery and Licensing",
+  "main": "app.js",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "build": "echo 'No build step required for static site'"
+  },
+  "keywords": ["fonts", "typography", "design"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/speed-insights": "^1.0.12"
+  }
+}

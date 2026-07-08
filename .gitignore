@@ -6,3 +6,4 @@ gemini_usage.json
 test_gemini.html
 test_origin.py
 test_google_key.py
+node_modules/
