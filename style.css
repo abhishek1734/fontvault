@@ -1569,16 +1569,18 @@ footer {
     padding-left: 0 !important;
   }
   .content-layout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
   }
   .sidebar-filters {
-    position: relative;
-    top: 0 !important;
-    max-height: none;
-    padding: 1.2rem 0;
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 76px !important;
+    max-height: calc(100vh - 100px) !important;
+    overflow-y: auto;
+    padding: 0 0 2rem 1.5rem !important;
     border-right: none !important;
-    border-bottom: 1px solid var(--border-grey) !important;
+    border-bottom: none !important;
   }
   .masonry-grid {
     flex-direction: column;
@@ -4958,10 +4960,12 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hove
    Desktop (>1024px) is NEVER affected here.
 ============================================================ */
 
-/* Global safety guard against horizontal scroll */
+/* Prevent horizontal overflow on sections without breaking root sticky positioning context */
 html, body {
-  max-width: 100% !important;
-  overflow-x: hidden !important;
+  max-width: 100%;
+}
+.main-container, .hero, footer, header#navbar, #mobile-menu {
+  overflow-x: hidden;
 }
 
 /* ── Tablet (≤768px) ── */
@@ -5004,8 +5008,11 @@ html, body {
     padding: 2rem 1.25rem !important;
   }
   .global-preview-bar {
+    position: -webkit-sticky !important;
+    position: sticky !important;
     padding: 1rem 1.25rem !important;
     top: 60px !important;
+    z-index: 180 !important;
   }
 
   /* Font list / Masonry grid single column */
@@ -5085,8 +5092,12 @@ html, body {
 
   /* Global preview bar layout & controls on small mobile */
   .global-preview-bar {
+    position: -webkit-sticky !important;
+    position: sticky !important;
     padding: 0.75rem 1rem !important;
     gap: 0.75rem !important;
+    top: 56px !important;
+    z-index: 180 !important;
   }
   .toolbar-controls-group {
     flex-direction: column !important;
