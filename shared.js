@@ -288,8 +288,10 @@ function setupSharedEventListeners() {
   logos.forEach(logo => {
     logo.addEventListener("click", (e) => {
       e.preventDefault();
-      // If we are on font.html, navigate back to index.html
-      if (window.location.pathname.includes('font.html')) {
+      const isHomePage = window.location.pathname === '/' || 
+                         window.location.pathname.endsWith('index.html') ||
+                         window.location.pathname === '';
+      if (!isHomePage) {
         window.location.href = 'index.html';
       } else {
         if (typeof clearAllFilters === "function") clearAllFilters();
