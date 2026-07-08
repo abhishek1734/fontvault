@@ -255,7 +255,7 @@ const cardObserver = new IntersectionObserver((entries, observer) => {
   });
 }, { root: null, rootMargin: '50px', threshold: 0.1 });
 
-function appendFontCard(font, delay) {
+function appendFontCard(font, delay, index) {
   const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT" }[font.provider] || font.provider.toUpperCase();
   const isInCompare = compareSet.has(font.id);
 
@@ -269,9 +269,23 @@ function appendFontCard(font, delay) {
   const titleText = globalPreviewText || font.name;
   const inFavorites = window.favoritesSet.has(font.id);
   const currentGlobalSize = document.getElementById("font-size-slider")?.value || 120;
+  const rankStr = `No. ${String(index || 1).padStart(3, '0')}`;
 
   card.innerHTML = `
-    <!-- Top Row: Name and Meta -->
+    <!-- GRID VIEW SPECIFIC HEADER (Shown only in grid layout active) -->
+    <div class="grid-card-header" style="display: none; justify-content: space-between; align-items: center; width: 100%;">
+      <span class="grid-card-rank" style="font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--text-secondary); opacity: 0.6; letter-spacing: 0.08em;">${rankStr}</span>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="grid-card-badge ${font.availability.toLowerCase().includes('free') ? 'free' : ''}" style="font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; border: 0.5px solid var(--trending-tag-border); background: var(--trending-tag-bg); color: var(--text-secondary);">${font.availability}</span>
+        <button class="favorite-add-btn ${inFavorites ? 'active' : ''}" title="${inFavorites ? 'Remove from Vault' : 'Save to Vault'}" data-id="${font.id}" onclick="event.stopPropagation(); toggleFavorite('${font.id}', this)" style="background:none; border:none; cursor:pointer; color:${inFavorites ? 'var(--signal-red)' : 'var(--text-secondary)'}; padding:0; display:flex; align-items:center; transition: color 0.2s;">
+          <svg class="heart-icon" width="14" height="14" viewBox="0 0 24 24" fill="${inFavorites ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Top Row: Name and Meta (List View) -->
     <div class="card-header-row">
       <span class="font-name-label" style="font-family:${fam},var(--font-display); font-size:1.2rem; opacity: 1; text-transform: none; letter-spacing: normal;">${font.name}</span>
       <div class="card-meta-right">
@@ -307,7 +321,7 @@ function appendFontCard(font, delay) {
       </div>
     </div>
 
-    <!-- Bottom Row: Foundry and View Family -->
+    <!-- Bottom Row: Foundry and View Family (List View) -->
     <div class="card-footer-row">
       <span class="foundry-label">by ${font.foundry || font.designer || 'Independent'} &middot; <span style="opacity:0.6;font-family:var(--font-mono);">${providerLabel}</span></span>
       <div class="card-footer-right" style="display:flex; align-items:center; gap:1rem;">
@@ -332,6 +346,15 @@ function appendFontCard(font, delay) {
         </a>
       </div>
     </div>
+
+    <!-- GRID VIEW SPECIFIC FOOTER (Shown only in grid layout active) -->
+    <div class="grid-card-footer" style="display: none; width: 100%; flex-direction: column; gap: 4px;">
+      <p class="grid-card-name" style="font-family:${fam},var(--font-display); font-size: 14px; font-weight: 600; color: var(--near-black); margin-bottom: 2px;">${font.name}</p>
+      <p class="grid-card-foundry" style="font-size: 11px; color: var(--text-secondary); opacity: 0.7; margin-bottom: 10px;">by ${font.foundry || font.designer || 'Independent'}</p>
+      <div class="grid-card-tags-row" style="display: flex; gap: 5px; flex-wrap: wrap;">
+        ${(font.tags || []).map(t => `<span class="grid-card-tag" style="font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; color: var(--text-secondary); opacity: 0.75; background: var(--trending-tag-bg); border: 0.5px solid var(--trending-tag-border); padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em;">${t}</span>`).join('')}
+      </div>
+    </div>
   `;
 
   // Compare add/remove button
@@ -347,6 +370,18 @@ function appendFontCard(font, delay) {
       e.stopPropagation();
     });
   }
+
+  // Navigation on card click when in grid view
+  card.addEventListener("click", e => {
+    const grid = document.getElementById("font-grid");
+    if (grid && grid.classList.contains("layout-grid-active")) {
+      // Don't trigger navigation if user clicked inside form controls or buttons
+      if (e.target.closest("button") || e.target.closest("input") || e.target.closest("a") || e.target.closest("[contenteditable]")) {
+        return;
+      }
+      openDetailPanel(font);
+    }
+  });
 
   // Inline editing on card preview text
   const previewTextEl = card.querySelector(".huge-preview-text");
@@ -662,7 +697,7 @@ function renderGrid(resetLimit = true) {
   }
 
   const toRender = filtered.slice(0, currentRenderLimit);
-  toRender.forEach((font, i) => appendFontCard(font, i));
+  toRender.forEach((font, i) => appendFontCard(font, i, i + 1));
   updateLoadMoreBtn(filtered.length, currentRenderLimit);
 }
 

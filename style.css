@@ -5404,10 +5404,10 @@ html, body {
 ============================================================ */
 #font-grid.layout-grid-active {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important; /* Slightly increased width */
   gap: 1px !important;
-  background: var(--border-grey) !important;
-  border: 1px solid var(--border-grey) !important;
+  background: var(--trending-border) !important;
+  border: 1px solid var(--trending-border) !important;
   border-radius: 0 !important; /* Sharp corners like trending cards */
   overflow: hidden !important;
   width: 100% !important;
@@ -5417,104 +5417,77 @@ html, body {
 }
 
 #font-grid.layout-grid-active .font-card {
-  background: var(--pure-white) !important; /* Matches site theme surface */
+  background: var(--trending-surface) !important; /* Unified surface token */
   padding: 1.5rem 1.5rem 2rem !important;
   border: none !important;
+  border-right: 1px solid var(--trending-border) !important;
+  border-bottom: 1px solid var(--trending-border) !important;
   border-radius: 0 !important;
   min-height: 290px !important;
   margin: 0 !important;
-  transform: none !important;
   width: 100% !important;
   max-width: 100% !important;
   box-shadow: none !important;
+  display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
   justify-content: space-between !important;
-  transition: background 0.2s, box-shadow 0.2s !important;
+  transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
   box-sizing: border-box !important;
+  cursor: pointer;
+}
+
+/* Hover Dimming Interactions matching trending marquee */
+#font-grid.layout-grid-active:hover .font-card:not(:hover) {
+  opacity: 0.55;
+  transform: scale(0.97) !important;
 }
 
 #font-grid.layout-grid-active .font-card:hover {
-  background: var(--off-white) !important; /* Subtle highlight */
+  background: var(--trending-surface-2) !important;
+  opacity: 1 !important;
+  transform: translateY(-6px) scale(1.02) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important;
+  z-index: 10;
 }
 
-/* Make grid card contents stack and look like trending cards */
-#font-grid.layout-grid-active .card-header-row {
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: space-between !important;
-  align-items: flex-start !important;
-  margin-bottom: 0.75rem !important;
-  width: 100% !important;
-  padding: 0 !important;
-}
-
-#font-grid.layout-grid-active .card-meta-left {
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 4px !important;
-  flex: 1 !important;
-}
-
-#font-grid.layout-grid-active .card-meta-right {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-}
-
-/* Hide the individual card font size slider/range inputs in grid view */
-#font-grid.layout-grid-active .card-size-slider-wrapper {
+/* Hide original List-view rows completely */
+#font-grid.layout-grid-active .card-header-row,
+#font-grid.layout-grid-active .card-footer-row {
   display: none !important;
 }
 
+/* Show custom Grid-view header and footer structures */
+#font-grid.layout-grid-active .grid-card-header,
+#font-grid.layout-grid-active .grid-card-footer {
+  display: flex !important;
+}
+
 /* Specimen rendering inside grid font card */
-#font-grid.layout-grid-active .specimen-preview {
+#font-grid.layout-grid-active .card-body-row {
   flex: 1 !important;
   display: flex !important;
   align-items: flex-end !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#font-grid.layout-grid-active .huge-preview-text {
+  width: 100% !important;
+  border: none !important;
   padding: 1rem 0 !important;
   margin: 0 !important;
-  border: none !important;
   overflow: hidden !important;
   line-height: 1.1 !important;
   min-height: 100px !important;
   font-size: clamp(24px, 4vw, 40px) !important; /* Scale down so preview fits grid card */
 }
 
-/* Footer details: designer + tags */
-#font-grid.layout-grid-active .card-footer-row {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 8px !important;
-  margin-top: 1rem !important;
-  width: 100% !important;
-  padding: 0 !important;
-  border-top: none !important;
-}
-
-#font-grid.layout-grid-active .card-info {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-}
-
-#font-grid.layout-grid-active .font-tags-row {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 6px !important;
-}
-
 /* Dark mode adjustments for main active grid */
 [data-theme="dark"] #font-grid.layout-grid-active {
-  background: var(--border-grey) !important;
-  border-color: var(--border-grey) !important;
-}
-[data-theme="dark"] #font-grid.layout-grid-active .font-card {
-  background: var(--trending-surface) !important;
-}
-[data-theme="dark"] #font-grid.layout-grid-active .font-card:hover {
-  background: var(--trending-surface-2) !important;
+  background: var(--trending-border) !important;
+  border-color: var(--trending-border) !important;
 }
 
 
