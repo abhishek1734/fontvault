@@ -1,3 +1,4 @@
+# Allow all crawlers
 User-agent: *
 Allow: /
 Disallow: /admin.html
@@ -9,5 +10,22 @@ Disallow: /generate_fonts.js
 Disallow: /generate_sitemap.js
 Disallow: /test_*.py
 Disallow: /test_*.html
+
+# Explicitly allow OpenAI crawlers (used by ChatGPT browsing)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Explicitly allow Bing/Microsoft crawlers
+User-agent: Bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
 
 Sitemap: https://fontvault.vercel.app/sitemap.xml
