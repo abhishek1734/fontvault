@@ -355,6 +355,8 @@ function appendFontCard(font, delay, index) {
         ${(font.tags || []).map(t => `<span class="grid-card-tag" style="font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; color: var(--text-secondary); opacity: 0.75; background: var(--trending-tag-bg); border: 0.5px solid var(--trending-tag-border); padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em;">${t}</span>`).join('')}
       </div>
     </div>
+    <!-- Hover CTA (Grid view only) -->
+    <span class="grid-card-cta" style="display: none; position: absolute; bottom: 1.5rem; right: 1.5rem; font-family: var(--font-mono); font-size: 11px; color: var(--trending-accent); opacity: 0; transition: opacity 0.2s; font-weight: 600; pointer-events: none;">Preview &rarr;</span>
   `;
 
   // Compare add/remove button
@@ -2042,12 +2044,6 @@ async function init() {
 //  NEW TRENDING SECTION BINDINGS & FILTERING
 // ─────────────────────────────────────────────────
 function setupTrendingNew() {
-  const grid = document.querySelector(".trending-new-grid");
-  if (grid) {
-    // Duplicate innerHTML to create a seamless infinite marquee scroll loop
-    grid.innerHTML += grid.innerHTML;
-  }
-
   const cards = document.querySelectorAll(".trending-new-card");
   const chips = document.querySelectorAll(".trending-mood-chip");
 

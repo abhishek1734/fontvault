@@ -5195,9 +5195,6 @@ html, body {
   overflow: hidden;
   width: 100%;
   position: relative;
-  /* Fade edges on the cards row only */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
 }
 
 @keyframes pulseLiveDot {
@@ -5205,25 +5202,16 @@ html, body {
   50% { box-shadow: 0 0 0 5px rgba(76,175,130,0.1); }
 }
 
-/* ── Grid (Infinite Scrolling Marquee Track) ── */
+/* ── Grid (Static rounded grid container, flush cards) ── */
 .trending-new-grid {
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  width: max-content !important;
-  gap: 0 !important; /* No spacing between cards */
-  padding: 1.25rem 0 2.25rem !important; /* Padding for hover translation floating - reduced bottom spacing */
-  animation: scrollMarqueeNew 38s linear infinite;
-  will-change: transform;
-}
-
-@keyframes scrollMarqueeNew {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-50%, 0, 0); }
-}
-
-/* Pause marquee animation on hovering the cards track */
-.trending-new-grid:hover {
-  animation-play-state: paused;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+  gap: 1px !important; /* Continuous grid separator */
+  background: var(--trending-border) !important;
+  border: 1px solid var(--trending-border) !important;
+  border-radius: 12px !important; /* Rounded corners for the container box */
+  overflow: hidden !important;
+  width: 100% !important;
 }
 
 /* ── Card ── */
@@ -5234,27 +5222,18 @@ html, body {
   flex-direction: column;
   gap: 1rem;
   cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
   min-height: 290px;
-  flex: 0 0 250px !important; /* Keep cards compact at 250px so more fit on 1 row! */
   border: none !important;
-  border-right: 1px solid var(--trending-border) !important; /* Border between cards */
-  border-radius: 0 !important; /* Sharp corners */
-}
-
-/* Dim non-hovered cards ONLY when hovering the cards track itself */
-.trending-new-grid:hover .trending-new-card:not(:hover) {
-  opacity: 0.55;
-  transform: scale(0.97);
+  border-right: 1px solid var(--trending-border) !important;
+  border-bottom: 1px solid var(--trending-border) !important;
+  border-radius: 0 !important; /* Sharp flush corners */
+  transition: background-color 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  will-change: background-color;
 }
 
 .trending-new-card:hover {
-  background: var(--trending-surface-2) !important;
-  opacity: 1 !important;
-  transform: translateY(-6px) scale(1.02) !important;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important;
-  z-index: 10;
+  background: var(--trending-surface-2) !important; /* Smooth color shift, no scale/translate */
 }
 .trending-new-card:hover .trending-new-cta {
   opacity: 1;
@@ -5432,24 +5411,18 @@ html, body {
   flex-direction: column !important;
   align-items: stretch !important;
   justify-content: space-between !important;
-  transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-  will-change: transform, opacity, box-shadow; /* GPU rendering hint for buttery smooth transitions */
+  transition: background-color 0.25s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  will-change: background-color; /* Smooth performance hint */
   box-sizing: border-box !important;
   cursor: pointer;
 }
 
-/* Hover Dimming Interactions matching trending marquee */
-#font-grid.layout-grid-active:hover .font-card:not(:hover) {
-  opacity: 0.55;
-  transform: scale(0.97) !important;
-}
-
 #font-grid.layout-grid-active .font-card:hover {
   background: var(--trending-surface-2) !important;
+}
+
+#font-grid.layout-grid-active .font-card:hover .grid-card-cta {
   opacity: 1 !important;
-  transform: translateY(-6px) scale(1.02) !important;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important;
-  z-index: 10;
 }
 
 /* Hide original List-view rows completely on normal font cards */
@@ -5526,6 +5499,10 @@ html, body {
 [data-theme="dark"] #font-grid.layout-grid-active {
   background: var(--trending-border) !important;
   border-color: var(--trending-border) !important;
+}
+
+#font-grid.layout-grid-active .grid-card-cta {
+  display: inline !important;
 }
 
 
