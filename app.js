@@ -584,7 +584,16 @@ function setupFontUploader() {
   const input = document.getElementById("hidden-font-input");
   if (!card || !input) return;
 
-  card.addEventListener("click", () => {
+  // Prevent document-level drag interference (browser won't navigate away on drop)
+  ["dragenter", "dragover", "dragleave", "drop"].forEach(eventName => {
+    document.addEventListener(eventName, e => e.preventDefault(), false);
+  });
+
+  let isDragging = false; // track drag state to avoid card click firing after a drop
+
+  // Click on card opens file browser — but only when NOT ending a drag
+  card.addEventListener("click", (e) => {
+    if (isDragging) return;
     input.click();
   });
 
@@ -597,29 +606,37 @@ function setupFontUploader() {
   const dropzone = card.querySelector(".uploader-dropzone");
   if (!dropzone) return;
 
-  ["dragenter", "dragover"].forEach(eventName => {
-    dropzone.addEventListener(eventName, e => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropzone.classList.add("dragover");
-    }, false);
-  });
+  dropzone.addEventListener("dragenter", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    isDragging = true;
+    dropzone.classList.add("dragover");
+  }, false);
 
-  ["dragleave", "drop"].forEach(eventName => {
-    dropzone.addEventListener(eventName, e => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropzone.classList.remove("dragover");
-    }, false);
-  });
+  dropzone.addEventListener("dragover", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    isDragging = true;
+    dropzone.classList.add("dragover");
+  }, false);
+
+  dropzone.addEventListener("dragleave", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzone.classList.remove("dragover");
+  }, false);
 
   dropzone.addEventListener("drop", e => {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    if (files.length > 0) {
+    e.preventDefault();
+    e.stopPropagation();
+    dropzone.classList.remove("dragover");
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
       handleFontFile(files[0]);
     }
-  });
+    // Reset isDragging after a tick so the card click doesn't fire
+    setTimeout(() => { isDragging = false; }, 100);
+  }, false);
 }
 
 function appendUploaderCard() {

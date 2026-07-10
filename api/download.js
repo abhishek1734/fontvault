@@ -1,4 +1,4 @@
-﻿// api/download.js — Vercel Serverless Function
+// api/download.js — Vercel Serverless Function
 // Downloads fonts as installable files:
 //   Google Fonts:
 //     - Strategy 1: Google's JSON manifest API (contains exact filenames, static/ folders, and gstatic URLs)
@@ -67,24 +67,46 @@ async function fetchFromManifest(family) {
     
     const text = await resp.text();
     let clean = text;
+    // Google prepends a XSSI protection prefix
     if (text.startsWith(")]}'")) {
       clean = text.substring(4);
     }
     
-    const data = JSON.parse(clean);
-    const fileRefs = data.get ? data.get("manifest")?.fileRefs : data.manifest?.fileRefs;
-    const finalFileRefs = fileRefs || [];
+    let data;
+    try {
+      data = JSON.parse(clean);
+    } catch (parseErr) {
+      console.warn(`[download] JSON parse failed for manifest:`, parseErr.message);
+      return null;
+    }
+
+    // The manifest JSON has multiple possible shapes depending on API version
+    let fileRefs = null;
+    if (data && data.manifest && Array.isArray(data.manifest.fileRefs)) {
+      fileRefs = data.manifest.fileRefs;
+    } else if (data && Array.isArray(data.fileRefs)) {
+      fileRefs = data.fileRefs;
+    } else {
+      // Deep search for fileRefs key
+      const str = JSON.stringify(data);
+      const match = str.match(/"fileRefs":\s*(\[[^\]]*\])/s);
+      if (match) {
+        try { fileRefs = JSON.parse(match[1]); } catch {}
+      }
+    }
     
-    if (finalFileRefs.length === 0) return null;
+    if (!fileRefs || fileRefs.length === 0) return null;
 
     // Download files in parallel
     const entries = (await Promise.all(
-      finalFileRefs.map(async file => {
+      fileRefs.map(async file => {
         try {
           const r = await fetch(file.url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
           if (!r.ok) return null;
           const buf = Buffer.from(await r.arrayBuffer());
-          return { name: file.filename, data: buf };
+          // Use filename from manifest, fallback to URL basename
+          const name = file.filename || file.url.split('/').pop().split('?')[0];
+          return { name, data: buf };
         } catch { return null; }
       })
     )).filter(Boolean);
@@ -104,8 +126,9 @@ async function fetchStaticFontsFromCSS(family) {
   const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(cleanFamily)}:${weightsParam}`;
   
   try {
+    // First try with empty User-Agent (gets TTF links in CSS)
     const cssResp = await fetch(cssUrl, {
-      headers: { 'User-Agent': '' } // Empty User-Agent forces TTF format instead of WOFF2
+      headers: { 'User-Agent': '' }
     });
 
     if (!cssResp.ok) return [];
@@ -123,12 +146,15 @@ async function fetchStaticFontsFromCSS(family) {
       if (!block.includes('src:')) continue;
       const styleMatch = block.match(/font-style:\s*(\w+)/);
       const weightMatch = block.match(/font-weight:\s*(\d+)/);
-      const urlMatch = block.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.ttf)\)/);
+      // Match TTF first, then WOFF2 as fallback
+      const urlMatch = block.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.(?:ttf|woff2))\)/);
       
       if (styleMatch && weightMatch && urlMatch) {
         const style = styleMatch[1];
         const weight = weightMatch[1];
         const fontFileUrl = urlMatch[1];
+        const isTTF = fontFileUrl.endsWith('.ttf');
+        const ext = isTTF ? 'ttf' : 'woff2';
         
         const weightName = weightNames[weight] || weight;
         let fontFileName = '';
@@ -138,7 +164,7 @@ async function fetchStaticFontsFromCSS(family) {
           fontFileName = weightName;
         }
         
-        const name = `${cleanFamily.replace(/\s+/g, '')}-${fontFileName}.ttf`;
+        const name = `${cleanFamily.replace(/\s+/g, '')}-${fontFileName}.${ext}`;
         
         if (!filesToDownload.find(f => f.name === name)) {
           filesToDownload.push({ name, url: fontFileUrl });
