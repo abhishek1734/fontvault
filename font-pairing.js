@@ -448,7 +448,7 @@ document.addEventListener("DOMContentLoaded", () => {
         activePairings = [pair];
         resultsArea.style.display = "block";
         stickyToolbar.style.display = "block";
-        curatedShowcase.style.display = "none";
+        if (curatedShowcase) curatedShowcase.style.display = "none";
         renderPairCards(activePairings, resultsGrid);
         
         // Populate custom analysis data for loading saved
@@ -514,7 +514,9 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   // Load Curated combinations by default
-  renderPairCards(curatedPairings, curatedGrid, true);
+  if (curatedGrid) {
+    renderPairCards(curatedPairings, curatedGrid, true);
+  }
   renderSavedCollections();
 
   // Helper to retrieve the API key (checking localStorage, then fallback)
@@ -588,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Show processing state, hide active areas
-    curatedShowcase.style.display = "none";
+    if (curatedShowcase) curatedShowcase.style.display = "none";
     resultsArea.style.display = "none";
     stickyToolbar.style.display = "none";
     analysisReport.style.display = "none";
@@ -719,7 +721,7 @@ document.addEventListener("DOMContentLoaded", () => {
       processingState.style.display = "none";
       alert("Failed to connect to Gemini API or parse results. Please verify your API Key and network connection.");
       // Rollback to defaults showcase
-      curatedShowcase.style.display = "block";
+      if (curatedShowcase) curatedShowcase.style.display = "block";
     }
   }
 
