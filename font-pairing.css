@@ -1351,7 +1351,8 @@
   right: 0;
   top: 0;
   bottom: 0;
-  width: 54px;
+  aspect-ratio: 1 / 1;
+  width: auto;
   background-color: #ff3d00 !important; /* Red-Orange fill */
   color: white !important;
   border: none !important;
@@ -1372,7 +1373,7 @@
 
 /* Slide in orange button and adjust padding when typing */
 .fp-input-row-wrapper.typing {
-  padding-right: 78px; /* Extra spacing to fit the flush orange send button */
+  padding-right: 90px; /* Extra spacing to fit the flush orange send button */
 }
 
 .fp-input-row-wrapper.typing .fp-send-btn {
