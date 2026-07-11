@@ -20,11 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const processingState = document.getElementById("fp-processing-state");
   const loaderStatusText = document.getElementById("fp-loader-status-text");
   
-  const analysisReport = document.getElementById("fp-analysis-report");
-  const analysisConfidence = document.getElementById("fp-analysis-confidence");
-  const tagsDetectedStyle = document.getElementById("fp-tags-detected-style");
-  const tagsDetectedReqs = document.getElementById("fp-tags-detected-reqs");
-  const analysisExplanationText = document.getElementById("fp-analysis-explanation-text");
+
 
   const stickyToolbar = document.getElementById("fp-sticky-toolbar");
   const resultsArea = document.getElementById("fp-results-area");
@@ -521,12 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const footer = document.querySelector("footer");
         if (footer) footer.style.display = "block";
         
-        // Populate custom analysis data for loading saved
-        analysisReport.style.display = "block";
-        analysisConfidence.textContent = `${pair.matchScore}%`;
-        tagsDetectedStyle.innerHTML = `<span class="fp-analysis-tag">Saved</span>`;
-        tagsDetectedReqs.innerHTML = `<span class="fp-analysis-tag">${pair.header}</span><span class="fp-analysis-tag">${pair.body}</span>`;
-        analysisExplanationText.textContent = `Displaying saved collection match. H: ${pair.header} + B: ${pair.body}.`;
+
 
         document.getElementById("fp-sticky-toolbar").scrollIntoView({ behavior: "smooth" });
       });
@@ -762,7 +753,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (curatedShowcase) curatedShowcase.style.display = "none";
     resultsArea.style.display = "none";
     stickyToolbar.style.display = "none";
-    analysisReport.style.display = "none";
     processingState.style.display = "block";
 
     const appContainer = document.querySelector(".fp-app-container");
@@ -847,25 +837,10 @@ document.addEventListener("DOMContentLoaded", () => {
         };
       });
 
-      // Inject details from top match into analysis report card
-      const topMatch = activePairings[0];
-      analysisConfidence.textContent = `${topMatch.confidenceScore || 96}%`;
-      
-      tagsDetectedStyle.innerHTML = topMatch.detectedStyle.map(tag => `
-        <span class="fp-analysis-tag">${tag}</span>
-      `).join("");
-      
-      tagsDetectedReqs.innerHTML = topMatch.detectedReqs.map(tag => `
-        <span class="fp-analysis-tag">${tag}</span>
-      `).join("");
-
-      analysisExplanationText.textContent = `Your design parameters suggest ${topMatch.detectedStyle.join(", ") || "premium"} style combinations. We matched ${topMatch.header} for structural titles balanced against ${topMatch.body} to maintain target usability.`;
-
       // Render grid cards and show sections
       renderPairCards(activePairings, resultsGrid);
       
       processingState.style.display = "none";
-      analysisReport.style.display = "block";
       stickyToolbar.style.display = "block";
       resultsArea.style.display = "block";
       
