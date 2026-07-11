@@ -46,6 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const drawerCloseBtn = document.getElementById("fp-drawer-close-btn");
   const compareBody = document.getElementById("fp-compare-body");
 
+  // Details Drawer
+  const detailsDrawer = document.getElementById("fp-details-drawer");
+  const detailsCloseBtn = document.getElementById("fp-details-close-btn");
+  const detailsBody = document.getElementById("fp-details-body");
+
   // API Key Modals
   const apiKeyModal = document.getElementById("api-key-modal");
   const closeApiKeyBtn = document.getElementById("close-api-key-modal");
@@ -144,155 +149,201 @@ document.addEventListener("DOMContentLoaded", () => {
       card.style.animationDelay = `${index * 0.08}s`;
       card.dataset.id = pair.pairName.toLowerCase().replace(/\s+/g, "-") + (isCuratedDefault ? "-curated" : "");
 
-      // Check if favorited
-      const isSaved = savedCollections.some(s => s.pairName === pair.pairName);
-      const saveBtnText = isSaved ? "Saved" : "Save Pair";
-      const saveBtnClass = isSaved ? "card-btn active" : "card-btn";
-
-      // Render metrics
-      const metrics = pair.strengthMetrics || { elegance: 85, readability: 85, contrast: 80, uniqueness: 75, versatility: 80 };
-      const metricsHtml = Object.entries(metrics).map(([key, val]) => `
-        <div class="metric-bar-wrapper">
-          <div class="metric-label-row">
-            <span>${key}</span>
-            <span>${val}%</span>
-          </div>
-          <div class="metric-bar-bg">
-            <div class="metric-bar-fill" style="width: ${val}%;"></div>
-          </div>
-        </div>
-      `).join("");
-
       card.innerHTML = `
-        <div class="fp-card-top">
-          <h3 class="card-pair-name">${pair.pairName}</h3>
-          <span class="card-match-badge">${pair.matchScore}% Match</span>
+        <!-- HTML Live Matte Thumbnail Preview -->
+        <div class="fp-card-thumbnail" style="font-family: '${pair.header}', serif;">
+          <!-- Ambient Glow Orb -->
+          <div class="glow-orb" style="position:absolute; top:-30%; left:-10%; width:80%; height:80%; background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, transparent 70%); filter: blur(20px); pointer-events: none;"></div>
+          <span style="position: relative; z-index: 2; font-weight: 500; color: var(--fp-text);">Aa</span>
         </div>
-        
-        <div class="fp-card-middle">
-          <div class="card-font-chip">
-            <span class="chip-label">Heading</span>
-            <span class="chip-val">${pair.header}</span>
+        <!-- Card Text Details -->
+        <div class="fp-card-info" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; text-align: left;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <span style="font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--fp-text-sec); letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px;">${pair.pairName}</span>
+            <span class="card-match-badge" style="margin: 0; padding: 2px 8px; font-size: 0.65rem; white-space: nowrap;">${pair.matchScore}% Match</span>
           </div>
-          <div class="card-font-chip">
-            <span class="chip-label">Body</span>
-            <span class="chip-val">${pair.body}</span>
-          </div>
-          ${pair.accent ? `
-            <div class="card-font-chip">
-              <span class="chip-label">Accent</span>
-              <span class="chip-val">${pair.accent}</span>
-            </div>
-          ` : ""}
-        </div>
-
-        <div class="fp-preview-canvas" style="text-align: left;">
-          <h2 class="specimen-title specimen-title-elem" style="font-family: '${pair.header}', serif; font-size: ${sizeSlider.value}px; letter-spacing: ${spacingSlider.value}px;">
-            ${customTextInput.value}
-          </h2>
-          <p class="specimen-para specimen-body-elem" style="font-family: '${pair.body}', sans-serif;">
-            Visualizing digital typography hierarchy is critical. A clean, balanced pair improves reader engagement and brand alignment.
-          </p>
-          <div class="specimen-cta-wrapper">
-            <a href="#" class="specimen-cta" onclick="event.preventDefault();" style="font-family: '${pair.accent || pair.body}', sans-serif;">
-              Explore Collection
-            </a>
-          </div>
-          <div class="specimen-quote" style="font-family: '${pair.body}', sans-serif; font-size: 0.9rem;">
-            “Type is a beautiful group of letters, not a group of beautiful letters.” — Matthew Carter
-          </div>
-        </div>
-
-        <div class="fp-card-bottom">
-          <p class="card-reasoning">
-            <strong>AI Evaluation:</strong> ${pair.reason}
-          </p>
-
-          <div class="pair-strength-metrics">
-            ${metricsHtml}
-          </div>
-
-          <div class="card-actions-row">
-            <div class="card-alternatives">
-              <span>Alternative Match:</span>
-              <span class="alternative-link" data-header="${pair.header}" data-alt-body="${pair.alternativeBody || 'Roboto'}">
-                Try ${pair.alternativeBody || 'Roboto'}
-              </span>
-            </div>
-            
-            <div class="card-buttons">
-              <button class="card-btn btn-swap" title="Swap Heading & Body">Swap</button>
-              <button class="${saveBtnClass} btn-save-pairing">${saveBtnText}</button>
-              <button class="card-btn btn-compare">Compare</button>
-              <button class="card-btn btn-copy-css" title="Copy CSS rules">Copy CSS</button>
-            </div>
-          </div>
-
-          <div class="fp-feedback-block">
-            <span class="feedback-label">Is this match relevant?</span>
-            <div class="feedback-buttons">
-              <button class="btn-feedback" onclick="alert('Thank you for helping train our compatibility matrix!');">Perfect</button>
-              <button class="btn-feedback" onclick="alert('Thank you for helping train our compatibility matrix!');">Good</button>
-              <button class="btn-feedback" onclick="alert('We have registered this mismatch to recalibrate our weights.'); this.closest('.fp-pair-card').style.opacity = '0.4';">Not Relevant</button>
-            </div>
-          </div>
+          <h3 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 500; margin: 0.25rem 0 0 0; color: var(--fp-text);">${pair.header}</h3>
+          <p style="font-size: 0.75rem; color: var(--fp-text-sec); margin: 0;">Pairs with <strong style="color: var(--fp-text); font-weight: 600;">${pair.body}</strong></p>
         </div>
       `;
 
-      // --- CARD HANDLERS ---
-      // Swap Font
-      card.querySelector(".btn-swap").addEventListener("click", () => {
-        const temp = pair.header;
-        pair.header = pair.body;
-        pair.body = temp;
-        // Rerender specific card
-        renderPairCards(pairingsList, targetGrid, isCuratedDefault);
-      });
-
-      // Save/Favorite
-      card.querySelector(".btn-save-pairing").addEventListener("click", (e) => {
-        const btn = e.target;
-        const existsIdx = savedCollections.findIndex(s => s.pairName === pair.pairName);
-        if (existsIdx > -1) {
-          savedCollections.splice(existsIdx, 1);
-          btn.textContent = "Save Pair";
-          btn.className = "card-btn";
-        } else {
-          savedCollections.push(pair);
-          btn.textContent = "Saved";
-          btn.className = "card-btn active";
-        }
-        localStorage.setItem("fontvault-saved-pairings", JSON.stringify(savedCollections));
-        renderSavedCollections();
-      });
-
-      // Compare Drawer trigger
-      card.querySelector(".btn-compare").addEventListener("click", () => {
-        const exists = comparedPairings.some(c => c.pairName === pair.pairName);
-        if (!exists) {
-          comparedPairings.push(pair);
-          renderCompareDrawer();
-        }
-        compareDrawer.classList.add("active");
-      });
-
-      // Copy CSS
-      card.querySelector(".btn-copy-css").addEventListener("click", () => {
-        const cssCode = `/* CSS rules for ${pair.pairName} */\n.heading-text {\n  font-family: "${pair.header}", serif;\n}\n.body-text {\n  font-family: "${pair.body}", sans-serif;\n}${pair.accent ? `\n.accent-text {\n  font-family: "${pair.accent}", sans-serif;\n}` : ""}`;
-        navigator.clipboard.writeText(cssCode).then(() => {
-          alert("CSS copied to clipboard successfully!");
-        });
-      });
-
-      // Alternative suggestion link
-      card.querySelector(".alternative-link").addEventListener("click", (e) => {
-        const alt = e.target.dataset.altBody;
-        pair.body = alt;
-        renderPairCards(pairingsList, targetGrid, isCuratedDefault);
+      // Open details drawer on click
+      card.addEventListener("click", () => {
+        openPairDetailsDrawer(pair);
       });
 
       targetGrid.appendChild(card);
     });
+  }
+
+  // --- PAIR DETAILS DRAWER ---
+  function openPairDetailsDrawer(pair) {
+    if (!detailsDrawer || !detailsBody) return;
+
+    // Make sure fonts are loaded
+    loadAndInjectFont(pair.header);
+    loadAndInjectFont(pair.body);
+    if (pair.accent) loadAndInjectFont(pair.accent);
+
+    const isSaved = savedCollections.some(s => s.pairName === pair.pairName);
+    const saveBtnText = isSaved ? "Saved" : "Save Pair";
+    const saveBtnClass = isSaved ? "card-btn active" : "card-btn";
+
+    const metrics = pair.strengthMetrics || { elegance: 85, readability: 85, contrast: 80, uniqueness: 75, versatility: 80 };
+    const metricsHtml = Object.entries(metrics).map(([key, val]) => `
+      <div class="metric-bar-wrapper">
+        <div class="metric-label-row">
+          <span>${key}</span>
+          <span>${val}%</span>
+        </div>
+        <div class="metric-bar-bg">
+          <div class="metric-bar-fill" style="width: ${val}%;"></div>
+        </div>
+      </div>
+    `).join("");
+
+    // Populate drawer body
+    detailsBody.innerHTML = `
+      <div class="fp-card-top" style="padding: 0 0 1.5rem 0; background: transparent; border-bottom: 1px solid var(--fp-border); margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="card-pair-name" style="font-size: 1.5rem; margin: 0;">${pair.pairName}</h3>
+        <span class="card-match-badge" style="font-size: 0.85rem; padding: 4px 12px; margin: 0;">${pair.matchScore}% Match</span>
+      </div>
+
+      <div class="fp-card-middle" style="padding: 0 0 1.5rem 0; border-bottom: 1px solid var(--fp-border); margin-bottom: 1.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+        <div class="card-font-chip">
+          <span class="chip-label">Heading</span>
+          <span class="chip-val">${pair.header}</span>
+        </div>
+        <div class="card-font-chip">
+          <span class="chip-label">Body</span>
+          <span class="chip-val">${pair.body}</span>
+        </div>
+        ${pair.accent ? `
+          <div class="card-font-chip">
+            <span class="chip-label">Accent</span>
+            <span class="chip-val">${pair.accent}</span>
+          </div>
+        ` : ""}
+      </div>
+
+      <div class="fp-preview-canvas" style="text-align: left; padding: 2rem 1.5rem; border: 1px solid var(--fp-border); background-color: var(--fp-bg); margin-bottom: 1.5rem; border-radius: 0;">
+        <h2 class="specimen-title specimen-title-elem" style="font-family: '${pair.header}', serif; font-size: ${sizeSlider.value}px; letter-spacing: ${spacingSlider.value}px; margin-top: 0; margin-bottom: 1rem; line-height: 1.15;">
+          ${customTextInput.value}
+        </h2>
+        <p class="specimen-para specimen-body-elem" style="font-family: '${pair.body}', sans-serif; line-height: 1.6; margin-top: 0; margin-bottom: 1.5rem;">
+          Visualizing digital typography hierarchy is critical. A clean, balanced pair improves reader engagement and brand alignment.
+        </p>
+        <div class="specimen-cta-wrapper" style="margin-bottom: 2rem;">
+          <a href="#" class="specimen-cta" onclick="event.preventDefault();" style="font-family: '${pair.accent || pair.body}', sans-serif; display: inline-block; background-color: var(--fp-text); color: var(--fp-bg); padding: 10px 24px; font-size: 0.8rem; font-weight: 600; text-decoration: none; border: 1px solid var(--fp-text);">
+            Explore Collection
+          </a>
+        </div>
+        <div class="specimen-quote" style="font-family: '${pair.body}', sans-serif; font-size: 0.9rem; border-left: 2px solid var(--fp-gold); padding-left: 1.25rem; font-style: italic; line-height: 1.5;">
+          “Type is a beautiful group of letters, not a group of beautiful letters.” — Matthew Carter
+        </div>
+      </div>
+
+      <div class="fp-card-bottom" style="padding: 0; background: transparent; display: flex; flex-direction: column; gap: 1.5rem;">
+        <p class="card-reasoning" style="margin: 0; font-size: 0.85rem; line-height: 1.6; color: var(--fp-text-sec);">
+          <strong>AI Evaluation:</strong> ${pair.reason}
+        </p>
+
+        <div class="pair-strength-metrics" style="padding-top: 1.5rem; border-top: 1px solid var(--fp-border); display: flex; flex-direction: column; gap: 1rem;">
+          ${metricsHtml}
+        </div>
+
+        <div class="card-actions-row" style="padding-top: 1.5rem; border-top: 1px solid var(--fp-border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <div class="card-alternatives" style="font-size: 0.75rem; color: var(--fp-text-sec);">
+            <span>Alternative Match:</span>
+            <span class="alternative-link" data-header="${pair.header}" data-alt-body="${pair.alternativeBody || 'Roboto'}" style="color: var(--fp-gold); text-decoration: underline; cursor: pointer; margin-left: 0.25rem;">
+              Try ${pair.alternativeBody || 'Roboto'}
+            </span>
+          </div>
+          
+          <div class="card-buttons" style="display: flex; gap: 0.75rem;">
+            <button class="card-btn btn-drawer-swap" style="background: var(--fp-bg); border: 1px solid var(--fp-border); color: var(--fp-text); padding: 8px 14px; font-size: 0.75rem; font-weight: 500; cursor: pointer;">Swap</button>
+            <button class="${saveBtnClass} btn-drawer-save" style="background: var(--fp-bg); border: 1px solid var(--fp-border); color: var(--fp-text); padding: 8px 14px; font-size: 0.75rem; font-weight: 500; cursor: pointer;">${saveBtnText}</button>
+            <button class="card-btn btn-drawer-compare" style="background: var(--fp-bg); border: 1px solid var(--fp-border); color: var(--fp-text); padding: 8px 14px; font-size: 0.75rem; font-weight: 500; cursor: pointer;">Compare</button>
+            <button class="card-btn btn-drawer-copy" style="background: var(--fp-bg); border: 1px solid var(--fp-border); color: var(--fp-text); padding: 8px 14px; font-size: 0.75rem; font-weight: 500; cursor: pointer;">Copy CSS</button>
+          </div>
+        </div>
+
+        <div class="fp-feedback-block" style="padding-top: 1.5rem; border-top: 1px solid var(--fp-border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <span class="feedback-label" style="font-size: 0.75rem; color: var(--fp-text-sec);">Is this match relevant?</span>
+          <div class="feedback-buttons" style="display: flex; gap: 0.5rem;">
+            <button class="btn-feedback" onclick="alert('Thank you for helping train our compatibility matrix!');" style="background: var(--fp-box-bg); border: 1px solid var(--fp-border); color: var(--fp-text-sec); padding: 4px 10px; font-size: 0.7rem; cursor: pointer;">Perfect</button>
+            <button class="btn-feedback" onclick="alert('Thank you for helping train our compatibility matrix!');" style="background: var(--fp-box-bg); border: 1px solid var(--fp-border); color: var(--fp-text-sec); padding: 4px 10px; font-size: 0.7rem; cursor: pointer;">Good</button>
+            <button class="btn-feedback btn-feedback-no" style="background: var(--fp-box-bg); border: 1px solid var(--fp-border); color: var(--fp-text-sec); padding: 4px 10px; font-size: 0.7rem; cursor: pointer;">Not Relevant</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // --- DRAWER HANDLERS ---
+    // Swap heading and body
+    detailsBody.querySelector(".btn-drawer-swap").addEventListener("click", () => {
+      const temp = pair.header;
+      pair.header = pair.body;
+      pair.body = temp;
+      openPairDetailsDrawer(pair);
+      renderPairCards(activePairings, resultsGrid);
+      renderSavedCollections();
+    });
+
+    // Save/Favorite in drawer
+    detailsBody.querySelector(".btn-drawer-save").addEventListener("click", (e) => {
+      const btn = e.target;
+      const existsIdx = savedCollections.findIndex(s => s.pairName === pair.pairName);
+      if (existsIdx > -1) {
+        savedCollections.splice(existsIdx, 1);
+        btn.textContent = "Save Pair";
+        btn.classList.remove("active");
+      } else {
+        savedCollections.push(pair);
+        btn.textContent = "Saved";
+        btn.classList.add("active");
+      }
+      localStorage.setItem("fontvault-saved-pairings", JSON.stringify(savedCollections));
+      renderSavedCollections();
+      renderPairCards(activePairings, resultsGrid);
+    });
+
+    // Compare trigger in drawer
+    detailsBody.querySelector(".btn-drawer-compare").addEventListener("click", () => {
+      const exists = comparedPairings.some(c => c.pairName === pair.pairName);
+      if (!exists) {
+        comparedPairings.push(pair);
+        renderCompareDrawer();
+      }
+      compareDrawer.classList.add("active");
+      detailsDrawer.classList.remove("active");
+    });
+
+    // Copy CSS rules
+    detailsBody.querySelector(".btn-drawer-copy").addEventListener("click", () => {
+      const cssCode = `/* CSS rules for ${pair.pairName} */\n.heading-text {\n  font-family: "${pair.header}", serif;\n}\n.body-text {\n  font-family: "${pair.body}", sans-serif;\n}${pair.accent ? `\n.accent-text {\n  font-family: "${pair.accent}", sans-serif;\n}` : ""}`;
+      navigator.clipboard.writeText(cssCode).then(() => {
+        alert("CSS copied to clipboard successfully!");
+      });
+    });
+
+    // Alternative match link
+    detailsBody.querySelector(".alternative-link").addEventListener("click", (e) => {
+      const alt = e.target.dataset.altBody;
+      pair.body = alt;
+      openPairDetailsDrawer(pair);
+      renderPairCards(activePairings, resultsGrid);
+      renderSavedCollections();
+    });
+
+    // Feedback Not Relevant button
+    detailsBody.querySelector(".btn-feedback-no").addEventListener("click", (e) => {
+      alert("We have registered this mismatch to recalibrate our weights.");
+      detailsDrawer.classList.remove("active");
+    });
+
+    // Slide in
+    detailsDrawer.classList.add("active");
   }
 
   // --- STICKY TOOLBAR EVENT LISTENERS ---
@@ -403,6 +454,12 @@ document.addEventListener("DOMContentLoaded", () => {
   drawerCloseBtn.addEventListener("click", () => {
     compareDrawer.classList.remove("active");
   });
+
+  if (detailsCloseBtn && detailsDrawer) {
+    detailsCloseBtn.addEventListener("click", () => {
+      detailsDrawer.classList.remove("active");
+    });
+  }
 
   // --- SAVED COLLECTIONS ---
   function renderSavedCollections() {

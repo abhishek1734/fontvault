@@ -760,22 +760,38 @@
 
 .fp-results-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 3.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
 }
 
 .fp-pair-card {
   border: 1px solid var(--fp-border);
   background-color: var(--fp-bg);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
   box-shadow: var(--fp-shadow);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+  overflow: hidden;
 }
 
 .fp-pair-card:hover {
   border-color: var(--fp-gold);
   box-shadow: var(--fp-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.fp-card-thumbnail {
+  background-color: var(--fp-box-bg);
+  border-bottom: 1px solid var(--fp-border);
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  overflow: hidden;
+  position: relative;
+  transition: background-color var(--transition-time);
 }
 
 .fp-card-top {
