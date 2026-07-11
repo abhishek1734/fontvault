@@ -406,11 +406,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- SAVED COLLECTIONS ---
   function renderSavedCollections() {
+    const appContainer = document.querySelector(".fp-app-container");
     if (savedCollections.length === 0) {
       savedSection.style.display = "none";
+      if (appContainer && resultsArea.style.display !== "block" && processingState.style.display !== "block") {
+        appContainer.style.display = "none";
+      }
       return;
     }
     savedSection.style.display = "block";
+    if (appContainer) appContainer.style.display = "block";
     savedGrid.innerHTML = "";
 
     savedCollections.forEach((pair, index) => {
@@ -446,11 +451,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       card.querySelector(`#saved-activate-${index}`).addEventListener("click", () => {
         activePairings = [pair];
+        const appContainer = document.querySelector(".fp-app-container");
+        if (appContainer) appContainer.style.display = "block";
         resultsArea.style.display = "block";
         stickyToolbar.style.display = "block";
         if (curatedShowcase) curatedShowcase.style.display = "none";
         renderPairCards(activePairings, resultsGrid);
         
+        const scrollArrow = document.getElementById("scroll-arrow");
+        if (scrollArrow) scrollArrow.style.display = "block";
+
         const footer = document.querySelector("footer");
         if (footer) footer.style.display = "block";
         
@@ -599,6 +609,9 @@ document.addEventListener("DOMContentLoaded", () => {
     analysisReport.style.display = "none";
     processingState.style.display = "block";
 
+    const appContainer = document.querySelector(".fp-app-container");
+    if (appContainer) appContainer.style.display = "block";
+
     // Smooth status text transitions
     const statusMessages = [
       "Analyzing brand intent...",
@@ -715,6 +728,9 @@ document.addEventListener("DOMContentLoaded", () => {
       stickyToolbar.style.display = "block";
       resultsArea.style.display = "block";
       
+      const scrollArrow = document.getElementById("scroll-arrow");
+      if (scrollArrow) scrollArrow.style.display = "block";
+
       const footer = document.querySelector("footer");
       if (footer) footer.style.display = "block";
       
