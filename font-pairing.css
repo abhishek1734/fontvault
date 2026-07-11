@@ -124,7 +124,7 @@
   text-align: center;
   padding: 8rem 2rem 5rem;
   margin-top: -64px;
-  margin-bottom: 4rem;
+  margin-bottom: 0;
   overflow: hidden;
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }

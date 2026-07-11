@@ -451,6 +451,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (curatedShowcase) curatedShowcase.style.display = "none";
         renderPairCards(activePairings, resultsGrid);
         
+        const footer = document.querySelector("footer");
+        if (footer) footer.style.display = "block";
+        
         // Populate custom analysis data for loading saved
         analysisReport.style.display = "block";
         analysisConfidence.textContent = `${pair.matchScore}%`;
@@ -711,6 +714,9 @@ document.addEventListener("DOMContentLoaded", () => {
       analysisReport.style.display = "block";
       stickyToolbar.style.display = "block";
       resultsArea.style.display = "block";
+      
+      const footer = document.querySelector("footer");
+      if (footer) footer.style.display = "block";
       
       // Smooth scroll to results
       document.getElementById("fp-sticky-toolbar").scrollIntoView({ behavior: "smooth" });
