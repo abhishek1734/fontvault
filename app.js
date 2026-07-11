@@ -316,7 +316,7 @@ function appendFontCard(font, delay, index) {
 
     <!-- Center Row: Huge Preview Text -->
     <div class="card-body-row">
-      <div class="huge-preview-text" contenteditable="false" spellcheck="false" data-font-name="${font.name.replace(/"/g,'&quot;')}" style="font-family:${fam},sans-serif;">
+      <div class="huge-preview-text" contenteditable="true" spellcheck="false" data-font-name="${font.name.replace(/"/g,'&quot;')}" style="font-family:${fam},sans-serif;">
         ${titleText}
       </div>
     </div>
@@ -356,7 +356,7 @@ function appendFontCard(font, delay, index) {
       </div>
     </div>
     <!-- Hover CTA (Grid view only) -->
-    <span class="grid-card-cta" style="display: none; position: absolute; bottom: 1.5rem; right: 1.5rem; font-family: var(--font-mono); font-size: 11px; color: var(--trending-accent); opacity: 0; transition: opacity 0.2s; font-weight: 600; pointer-events: none;">Preview &rarr;</span>
+    <span class="grid-card-cta" style="display: none; position: absolute; bottom: 1.5rem; right: 1.5rem; font-family: var(--font-mono); font-size: 11px; color: var(--signal-red); opacity: 0; transition: opacity 0.2s; font-weight: 600; pointer-events: none;">Preview &rarr;</span>
   `;
 
   // Compare add/remove button
@@ -388,17 +388,9 @@ function appendFontCard(font, delay, index) {
   // Inline editing on card preview text
   const previewTextEl = card.querySelector(".huge-preview-text");
   if (previewTextEl) {
-    // Click: make editable and stop card navigation
+    // Click: prevent navigation to detail panel, let browser place cursor and select text naturally
     previewTextEl.addEventListener("click", e => {
       e.stopPropagation();
-      previewTextEl.contentEditable = "true";
-      // Move cursor to end
-      const range = document.createRange();
-      const sel = window.getSelection();
-      range.selectNodeContents(previewTextEl);
-      range.collapse(false);
-      sel.removeAllRanges();
-      sel.addRange(range);
     });
     // Enter key: commit and exit
     previewTextEl.addEventListener("keydown", e => {
@@ -407,15 +399,13 @@ function appendFontCard(font, delay, index) {
         previewTextEl.blur();
       }
     });
-    // Blur: revert to non-editable if still showing default font name
+    // Blur: restore font name if cleared
     previewTextEl.addEventListener("blur", () => {
       if (!globalPreviewText) {
-        // If user cleared it back to empty, restore font name
         const fontName = previewTextEl.dataset.fontName;
         if (!previewTextEl.textContent.trim()) {
           previewTextEl.textContent = fontName;
         }
-        previewTextEl.contentEditable = "false";
       }
     });
   }
