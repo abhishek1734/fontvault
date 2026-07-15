@@ -206,6 +206,11 @@ function renderFontDetails(font) {
           ${font.description || 'A highly crafted typographic specimen optimized for digital interfaces, editorial layout, and modern brand design languages.'}
         </p>
 
+        <!-- Scroll down indicator -->
+        <div class="hero-scroll-indicator" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 5rem; cursor: pointer; animation: fade-in-indicator 1.5s ease-out;" onclick="document.getElementById('playground').scrollIntoView({ behavior: 'smooth' })">
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em;">Scroll Down</span>
+          <i data-lucide="arrow-down" style="width: 16px; height: 16px; color: var(--accent-color); animation: arrow-bounce 2s infinite;"></i>
+        </div>
       </div>
     </section>
 
@@ -799,6 +804,53 @@ function initPremiumInteractions(font) {
   const valLeading = document.getElementById("val-leading");
 
   // Sync Slider values in real time with transitions
+  function checkPlaygroundChanges() {
+    if (!sliderSize || !sliderWeight || !sliderTracking || !sliderLeading) return;
+    const isSizeChanged = Number(sliderSize.value) !== 64;
+    const isWeightChanged = Number(sliderWeight.value) !== Number(defaultWeight);
+    const isTrackingChanged = Number(sliderTracking.value) !== 0;
+    const isLeadingChanged = Number(sliderLeading.value) !== 1.2;
+    
+    const sliderWidth = document.getElementById("slider-var-width");
+    const sliderOpsz = document.getElementById("slider-var-opsz");
+    const isWidthChanged = sliderWidth ? Number(sliderWidth.value) !== 100 : false;
+    const isOpszChanged = sliderOpsz ? Number(sliderOpsz.value) !== 14 : false;
+    
+    const switchItalic = document.getElementById("switch-italic");
+    const isItalicChanged = switchItalic ? switchItalic.checked : false;
+
+    // Check active alignment button (default is left, which is index 0)
+    const alignBtns = document.querySelectorAll("#seg-alignment .segment-btn");
+    const isAlignChanged = alignBtns.length > 0 ? !alignBtns[0].classList.contains("active") : false;
+
+    // Check active text transform button (default is none, which is index 0)
+    const transBtns = document.querySelectorAll("#seg-transform .segment-btn");
+    const isTransChanged = transBtns.length > 0 ? !transBtns[0].classList.contains("active") : false;
+
+    // Check active theme circle (default is index 0)
+    const themeCircles = document.querySelectorAll("#color-theme-picker .color-circle");
+    const isThemeChanged = themeCircles.length > 0 ? !themeCircles[0].classList.contains("active") : false;
+
+    const hasChanges = isSizeChanged || isWeightChanged || isTrackingChanged || isLeadingChanged || isWidthChanged || isOpszChanged || isItalicChanged || isAlignChanged || isTransChanged || isThemeChanged;
+
+    const resetBtn = document.getElementById("btn-reset-playground");
+    if (resetBtn) {
+      if (hasChanges) {
+        resetBtn.classList.remove("cta-secondary");
+        resetBtn.classList.add("cta-primary");
+        resetBtn.style.backgroundColor = "var(--accent-color)";
+        resetBtn.style.borderColor = "var(--accent-color)";
+        resetBtn.style.color = "#FFFFFF";
+      } else {
+        resetBtn.classList.remove("cta-primary");
+        resetBtn.classList.add("cta-secondary");
+        resetBtn.style.backgroundColor = "";
+        resetBtn.style.borderColor = "";
+        resetBtn.style.color = "";
+      }
+    }
+  }
+
   function updatePlaygroundValues() {
     if (!pEditableText) return;
     const size = sliderSize.value;
@@ -835,6 +887,8 @@ function initPremiumInteractions(font) {
     if (varSettings) {
       pEditableText.style.fontVariationSettings = varSettings;
     }
+
+    checkPlaygroundChanges();
   }
 
   [sliderSize, sliderWeight, sliderTracking, sliderLeading].forEach(slider => {

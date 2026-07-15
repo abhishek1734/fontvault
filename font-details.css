@@ -8,9 +8,9 @@
   
   /* Grayscale Palette (Enforced Pure White & Editorial Dark Grayscale) */
   --bg-color: #FFFFFF;
-  --card-bg: #FFFFFF;
-  --card-bg-subtle: #FFFFFF;
-  --border-color: #ECECEC;
+  --card-bg: #F8F9FA;
+  --card-bg-subtle: #F3F4F6;
+  --border-color: #E5E7EB;
   --text-primary: #111111;
   --text-secondary: #555555;
   --text-muted: #888888;
@@ -619,7 +619,7 @@ section {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 280px;
+  min-height: 380px;
   position: relative;
   overflow: hidden;
 }
@@ -629,6 +629,7 @@ section {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 1;
 }
 .guideline-line {
   position: absolute;
@@ -643,11 +644,17 @@ section {
   color: var(--text-muted);
   transform: translateY(-50%);
 }
+.guideline-line span {
+  background-color: var(--card-bg-subtle);
+  padding: 0 3px;
+  line-height: 1.4;
+}
 
 .glyph-large-display {
   font-size: 7rem;
   line-height: 1;
   color: var(--text-primary);
+  position: relative;
   z-index: 2;
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -663,7 +670,9 @@ section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 2;
+  position: relative;
+  z-index: 3;
+  background-color: var(--card-bg-subtle);
 }
 .glyph-meta-text {
   display: flex;
@@ -1201,10 +1210,10 @@ section {
 
 /* Custom Spacing Overrides */
 #hero {
-  padding-bottom: 10rem;
+  padding-bottom: 14rem;
 }
 #playground {
-  padding-top: 6rem;
+  padding-top: 8rem;
 }
 
 /* Interactive Metrics Sparkline Graphs */
