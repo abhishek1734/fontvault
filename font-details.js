@@ -1465,3 +1465,40 @@ function updateGlyphGuidelines(fontName) {
   if (baselineLine) baselineLine.style.top = `${baselineTop}%`;
   if (descenderLine) descenderLine.style.top = `${baselineTop - (metrics.descender * scale)}%`;
 }
+
+function getFontWeights(font) {
+  if (font.variants && Array.isArray(font.variants)) {
+    const weights = new Set();
+    font.variants.forEach(v => {
+      const match = v.match(/\d+/);
+      if (match) {
+        weights.add(parseInt(match[0], 10));
+      } else if (v === 'regular' || v === 'italic') {
+        weights.add(400);
+      }
+    });
+    if (weights.size > 0) {
+      return Array.from(weights).sort((a, b) => a - b);
+    }
+  }
+  if (font.provider === 'google' || font.provider === 'fontshare') {
+    if (font.stylesCount === 1) return [400];
+    return [300, 400, 500, 700];
+  }
+  return [400];
+}
+
+function getWeightLabel(weight) {
+  const labels = {
+    100: "Thin",
+    200: "Extra Light",
+    300: "Light",
+    400: "Regular",
+    500: "Medium",
+    600: "Semi Bold",
+    700: "Bold",
+    800: "Extra Bold",
+    900: "Black"
+  };
+  return labels[weight] || "Regular";
+}
