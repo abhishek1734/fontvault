@@ -29,9 +29,9 @@ async function loadCustomFontsFromSupabase() {
       if (fontsData.find(f => f.id === row.id)) return;
 
       // Register @font-face so the font actually renders
-      if (row.css_family && row.file_url) {
+      if (row.css_family && row.public_url) {
         const styleEl = document.createElement('style');
-        styleEl.textContent = `@font-face { font-family: '${row.css_family}'; src: url('${row.file_url}') format('${row.format || 'woff2'}'); font-display: swap; }`;
+        styleEl.textContent = `@font-face { font-family: '${row.css_family}'; src: url('${row.public_url}') format('${row.format || 'woff2'}'); font-display: swap; }`;
         document.head.appendChild(styleEl);
       }
 
@@ -50,7 +50,7 @@ async function loadCustomFontsFromSupabase() {
         useCase: 'Web',
         style: row.category || 'Sans-Serif',
         language: 'Latin',
-        downloadUrl: row.file_url,
+        downloadUrl: row.public_url,
         price: row.is_free ? 'Free' : 'Paid',
         fileSize: row.file_size || '—',
         cssFamily: row.css_family ? `'${row.css_family}'` : `'${row.name}'`,
