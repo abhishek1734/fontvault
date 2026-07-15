@@ -451,15 +451,15 @@ function renderFontDetails(font) {
                   </div>
                   <!-- Premium Minimal Bar Chart -->
                   <div style="display: flex; gap: 4px; align-items: flex-end; height: 35px; margin-top: 0.8rem; width: 100%;">
-                    <div style="flex: 1; height: 10px; background: #22c55e; opacity: 0.4;"></div>
-                    <div style="flex: 1; height: 14px; background: #22c55e; opacity: 0.5;"></div>
-                    <div style="flex: 1; height: 12px; background: #22c55e; opacity: 0.6;"></div>
-                    <div style="flex: 1; height: 20px; background: #22c55e; opacity: 0.7;"></div>
-                    <div style="flex: 1; height: 16px; background: #22c55e; opacity: 0.8;"></div>
-                    <div style="flex: 1; height: 24px; background: #22c55e; opacity: 0.9;"></div>
-                    <div style="flex: 1; height: 18px; background: #22c55e;"></div>
-                    <div style="flex: 1; height: 26px; background: #22c55e;"></div>
-                    <div style="flex: 1; height: 32px; background: #22c55e;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 10px; background: #22c55e; opacity: 0.4;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 14px; background: #22c55e; opacity: 0.5;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 12px; background: #22c55e; opacity: 0.6;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 20px; background: #22c55e; opacity: 0.7;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 16px; background: #22c55e; opacity: 0.8;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 24px; background: #22c55e; opacity: 0.9;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 18px; background: #22c55e;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 26px; background: #22c55e;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 32px; background: #22c55e;"></div>
                   </div>
                 </div>
                 
@@ -471,15 +471,15 @@ function renderFontDetails(font) {
                   </div>
                   <!-- Premium Minimal Bar Chart -->
                   <div style="display: flex; gap: 4px; align-items: flex-end; height: 35px; margin-top: 0.8rem; width: 100%;">
-                    <div style="flex: 1; height: 22px; background: var(--text-primary); opacity: 0.15;"></div>
-                    <div style="flex: 1; height: 18px; background: var(--text-primary); opacity: 0.25;"></div>
-                    <div style="flex: 1; height: 26px; background: var(--text-primary); opacity: 0.35;"></div>
-                    <div style="flex: 1; height: 14px; background: var(--text-primary); opacity: 0.45;"></div>
-                    <div style="flex: 1; height: 24px; background: var(--text-primary); opacity: 0.6;"></div>
-                    <div style="flex: 1; height: 30px; background: var(--text-primary); opacity: 0.75;"></div>
-                    <div style="flex: 1; height: 20px; background: var(--text-primary); opacity: 0.85;"></div>
-                    <div style="flex: 1; height: 28px; background: var(--accent-color);"></div>
-                    <div style="flex: 1; height: 35px; background: var(--accent-color);"></div>
+                    <div class="metric-bar" style="flex: 1; height: 22px; background: var(--text-primary); opacity: 0.15;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 18px; background: var(--text-primary); opacity: 0.25;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 26px; background: var(--text-primary); opacity: 0.35;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 14px; background: var(--text-primary); opacity: 0.45;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 24px; background: var(--text-primary); opacity: 0.6;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 30px; background: var(--text-primary); opacity: 0.75;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 20px; background: var(--text-primary); opacity: 0.85;"></div>
+                    <div class="metric-bar" style="flex: 1; height: 28px; background: var(--accent-color);"></div>
+                    <div class="metric-bar" style="flex: 1; height: 35px; background: var(--accent-color);"></div>
                   </div>
                 </div>
                 
@@ -491,16 +491,16 @@ function renderFontDetails(font) {
                   </div>
                   <!-- Premium Segmented Storage Bar -->
                   <div style="display: flex; gap: 3px; margin-top: 1rem; width: 100%;">
-                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
-                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
-                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
-                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
-                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
-                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
-                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
-                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
-                    <div style="flex: 1; height: 6px; background: var(--border-color);"></div>
-                    <div style="flex: 1; height: 6px; background: var(--border-color);"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: var(--border-color);"></div>
+                    <div class="metric-segment" style="flex: 1; height: 6px; background: var(--border-color);"></div>
                   </div>
                 </div>
               </div>
