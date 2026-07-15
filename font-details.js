@@ -624,6 +624,8 @@ function renderFontDetails(font) {
 // -------------------------------------------------
 function initPremiumInteractions(font) {
   const fam = font.cssFamily || `'${font.name}'`;
+  const weights = getFontWeights(font);
+  const defaultWeight = weights.includes(400) ? 400 : weights[0];
   
   // Re-generate Lucide Icons in injected DOM
   if (window.lucide) {

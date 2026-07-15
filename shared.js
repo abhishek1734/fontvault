@@ -207,7 +207,7 @@ function renderUniversalNavbar() {
   if (!navbar) return;
 
   navbar.innerHTML = `
-    <a href="index.html" class="logo">FONTVAULT</a>
+    <a href="/index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
       <div class="search-container" id="search-container">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -228,7 +228,7 @@ function renderUniversalNavbar() {
           </div>
         </div>
       </div>
-      <a href="font-pairing.html" class="nav-link" id="nav-font-pairing">Font Pairing</a>
+      <a href="/font-pairing.html" class="nav-link" id="nav-font-pairing">Font Pairing</a>
       <button id="vault-btn" class="nav-btn">
         My Vault
       </button>
@@ -257,9 +257,9 @@ function renderUniversalNavbar() {
         </div>
       </div>
       <!-- Nav links -->
-      <a href="font-pairing.html" class="mobile-menu-item">Font Pairing</a>
-      <a href="blog.html" class="mobile-menu-item">Blog</a>
-      <a href="collections.html" class="mobile-menu-item">Collections</a>
+      <a href="/font-pairing.html" class="mobile-menu-item">Font Pairing</a>
+      <a href="/blog.html" class="mobile-menu-item">Blog</a>
+      <a href="/collections.html" class="mobile-menu-item">Collections</a>
       <div class="mobile-menu-divider"></div>
       <button id="mobile-submit-btn" class="mobile-menu-item">Submit a Font</button>
       <button id="mobile-login-btn" class="mobile-menu-item accent-item">My Vault</button>
@@ -292,7 +292,7 @@ function setupSharedEventListeners() {
                          window.location.pathname.endsWith('index.html') ||
                          window.location.pathname === '';
       if (!isHomePage) {
-        window.location.href = 'index.html';
+        window.location.href = '/index.html';
       } else {
         if (typeof clearAllFilters === "function") clearAllFilters();
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -303,7 +303,7 @@ function setupSharedEventListeners() {
   const vaultBtn = document.getElementById("vault-btn");
   if (vaultBtn && window.location.pathname.includes('font.html')) {
     vaultBtn.addEventListener("click", () => {
-      window.location.href = 'index.html?vault=true';
+      window.location.href = '/index.html?vault=true';
     });
   }
 
@@ -398,7 +398,7 @@ function setupSharedEventListeners() {
                 }
               }
             } else {
-              window.location.href = `index.html?search=${encodeURIComponent(q)}&scroll=true`;
+              window.location.href = `/index.html?search=${encodeURIComponent(q)}&scroll=true`;
             }
           });
         });
@@ -505,7 +505,7 @@ function setupSharedEventListeners() {
             gridSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         } else {
-          window.location.href = `index.html?search=${encodeURIComponent(query)}&scroll=true`;
+          window.location.href = `/index.html?search=${encodeURIComponent(query)}&scroll=true`;
         }
       }
     });
@@ -543,7 +543,7 @@ function setupSharedEventListeners() {
       saveRecentSearch(query);
       searchDropdown.classList.remove("visible");
       if (window.location.pathname.includes('font.html')) {
-        window.location.href = `index.html?search=${encodeURIComponent(query)}`;
+        window.location.href = `/index.html?search=${encodeURIComponent(query)}`;
       } else {
         document.getElementById("main-content")?.scrollIntoView({ behavior: "smooth" });
       }
@@ -703,7 +703,7 @@ function setupSharedEventListeners() {
           }
         } else {
           // Navigate to home with search query
-          window.location.href = `index.html?search=${encodeURIComponent(q)}`;
+          window.location.href = `/index.html?search=${encodeURIComponent(q)}`;
         }
       }
     });
