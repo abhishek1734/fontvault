@@ -1,76 +1,99 @@
 // font-details.js
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Apply dark mode preference immediately
-  const savedDark = localStorage.getItem("fontvault-dark");
-  if (savedDark === "1") {
-    applyTheme(true);
-  } else {
-    applyTheme(false);
-  }
+  try {
+    // Apply dark mode preference immediately
+    const savedDark = localStorage.getItem("fontvault-dark");
+    if (savedDark === "1") {
+      applyTheme(true);
+    } else {
+      applyTheme(false);
+    }
 
-  setupSharedEventListeners();
-  const urlParams = new URLSearchParams(window.location.search);
-  let fontId = urlParams.get('id');
-  if (!fontId) {
-    const pathParts = window.location.pathname.split('/');
-    const fontsIndex = pathParts.indexOf('fonts');
-    if (fontsIndex !== -1 && pathParts[fontsIndex + 1]) {
-      fontId = decodeURIComponent(pathParts[fontsIndex + 1]);
+    setupSharedEventListeners();
+    const urlParams = new URLSearchParams(window.location.search);
+    let fontId = urlParams.get('id');
+    if (!fontId) {
+      const pathParts = window.location.pathname.split('/');
+      const fontsIndex = pathParts.indexOf('fonts');
+      if (fontsIndex !== -1 && pathParts[fontsIndex + 1]) {
+        fontId = decodeURIComponent(pathParts[fontsIndex + 1]);
+      }
+    }
+    
+    if (!fontId) {
+      document.getElementById('font-detail-root').innerHTML = `
+        <div style="text-align:center; padding:10rem 2rem;">
+          <h2>Font not found.</h2>
+          <a href="/index.html" class="cta-btn cta-primary" style="margin-top:2rem;">Return to Home</a>
+        </div>
+      `;
+      return;
+    }
+
+    // Show premium loading state
+    const root = document.getElementById('font-detail-root');
+    root.innerHTML = `
+      <div style="text-align:center; padding:15rem 2rem; color:var(--text-primary);">
+        <p style="font-size:1.2rem; font-family:var(--font-mono); letter-spacing:0.1em; animation:pulse-text 1.5s infinite;">LOADING TYPOGRAPHIC ASSETS...</p>
+      </div>
+      <style>
+        @keyframes pulse-text {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 1; }
+        }
+      </style>
+    `;
+
+    // Load Google Fonts AND custom admin-uploaded fonts in parallel with a timeout race
+    try {
+      await Promise.race([
+        Promise.all([
+          initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY'),
+          loadCustomFontsFromSupabase()
+        ]),
+        new Promise(resolve => setTimeout(resolve, 2000)) // 2-second fallback timeout
+      ]);
+    } catch (e) {
+      console.warn("Non-blocking load error:", e);
+    }
+
+    const font = fontsData.find(f => f.id === fontId);
+    if (!font) {
+      root.innerHTML = `
+        <div style="text-align:center; padding:10rem 2rem;">
+          <h2>Font not found in the database.</h2>
+          <p style="color:#888; margin-top:1rem;">The font may have been removed or the link is invalid.</p>
+          <a href="/index.html" class="cta-btn cta-primary" style="margin-top:2rem;">Return to Home</a>
+        </div>
+      `;
+      return;
+    }
+
+    // Load the external font stylesheet/rules
+    loadExternalFont(font);
+
+    // Render cinematic page
+    renderFontDetails(font);
+    updateDynamicSEO(font);
+    
+    // Initialize Premium Interactions (Scroll, Animations, Controls)
+    initPremiumInteractions(font);
+
+  } catch (globalError) {
+    console.error("Global Details Initialization Error:", globalError);
+    const root = document.getElementById('font-detail-root');
+    if (root) {
+      root.innerHTML = `
+        <div style="text-align:center; padding:10rem 2rem; color:var(--text-primary);">
+          <h2>Initialization Error</h2>
+          <p style="color:#EF4444; margin-top:1rem; font-family:monospace; font-size:0.9rem;">${globalError.name}: ${globalError.message}</p>
+          <p style="color:#888; margin-top:0.5rem; font-size:0.85rem;">Stack trace: ${globalError.stack ? globalError.stack.split('\n')[0] : ''}</p>
+          <a href="/index.html" class="cta-btn cta-primary" style="margin-top:2rem;">Return to Home</a>
+        </div>
+      `;
     }
   }
-  
-  if (!fontId) {
-    document.getElementById('font-detail-root').innerHTML = `
-      <div style="text-align:center; padding:10rem 2rem;">
-        <h2>Font not found.</h2>
-        <a href="index.html" class="cta-btn cta-primary" style="margin-top:2rem;">Return to Home</a>
-      </div>
-    `;
-    return;
-  }
-
-  // Show premium loading state
-  const root = document.getElementById('font-detail-root');
-  root.innerHTML = `
-    <div style="text-align:center; padding:15rem 2rem; color:var(--text-primary);">
-      <p style="font-size:1.2rem; font-family:var(--font-mono); letter-spacing:0.1em; animation:pulse-text 1.5s infinite;">LOADING TYPOGRAPHIC ASSETS...</p>
-    </div>
-    <style>
-      @keyframes pulse-text {
-        0%, 100% { opacity: 0.3; }
-        50% { opacity: 1; }
-      }
-    </style>
-  `;
-
-  // Load Google Fonts AND custom admin-uploaded fonts in parallel
-  await Promise.all([
-    initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY'),
-    loadCustomFontsFromSupabase()
-  ]);
-
-  const font = fontsData.find(f => f.id === fontId);
-  if (!font) {
-    root.innerHTML = `
-      <div style="text-align:center; padding:10rem 2rem;">
-        <h2>Font not found in the database.</h2>
-        <p style="color:#888; margin-top:1rem;">The font may have been removed or the link is invalid.</p>
-        <a href="index.html" class="cta-btn cta-primary" style="margin-top:2rem;">Return to Home</a>
-      </div>
-    `;
-    return;
-  }
-
-  // Load the external font stylesheet/rules
-  loadExternalFont(font);
-
-  // Render cinematic page
-  renderFontDetails(font);
-  updateDynamicSEO(font);
-  
-  // Initialize Premium Interactions (Scroll, Animations, Controls)
-  initPremiumInteractions(font);
 });
 
 // Dynamic SEO Injector
