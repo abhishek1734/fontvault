@@ -783,7 +783,7 @@ section {
   transition: transform var(--transition-slow);
 }
 .showcase-card:hover .showcase-layout-demo {
-  transform: scale(1.05);
+  transform: none;
 }
 
 .showcase-meta {

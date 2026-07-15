@@ -500,10 +500,18 @@ function renderFontDetails(font) {
                     <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">94.2%</h4>
                     <p style="font-size: 0.7rem; color: #22c55e; margin: 0.1rem 0 0; font-family: var(--font-mono); font-weight: 500;">&uarr; 12.4%</p>
                   </div>
-                  <!-- Sparkline SVG -->
-                  <svg width="100%" height="35" style="margin-top: 0.5rem; stroke: #22c55e; stroke-width: 1.5; fill: none; opacity: 0.85;">
-                    <path d="M0,28 L15,18 L30,22 L45,10 L60,25 L75,8 L90,18 L105,5 L120,20 L135,12 L150,22 L165,8 L180,18 L200,2" />
-                  </svg>
+                  <!-- Premium Minimal Bar Chart -->
+                  <div style="display: flex; gap: 4px; align-items: flex-end; height: 35px; margin-top: 0.8rem; width: 100%;">
+                    <div style="flex: 1; height: 10px; background: #22c55e; opacity: 0.4;"></div>
+                    <div style="flex: 1; height: 14px; background: #22c55e; opacity: 0.5;"></div>
+                    <div style="flex: 1; height: 12px; background: #22c55e; opacity: 0.6;"></div>
+                    <div style="flex: 1; height: 20px; background: #22c55e; opacity: 0.7;"></div>
+                    <div style="flex: 1; height: 16px; background: #22c55e; opacity: 0.8;"></div>
+                    <div style="flex: 1; height: 24px; background: #22c55e; opacity: 0.9;"></div>
+                    <div style="flex: 1; height: 18px; background: #22c55e;"></div>
+                    <div style="flex: 1; height: 26px; background: #22c55e;"></div>
+                    <div style="flex: 1; height: 32px; background: #22c55e;"></div>
+                  </div>
                 </div>
                 
                 <div style="border-right: 1px solid var(--border-color); padding-right: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
@@ -512,10 +520,18 @@ function renderFontDetails(font) {
                     <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">18.5k</h4>
                     <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0.1rem 0 0; font-family: var(--font-mono);">Peak: 2.4k/min</p>
                   </div>
-                  <!-- Sparkline SVG -->
-                  <svg width="100%" height="35" style="margin-top: 0.5rem; stroke: var(--accent-color); stroke-width: 1.5; fill: none; opacity: 0.85;">
-                    <path d="M0,32 L15,28 L30,12 L45,26 L60,18 L75,30 L90,14 L105,24 L120,8 L135,22 L150,5 L165,15 L180,25 L200,10" />
-                  </svg>
+                  <!-- Premium Minimal Bar Chart -->
+                  <div style="display: flex; gap: 4px; align-items: flex-end; height: 35px; margin-top: 0.8rem; width: 100%;">
+                    <div style="flex: 1; height: 22px; background: var(--text-primary); opacity: 0.15;"></div>
+                    <div style="flex: 1; height: 18px; background: var(--text-primary); opacity: 0.25;"></div>
+                    <div style="flex: 1; height: 26px; background: var(--text-primary); opacity: 0.35;"></div>
+                    <div style="flex: 1; height: 14px; background: var(--text-primary); opacity: 0.45;"></div>
+                    <div style="flex: 1; height: 24px; background: var(--text-primary); opacity: 0.6;"></div>
+                    <div style="flex: 1; height: 30px; background: var(--text-primary); opacity: 0.75;"></div>
+                    <div style="flex: 1; height: 20px; background: var(--text-primary); opacity: 0.85;"></div>
+                    <div style="flex: 1; height: 28px; background: var(--accent-color);"></div>
+                    <div style="flex: 1; height: 35px; background: var(--accent-color);"></div>
+                  </div>
                 </div>
                 
                 <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
@@ -524,9 +540,18 @@ function renderFontDetails(font) {
                     <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">8.42<span style="font-size: 1.1rem;">TB</span></h4>
                     <p style="font-size: 0.7rem; color: #EF4444; margin: 0.1rem 0 0; font-family: var(--font-mono); font-weight: 500;">82% Capacity</p>
                   </div>
-                  <!-- Progress Bar segments -->
-                  <div style="margin-top: 0.8rem; background: var(--border-color); height: 5px; width: 100%; position: relative;">
-                    <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 82%; background: #EF4444;"></div>
+                  <!-- Premium Segmented Storage Bar -->
+                  <div style="display: flex; gap: 3px; margin-top: 1rem; width: 100%;">
+                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div style="flex: 1; height: 6px; background: #EF4444;"></div>
+                    <div style="flex: 1; height: 6px; background: var(--border-color);"></div>
+                    <div style="flex: 1; height: 6px; background: var(--border-color);"></div>
                   </div>
                 </div>
               </div>
