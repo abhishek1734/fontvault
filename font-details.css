@@ -8,8 +8,8 @@
   
   /* Grayscale Palette (Enforced Pure White & Editorial Dark Grayscale) */
   --bg-color: #FFFFFF;
-  --card-bg: #F8F9FA;
-  --card-bg-subtle: #F3F4F6;
+  --card-bg: #fbfbfb;
+  --card-bg-subtle: #fbfbfb;
   --border-color: #E5E7EB;
   --text-primary: #111111;
   --text-secondary: #555555;
