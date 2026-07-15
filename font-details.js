@@ -34,13 +34,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Show premium loading state
     const root = document.getElementById('font-detail-root');
     root.innerHTML = `
-      <div style="text-align:center; padding:15rem 2rem; color:var(--text-primary);">
-        <p style="font-size:1.2rem; font-family:var(--font-mono); letter-spacing:0.1em; animation:pulse-text 1.5s infinite;">LOADING TYPOGRAPHIC ASSETS...</p>
+      <div style="max-width: 1400px; margin: 0 auto; padding: 4rem 1.5rem; color: var(--text-primary);">
+        <div style="width: 180px; height: 16px; background: #222; margin-bottom: 2.5rem; animation: skeleton-pulse 1.5s infinite;"></div>
+        <div style="width: 60%; height: 90px; background: #222; margin-bottom: 2rem; animation: skeleton-pulse 1.5s infinite;"></div>
+        <div style="width: 80%; height: 24px; background: #222; margin-bottom: 1rem; animation: skeleton-pulse 1.5s infinite;"></div>
+        <div style="width: 50%; height: 24px; background: #222; margin-bottom: 4rem; animation: skeleton-pulse 1.5s infinite;"></div>
+        <div style="width: 100%; height: 260px; background: #121212; border: 1px solid #222; animation: skeleton-pulse 1.5s infinite;"></div>
       </div>
       <style>
-        @keyframes pulse-text {
+        @keyframes skeleton-pulse {
           0%, 100% { opacity: 0.3; }
-          50% { opacity: 1; }
+          50% { opacity: 0.7; }
         }
       </style>
     `;
@@ -194,11 +198,7 @@ function renderFontDetails(font) {
           <span style="color: var(--text-primary); font-weight: 500;">${font.name}</span>
         </div>
 
-        <span class="provider-badge">
-          <i data-lucide="globe" style="width: 13px; height: 13px;"></i> ${font.provider || 'Local Hosted'}
-        </span>
-
-        <div class="hero-font-title-wrapper">
+        <div class="hero-font-title-wrapper" style="margin-top: 1.5rem;">
           <h1 class="hero-font-title" style="font-family: ${fam}, serif;">${font.name}</h1>
         </div>
 
@@ -255,6 +255,12 @@ function renderFontDetails(font) {
           <div class="hero-specimen-editable" id="hero-editable-specimen" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif;">
             Typing updates this specimen instantly.
           </div>
+        </div>
+
+        <!-- Scroll down indicator -->
+        <div class="hero-scroll-indicator" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 3.5rem; cursor: pointer; animation: fade-in-indicator 1.5s ease-out;" onclick="document.getElementById('playground').scrollIntoView({ behavior: 'smooth' })">
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em;">Scroll Down</span>
+          <i data-lucide="arrow-down" style="width: 16px; height: 16px; color: var(--accent-color); animation: arrow-bounce 2s infinite;"></i>
         </div>
       </div>
     </section>

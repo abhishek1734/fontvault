@@ -756,17 +756,34 @@ window.toggleFavorite = function(fontId, btnElement) {
   const navbar = document.getElementById("navbar");
   if (!navbar) return;
   
-  const handleScroll = () => {
-    // Height collapse globally on scroll
-    navbar.classList.toggle("collapsed", window.scrollY > 80);
+  let lastScrollY = window.scrollY;
 
-    const hero = document.querySelector(".hero, .aiff-hero, .fp-hero-section");
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+    
+    // Determine scroll direction
+    const scrollingUp = currentScrollY < lastScrollY;
+    
+    // Collapse if scrolling down past 80px; show if scrolling up
+    if (currentScrollY > 80) {
+      if (scrollingUp) {
+        navbar.classList.remove("collapsed");
+      } else {
+        navbar.classList.add("collapsed");
+      }
+    } else {
+      navbar.classList.remove("collapsed");
+    }
+
+    lastScrollY = currentScrollY;
+
+    const hero = document.querySelector(".hero, .aiff-hero, .fp-hero-section, .hero-section");
     if (!hero) {
       navbar.classList.add("navbar-scrolled");
       return;
     }
     const heroHeight = hero.offsetHeight || 300;
-    if (window.scrollY > Math.max(80, heroHeight - 80)) {
+    if (currentScrollY > Math.max(80, heroHeight - 80)) {
       navbar.classList.add("navbar-scrolled");
     } else {
       navbar.classList.remove("navbar-scrolled");
