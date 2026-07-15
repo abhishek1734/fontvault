@@ -30,6 +30,14 @@
 
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=5.29">
+  <link rel="stylesheet" href="font-details.css">
+  
+  <!-- CDNs for Premium Interactions -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.36/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
   <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
@@ -47,7 +55,7 @@
 <body>
 
   <!-- SCROLL PROGRESS BAR -->
-  <div id="progress-bar" class="progress-bar"></div>
+  <div class="progress-bar-edge" id="scroll-progress-edge"></div>
 
   <!-- NAVIGATION BAR -->
   <header id="navbar">
@@ -186,6 +194,70 @@
       <p class="auth-terms">By continuing, you agree to FontVault's <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
     </div>
   </div>
+
+  <!-- STICKY FLOATING QUICK ACTIONS BAR -->
+  <div class="sticky-floating-bar" id="sticky-floating-actions-bar">
+    <div class="floating-bar-info">
+      <span class="floating-bar-name" id="floating-bar-font-name">Font Family</span>
+    </div>
+    <div class="floating-bar-actions">
+      <button class="cta-btn cta-primary floating-bar-btn" id="floating-btn-download">
+        <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download
+      </button>
+      <button class="cta-icon-btn" id="floating-btn-favorite" title="Favorite font">
+        <i data-lucide="heart" style="width: 16px; height: 16px;"></i>
+      </button>
+      <button class="cta-icon-btn" id="floating-btn-share" title="Share link">
+        <i data-lucide="share-2" style="width: 16px; height: 16px;"></i>
+      </button>
+      <button class="cta-icon-btn" id="floating-btn-copy-css" title="Copy CSS">
+        <i data-lucide="code" style="width: 16px; height: 16px;"></i>
+      </button>
+      <button class="cta-secondary floating-bar-btn" id="floating-btn-compare">
+        <i data-lucide="columns" style="width: 14px; height: 14px;"></i> Compare
+      </button>
+    </div>
+  </div>
+
+  <!-- LIVE FONT COMPARISON MODAL -->
+  <div class="compare-modal-overlay" id="compare-modal-overlay">
+    <div class="compare-modal-card">
+      <button class="compare-modal-close" id="compare-modal-close-btn">&times;</button>
+      <h2 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; margin: 0 0 0.5rem 0;">Compare Specimen</h2>
+      <p style="color: var(--text-secondary); margin: 0 0 2rem 0; font-size: 0.9rem;">Test this typeface side-by-side with another catalog font family in real-time.</p>
+      
+      <div class="compare-columns-grid">
+        <!-- Left Font (Active Font) -->
+        <div class="compare-column-side">
+          <div>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Active Font</span>
+            <h3 id="compare-active-font-name" style="margin: 0; font-size: 1.25rem;">Font Name</h3>
+          </div>
+          <div class="compare-specimen-display" id="compare-active-specimen" contenteditable="true" spellcheck="false">
+            Type here to compare letters.
+          </div>
+        </div>
+        
+        <!-- Right Font (Selector Font) -->
+        <div class="compare-column-side">
+          <div>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Select Compare Target</span>
+            <select class="compare-font-select" id="compare-target-select">
+              <!-- Options loaded dynamically -->
+            </select>
+          </div>
+          <div class="compare-specimen-display" id="compare-target-specimen" contenteditable="true" spellcheck="false" style="font-family: serif;">
+            Type here to compare letters.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMOOTH MORPH BACK TO TOP BUTTON -->
+  <button class="back-to-top-morph" id="back-to-top-btn" title="Back to Top">
+    <i data-lucide="arrow-up" style="width: 20px; height: 20px;"></i>
+  </button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="fonts.js?v=5.28"></script>

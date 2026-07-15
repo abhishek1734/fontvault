@@ -1,7 +1,7 @@
 // font-details.js
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // Apply dark mode preference immediately to prevent flashing
+  // Apply dark mode preference immediately
   const savedDark = localStorage.getItem("fontvault-dark");
   if (savedDark === "1") {
     applyTheme(true);
@@ -24,18 +24,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById('font-detail-root').innerHTML = `
       <div style="text-align:center; padding:10rem 2rem;">
         <h2>Font not found.</h2>
-        <a href="index.html" class="btn btn-primary" style="margin-top:2rem;">Return to Home</a>
+        <a href="index.html" class="cta-btn cta-primary" style="margin-top:2rem;">Return to Home</a>
       </div>
     `;
     return;
   }
 
-  // Show loading state while fetching
+  // Show premium loading state
   const root = document.getElementById('font-detail-root');
   root.innerHTML = `
-    <div style="text-align:center; padding:10rem 2rem; color:var(--signal-red);">
-      <p style="font-size:var(--ts-xl);font-family:var(--font-mono);animation:pulse 1.5s infinite;">LOADING FONT...</p>
+    <div style="text-align:center; padding:15rem 2rem; color:var(--text-primary);">
+      <p style="font-size:1.2rem; font-family:var(--font-mono); letter-spacing:0.1em; animation:pulse-text 1.5s infinite;">LOADING TYPOGRAPHIC ASSETS...</p>
     </div>
+    <style>
+      @keyframes pulse-text {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+      }
+    </style>
   `;
 
   // Load Google Fonts AND custom admin-uploaded fonts in parallel
@@ -50,89 +56,34 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div style="text-align:center; padding:10rem 2rem;">
         <h2>Font not found in the database.</h2>
         <p style="color:#888; margin-top:1rem;">The font may have been removed or the link is invalid.</p>
-        <a href="index.html" class="btn btn-primary" style="margin-top:2rem;">Return to Home</a>
+        <a href="index.html" class="cta-btn cta-primary" style="margin-top:2rem;">Return to Home</a>
       </div>
     `;
     return;
   }
 
-  // Load the external font
+  // Load the external font stylesheet/rules
   loadExternalFont(font);
 
+  // Render cinematic page
   renderFontDetails(font);
   updateDynamicSEO(font);
+  
+  // Initialize Premium Interactions (Scroll, Animations, Controls)
+  initPremiumInteractions(font);
 });
 
+// Dynamic SEO Injector
 function updateDynamicSEO(font) {
   if (!window.FontVaultSEO) return;
 
   const fontId = font.id || font.slug || font.name.toLowerCase().replace(/\s+/g, '-');
-  const title = `${font.name} Font — Preview, Alternatives & Best Font Pairings | FontVault`;
-  const desc = font.description || `Preview ${font.name}, discover design alternatives, pair it with beautiful fonts, and use it in your next projects.`;
+  const title = `${font.name} Font — Specimen, Playground & Alternatives | FontVault`;
+  const desc = font.description || `Explore ${font.name} typeface, test the live specimen playground, download font family files, and browse pairings.`;
   const canonicalUrl = `${window.FontVaultSEO.CANONICAL_HOST}/fonts/${fontId}`;
 
   window.FontVaultSEO.updateMetadata(title, desc, canonicalUrl, "font");
 
-  // Injections
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${window.FontVaultSEO.CANONICAL_HOST}/` },
-      { "@type": "ListItem", "position": 2, "name": "Fonts", "item": `${window.FontVaultSEO.CANONICAL_HOST}/#hero` },
-      { "@type": "ListItem", "position": 3, "name": font.name, "item": canonicalUrl }
-    ]
-  };
-
-  const creativeWorkSchema = {
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": font.name,
-    "author": { "@type": "Person", "name": font.designer || "Unknown Designer" },
-    "publisher": { "@type": "Organization", "name": font.foundry || "Independent" },
-    "dateCreated": font.year || "N/A",
-    "description": desc,
-    "genre": "Typography",
-    "license": font.availability || "Free",
-    "fileSize": font.fileSize || "Unknown"
-  };
-
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": `Is the ${font.name} font free for commercial use?`,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": `${font.name} is available under the license status: ${font.availability || 'Free'}. Please verify the license terms before using it commercially.`
-        }
-      },
-      {
-        "@type": "Question",
-        "name": `Who is the designer of ${font.name}?`,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": `${font.name} was designed by ${font.designer || 'Unknown Designer'} and released through ${font.foundry || 'Independent'}.`
-        }
-      },
-      {
-        "@type": "Question",
-        "name": `What category of typeface is ${font.name}?`,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": `It belongs to the ${font.style || 'Display'} category, with a visual mood described as ${font.mood || 'Modern'}.`
-        }
-      }
-    ]
-  };
-
-  window.FontVaultSEO.injectSchema(breadcrumbSchema, "breadcrumb-schema");
-  window.FontVaultSEO.injectSchema(creativeWorkSchema, "font-schema");
-  window.FontVaultSEO.injectSchema(faqSchema, "faq-schema");
-
-  // Inject visual breadcrumbs
   const crumbs = [
     { name: "Home", url: "/" },
     { name: "Fonts", url: "/#hero" },
@@ -145,6 +96,7 @@ function updateDynamicSEO(font) {
   }
 }
 
+// Render dynamic sections
 function renderFontDetails(font) {
   const root = document.getElementById('font-detail-root');
   const fam = font.cssFamily || `'${font.name}'`;
@@ -152,897 +104,1242 @@ function renderFontDetails(font) {
   const weights = getFontWeights(font);
   const defaultWeight = weights.includes(400) ? 400 : weights[0];
   
-  // Render structure
-  root.innerHTML = `
-    <div class="fd-hero" style="padding: 6rem 4rem 4rem; text-align: center; border-bottom: 1px solid var(--border-grey);">
-      <p style="font-family: var(--font-mono); color: #888; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; margin-bottom: 1rem;">
-        ${font.provider || 'custom'} / ${font.style || 'Display'}
-      </p>
-      <div style="position: relative; display: inline-block; max-width: 100%;">
-        <h1 class="fd-title" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: clamp(3rem, 10vw, 12rem); line-height: 1; margin: 0; outline: none; cursor: text;">
-          ${font.name}
-        </h1>
-        <div style="position: absolute; top: -1rem; right: -1rem; background: var(--signal-red); color: white; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-family: var(--font-sans); font-weight: 500; transform: rotate(5deg); pointer-events: none; opacity: 0.9; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Edit this!</div>
+  // Generate styles grid preview cards HTML
+  const stylesHtml = weights.map(w => `
+    <div class="style-card cascade-item" data-weight="${w}">
+      <div class="style-card-header">
+        <span class="style-weight-name">${getWeightLabel(w)}</span>
+        <span class="style-weight-num">${w}</span>
       </div>
-      <p style="margin-top: 2rem; font-size: 1.1rem; color: #666; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-        ${font.description || 'A beautiful custom typeface hosted locally.'}
-      </p>
-      <style>
-        .fd-download-btn {
-          padding: 1rem 3rem; 
-          font-size: 1.1rem; 
-          background: transparent; 
-          color: var(--near-black); 
-          border: 2px solid var(--near-black); 
-          border-radius: 4px;
-          cursor: pointer;
-          font-family: var(--font-sans);
-          font-weight: 500;
-          transition: all 0.2s ease;
-        }
-        .fd-download-btn:hover {
-          background: var(--near-black);
-          color: #fff;
-        }
-        [data-theme="dark"] .fd-download-btn {
-          color: #fff;
-          border-color: #fff;
-        }
-        [data-theme="dark"] .fd-download-btn:hover {
-          background: #fff;
-          color: #000;
-        }
-        .fd-unit-btn {
-          background: none;
-          border: 1px solid var(--border-grey);
-          border-radius: 4px;
-          color: #888;
-          font-size: 0.7rem;
-          padding: 0.2rem 0.5rem;
-          cursor: pointer;
-          text-transform: uppercase;
-        }
-        .fd-unit-btn:hover {
-          color: var(--near-black);
-          border-color: var(--near-black);
-        }
-        [data-theme="dark"] .fd-unit-btn:hover {
-          color: #fff;
-          border-color: #fff;
-        }
-      </style>
-      <div style="margin-top: 3rem; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; align-items: center;">
-        <div style="display: flex; gap: 1rem; align-items: center;">
-          <button class="fd-download-btn" id="btn-fd-download">Download Family (${font.stylesCount || 1} styles)</button>
-          <button class="fd-download-btn ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'active' : ''}" style="padding: 1rem; font-size: 1.2rem; color: ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'var(--signal-red)' : 'inherit'}; border-color: ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'var(--signal-red)' : 'var(--near-black)'}; display: flex; align-items: center; justify-content: center;" onclick="if(typeof toggleFavorite === 'function') toggleFavorite('${font.id}', this)">
-            <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="${window.favoritesSet && window.favoritesSet.has(font.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </button>
-        </div>
-        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: #999;">${font.price || 'Free'} / ${font.fileSize || 'N/A'}</span>
+      <div class="style-preview-text" style="font-family: ${fam}, serif; font-weight: ${w};">
+        ${font.name} Specimen
       </div>
     </div>
+  `).join('');
 
-    <!-- Interactive Specimen + Weights Side by Side (Full Width) -->
-    <div class="fd-specimen-section">
-      <div class="fd-specimen-inner">
-        <!-- Left: Interactive Specimen -->
-        <div class="fd-specimen-left">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin: 0;">Interactive Specimen</h3>
-            <button class="fd-unit-btn" id="fd-unit-toggle">Switch to REM</button>
+  // Generate pairing cards
+  const pairingFonts = fontsData.filter(f => f.id !== font.id).slice(0, 2);
+  const pairingsHtml = pairingFonts.map((pFont, idx) => {
+    const categories = ["Editorial", "SaaS Startup", "Luxury Boutique", "Branding"];
+    const activeCategory = categories[idx % categories.length];
+    const matchScores = [98, 95];
+    const activeScore = matchScores[idx % matchScores.length];
+    
+    // Lazy load the pairing body font
+    loadExternalFont(pFont);
+    const pFam = pFont.cssFamily || `'${pFont.name}'`;
+    
+    return `
+      <div class="pairing-showcase-card cascade-item">
+        <div class="pairing-card-header">
+          <div class="pairing-fonts-meta">
+            <span class="pairing-font-role">Heading / Body</span>
+            <span class="pairing-font-name">${font.name} + ${pFont.name}</span>
           </div>
-          <div class="fd-tester" style="border: 1px solid var(--border-grey); border-radius: 8px; overflow: hidden;">
-            <div style="padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-grey); background: rgba(0,0,0,0.02); display: flex; flex-wrap: wrap; column-gap: 3.5rem; row-gap: 1.5rem; align-items: flex-end;">
-              <div style="display:flex; flex-direction:column; min-width: 140px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-                  <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Size</label>
-                  <span id="fd-size-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">64px</span>
-                </div>
-                <input type="range" id="fd-size" min="16" max="150" value="64">
-              </div>
-              <div style="display:flex; flex-direction:column; min-width: 140px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-                  <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Leading</label>
-                  <span id="fd-leading-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">1.2</span>
-                </div>
-                <input type="range" id="fd-leading" min="0.8" max="2.5" step="0.1" value="1.2">
-              </div>
-              <div style="display:flex; flex-direction:column; min-width: 140px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-                  <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Tracking</label>
-                  <span id="fd-tracking-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">0em</span>
-                </div>
-                <input type="range" id="fd-tracking" min="-0.1" max="0.5" step="0.01" value="0">
-              </div>
-              <div style="display:flex; flex-direction:column; min-width: 140px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-                  <label style="font-size:0.75rem; text-transform:uppercase; color:#888; font-family:var(--font-mono);">Weight</label>
-                  <span id="fd-weight-val" style="font-size:0.75rem; color:var(--near-black); font-family:var(--font-mono);">${defaultWeight}</span>
-                </div>
-                <select id="fd-weight" style="padding: 0.25rem 0.5rem; background: var(--pure-white); border: 1px solid var(--border-grey); border-radius: 4px; color: var(--near-black); font-family: var(--font-mono); font-size: 0.85rem; outline: none; cursor: pointer; height: 1.8rem;" ${weights.length <= 1 ? 'disabled' : ''}>
-                  ${weights.map(w => `<option value="${w}" ${w === defaultWeight ? 'selected' : ''}>${w} — ${getWeightLabel(w)}</option>`).join('')}
-                </select>
-              </div>
+          <span class="pairing-match-pill">${activeScore}% Match</span>
+        </div>
+        <div class="pairing-preview-box">
+          <h4 class="pairing-headline" style="font-family: ${fam}, serif;">We design interfaces that shape cultural perception.</h4>
+          <p class="pairing-paragraph" style="font-family: ${pFam}, sans-serif;">
+            Typography holds the visual structure of message intent. By balancing heading terminals with neutral body paragraphs, reader engagement remains consistent.
+          </p>
+        </div>
+        <div class="pairing-card-footer">
+          <span class="pairing-use-tag">${activeCategory}</span>
+          <button class="cta-btn cta-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.78rem;" onclick="copyCSSPairing('${font.name}', '${pFont.name}')">
+            <i data-lucide="code" style="width: 13px; height: 13px;"></i> Copy Rules
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Main UI skeleton
+  root.innerHTML = `
+    <!-- Ambient mesh background & noise filter -->
+    <div class="mesh-glow"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- 1. CINEMATIC HERO -->
+    <section class="hero-section" id="hero" style="padding-top: 4rem;">
+      <div class="container hero-wrapper">
+        <div class="breadcrumb-nav">
+          <a href="index.html">Home</a>
+          <span>/</span>
+          <a href="index.html#hero">Fonts</a>
+          <span>/</span>
+          <span style="color: var(--text-primary); font-weight: 500;">${font.name}</span>
+        </div>
+
+        <span class="provider-badge">
+          <i data-lucide="globe" style="width: 13px; height: 13px;"></i> ${font.provider || 'Local Hosted'}
+        </span>
+
+        <div class="hero-font-title-wrapper">
+          <h1 class="hero-font-title" style="font-family: ${fam}, serif;">${font.name}</h1>
+        </div>
+
+        <p class="hero-font-description">
+          ${font.description || 'A highly crafted typographic specimen optimized for digital interfaces, editorial layout, and modern brand design languages.'}
+        </p>
+
+        <!-- Metadata Row -->
+        <div class="hero-metadata-grid cascade-item">
+          <div class="metadata-item">
+            <span class="metadata-label">Designer</span>
+            <span class="metadata-value" title="${font.designer || 'Independent'}">${font.designer || 'Independent'}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Foundry</span>
+            <span class="metadata-value" title="${font.foundry || 'Independent'}">${font.foundry || 'Independent'}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Category</span>
+            <span class="metadata-value" title="${font.style || 'Display'}">${font.style || 'Display'}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">License</span>
+            <span class="metadata-value" title="${font.price || 'Free'}">${font.price || 'Free'}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Languages</span>
+            <span class="metadata-value" title="${font.languages ? font.languages.join(', ') : 'Latin'}">${font.languages ? font.languages.join(', ') : 'Latin'}</span>
+          </div>
+        </div>
+
+        <!-- Primary Action buttons -->
+        <div class="hero-actions cascade-item">
+          <button class="cta-btn cta-primary" id="btn-hero-download">
+            <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download Family
+          </button>
+          <button class="cta-icon-btn ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'active' : ''}" id="btn-hero-favorite" title="Save to Vault" onclick="toggleFavoriteState('${font.id}', this)">
+            <i data-lucide="heart" style="width: 18 height: 18px; pointer-events: none;"></i>
+          </button>
+          <button class="cta-icon-btn" id="btn-hero-share" title="Share typeface">
+            <i data-lucide="share-2" style="width: 18px; height: 18px;"></i>
+          </button>
+          <button class="cta-icon-btn" id="btn-hero-copy-css" title="Copy CSS rules">
+            <i data-lucide="code" style="width: 18px; height: 18px;"></i>
+          </button>
+        </div>
+
+        <!-- Huge editable specimen card -->
+        <div class="hero-specimen-card cascade-item">
+          <div class="specimen-card-header">
+            <span class="specimen-card-tag">${font.name} Regular specimen</span>
+            <span class="specimen-card-indicator">Interactive Canvas</span>
+          </div>
+          <div class="hero-specimen-editable" id="hero-editable-specimen" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif;">
+            Typing updates this specimen instantly.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. SPECIMEN PLAYGROUND (Highlight) -->
+    <section class="playground-section" id="playground">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Interactive Playground</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Customize design axes, adjust variable sliders, alignment, or canvas colors to see the letters react.</p>
+
+        <div class="playground-grid">
+          <!-- Left: Big Specimen Preview -->
+          <div class="playground-canvas" id="p-canvas" style="background-color: var(--card-bg-subtle);">
+            <div class="playground-canvas-header">
+              <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;" id="p-canvas-label">Active specs</span>
+              <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;" id="p-canvas-font-name">${font.name}</span>
             </div>
-            <div id="fd-specimen" contenteditable="true" spellcheck="false" style="padding: 3rem 2rem; font-family: ${fam}, serif; font-size: 64px; line-height: 1.2; font-weight: ${defaultWeight}; outline: none; min-height: 280px;">
+            <div class="playground-editable-text" id="p-editable-text" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-weight: ${defaultWeight};">
               The quick brown fox jumps over the lazy dog.
             </div>
           </div>
-        </div>
 
-        <!-- Right: Available Weights & Styles -->
-        <div class="fd-weights-right">
-          <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem; margin-top: 0;">Available Weights &amp; Styles</h3>
-          <div class="fd-weights-grid" id="fd-weights-grid" style="display: flex; flex-direction: column; gap: 1rem;">
-            ${weights.slice(0, 6).map((w, i) => `
-              <div class="fd-weight-card" style="padding: 1.25rem 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-grey); padding-bottom: 0.5rem;">
-                  <span style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; color: var(--near-black); text-transform: uppercase;">${getWeightLabel(w)}</span>
-                  <span style="font-family: var(--font-mono); font-size: 0.7rem; color: #888;">${w}</span>
-                </div>
-                <div class="fd-weight-preview" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: 1.5rem; font-weight: ${w}; line-height: 1.2; color: var(--near-black); outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                  The quick brown fox
-                </div>
+          <!-- Right: Controls -->
+          <div class="playground-controls">
+            <!-- Font Size -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Size</span>
+                <span class="control-value" id="val-size">64px</span>
               </div>
-            `).join('')}
-            ${weights.length > 6 ? `
-              <div id="fd-hidden-weights-wrapper" style="display: flex; flex-direction: column; gap: 1rem; max-height: 0px; opacity: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;">
-                ${weights.slice(6).map((w, i) => `
-                  <div class="fd-weight-card" style="padding: 1.25rem 1.5rem; border: 1px solid var(--border-grey); border-radius: 8px; display: flex; flex-direction: column; gap: 0.75rem; cursor: pointer; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-grey); padding-bottom: 0.5rem;">
-                      <span style="font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; color: var(--near-black); text-transform: uppercase;">${getWeightLabel(w)}</span>
-                      <span style="font-family: var(--font-mono); font-size: 0.7rem; color: #888;">${w}</span>
-                    </div>
-                    <div class="fd-weight-preview" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-size: 1.5rem; font-weight: ${w}; line-height: 1.2; color: var(--near-black); outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                      The quick brown fox
-                    </div>
-                  </div>
-                `).join('')}
+              <input type="range" class="custom-range" id="slider-size" min="16" max="180" value="64">
+            </div>
+
+            <!-- Font Weight -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Weight</span>
+                <span class="control-value" id="val-weight">${defaultWeight}</span>
               </div>
-              <button class="fd-weights-see-more" id="fd-weights-see-more" onclick="toggleRemainingWeights(this, ${weights.length - 6})">
-                See <span class="see-more-count">${weights.length - 6}</span> More Style${weights.length - 6 !== 1 ? 's' : ''}
-              </button>
-            ` : ''}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Glyphs Editor/Inspection Section -->
-    <div class="fd-glyphs-section">
-      <div class="fd-glyphs-layout">
-        <!-- Left Panel: Large Glyph Preview -->
-        <div class="fd-glyphs-left">
-          <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 1px solid var(--border-grey); padding-bottom:1rem;">
-            <h2 style="font-family:var(--font-display); font-size:2.2rem; font-weight:600; margin:0; color:var(--near-black);">Glyphs</h2>
-            <div style="text-align:right; font-family:var(--font-mono); font-size:0.75rem; color:#888;">
-              <span id="fd-glyph-meta-name" style="display:block; font-weight:600; text-transform:uppercase; color:var(--near-black);">Capital Letter A</span>
-              <span id="fd-glyph-meta-unicode">U+0041</span>
-            </div>
-          </div>
-          <div class="fd-glyph-preview-card">
-            <!-- Guidelines Overlay -->
-            <div class="fd-guidelines-container">
-              <div class="fd-guideline cap-height"><span>Cap Height</span><span>700</span></div>
-              <div class="fd-guideline x-height"><span>X-Height</span><span>500</span></div>
-              <div class="fd-guideline baseline"><span>Baseline</span><span>0</span></div>
-              <div class="fd-guideline descender"><span>Descender</span><span>-200</span></div>
-            </div>
-            <!-- Large Glyph Character -->
-            <div id="fd-large-glyph" class="fd-glyph-display" style="font-family:${fam};">A</div>
-          </div>
-        </div>
-
-        <!-- Right Panel: Glyph Browser -->
-        <div class="fd-glyphs-right">
-          <!-- Top Controls -->
-          <div class="fd-glyph-controls">
-            <select id="fd-glyph-weight-select" class="fd-control-select">
-              <option value="normal" selected>Regular</option>
-              <option value="bold">Bold</option>
-              <option value="italic">Italic</option>
-            </select>
-            
-            <div class="fd-btn-group">
-              <button id="fd-glyph-fill-solid" class="fd-btn-group-btn active" onclick="setGlyphFillMode('solid')">Solid</button>
-              <button id="fd-glyph-fill-outline" class="fd-btn-group-btn" onclick="setGlyphFillMode('outline')">Outline</button>
-            </div>
-            
-            <div class="fd-btn-group">
-              <button id="fd-glyph-set-basic" class="fd-btn-group-btn active" onclick="setGlyphSet('basic')">Basic Set</button>
-              <button id="fd-glyph-set-full" class="fd-btn-group-btn" onclick="setGlyphSet('full')">Full Set</button>
+              <input type="range" class="custom-range" id="slider-weight" min="100" max="900" step="100" value="${defaultWeight}">
             </div>
 
-            <input type="text" id="fd-glyph-custom-input" class="fd-control-input" placeholder="Type your letters">
-          </div>
+            <!-- Letter Spacing -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Letter Spacing</span>
+                <span class="control-value" id="val-tracking">0.00em</span>
+              </div>
+              <input type="range" class="custom-range" id="slider-tracking" min="-0.1" max="0.3" step="0.01" value="0">
+            </div>
 
-          <!-- Glyph Grid Content -->
-          <div id="fd-glyph-browser-content" style="display:flex; flex-direction:column; gap:2rem;">
-            <!-- Rendered sections injected here -->
-          </div>
-        </div>
-      </div>
-    </div>
+            <!-- Line Height -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Line Height</span>
+                <span class="control-value" id="val-leading">1.2</span>
+              </div>
+              <input type="range" class="custom-range" id="slider-leading" min="0.8" max="2.5" step="0.1" value="1.2">
+            </div>
 
-    <!-- Layout Section -->
-    <div class="fd-layout-section">
-      <div class="fd-layout-header">
-        <h2 style="font-family:var(--font-display); font-size:2.2rem; font-weight:600; margin:0; color:var(--near-black);">Layout</h2>
-        <div class="fd-layout-controls">
-          <button class="fd-layout-preset-btn active" onclick="setLayoutPreset('default', this)">Default Layout</button>
-          <button class="fd-layout-preset-btn" onclick="setLayoutPreset('editorial', this)">Editorial</button>
-          <button class="fd-layout-preset-btn" onclick="setLayoutPreset('minimal', this)">Minimal</button>
-          <button class="fd-layout-btn" onclick="resetLayoutText()">Reset</button>
-        </div>
-      </div>
-
-      <div id="fd-layout-body">
-        <!-- Title Row -->
-        <div class="fd-layout-row fd-layout-title-row">
-          <div class="fd-layout-row-label">
-            <span class="fd-layout-font-tag">${font.name}</span>
-            <span class="fd-layout-role-tag">Title</span>
-          </div>
-          <div
-            id="fd-layout-title"
-            class="fd-layout-title"
-            style="font-family:${fam}, serif;"
-            contenteditable="true"
-            spellcheck="false"
-          >Ask powerful questions</div>
-          <div class="fd-layout-row-add">+ Add Style</div>
-        </div>
-
-        <!-- Subheading Row -->
-        <div class="fd-layout-row fd-layout-sub-row">
-          <div class="fd-layout-row-label">
-            <span class="fd-layout-font-tag">${font.name}</span>
-            <span class="fd-layout-role-tag">Subheading</span>
-          </div>
-          <div
-            id="fd-layout-sub"
-            class="fd-layout-sub"
-            style="font-family:${fam}, serif;"
-            contenteditable="true"
-            spellcheck="false"
-          >All the world's a stage and all the men and women merely players. They have their exits and their entrances; And one man in his time plays many parts.</div>
-          <div class="fd-layout-row-add">+ Add Style</div>
-        </div>
-
-        <!-- Body Row -->
-        <div class="fd-layout-row fd-layout-body-row">
-          <div class="fd-layout-row-label">
-            <span class="fd-layout-font-tag">${font.name}</span>
-            <span class="fd-layout-role-tag">Body</span>
-          </div>
-          <div id="fd-layout-body-text" class="fd-layout-body-text" style="font-family:${fam}, serif;">
-            <div contenteditable="true" spellcheck="false">In this fast-paced world, it is important to take a moment and reflect on our journey. We often get caught up in the rat race and forget what is truly important in life. We strive for success, wealth and fame, but these things are fleeting and can never truly fulfil us.</div>
-            <div contenteditable="true" spellcheck="false">An opportunity for growth and learning. We must embrace challenges and obstacles as opportunities for growth and transformation. It's easy to get caught up in comparing ourselves to others and measuring our worth by external standards.</div>
-            <div contenteditable="true" spellcheck="false">Qualities, strengths, and weaknesses and allow them to guide you on your journey. The world needs more individuals who are true to themselves, who live with purpose and passion, and who inspire others to do the same.</div>
-          </div>
-          <div class="fd-layout-row-add">+ Add Style</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Font Details & Pairings (moved below Layout) -->
-    <div class="fd-details-section">
-      <div class="fd-details-inner">
-        <div class="fd-details-col">
-          <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem;">Font Details</h3>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Designer</span><span style="font-size:1rem; font-weight:500;">${font.designer || 'Independent'}</span></div>
-            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Foundry</span><span style="font-size:1rem; font-weight:500;">${font.foundry || 'Independent'}</span></div>
-            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Year Released</span><span style="font-size:1rem; font-weight:500;">${font.year || 'N/A'}</span></div>
-            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Category</span><span style="font-size:1rem; font-weight:500;">${font.style || 'Display'}</span></div>
-            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">License</span><span style="font-size:1rem; font-weight:500;">${font.price || 'Free'}</span></div>
-            <div><span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.4rem; font-family:var(--font-mono);">Languages</span><span style="font-size:1rem; font-weight:500;">${font.languages ? font.languages.join(', ') : 'Latin'}</span></div>
-          </div>
-        </div>
-        <div class="fd-pairings-col">
-          <h3 style="margin-bottom: 1.5rem; font-family: var(--font-display); font-size: 1.5rem;">Pairs Well With</h3>
-          <div style="display:flex; flex-direction:column; gap:1rem;">
-            ${font.pairsWith && font.pairsWith.length > 0 ? font.pairsWith.map(pair => {
-              const pairFont = fontsData.find(f => f.id === pair.id);
-              if (!pairFont) return '';
-              return `<div style="padding: 1rem; border: 1px solid var(--border-grey); border-radius: 6px; display:flex; justify-content:space-between; align-items:center; transition: border-color 0.2s ease;" onmouseenter="this.style.borderColor='var(--signal-red)'" onmouseleave="this.style.borderColor='var(--border-grey)'">
-                <div>
-                  <span style="display:block; font-size:0.75rem; color:#888; text-transform:uppercase; margin-bottom:0.25rem;">${pair.role}</span>
-                  <span style="font-size:1rem; font-weight:500;">${pairFont.name}</span>
+            <!-- Variable axes if available (Weight, Width, Optical Size) -->
+            ${font.isVariable || font.name.toLowerCase().includes('variable') ? `
+              <div class="control-group">
+                <div class="control-header">
+                  <span class="control-label" style="color: var(--accent-color);">Variable Width</span>
+                  <span class="control-value" id="val-var-width">100</span>
                 </div>
-                <a href="/fonts/${pairFont.id}" style="color:var(--signal-red); text-decoration:none; font-size:0.8rem; font-weight:500;">View →</a>
-              </div>`;
-            }).join('') : '<p style="color:#888; font-size:0.9rem;">No specific pairings suggested.</p>'}
+                <input type="range" class="custom-range" id="slider-var-width" min="50" max="150" value="100">
+              </div>
+              <div class="control-group">
+                <div class="control-header">
+                  <span class="control-label" style="color: var(--accent-color);">Optical Size</span>
+                  <span class="control-value" id="val-var-opsz">14</span>
+                </div>
+                <input type="range" class="custom-range" id="slider-var-opsz" min="6" max="72" value="14">
+              </div>
+            ` : ""}
+
+            <!-- Alignment -->
+            <div class="control-group">
+              <span class="control-label">Alignment</span>
+              <div class="segmented-control" id="seg-alignment">
+                <button class="segment-btn active" data-align="left">Left</button>
+                <button class="segment-btn" data-align="center">Center</button>
+                <button class="segment-btn" data-align="right">Right</button>
+                <button class="segment-btn" data-align="justify">Justify</button>
+              </div>
+            </div>
+
+            <!-- Text Transform -->
+            <div class="control-group">
+              <span class="control-label">Text Transform</span>
+              <div class="segmented-control" id="seg-transform">
+                <button class="segment-btn active" data-transform="none">None</button>
+                <button class="segment-btn" data-transform="uppercase">Caps</button>
+                <button class="segment-btn" data-transform="lowercase">Lower</button>
+              </div>
+            </div>
+
+            <!-- Canvas Theme Picker -->
+            <div class="control-group">
+              <span class="control-label">Theme</span>
+              <div class="color-picker-row" id="color-theme-picker">
+                <div class="color-circle active" data-bg="#F9F9F9" data-text="#111" style="background-color: #F9F9F9; border: 1px solid #ddd;"></div>
+                <div class="color-circle" data-bg="#111" data-text="#FFF" style="background-color: #111;"></div>
+                <div class="color-circle" data-bg="rgba(var(--accent-rgb), 0.05)" data-text="var(--accent-color)" style="background-color: rgba(217, 119, 6, 0.2);"></div>
+                <div class="color-circle" data-bg="#090909" data-text="#34D399" style="background-color: #090909; color: #34D399; font-family: monospace; font-size: 8px;">&lt;&gt;</div>
+              </div>
+            </div>
+
+            <!-- Switch: Italic -->
+            <div class="control-group switch-control">
+              <span class="control-label">Italic Overlay</span>
+              <div>
+                <input type="checkbox" id="switch-italic" class="switch-input">
+                <label for="switch-italic" class="switch-label"></label>
+              </div>
+            </div>
+
+            <!-- Reset Button -->
+            <button class="cta-btn cta-secondary" id="btn-reset-playground" style="margin-top: 1rem; width: 100%; justify-content: center;">
+              <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Reset Playground
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- 3. STYLE FAMILY DETAILS -->
+    <section class="styles-section" id="styles">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Styles &amp; Weights</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Review weights from thin hairline formats to heavy black profiles. Hover cards to test previews, click to load weight directly to playground.</p>
+        <div class="styles-grid" id="weights-grid-container">
+          ${stylesHtml}
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. GLYPHS EXPLORER -->
+    <section class="glyphs-section" id="glyphs">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Glyphs &amp; Characters</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Inspect character shapes, metrics rules, vectors structure, and copy unicodes directly to your codebase clipboard.</p>
+
+        <div class="glyphs-layout">
+          <!-- Left Panel: Sticky Large Preview -->
+          <div class="glyphs-sticky-panel">
+            <div class="glyph-large-card">
+              <!-- Metrics Guidelines overlay -->
+              <div class="glyph-guidelines">
+                <div class="guideline-line" id="guide-cap" style="top: 25%;"><span>Cap Height</span><span id="label-cap">700</span></div>
+                <div class="guideline-line" id="guide-x" style="top: 45%;"><span>X-Height</span><span id="label-x">480</span></div>
+                <div class="guideline-line" id="guide-base" style="top: 76%;"><span>Baseline</span><span>0</span></div>
+                <div class="guideline-line" id="guide-desc" style="top: 88%;"><span>Descender</span><span id="label-desc">-220</span></div>
+              </div>
+              
+              <!-- Large Display Character -->
+              <div class="glyph-large-display" id="large-glyph-char" style="font-family: ${fam}, serif;">A</div>
+
+              <div class="glyph-meta-row">
+                <div class="glyph-meta-text">
+                  <span class="glyph-meta-name" id="glyph-char-name">Capital Letter A</span>
+                  <span class="glyph-meta-unicode" id="glyph-char-unicode">U+0041</span>
+                </div>
+                <button class="cta-btn cta-secondary" style="padding: 0.5rem 1rem; font-size: 0.75rem;" id="btn-copy-glyph-unicode">
+                  <i data-lucide="copy" style="width: 12px; height: 12px;"></i> Copy Code
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel: Browse characters -->
+          <div>
+            <!-- Category Tabs -->
+            <div class="glyph-category-tabs" id="glyph-tabs-container">
+              <button class="glyph-tab active" data-set="uppercase">Uppercase</button>
+              <button class="glyph-tab" data-set="lowercase">Lowercase</button>
+              <button class="glyph-tab" data-set="numbers">Numbers</button>
+              <button class="glyph-tab" data-set="symbols">Symbols</button>
+              <button class="glyph-tab" data-set="punctuation">Punctuation</button>
+              <button class="glyph-tab" data-set="latin-ext">Latin Extended</button>
+            </div>
+
+            <!-- Custom Glyph Search -->
+            <div style="margin-bottom: 2rem;">
+              <input type="text" class="custom-range" id="glyph-custom-text-search" placeholder="Type custom characters to inspect..." style="padding: 0.8rem 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; color: var(--text-primary); height: auto;">
+            </div>
+
+            <!-- Grid container -->
+            <div class="glyphs-cell-grid" id="glyphs-cells-container">
+              <!-- Loaded dynamically via js -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. FONT IN USE SHOWCASE (Parallax Mockups) -->
+    <section class="showcase-section" id="showcase">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Font in Use</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Review real-world typographic compositions and mockups displaying the typeface layout potentials.</p>
+
+        <div class="showcase-grid">
+          <!-- Card 1: Landing Page Hero -->
+          <div class="showcase-card cascade-item">
+            <div class="showcase-layout-demo" style="text-align: center;">
+              <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-color); font-weight: 600; text-transform: uppercase;">Next-Gen Platform</span>
+              <h3 style="font-family: ${fam}, serif; font-size: clamp(2rem, 4vw, 3.5rem); margin: 1rem 0 1.5rem; font-weight: 700; line-height: 1.05;">Accelerating developers velocity.</h3>
+              <p style="font-size: 0.85rem; max-width: 320px; margin: 0 auto; color: var(--text-secondary); line-height: 1.6;">Deploy serverless websites, host assets globally, and run real-time edge databases instantly.</p>
+            </div>
+            <div class="showcase-meta">
+              <span class="showcase-tag">App UI Mockup</span>
+              <h3 class="showcase-title">Vercel-style Landing Hero</h3>
+            </div>
+          </div>
+
+          <!-- Card 2: Editorial Magazine -->
+          <div class="showcase-card cascade-item">
+            <div class="showcase-layout-demo" style="padding: 3rem; display: flex; flex-direction: column; justify-content: space-between; text-align: left; background-color: #111; color: #FFF;">
+              <span style="font-family: var(--font-mono); font-size: 0.65rem; opacity: 0.5; text-transform: uppercase;">Issue 27 — Summer 2026</span>
+              <h3 style="font-family: ${fam}, serif; font-size: 3rem; margin: 0; line-height: 1.0; font-weight: 300;">Silent forms of visual culture.</h3>
+              <p style="font-size: 0.8rem; margin: 0; color: #888; line-height: 1.6; max-width: 280px;">An analytical review of classic Roman typography balanced against brutalist digital Swiss architectures.</p>
+            </div>
+            <div class="showcase-meta">
+              <span class="showcase-tag">Editorial Composition</span>
+              <h3 class="showcase-title">Brutalist Magazine Cover</h3>
+            </div>
+          </div>
+
+          <!-- Card 3: Dashboard Typography Grid -->
+          <div class="showcase-card showcase-grid-full cascade-item" style="height: 380px;">
+            <div class="showcase-layout-demo" style="padding: 2.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; align-items: center; background-color: var(--bg-color);">
+              <div style="border-right: 1px solid var(--border-color); padding-right: 2rem;">
+                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">CONVERSION RATE</span>
+                <h4 style="font-family: ${fam}, serif; font-size: 3.5rem; margin: 0.5rem 0 0; font-weight: 500;">94.2%</h4>
+                <p style="font-size: 0.75rem; color: #22c55e; margin: 0.25rem 0 0;">&uarr; 12.4% this quarter</p>
+              </div>
+              <div style="border-right: 1px solid var(--border-color); padding-right: 2rem;">
+                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">ACTIVE USERS</span>
+                <h4 style="font-family: ${fam}, serif; font-size: 3.5rem; margin: 0.5rem 0 0; font-weight: 500;">18.5k</h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.25rem 0 0;">Peak concurrent: 2,400/min</p>
+              </div>
+              <div>
+                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">TOTAL DISK USED</span>
+                <h4 style="font-family: ${fam}, serif; font-size: 3.5rem; margin: 0.5rem 0 0; font-weight: 500;">8.42<span style="font-size: 1.5rem;">TB</span></h4>
+                <p style="font-size: 0.75rem; color: #EF4444; margin: 0.25rem 0 0;">&bull; 82% capacity reached</p>
+              </div>
+            </div>
+            <div class="showcase-meta">
+              <span class="showcase-tag">SaaS Dashboard</span>
+              <h3 class="showcase-title">Numerical Metrics UI</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. FONT PAIRINGS -->
+    <section class="pairings-section" id="pairings">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Recommended Pairings</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Combine header weights with body typefaces selected dynamically using typographic balance rules.</p>
+        <div class="pairings-row">
+          ${pairingsHtml}
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. TECHNICAL SPECIFICATIONS -->
+    <section class="specs-section" id="specs">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Specifications</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Technical attributes, supported character boundaries, weights count, and file sizes.</p>
+
+        <div class="details-list-grid">
+          <!-- Card 1 -->
+          <div class="detail-list-card cascade-item">
+            <div class="detail-list-icon"><i data-lucide="user"></i></div>
+            <div class="detail-list-info">
+              <span class="detail-list-label">Designer</span>
+              <span class="detail-list-val" title="${font.designer || 'Independent'}">${font.designer || 'Independent'}</span>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="detail-list-card cascade-item">
+            <div class="detail-list-icon"><i data-lucide="building"></i></div>
+            <div class="detail-list-info">
+              <span class="detail-list-label">Foundry</span>
+              <span class="detail-list-val" title="${font.foundry || 'Independent'}">${font.foundry || 'Independent'}</span>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="detail-list-card cascade-item">
+            <div class="detail-list-icon"><i data-lucide="award"></i></div>
+            <div class="detail-list-info">
+              <span class="detail-list-label">License</span>
+              <span class="detail-list-val">${font.price || 'Free'}</span>
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div class="detail-list-card cascade-item">
+            <div class="detail-list-icon"><i data-lucide="file-type"></i></div>
+            <div class="detail-list-info">
+              <span class="detail-list-label">File Size</span>
+              <span class="detail-list-val">${font.fileSize || 'N/A'}</span>
+            </div>
+          </div>
+          <!-- Card 5 -->
+          <div class="detail-list-card cascade-item">
+            <div class="detail-list-icon"><i data-lucide="layers"></i></div>
+            <div class="detail-list-info">
+              <span class="detail-list-label">Styles</span>
+              <span class="detail-list-val">${font.stylesCount || 1} available</span>
+            </div>
+          </div>
+          <!-- Card 6 -->
+          <div class="detail-list-card cascade-item">
+            <div class="detail-list-icon"><i data-lucide="languages"></i></div>
+            <div class="detail-list-info">
+              <span class="detail-list-label">Languages</span>
+              <span class="detail-list-val">${font.languages ? font.languages.join(', ') : 'Latin'}</span>
+            </div>
+          </div>
+          <!-- Card 7 -->
+          <div class="detail-list-card cascade-item">
+            <div class="detail-list-icon"><i data-lucide="binary"></i></div>
+            <div class="detail-list-info">
+              <span class="detail-list-label">Glyphs Count</span>
+              <span class="detail-list-val">240 characters</span>
+            </div>
+          </div>
+          <!-- Card 8 -->
+          <div class="detail-list-card cascade-item">
+            <div class="detail-list-icon"><i data-lucide="sliders"></i></div>
+            <div class="detail-list-info">
+              <span class="detail-list-label">Variable Font</span>
+              <span class="detail-list-val">${font.isVariable || font.name.toLowerCase().includes('variable') ? 'Yes' : 'No'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. APPLE-STYLE DOWNLOAD BANNER -->
+    <section class="download-cta-section" id="download-banner">
+      <div class="container">
+        <div class="download-cta-banner cascade-item">
+          <div class="mesh-glow" style="opacity: 0.1;"></div>
+          <h2 class="download-banner-title">Ready to build with ${font.name}?</h2>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; z-index: 2;">
+            <button class="cta-btn cta-primary" id="btn-banner-download" style="padding: 1.2rem 3.5rem; font-size: 1.05rem;">
+              <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download Font Family
+            </button>
+            <button class="cta-btn cta-secondary" id="btn-banner-fav" style="padding: 1.2rem 2.2rem;" onclick="toggleFavoriteState('${font.id}', this)">
+              <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. RELATED FONTS CAROUSEL -->
+    <section class="related-section" id="related-fonts">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem;">
+          <div>
+            <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Related Fonts</h2>
+            <p style="color: var(--text-secondary); margin: 0; font-size: 1.1rem; max-width: 600px;">Explore similar typefaces in the FontVault catalog.</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; z-index: 2;">
+            <button class="cta-icon-btn" id="btn-carousel-left" title="Scroll left"><i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i></button>
+            <button class="cta-icon-btn" id="btn-carousel-right" title="Scroll right"><i data-lucide="chevron-right" style="width: 18px; height: 18px;"></i></button>
+          </div>
+        </div>
+
+        <div class="carousel-wrapper">
+          <div class="carousel-track" id="carousel-track-container">
+            <!-- Dynamic related cards loaded in init -->
+          </div>
+        </div>
+      </div>
+    </section>
   `;
+}
 
-  // Download Button Logic — uses /api/download proxy (no external redirects)
-  const downloadBtn = document.getElementById("btn-fd-download");
-  if (downloadBtn) {
-    downloadBtn.addEventListener("click", async () => {
-      const url = font.downloadUrl;
-      if (!url || url === '#') return;
+// -------------------------------------------------
+// PREMIUM ACTIONS & LISTENERS SETUP
+// -------------------------------------------------
+function initPremiumInteractions(font) {
+  const fam = font.cssFamily || `'${font.name}'`;
+  
+  // Re-generate Lucide Icons in injected DOM
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 
-      const isGoogleFont = url.includes('fonts.google.com');
-      const ext = isGoogleFont ? 'zip'
-                : (font.format === 'truetype' ? 'ttf'
-                : font.format === 'opentype' ? 'otf'
-                : font.format || 'woff2');
+  // --- 1. INITIALIZE LENIS SMOOTH SCROLL ---
+  let lenis;
+  if (window.Lenis) {
+    lenis = new window.Lenis({
+      duration: 1.5,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+      infinite: false,
+    });
 
-      if (window.FontVaultAnalytics) {
-        window.FontVaultAnalytics.trackDownload(font.name, ext);
-      }
-      const safeName = (font.name || 'font').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_');
-      const safeFilename = `${safeName}${isGoogleFont ? '_fonts' : ''}.${ext}`;
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  }
 
-      downloadBtn.textContent = '↓ Fetching...';
-      downloadBtn.disabled = true;
+  // --- 2. GSAP & SCROLLTRIGGER SCRUB ANIMATIONS ---
+  if (window.gsap && window.ScrollTrigger) {
+    window.gsap.registerPlugin(window.ScrollTrigger);
 
-      try {
-        let proxyUrl;
-        if (isGoogleFont) {
-          const familyMatch = url.match(/specimen\/([^?#]+)/);
-          const family = familyMatch
-            ? decodeURIComponent(familyMatch[1].replace(/\+/g, ' '))
-            : font.name;
-          proxyUrl = `/api/download?family=${encodeURIComponent(family)}&filename=${encodeURIComponent(safeFilename)}`;
-        } else {
-          proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(safeFilename)}`;
+    // Hero title scale down and fade out on scroll
+    window.gsap.to(".hero-font-title", {
+      scrollTrigger: {
+        trigger: "#hero",
+        start: "top top",
+        end: "bottom center",
+        scrub: true,
+      },
+      scale: 0.85,
+      opacity: 0.15,
+      ease: "power2.out",
+    });
+
+    // Massive Specimen card slide up on scroll
+    window.gsap.to(".hero-specimen-card", {
+      scrollTrigger: {
+        trigger: "#hero",
+        start: "top center",
+        end: "bottom top",
+        scrub: true,
+      },
+      y: -60,
+      ease: "power2.out",
+    });
+
+    // Sections fade-in cascade staggered scrub animations (scrubs both directions!)
+    const cascadeSections = ["#playground", "#styles", "#glyphs", "#showcase", "#pairings", "#specs", "#download-banner", "#related-fonts"];
+    cascadeSections.forEach(sectionId => {
+      const section = document.querySelector(sectionId);
+      if (!section) return;
+
+      const elements = section.querySelectorAll(".cascade-item");
+      if (elements.length === 0) return;
+
+      window.gsap.fromTo(elements, 
+        {
+          opacity: 0,
+          y: 60,
+          filter: "blur(8px)",
+          scale: 0.95
+        },
+        {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          scale: 1,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            end: "top 20%",
+            toggleActions: "play reverse play reverse",
+            scrub: 1
+          }
         }
+      );
+    });
+  }
 
-        const resp = await fetch(proxyUrl);
-        if (!resp.ok) throw new Error(`${resp.status}`);
-        const blob = await resp.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = safeFilename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-        downloadBtn.textContent = isGoogleFont
-          ? `✓ Downloaded ZIP (${font.name})`
-          : `✓ Downloaded ${ext.toUpperCase()}`;
-        downloadBtn.style.borderColor = '#22c55e';
-        downloadBtn.style.color = '#22c55e';
-      } catch (err) {
-        console.warn('[FontVault] Detail page download failed:', err);
-        downloadBtn.textContent = 'Download Failed — Retry';
-        downloadBtn.disabled = false;
+  // --- 3. DYNAMIC SCROLL ACTIONS & STICKY Floating Action BAR ---
+  const floatingBar = document.getElementById("sticky-floating-actions-bar");
+  const floatingBarName = document.getElementById("floating-bar-font-name");
+  if (floatingBarName) floatingBarName.textContent = font.name;
+
+  const backToTopBtn = document.getElementById("back-to-top-btn");
+  const progressEdge = document.getElementById("scroll-progress-edge");
+
+  window.addEventListener("scroll", () => {
+    const sTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    
+    // Scroll progress bar
+    if (progressEdge && docHeight > 0) {
+      const pct = (sTop / docHeight) * 100;
+      progressEdge.style.width = `${pct}%`;
+    }
+
+    // Floating Sticky Action Bar visibility
+    if (floatingBar) {
+      if (sTop > 600) {
+        floatingBar.classList.add("active");
+      } else {
+        floatingBar.classList.remove("active");
+      }
+    }
+
+    // Back to top morph visibility
+    if (backToTopBtn) {
+      if (sTop > 800) {
+        backToTopBtn.classList.add("active");
+      } else {
+        backToTopBtn.classList.remove("active");
+      }
+    }
+  });
+
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener("click", () => {
+      if (lenis) {
+        lenis.scrollTo(0, { duration: 1.5 });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     });
   }
 
-  // Attach tester event listeners
-  const sizeSlider = document.getElementById("fd-size");
-  const leadingSlider = document.getElementById("fd-leading");
-  const trackingSlider = document.getElementById("fd-tracking");
-  const specimen = document.getElementById("fd-specimen");
-  const sizeVal = document.getElementById("fd-size-val");
-  const leadingVal = document.getElementById("fd-leading-val");
-  const trackingVal = document.getElementById("fd-tracking-val");
-  const unitToggle = document.getElementById("fd-unit-toggle");
+  // --- 4. PLAYGROUND INTERACTIVE CONTROLS BINDING ---
+  const pEditableText = document.getElementById("p-editable-text");
+  const sliderSize = document.getElementById("slider-size");
+  const sliderWeight = document.getElementById("slider-weight");
+  const sliderTracking = document.getElementById("slider-tracking");
+  const sliderLeading = document.getElementById("slider-leading");
+  
+  const valSize = document.getElementById("val-size");
+  const valWeight = document.getElementById("val-weight");
+  const valTracking = document.getElementById("val-tracking");
+  const valLeading = document.getElementById("val-leading");
 
-  let useRem = false;
+  // Sync Slider values in real time with transitions
+  function updatePlaygroundValues() {
+    if (!pEditableText) return;
+    const size = sliderSize.value;
+    const weight = sliderWeight.value;
+    const tracking = sliderTracking.value;
+    const leading = sliderLeading.value;
 
-  function updateSpecimen() {
-    const s = sizeSlider.value;
-    const l = leadingSlider.value;
-    const t = trackingSlider ? trackingSlider.value : "0";
-    
-    if (useRem) {
-      const remSize = (s / 16).toFixed(2);
-      sizeVal.textContent = remSize + "rem";
-      specimen.style.fontSize = remSize + "rem";
-    } else {
-      sizeVal.textContent = s + "px";
-      specimen.style.fontSize = s + "px";
+    valSize.textContent = `${size}px`;
+    valWeight.textContent = weight;
+    valTracking.textContent = `${Number(tracking).toFixed(2)}em`;
+    valLeading.textContent = Number(leading).toFixed(1);
+
+    // CSS variables / styles updates
+    pEditableText.style.fontSize = `${size}px`;
+    pEditableText.style.fontWeight = weight;
+    pEditableText.style.letterSpacing = `${tracking}em`;
+    pEditableText.style.lineHeight = leading;
+
+    // Optional Variable Font parameters
+    const sliderWidth = document.getElementById("slider-var-width");
+    const sliderOpsz = document.getElementById("slider-var-opsz");
+    const valWidth = document.getElementById("val-var-width");
+    const valOpsz = document.getElementById("val-var-opsz");
+
+    let varSettings = "";
+    if (sliderWidth && valWidth) {
+      valWidth.textContent = sliderWidth.value;
+      varSettings += `"wdth" ${sliderWidth.value}`;
     }
-    
-    leadingVal.textContent = l;
-    specimen.style.lineHeight = l;
-    
-    if (trackingVal) {
-      trackingVal.textContent = t + "em";
-      specimen.style.letterSpacing = t + "em";
+    if (sliderOpsz && valOpsz) {
+      valOpsz.textContent = sliderOpsz.value;
+      varSettings += varSettings ? `, "opsz" ${sliderOpsz.value}` : `"opsz" ${sliderOpsz.value}`;
+    }
+    if (varSettings) {
+      pEditableText.style.fontVariationSettings = varSettings;
     }
   }
 
-  if (unitToggle) {
-    unitToggle.addEventListener("click", () => {
-      useRem = !useRem;
-      unitToggle.textContent = useRem ? "Switch to PX" : "Switch to REM";
-      updateSpecimen();
+  [sliderSize, sliderWeight, sliderTracking, sliderLeading].forEach(slider => {
+    if (slider) slider.addEventListener("input", updatePlaygroundValues);
+  });
+
+  // Dynamic variable slider bindings
+  const sliderWidth = document.getElementById("slider-var-width");
+  const sliderOpsz = document.getElementById("slider-var-opsz");
+  if (sliderWidth) sliderWidth.addEventListener("input", updatePlaygroundValues);
+  if (sliderOpsz) sliderOpsz.addEventListener("input", updatePlaygroundValues);
+
+  // Alignment Segmented Button binding
+  const alignBtns = document.querySelectorAll("#seg-alignment .segment-btn");
+  alignBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      alignBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      if (pEditableText) pEditableText.style.textAlign = btn.dataset.align;
+    });
+  });
+
+  // Transform Segmented Button binding
+  const transBtns = document.querySelectorAll("#seg-transform .segment-btn");
+  transBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      transBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      if (pEditableText) pEditableText.style.textTransform = btn.dataset.transform;
+    });
+  });
+
+  // Canvas Theme Circle selection binding
+  const themeCircles = document.querySelectorAll("#color-theme-picker .color-circle");
+  themeCircles.forEach(circle => {
+    circle.addEventListener("click", () => {
+      themeCircles.forEach(c => c.classList.remove("active"));
+      circle.classList.add("active");
+      const canvas = document.getElementById("p-canvas");
+      if (canvas) {
+        canvas.style.backgroundColor = circle.dataset.bg;
+        pEditableText.style.color = circle.dataset.text;
+        
+        const canvasLabel = document.getElementById("p-canvas-label");
+        const canvasFont = document.getElementById("p-canvas-font-name");
+        if (canvasLabel) canvasLabel.style.color = circle.dataset.text;
+        if (canvasFont) canvasFont.style.color = circle.dataset.text;
+        if (canvasLabel) canvasLabel.style.opacity = 0.5;
+        if (canvasFont) canvasFont.style.opacity = 0.5;
+      }
+    });
+  });
+
+  // Italic switch binding
+  const switchItalic = document.getElementById("switch-italic");
+  if (switchItalic) {
+    switchItalic.addEventListener("change", () => {
+      if (pEditableText) {
+        pEditableText.style.fontStyle = switchItalic.checked ? "italic" : "normal";
+      }
     });
   }
 
-  if(sizeSlider && specimen) {
-    sizeSlider.addEventListener("input", updateSpecimen);
-  }
+  // Reset Playground
+  const resetBtn = document.getElementById("btn-reset-playground");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      sliderSize.value = 64;
+      sliderWeight.value = defaultWeight;
+      sliderTracking.value = 0;
+      sliderLeading.value = 1.2;
+      if (sliderWidth) sliderWidth.value = 100;
+      if (sliderOpsz) sliderOpsz.value = 14;
 
-  if(leadingSlider && specimen) {
-    leadingSlider.addEventListener("input", updateSpecimen);
-  }
+      if (switchItalic) switchItalic.checked = false;
+      alignBtns.forEach(b => b.classList.remove("active"));
+      alignBtns[0].classList.add("active");
+      transBtns.forEach(b => b.classList.remove("active"));
+      transBtns[0].classList.add("active");
+      themeCircles.forEach(c => c.classList.remove("active"));
+      themeCircles[0].classList.add("active");
 
-  if(trackingSlider && specimen) {
-    trackingSlider.addEventListener("input", updateSpecimen);
-  }
+      const canvas = document.getElementById("p-canvas");
+      if (canvas) {
+        canvas.style.backgroundColor = themeCircles[0].dataset.bg;
+        pEditableText.style.color = themeCircles[0].dataset.text;
+        pEditableText.style.textAlign = "left";
+        pEditableText.style.textTransform = "none";
+        pEditableText.style.fontStyle = "normal";
+      }
 
-  const weightSelect = document.getElementById("fd-weight");
-  const weightVal = document.getElementById("fd-weight-val");
-  if (weightSelect && specimen) {
-    weightSelect.addEventListener("change", (e) => {
-      const w = e.target.value;
-      if (weightVal) weightVal.textContent = w;
-      specimen.style.fontWeight = w;
+      updatePlaygroundValues();
     });
   }
 
-  // Initialize Glyphs Grid
-  if (typeof renderGlyphGrid === "function") {
-    renderGlyphGrid();
+  // --- 5. STYLES CARDS EVENT LISTENERS ---
+  const styleCards = document.querySelectorAll(".style-card");
+  styleCards.forEach(card => {
+    card.addEventListener("click", () => {
+      const w = card.dataset.weight;
+      if (sliderWeight) {
+        sliderWeight.value = w;
+        updatePlaygroundValues();
+        document.getElementById("playground").scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  });
+
+  // --- 6. GLYPHS EXPLORER GRID & METRICS ---
+  let selectedGlyphSet = "uppercase";
+  const glyphTabs = document.querySelectorAll("#glyph-tabs-container .glyph-tab");
+  
+  function getGlyphCharsForSet(setName) {
+    const uppercaseSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+    const lowercaseSet = "abcdefghijklmnopqrstuvwxyz".split('');
+    const numbersSet = "0123456789".split('');
+    const symbolsSet = "@#$-+=*/%^&_[]{}<>|~".split('');
+    const punctuationSet = ".,;:!?\"'()".split('');
+    const latinExtSet = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ".split('');
+    
+    switch(setName) {
+      case "uppercase": return uppercaseSet;
+      case "lowercase": return lowercaseSet;
+      case "numbers": return numbersSet;
+      case "symbols": return symbolsSet;
+      case "punctuation": return punctuationSet;
+      case "latin-ext": return latinExtSet;
+      default: return uppercaseSet;
+    }
   }
 
-  // Sync specimen typing to all weights cards preview texts
-  if (specimen) {
-    specimen.addEventListener("input", () => {
-      const text = specimen.textContent;
-      const weightPreviews = document.querySelectorAll(".fd-weight-preview");
-      weightPreviews.forEach(p => {
-        p.textContent = text;
+  function renderSelectedGlyphGrid() {
+    const cellsContainer = document.getElementById("glyphs-cells-container");
+    if (!cellsContainer) return;
+
+    const chars = getGlyphCharsForSet(selectedGlyphSet);
+    
+    cellsContainer.innerHTML = chars.map((char, index) => `
+      <div class="glyph-grid-cell" data-char="${char}">
+        ${char}
+      </div>
+    `).join('');
+
+    // Bind click events on glyph grid cells
+    const cells = cellsContainer.querySelectorAll(".glyph-grid-cell");
+    cells.forEach(cell => {
+      cell.addEventListener("click", () => {
+        cells.forEach(c => c.classList.remove("active"));
+        cell.classList.add("active");
+        loadGlyphMeta(cell.dataset.char);
+      });
+    });
+
+    // Make first element active by default
+    if (cells.length > 0) {
+      cells[0].classList.add("active");
+      loadGlyphMeta(cells[0].dataset.char);
+    }
+  }
+
+  function loadGlyphMeta(char) {
+    const largeChar = document.getElementById("large-glyph-char");
+    const metaName = document.getElementById("glyph-char-name");
+    const metaUnicode = document.getElementById("glyph-char-unicode");
+    
+    if (!largeChar) return;
+
+    largeChar.classList.add("scale-pop");
+    
+    setTimeout(() => {
+      largeChar.textContent = char;
+      const metadata = getGlyphMetadata(char);
+      if (metaName) metaName.textContent = metadata.name;
+      if (metaUnicode) metaUnicode.textContent = metadata.unicode;
+      
+      largeChar.classList.remove("scale-pop");
+    }, 150);
+  }
+
+  // Tab switching click events
+  glyphTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      glyphTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      selectedGlyphSet = tab.dataset.set;
+      renderSelectedGlyphGrid();
+    });
+  });
+
+  // Custom text character browser search bar
+  const glyphCustomSearch = document.getElementById("glyph-custom-text-search");
+  if (glyphCustomSearch) {
+    glyphCustomSearch.addEventListener("input", (e) => {
+      const val = e.target.value.trim();
+      const cellsContainer = document.getElementById("glyphs-cells-container");
+      if (!cellsContainer) return;
+
+      if (!val) {
+        renderSelectedGlyphGrid();
+        return;
+      }
+
+      const uniqueChars = Array.from(new Set(val.split('')));
+      cellsContainer.innerHTML = uniqueChars.map(char => `
+        <div class="glyph-grid-cell" data-char="${char}">
+          ${char}
+        </div>
+      `).join('');
+
+      const cells = cellsContainer.querySelectorAll(".glyph-grid-cell");
+      cells.forEach(cell => {
+        cell.addEventListener("click", () => {
+          cells.forEach(c => c.classList.remove("active"));
+          cell.classList.add("active");
+          loadGlyphMeta(cell.dataset.char);
+        });
+      });
+
+      if (cells.length > 0) {
+        cells[0].classList.add("active");
+        loadGlyphMeta(cells[0].dataset.char);
+      }
+    });
+  }
+
+  // Copy Glyph Unicode
+  const copyGlyphUnicodeBtn = document.getElementById("btn-copy-glyph-unicode");
+  if (copyGlyphUnicodeBtn) {
+    copyGlyphUnicodeBtn.addEventListener("click", () => {
+      const unicode = document.getElementById("glyph-char-unicode").textContent;
+      navigator.clipboard.writeText(unicode).then(() => {
+        alert(`Unicode code point ${unicode} copied to clipboard!`);
       });
     });
   }
 
-  // Initialize Guideline Metrics
-  if (typeof updateGlyphGuidelines === "function") {
-    updateGlyphGuidelines(font.name);
-  }
+  // Initialize Glyph section
+  renderSelectedGlyphGrid();
+  updateGlyphGuidelines(font.name);
 
-  // Attach Glyphs weight selector event listener
-  const glyphWeightSelect = document.getElementById("fd-glyph-weight-select");
-  if (glyphWeightSelect) {
-    glyphWeightSelect.addEventListener("change", () => {
-      if (typeof applyStyleOverridesToGrid === "function") {
-        applyStyleOverridesToGrid();
-      }
-    });
-  }
+  // --- 7. RELATED FONTS CAROUSEL SLIDE BINDINGS ---
+  const carouselTrack = document.getElementById("carousel-track-container");
+  const btnCarouselLeft = document.getElementById("btn-carousel-left");
+  const btnCarouselRight = document.getElementById("btn-carousel-right");
 
-  // Attach Glyphs custom text input listener
-  const glyphCustomInput = document.getElementById("fd-glyph-custom-input");
-  if (glyphCustomInput) {
-    glyphCustomInput.addEventListener("input", () => {
-      if (typeof renderGlyphGrid === "function") {
-        renderGlyphGrid();
-      }
-    });
-  }
-}
-
-// -------------------------------------------------
-// HELPERS FOR FONT WEIGHTS
-// -------------------------------------------------
-
-function getFontWeights(font) {
-  if (font.variants && Array.isArray(font.variants)) {
-    const weights = new Set();
-    font.variants.forEach(v => {
-      const match = v.match(/\d+/);
-      if (match) {
-        weights.add(parseInt(match[0], 10));
-      } else if (v === 'regular' || v === 'italic') {
-        weights.add(400);
-      }
-    });
-    if (weights.size > 0) {
-      return Array.from(weights).sort((a, b) => a - b);
-    }
-  }
-  
-  if (font.provider === 'fontshare') {
-    const fontshareWeights = {
-      'satoshi': [300, 400, 500, 700, 900],
-      'clash-display': [200, 300, 400, 500, 600, 700],
-      'cabinet-grotesk-free': [100, 200, 300, 400, 500, 700, 800, 900],
-      'general-sans': [200, 300, 400, 500, 600, 700],
-      'zodiak': [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      'switzer': [100, 200, 300, 400, 500, 600, 700, 800, 900],
-      'boska': [300, 400, 500, 700, 900],
-      'chillax': [200, 300, 400, 500, 600, 700],
-      'tanker': [400],
-      'ranade': [100, 200, 300, 400, 500, 700]
-    };
-    if (fontshareWeights[font.id]) {
-      return fontshareWeights[font.id];
-    }
-  }
-
-  if (font.provider === 'google' || font.provider === 'fontshare') {
-    if (font.stylesCount === 1) return [400];
-    return [300, 400, 500, 700];
-  }
-  return [400];
-}
-
-function getWeightLabel(weight) {
-  const labels = {
-    100: "Thin",
-    200: "Extra Light",
-    300: "Light",
-    400: "Regular",
-    500: "Medium",
-    600: "Semi Bold",
-    700: "Bold",
-    800: "Extra Bold",
-    900: "Black"
-  };
-  return labels[weight] || "Regular";
-}
-
-// -------------------------------------------------
-// GLYPHS INTERACTIVE VIEW SYSTEM
-// -------------------------------------------------
-let currentGlyphSet = "basic";
-let currentGlyphFill = "solid";
-
-function getGlyphMetadata(char) {
-  const code = char.charCodeAt(0);
-  const hex = code.toString(16).toUpperCase().padStart(4, '0');
-  const unicodeStr = `U+${hex}`;
-  
-  let name = "";
-  if (char >= 'A' && char <= 'Z') {
-    name = `Capital Letter ${char}`;
-  } else if (char >= 'a' && char <= 'z') {
-    name = `Lowercase Letter ${char.toUpperCase()}`;
-  } else if (char >= '0' && char <= '9') {
-    name = `Digit ${char}`;
-  } else {
-    const symbolNames = {
-      '!': 'Exclamation Mark',
-      '@': 'At Sign',
-      '#': 'Number Sign / Hash',
-      '$': 'Dollar Sign',
-      '%': 'Percent Sign',
-      '^': 'Caret / Circumflex',
-      '&': 'Ampersand',
-      '*': 'Asterisk',
-      '(': 'Left Parenthesis',
-      ')': 'Right Parenthesis',
-      '-': 'Hyphen-Minus',
-      '_': 'Low Line / Underscore',
-      '=': 'Equals Sign',
-      '+': 'Plus Sign',
-      '{': 'Left Curly Bracket',
-      '}': 'Right Curly Bracket',
-      '[': 'Left Square Bracket',
-      ']': 'Right Square Bracket',
-      '|': 'Vertical Line / Pipe',
-      ':': 'Colon',
-      ';': 'Semicolon',
-      '"': 'Quotation Mark',
-      "'": 'Apostrophe',
-      '<': 'Less-Than Sign',
-      '>': 'Greater-Than Sign',
-      ',': 'Comma',
-      '.': 'Full Stop / Period',
-      '?': 'Question Mark',
-      '/': 'Solidus / Slash',
-      '~': 'Tilde',
-      '`': 'Grave Accent'
-    };
-    name = symbolNames[char] || `Character '${char}'`;
-  }
-  return { name, unicode: unicodeStr };
-}
-
-window.renderGlyphGrid = function() {
-  const container = document.getElementById("fd-glyph-browser-content");
-  if (!container) return;
-
-  const customInput = document.getElementById("fd-glyph-custom-input");
-  const customVal = customInput ? customInput.value : "";
-  
-  let html = "";
-  
-  if (customVal) {
-    // Unique characters from custom input
-    const uniqueChars = Array.from(new Set(customVal.split('')));
-    html += renderGlyphSection("Custom Letters", uniqueChars);
-  } else {
-    // Normal categorized layout
-    if (currentGlyphSet === "basic") {
-      html += renderGlyphSection("Uppercase", "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''));
-      html += renderGlyphSection("Lowercase", "abcdefghijklmnopqrstuvwxyz".split(''));
-      html += renderGlyphSection("Numerals", "0123456789".split(''));
-    } else {
-      html += renderGlyphSection("Uppercase", "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(''));
-      html += renderGlyphSection("Lowercase", "abcdefghijklmnopqrstuvwxyz".split(''));
-      html += renderGlyphSection("Numerals", "0123456789".split(''));
-      html += renderGlyphSection("Symbols & Punctuation", "!@#$%^&*()_+-=[]{}|;':\",./<>?~`".split(''));
-    }
-  }
-
-  container.innerHTML = html;
-
-  // Re-apply style and weight overrides to cells
-  applyStyleOverridesToGrid();
-};
-
-function renderGlyphSection(title, chars) {
-  if (chars.length === 0) return "";
-  const currentLargeChar = document.getElementById("fd-large-glyph")?.textContent || "A";
-
-  const cellsHTML = chars.map(char => {
-    const isActive = char === currentLargeChar;
-    const outlineStyle = currentGlyphFill === "outline" ? "-webkit-text-stroke:1px var(--near-black); color:transparent !important;" : "";
-    return `<div class="fd-glyph-cell ${isActive ? 'active' : ''}" style="${outlineStyle}" onclick="selectGlyph('${char}', this)">${char}</div>`;
-  }).join('');
-
-  return `
-    <div class="fd-glyph-section">
-      <div class="fd-glyph-section-header">
-        <span>${title}</span>
-        <span style="opacity: 0.5;">${chars.length} glyphs</span>
-      </div>
-      <div class="fd-glyph-grid">
-        ${cellsHTML}
-      </div>
-    </div>
-  `;
-}
-
-window.selectGlyph = function(char, cellElement) {
-  const largeGlyph = document.getElementById("fd-large-glyph");
-  const nameEl = document.getElementById("fd-glyph-meta-name");
-  const unicodeEl = document.getElementById("fd-glyph-meta-unicode");
-
-  if (!largeGlyph) return;
-
-  // Scale pop transition animation
-  largeGlyph.classList.add("scale-pop");
-  
-  setTimeout(() => {
-    largeGlyph.textContent = char;
+  if (carouselTrack) {
+    const relatedFonts = fontsData.filter(f => f.id !== font.id).slice(0, 6);
     
-    // Update metadata
-    const meta = getGlyphMetadata(char);
-    if (nameEl) nameEl.textContent = meta.name;
-    if (unicodeEl) unicodeEl.textContent = meta.unicode;
-    
-    largeGlyph.classList.remove("scale-pop");
-  }, 150);
+    carouselTrack.innerHTML = relatedFonts.map(rf => `
+      <div class="carousel-card" onclick="window.location.href='font.html?id=${rf.id}'">
+        <div>
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">${rf.style}</span>
+          <h4 style="font-family: ${rf.cssFamily || `'${rf.name}'`}, serif; font-size: 1.6rem; font-weight: 500; margin: 0.5rem 0 0;">${rf.name}</h4>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 2rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary);">${rf.designer || 'Independent'}</span>
+          <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-color); font-weight: 600;">View →</span>
+        </div>
+      </div>
+    `).join('');
 
-  // Update active cell class
-  const grid = cellElement.closest("#fd-glyph-browser-content");
-  if (grid) {
-    grid.querySelectorAll(".fd-glyph-cell").forEach(cell => {
-      cell.classList.remove("active");
+    let slideOffset = 0;
+    const maxOffset = Math.max(0, (relatedFonts.length * 352) - carouselTrack.parentElement.clientWidth);
+
+    if (btnCarouselRight) {
+      btnCarouselRight.addEventListener("click", () => {
+        slideOffset = Math.min(slideOffset + 352, maxOffset);
+        window.gsap.to(carouselTrack, { x: -slideOffset, duration: 0.8, ease: "power3.out" });
+      });
+    }
+
+    if (btnCarouselLeft) {
+      btnCarouselLeft.addEventListener("click", () => {
+        slideOffset = Math.max(slideOffset - 352, 0);
+        window.gsap.to(carouselTrack, { x: -slideOffset, duration: 0.8, ease: "power3.out" });
+      });
+    }
+  }
+
+  // --- 8. DOWNLOAD PROXY BUTTON BINDINGS ---
+  const downloadTriggers = [
+    document.getElementById("btn-hero-download"),
+    document.getElementById("floating-btn-download"),
+    document.getElementById("btn-banner-download")
+  ];
+
+  downloadTriggers.forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", async () => {
+        const url = font.downloadUrl;
+        if (!url || url === '#') {
+          alert("This font is external or does not have a direct file download path.");
+          return;
+        }
+
+        const isGoogleFont = url.includes('fonts.google.com');
+        const ext = isGoogleFont ? 'zip'
+                  : (font.format === 'truetype' ? 'ttf'
+                  : font.format === 'opentype' ? 'otf'
+                  : font.format || 'woff2');
+
+        if (window.FontVaultAnalytics) {
+          window.FontVaultAnalytics.trackDownload(font.name, ext);
+        }
+        const safeName = (font.name || 'font').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_');
+        const safeFilename = `${safeName}${isGoogleFont ? '_fonts' : ''}.${ext}`;
+
+        btn.textContent = '↓ Fetching...';
+        btn.disabled = true;
+
+        try {
+          let proxyUrl;
+          if (isGoogleFont) {
+            const familyMatch = url.match(/specimen\/([^?#]+)/);
+            const family = familyMatch
+              ? decodeURIComponent(familyMatch[1].replace(/\+/g, ' '))
+              : font.name;
+            proxyUrl = `/api/download?family=${encodeURIComponent(family)}&filename=${encodeURIComponent(safeFilename)}`;
+          } else {
+            proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(safeFilename)}`;
+          }
+
+          const resp = await fetch(proxyUrl);
+          if (!resp.ok) throw new Error(`${resp.status}`);
+          const blob = await resp.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = safeFilename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+          btn.innerHTML = `<i data-lucide="check" style="width: 14px; height: 14px;"></i> Downloaded`;
+          btn.style.backgroundColor = '#22c55e';
+          btn.style.color = '#FFF';
+        } catch (err) {
+          console.warn('[FontVault] Detail page download failed:', err);
+          btn.textContent = 'Failed';
+          btn.disabled = false;
+        }
+      });
+    }
+  });
+
+  // --- 9. KEYBOARD SHORTCUTS ---
+  document.addEventListener("keydown", (e) => {
+    const isEditing = ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName) || document.activeElement.contentEditable === "true";
+    if (isEditing) return;
+
+    const key = e.key.toLowerCase();
+    
+    // Focus search input on "/"
+    if (e.key === "/") {
+      e.preventDefault();
+      const sInput = document.getElementById("search-input");
+      if (sInput) sInput.focus();
+    }
+    
+    // Favorite font on "f"
+    if (key === "f") {
+      const favBtn = document.getElementById("btn-hero-favorite");
+      if (favBtn) toggleFavoriteState(font.id, favBtn);
+    }
+
+    // Download font on "d"
+    if (key === "d") {
+      const dlBtn = document.getElementById("btn-hero-download");
+      if (dlBtn) dlBtn.click();
+    }
+
+    // Copy CSS rules on "c"
+    if (key === "c") {
+      const cssBtn = document.getElementById("btn-hero-copy-css");
+      if (cssBtn) cssBtn.click();
+    }
+  });
+
+  // Hero custom specimen live editing updates playground specimen in real-time
+  const heroSpecimenInput = document.getElementById("hero-editable-specimen");
+  if (heroSpecimenInput) {
+    heroSpecimenInput.addEventListener("input", () => {
+      if (pEditableText) pEditableText.textContent = heroSpecimenInput.textContent;
     });
   }
-  cellElement.classList.add("active");
-};
 
-window.setGlyphFillMode = function(mode) {
-  currentGlyphFill = mode;
+  // --- 10. COMPATIBILITY COMPARE MODAL ---
+  const compareOverlay = document.getElementById("compare-modal-overlay");
+  const compareCloseBtn = document.getElementById("compare-modal-close-btn");
+  const compareTargetSelect = document.getElementById("compare-target-select");
   
-  const solidBtn = document.getElementById("fd-glyph-fill-solid");
-  const outlineBtn = document.getElementById("fd-glyph-fill-outline");
-  if (solidBtn && outlineBtn) {
-    if (mode === "solid") {
-      solidBtn.classList.add("active");
-      outlineBtn.classList.remove("active");
-    } else {
-      solidBtn.classList.remove("active");
-      outlineBtn.classList.add("active");
+  const activeSpecimen = document.getElementById("compare-active-specimen");
+  const targetSpecimen = document.getElementById("compare-target-specimen");
+  const activeSpecimenName = document.getElementById("compare-active-font-name");
+
+  // Bind compare open buttons (Hero actions + floating bar action)
+  const compareTriggers = [
+    document.getElementById("floating-btn-compare"),
+    document.getElementById("btn-hero-compare") // if exists
+  ];
+
+  function openCompareModal() {
+    if (!compareOverlay) return;
+
+    if (activeSpecimenName) activeSpecimenName.textContent = font.name;
+    if (activeSpecimen) {
+      activeSpecimen.textContent = pEditableText ? pEditableText.textContent : "Type here to compare.";
+      activeSpecimen.style.fontFamily = fam;
     }
-  }
 
-  const largeGlyph = document.getElementById("fd-large-glyph");
-  if (largeGlyph) {
-    if (mode === "outline") {
-      largeGlyph.style.webkitTextStroke = "2px var(--near-black)";
-      largeGlyph.style.color = "transparent";
-    } else {
-      largeGlyph.style.webkitTextStroke = "none";
-      largeGlyph.style.color = "var(--near-black)";
+    // Populate Right select options
+    if (compareTargetSelect) {
+      compareTargetSelect.innerHTML = fontsData.map(f => `
+        <option value="${f.id}" ${f.id === font.id ? 'disabled' : ''}>${f.name} (${f.style})</option>
+      `).join('');
+      
+      // Select first alternate option
+      const alternateOption = fontsData.find(f => f.id !== font.id);
+      if (alternateOption) {
+        compareTargetSelect.value = alternateOption.id;
+        loadCompareTargetFont(alternateOption.id);
+      }
     }
-  }
-  
-  renderGlyphGrid();
-};
 
-window.setGlyphSet = function(set) {
-  currentGlyphSet = set;
-  
-  const basicBtn = document.getElementById("fd-glyph-set-basic");
-  const fullBtn = document.getElementById("fd-glyph-set-full");
-  if (basicBtn && fullBtn) {
-    if (set === "basic") {
-      basicBtn.classList.add("active");
-      fullBtn.classList.remove("active");
-    } else {
-      basicBtn.classList.remove("active");
-      fullBtn.classList.add("active");
+    compareOverlay.classList.add("active");
+  }
+
+  compareTriggers.forEach(btn => {
+    if (btn) btn.addEventListener("click", openCompareModal);
+  });
+
+  if (compareCloseBtn && compareOverlay) {
+    compareCloseBtn.addEventListener("click", () => {
+      compareOverlay.classList.remove("active");
+    });
+  }
+
+  if (compareTargetSelect) {
+    compareTargetSelect.addEventListener("change", (e) => {
+      loadCompareTargetFont(e.target.value);
+    });
+  }
+
+  function loadCompareTargetFont(id) {
+    const targetFont = fontsData.find(f => f.id === id);
+    if (!targetFont || !targetSpecimen) return;
+
+    loadExternalFont(targetFont);
+    targetSpecimen.style.fontFamily = targetFont.cssFamily || `'${targetFont.name}'`;
+    targetSpecimen.textContent = activeSpecimen ? activeSpecimen.textContent : "Type here to compare.";
+  }
+
+  // Cross-typing sync inside modal columns
+  if (activeSpecimen && targetSpecimen) {
+    activeSpecimen.addEventListener("input", () => {
+      targetSpecimen.textContent = activeSpecimen.textContent;
+    });
+    targetSpecimen.addEventListener("input", () => {
+      activeSpecimen.textContent = targetSpecimen.textContent;
+    });
+  }
+
+  // --- 11. GENERAL INTERACTIONS BINDINGS ---
+  // Copy CSS Action buttons
+  const copyCssButtons = [
+    document.getElementById("btn-hero-copy-css"),
+    document.getElementById("floating-btn-copy-css")
+  ];
+  copyCssButtons.forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", () => {
+        const cssCode = `/* CSS rules for ${font.name} */\n.heading-text {\n  font-family: ${fam}, serif;\n  font-weight: 500;\n}`;
+        navigator.clipboard.writeText(cssCode).then(() => {
+          alert("CSS rules copied to clipboard successfully!");
+        });
+      });
     }
+  });
+
+  // Favorite floating button binding sync
+  const floatingFavBtn = document.getElementById("floating-btn-favorite");
+  if (floatingFavBtn) {
+    if (window.favoritesSet && window.favoritesSet.has(font.id)) {
+      floatingFavBtn.classList.add("active");
+    }
+    floatingFavBtn.addEventListener("click", () => {
+      toggleFavoriteState(font.id, floatingFavBtn);
+      
+      // Keep hero favorite button state in sync
+      const heroFavBtn = document.getElementById("btn-hero-favorite");
+      if (heroFavBtn) {
+        if (window.favoritesSet.has(font.id)) {
+          heroFavBtn.classList.add("active");
+        } else {
+          heroFavBtn.classList.remove("active");
+        }
+      }
+    });
   }
 
-  renderGlyphGrid();
-};
-
-window.applyStyleOverridesToGrid = function() {
-  const weightSelect = document.getElementById("fd-glyph-weight-select");
-  if (!weightSelect) return;
-  
-  const mode = weightSelect.value;
-  let weight = "400";
-  let style = "normal";
-  
-  if (mode === "bold") {
-    weight = "700";
-  } else if (mode === "italic") {
-    style = "italic";
-  }
-
-  const largeGlyph = document.getElementById("fd-large-glyph");
-  if (largeGlyph) {
-    largeGlyph.style.fontWeight = weight;
-    largeGlyph.style.fontStyle = style;
-  }
-
-  const cells = document.querySelectorAll(".fd-glyph-cell");
-  cells.forEach(cell => {
-    cell.style.fontWeight = weight;
-    cell.style.fontStyle = style;
+  // Share Actions buttons
+  const shareButtons = [
+    document.getElementById("btn-hero-share"),
+    document.getElementById("floating-btn-share")
+  ];
+  shareButtons.forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", () => {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          alert("Link to specimen copied to clipboard!");
+        });
+      });
+    }
   });
 }
 
-// -------------------------------------------------
-// LAYOUT SECTION PRESETS
-// -------------------------------------------------
-
-const LAYOUT_PRESETS = {
-  default: {
-    title: "Ask powerful questions",
-    sub: "All the world's a stage and all the men and women merely players. They have their exits and their entrances; And one man in his time plays many parts.",
-    body: [
-      "In this fast-paced world, it is important to take a moment and reflect on our journey. We often get caught up in the rat race and forget what is truly important in life. We strive for success, wealth and fame, but these things are fleeting and can never truly fulfil us.",
-      "An opportunity for growth and learning. We must embrace challenges and obstacles as opportunities for growth and transformation. It's easy to get caught up in comparing ourselves to others and measuring our worth by external standards.",
-      "Qualities, strengths, and weaknesses and allow them to guide you on your journey. The world needs more individuals who are true to themselves, who live with purpose and passion, and who inspire others to do the same."
-    ]
-  },
-  editorial: {
-    title: "The art of seeing beauty in everything",
-    sub: "Design is not just what it looks like and feels like. Design is how it works. True elegance is not about complexity, but clarity.",
-    body: [
-      "Typography is the voice of design. Every letterform carries history, intention, and emotion. A well-set headline can stop a reader mid-scroll, pull them in, and hold them there for a moment longer than expected.",
-      "The best typefaces disappear into the work. When type is perfect, you stop noticing the letters and start feeling what they say. That invisible quality is what every typographer strives for.",
-      "Whitespace, rhythm, hierarchy — these are the instruments of a typographer's orchestra. And when they come together in perfect balance, even the simplest word becomes unforgettable."
-    ]
-  },
-  minimal: {
-    title: "Less, but better",
-    sub: "Good design is as little design as possible. The aim is to do justice to the natural qualities of the form.",
-    body: [
-      "Simplicity is not the absence of clutter. It is the presence of purpose. Every element must earn its place.",
-      "Restraint takes more discipline than abundance. Choosing what to leave out defines a design as much as what is left in.",
-      "The best interface is the one that gets out of the way and lets the content breathe. Clarity always wins."
-    ]
+// Favorite state toggler
+window.toggleFavoriteState = function(fontId, btn) {
+  if (typeof toggleFavorite === "function") {
+    toggleFavorite(fontId, btn);
   }
 };
 
-window.setLayoutPreset = function(preset, btn) {
-  const data = LAYOUT_PRESETS[preset];
-  if (!data) return;
-
-  const titleEl = document.getElementById("fd-layout-title");
-  const subEl = document.getElementById("fd-layout-sub");
-  const bodyEl = document.getElementById("fd-layout-body-text");
-
-  if (titleEl) titleEl.textContent = data.title;
-  if (subEl) subEl.textContent = data.sub;
-  if (bodyEl) {
-    bodyEl.innerHTML = data.body.map(p =>
-      `<div contenteditable="true" spellcheck="false">${p}</div>`
-    ).join('');
-  }
-
-  // Update active button state
-  document.querySelectorAll(".fd-layout-preset-btn").forEach(b => b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
-};
-
-window.resetLayoutText = function() {
-  setLayoutPreset("default", document.querySelector(".fd-layout-preset-btn"));
-};
-
-// -------------------------------------------------
-// WEIGHTS SHOW / HIDE TOGGLE
-// -------------------------------------------------
-window.toggleRemainingWeights = function(btn, remaining) {
-  const wrapper = document.getElementById("fd-hidden-weights-wrapper");
-  if (!wrapper) return;
-
-  const isCollapsed = wrapper.style.maxHeight === "0px" || wrapper.style.maxHeight === "";
-
-  if (isCollapsed) {
-    // Expand
-    wrapper.style.maxHeight = wrapper.scrollHeight + "px";
-    wrapper.style.opacity = "1";
-    
-    // Update button to collapse mode
-    btn.innerHTML = `
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="opacity:0.7; transform: rotate(180deg); margin-right: 0.25rem;">
-        <path d="M19 9l-7 7-7-7"/>
-      </svg>
-      Show Less
-    `;
-  } else {
-    // Collapse
-    wrapper.style.maxHeight = "0px";
-    wrapper.style.opacity = "0";
-
-    // Restore See More button text
-    btn.innerHTML = `See <span class="see-more-count">${remaining}</span> More Style${remaining !== 1 ? 's' : ''}`;
-    
-    // Smooth scroll the button back into view
-    btn.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-};
-
-// -------------------------------------------------
-// GLYPHS GUIDELINE METRICS
-// -------------------------------------------------
-function getFontMetrics(fontName) {
-  let hash = 0;
-  for (let i = 0; i < fontName.length; i++) {
-    hash = fontName.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  hash = Math.abs(hash);
-
-  const baseline = 0;
-  const capHeight = 670 + (hash % 81); // 670 to 750
-  const xHeight = 440 + ((hash >> 3) % 71); // 440 to 510
-  const descender = -190 - ((hash >> 6) % 81); // -190 to -270
-
-  return {
-    capHeight,
-    xHeight,
-    baseline,
-    descender
-  };
-}
-
-window.updateGlyphGuidelines = function(fontName) {
-  const metrics = getFontMetrics(fontName);
-  
-  const capHeightLabel = document.querySelector(".fd-guideline.cap-height span:last-child");
-  const xHeightLabel = document.querySelector(".fd-guideline.x-height span:last-child");
-  const baselineLabel = document.querySelector(".fd-guideline.baseline span:last-child");
-  const descenderLabel = document.querySelector(".fd-guideline.descender span:last-child");
-
-  if (capHeightLabel) capHeightLabel.textContent = metrics.capHeight;
-  if (xHeightLabel) xHeightLabel.textContent = metrics.xHeight;
-  if (baselineLabel) baselineLabel.textContent = metrics.baseline;
-  if (descenderLabel) descenderLabel.textContent = metrics.descender;
-
-  const capHeightLine = document.querySelector(".fd-guideline.cap-height");
-  const xHeightLine = document.querySelector(".fd-guideline.x-height");
-  const baselineLine = document.querySelector(".fd-guideline.baseline");
-  const descenderLine = document.querySelector(".fd-guideline.descender");
-
-  const baselineTop = 76; 
-  const scale = 0.077;    
-
-  if (capHeightLine) capHeightLine.style.top = `${baselineTop - (metrics.capHeight * scale)}%`;
-  if (xHeightLine) xHeightLine.style.top = `${baselineTop - (metrics.xHeight * scale)}%`;
-  if (baselineLine) baselineLine.style.top = `${baselineTop}%`;
-  if (descenderLine) descenderLine.style.top = `${baselineTop - (metrics.descender * scale)}%`;
+// CSS Rules copy helper for pairings
+window.copyCSSPairing = function(headingFont, bodyFont) {
+  const cssCode = `/* Typographic Pairing Rules */\nh1, h2, h3 {\n  font-family: "${headingFont}", serif;\n}\np, body {\n  font-family: "${bodyFont}", sans-serif;\n}`;
+  navigator.clipboard.writeText(cssCode).then(() => {
+    alert(`CSS rules for ${headingFont} + ${bodyFont} copied to clipboard!`);
+  });
 };
