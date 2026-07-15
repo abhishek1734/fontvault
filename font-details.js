@@ -1345,3 +1345,100 @@ window.copyCSSPairing = function(headingFont, bodyFont) {
     alert(`CSS rules for ${headingFont} + ${bodyFont} copied to clipboard!`);
   });
 };
+
+// --- GLYPHS HELPERS ---
+function getGlyphMetadata(char) {
+  const code = char.charCodeAt(0);
+  const hex = code.toString(16).toUpperCase().padStart(4, '0');
+  const unicodeStr = `U+${hex}`;
+  
+  let name = "";
+  if (char >= 'A' && char <= 'Z') {
+    name = `Capital Letter ${char}`;
+  } else if (char >= 'a' && char <= 'z') {
+    name = `Lowercase Letter ${char.toUpperCase()}`;
+  } else if (char >= '0' && char <= '9') {
+    name = `Digit ${char}`;
+  } else {
+    const symbolNames = {
+      '!': 'Exclamation Mark',
+      '@': 'At Sign',
+      '#': 'Number Sign / Hash',
+      '$': 'Dollar Sign',
+      '%': 'Percent Sign',
+      '^': 'Caret / Circumflex',
+      '&': 'Ampersand',
+      '*': 'Asterisk',
+      '(': 'Left Parenthesis',
+      ')': 'Right Parenthesis',
+      '-': 'Hyphen-Minus',
+      '_': 'Low Line / Underscore',
+      '=': 'Equals Sign',
+      '+': 'Plus Sign',
+      '{': 'Left Curly Bracket',
+      '}': 'Right Curly Bracket',
+      '[': 'Left Square Bracket',
+      ']': 'Right Square Bracket',
+      '|': 'Vertical Line / Pipe',
+      ':': 'Colon',
+      ';': 'Semicolon',
+      '"': 'Quotation Mark',
+      "'": 'Apostrophe',
+      '<': 'Less-Than Sign',
+      '>': 'Greater-Than Sign',
+      ',': 'Comma',
+      '.': 'Full Stop / Period',
+      '?': 'Question Mark',
+      '/': 'Solidus / Slash',
+      '~': 'Tilde',
+      '`': 'Grave Accent'
+    };
+    name = symbolNames[char] || `Character '${char}'`;
+  }
+  return { name, unicode: unicodeStr };
+}
+
+function getFontMetrics(fontName) {
+  let hash = 0;
+  for (let i = 0; i < fontName.length; i++) {
+    hash = fontName.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  hash = Math.abs(hash);
+
+  const baseline = 0;
+  const capHeight = 670 + (hash % 81); // 670 to 750
+  const xHeight = 440 + ((hash >> 3) % 71); // 440 to 510
+  const descender = -190 - ((hash >> 6) % 81); // -190 to -270
+
+  return {
+    capHeight,
+    xHeight,
+    baseline,
+    descender
+  };
+}
+
+function updateGlyphGuidelines(fontName) {
+  const metrics = getFontMetrics(fontName);
+  
+  const capHeightLabel = document.getElementById("label-cap");
+  const xHeightLabel = document.getElementById("label-x");
+  const descenderLabel = document.getElementById("label-desc");
+
+  if (capHeightLabel) capHeightLabel.textContent = metrics.capHeight;
+  if (xHeightLabel) xHeightLabel.textContent = metrics.xHeight;
+  if (descenderLabel) descenderLabel.textContent = metrics.descender;
+
+  const capHeightLine = document.getElementById("guide-cap");
+  const xHeightLine = document.getElementById("guide-x");
+  const baselineLine = document.getElementById("guide-base");
+  const descenderLine = document.getElementById("guide-desc");
+
+  const baselineTop = 76; 
+  const scale = 0.077;    
+
+  if (capHeightLine) capHeightLine.style.top = `${baselineTop - (metrics.capHeight * scale)}%`;
+  if (xHeightLine) xHeightLine.style.top = `${baselineTop - (metrics.xHeight * scale)}%`;
+  if (baselineLine) baselineLine.style.top = `${baselineTop}%`;
+  if (descenderLine) descenderLine.style.top = `${baselineTop - (metrics.descender * scale)}%`;
+}
