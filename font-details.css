@@ -77,22 +77,6 @@ section {
   border-bottom: 1px solid var(--border-color);
   position: relative;
   overflow: hidden;
-  box-sizing: border-box;
-}
-
-@media (min-width: 1025px) {
-  html {
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-  }
-  section {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
 }
 
 /* Subtle background noise texture */
