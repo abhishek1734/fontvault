@@ -766,8 +766,8 @@ section {
   transition: border-color var(--transition-medium), box-shadow var(--transition-medium);
 }
 .showcase-card:hover {
-  border-color: var(--text-primary);
-  box-shadow: var(--shadow-lg);
+  border-color: #D2D2D2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 /* Live styled components compositions */
