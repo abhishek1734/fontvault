@@ -34,13 +34,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Show premium loading state
     const root = document.getElementById('font-detail-root');
     root.innerHTML = `
-      <div style="text-align:center; padding:15rem 2rem; color:var(--text-primary);">
-        <p style="font-size:1.2rem; font-family:var(--font-mono); letter-spacing:0.1em; animation:pulse-text 1.5s infinite;">LOADING TYPOGRAPHIC ASSETS...</p>
+      <div style="max-width: 1400px; margin: 0 auto; padding: 4rem 1.5rem; color: var(--text-primary);">
+        <div style="width: 180px; height: 16px; background: #F3F3F3; margin-bottom: 2.5rem; animation: skeleton-pulse 1.5s infinite;"></div>
+        <div style="width: 50%; height: 80px; background: #F3F3F3; margin-bottom: 2rem; animation: skeleton-pulse 1.5s infinite;"></div>
+        <div style="width: 70%; height: 24px; background: #F3F3F3; margin-bottom: 1rem; animation: skeleton-pulse 1.5s infinite;"></div>
+        <div style="width: 40%; height: 24px; background: #F3F3F3; margin-bottom: 4rem; animation: skeleton-pulse 1.5s infinite;"></div>
+        <div style="width: 100%; height: 240px; background: #FAFAFA; border: 1px solid #ECECEC; animation: skeleton-pulse 1.5s infinite;"></div>
       </div>
       <style>
-        @keyframes pulse-text {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 1; }
+        @keyframes skeleton-pulse {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.8; }
         }
       </style>
     `;
@@ -194,11 +198,7 @@ function renderFontDetails(font) {
           <span style="color: var(--text-primary); font-weight: 500;">${font.name}</span>
         </div>
 
-        <span class="provider-badge">
-          <i data-lucide="globe" style="width: 13px; height: 13px;"></i> ${font.provider || 'Local Hosted'}
-        </span>
-
-        <div class="hero-font-title-wrapper">
+        <div class="hero-font-title-wrapper" style="margin-top: 1.5rem;">
           <h1 class="hero-font-title" style="font-family: ${fam}, serif;">${font.name}</h1>
         </div>
 
@@ -461,53 +461,79 @@ function renderFontDetails(font) {
 
         <div class="showcase-grid">
           <!-- Card 1: Landing Page Hero -->
-          <div class="showcase-card cascade-item">
-            <div class="showcase-layout-demo" style="text-align: center;">
-              <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-color); font-weight: 600; text-transform: uppercase;">Next-Gen Platform</span>
-              <h3 style="font-family: ${fam}, serif; font-size: clamp(2rem, 4vw, 3.5rem); margin: 1rem 0 1.5rem; font-weight: 700; line-height: 1.05;">Accelerating developers velocity.</h3>
-              <p style="font-size: 0.85rem; max-width: 320px; margin: 0 auto; color: var(--text-secondary); line-height: 1.6;">Deploy serverless websites, host assets globally, and run real-time edge databases instantly.</p>
+          <div class="showcase-card-wrapper cascade-item">
+            <div class="showcase-card">
+              <div class="showcase-layout-demo" style="text-align: center; justify-content: center; padding: 2rem;">
+                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-color); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">Next-Gen Platform</span>
+                <h3 style="font-family: ${fam}, serif; font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 0 0 0.8rem; font-weight: 700; line-height: 1.1; color: var(--text-primary);">Accelerating developers velocity.</h3>
+                <p style="font-size: 0.8rem; max-width: 290px; margin: 0 auto; color: var(--text-secondary); line-height: 1.5;">Deploy serverless websites, host assets globally, and run databases instantly.</p>
+              </div>
             </div>
-            <div class="showcase-meta">
-              <span class="showcase-tag">App UI Mockup</span>
-              <h3 class="showcase-title">Vercel-style Landing Hero</h3>
+            <div class="showcase-meta" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.2rem;">
+              <span class="showcase-tag" style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-color); text-transform: uppercase;">App UI Mockup</span>
+              <h3 class="showcase-title" style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-primary);">Vercel-style Landing Hero</h3>
             </div>
           </div>
 
           <!-- Card 2: Editorial Magazine -->
-          <div class="showcase-card cascade-item">
-            <div class="showcase-layout-demo" style="padding: 3rem; display: flex; flex-direction: column; justify-content: space-between; text-align: left; background-color: #111; color: #FFF;">
-              <span style="font-family: var(--font-mono); font-size: 0.65rem; opacity: 0.5; text-transform: uppercase;">Issue 27 — Summer 2026</span>
-              <h3 style="font-family: ${fam}, serif; font-size: 3rem; margin: 0; line-height: 1.0; font-weight: 300;">Silent forms of visual culture.</h3>
-              <p style="font-size: 0.8rem; margin: 0; color: #888; line-height: 1.6; max-width: 280px;">An analytical review of classic Roman typography balanced against brutalist digital Swiss architectures.</p>
+          <div class="showcase-card-wrapper cascade-item">
+            <div class="showcase-card">
+              <div class="showcase-layout-demo" style="padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; text-align: left; background-color: #111; color: #FFF;">
+                <span style="font-family: var(--font-mono); font-size: 0.65rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.05em;">Issue 27 — Summer 2026</span>
+                <h3 style="font-family: ${fam}, serif; font-size: clamp(1.8rem, 3.5vw, 2.4rem); margin: 1.5rem 0; line-height: 1.1; font-weight: 300; color: #FFF;">Silent forms of visual culture.</h3>
+                <p style="font-size: 0.78rem; margin: 0; color: #888; line-height: 1.5; max-width: 240px;">An analytical review of classic Roman typography balanced against Swiss architecture.</p>
+              </div>
             </div>
-            <div class="showcase-meta">
-              <span class="showcase-tag">Editorial Composition</span>
-              <h3 class="showcase-title">Brutalist Magazine Cover</h3>
+            <div class="showcase-meta" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.2rem;">
+              <span class="showcase-tag" style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-color); text-transform: uppercase;">Editorial Composition</span>
+              <h3 class="showcase-title" style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-primary);">Brutalist Magazine Cover</h3>
             </div>
           </div>
 
           <!-- Card 3: Dashboard Typography Grid -->
-          <div class="showcase-card showcase-grid-full cascade-item" style="height: 380px;">
-            <div class="showcase-layout-demo" style="padding: 2.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; align-items: center; background-color: var(--bg-color);">
-              <div style="border-right: 1px solid var(--border-color); padding-right: 2rem;">
-                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">CONVERSION RATE</span>
-                <h4 style="font-family: ${fam}, serif; font-size: 3.5rem; margin: 0.5rem 0 0; font-weight: 500;">94.2%</h4>
-                <p style="font-size: 0.75rem; color: #22c55e; margin: 0.25rem 0 0;">&uarr; 12.4% this quarter</p>
-              </div>
-              <div style="border-right: 1px solid var(--border-color); padding-right: 2rem;">
-                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">ACTIVE USERS</span>
-                <h4 style="font-family: ${fam}, serif; font-size: 3.5rem; margin: 0.5rem 0 0; font-weight: 500;">18.5k</h4>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.25rem 0 0;">Peak concurrent: 2,400/min</p>
-              </div>
-              <div>
-                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">TOTAL DISK USED</span>
-                <h4 style="font-family: ${fam}, serif; font-size: 3.5rem; margin: 0.5rem 0 0; font-weight: 500;">8.42<span style="font-size: 1.5rem;">TB</span></h4>
-                <p style="font-size: 0.75rem; color: #EF4444; margin: 0.25rem 0 0;">&bull; 82% capacity reached</p>
+          <div class="showcase-card-wrapper showcase-grid-full cascade-item">
+            <div class="showcase-card" style="height: 290px;">
+              <div class="showcase-layout-demo" style="padding: 2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; align-items: center; background-color: var(--bg-color);">
+                <div style="border-right: 1px solid var(--border-color); padding-right: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                  <div>
+                    <span style="font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.05em;">CONVERSION RATE</span>
+                    <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">94.2%</h4>
+                    <p style="font-size: 0.7rem; color: #22c55e; margin: 0.1rem 0 0; font-family: var(--font-mono); font-weight: 500;">&uarr; 12.4%</p>
+                  </div>
+                  <!-- Sparkline SVG -->
+                  <svg width="100%" height="35" style="margin-top: 0.5rem; stroke: #22c55e; stroke-width: 1.5; fill: none; opacity: 0.85;">
+                    <path d="M0,28 L15,18 L30,22 L45,10 L60,25 L75,8 L90,18 L105,5 L120,20 L135,12 L150,22 L165,8 L180,18 L200,2" />
+                  </svg>
+                </div>
+                
+                <div style="border-right: 1px solid var(--border-color); padding-right: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                  <div>
+                    <span style="font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.05em;">ACTIVE USERS</span>
+                    <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">18.5k</h4>
+                    <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0.1rem 0 0; font-family: var(--font-mono);">Peak: 2.4k/min</p>
+                  </div>
+                  <!-- Sparkline SVG -->
+                  <svg width="100%" height="35" style="margin-top: 0.5rem; stroke: var(--accent-color); stroke-width: 1.5; fill: none; opacity: 0.85;">
+                    <path d="M0,32 L15,28 L30,12 L45,26 L60,18 L75,30 L90,14 L105,24 L120,8 L135,22 L150,5 L165,15 L180,25 L200,10" />
+                  </svg>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                  <div>
+                    <span style="font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.05em;">TOTAL DISK USED</span>
+                    <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">8.42<span style="font-size: 1.1rem;">TB</span></h4>
+                    <p style="font-size: 0.7rem; color: #EF4444; margin: 0.1rem 0 0; font-family: var(--font-mono); font-weight: 500;">82% Capacity</p>
+                  </div>
+                  <!-- Progress Bar segments -->
+                  <div style="margin-top: 0.8rem; background: var(--border-color); height: 5px; width: 100%; position: relative;">
+                    <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 82%; background: #EF4444;"></div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="showcase-meta">
-              <span class="showcase-tag">SaaS Dashboard</span>
-              <h3 class="showcase-title">Numerical Metrics UI</h3>
+            <div class="showcase-meta" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.2rem;">
+              <span class="showcase-tag" style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-color); text-transform: uppercase;">SaaS Dashboard</span>
+              <h3 class="showcase-title" style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-primary);">Numerical Metrics UI</h3>
             </div>
           </div>
         </div>
@@ -1198,19 +1224,19 @@ function initPremiumInteractions(font) {
     }
     
     // Favorite font on "f"
-    if (key === "f") {
+    if (key === "f" && !e.ctrlKey && !e.metaKey && !e.altKey) {
       const favBtn = document.getElementById("btn-hero-favorite");
       if (favBtn) toggleFavoriteState(font.id, favBtn);
     }
 
     // Download font on "d"
-    if (key === "d") {
+    if (key === "d" && !e.ctrlKey && !e.metaKey && !e.altKey) {
       const dlBtn = document.getElementById("btn-hero-download");
       if (dlBtn) dlBtn.click();
     }
 
     // Copy CSS rules on "c"
-    if (key === "c") {
+    if (key === "c" && !e.ctrlKey && !e.metaKey && !e.altKey) {
       const cssBtn = document.getElementById("btn-hero-copy-css");
       if (cssBtn) cssBtn.click();
     }
