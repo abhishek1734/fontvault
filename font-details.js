@@ -206,45 +206,8 @@ function renderFontDetails(font) {
           ${font.description || 'A highly crafted typographic specimen optimized for digital interfaces, editorial layout, and modern brand design languages.'}
         </p>
 
-        <!-- Metadata Row -->
-        <div class="hero-metadata-grid cascade-item">
-          <div class="metadata-item">
-            <span class="metadata-label">Designer</span>
-            <span class="metadata-value" title="${font.designer || 'Independent'}">${font.designer || 'Independent'}</span>
-          </div>
-          <div class="metadata-item">
-            <span class="metadata-label">Foundry</span>
-            <span class="metadata-value" title="${font.foundry || 'Independent'}">${font.foundry || 'Independent'}</span>
-          </div>
-          <div class="metadata-item">
-            <span class="metadata-label">Category</span>
-            <span class="metadata-value" title="${font.style || 'Display'}">${font.style || 'Display'}</span>
-          </div>
-          <div class="metadata-item">
-            <span class="metadata-label">License</span>
-            <span class="metadata-value" title="${font.price || 'Free'}">${font.price || 'Free'}</span>
-          </div>
-          <div class="metadata-item">
-            <span class="metadata-label">Languages</span>
-            <span class="metadata-value" title="${font.languages ? font.languages.join(', ') : 'Latin'}">${font.languages ? font.languages.join(', ') : 'Latin'}</span>
-          </div>
-        </div>
-
-        <!-- Primary Action buttons -->
-        <div class="hero-actions cascade-item">
-          <button class="cta-btn cta-primary" id="btn-hero-download">
-            <i data-lucide="download" style="width: 16px; height: 16px;"></i> Download Family
-          </button>
-          <button class="cta-icon-btn ${window.favoritesSet && window.favoritesSet.has(font.id) ? 'active' : ''}" id="btn-hero-favorite" title="Save to Vault" onclick="toggleFavoriteState('${font.id}', this)">
-            <i data-lucide="heart" style="width: 18 height: 18px; pointer-events: none;"></i>
-          </button>
-          <button class="cta-icon-btn" id="btn-hero-share" title="Share typeface">
-            <i data-lucide="share-2" style="width: 18px; height: 18px;"></i>
-          </button>
-          <button class="cta-icon-btn" id="btn-hero-copy-css" title="Copy CSS rules">
-            <i data-lucide="code" style="width: 18px; height: 18px;"></i>
-          </button>
-        </div>
+        <!-- Vertical spacer gap -->
+        <div style="height: 3.5rem;"></div>
 
         <!-- Huge editable specimen card -->
         <div class="hero-specimen-card cascade-item">
@@ -1258,19 +1221,26 @@ function initPremiumInteractions(font) {
     
     // Favorite font on "f"
     if (key === "f" && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      const favBtn = document.getElementById("btn-hero-favorite");
-      if (favBtn) toggleFavoriteState(font.id, favBtn);
+      const favBtn = document.getElementById("btn-hero-favorite") || document.getElementById("floating-btn-favorite");
+      if (favBtn) {
+        if (favBtn.id === "floating-btn-favorite") {
+          // Trigger click if it's the floating button
+          favBtn.click();
+        } else {
+          toggleFavoriteState(font.id, favBtn);
+        }
+      }
     }
 
     // Download font on "d"
     if (key === "d" && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      const dlBtn = document.getElementById("btn-hero-download");
+      const dlBtn = document.getElementById("btn-hero-download") || document.getElementById("floating-btn-download");
       if (dlBtn) dlBtn.click();
     }
 
     // Copy CSS rules on "c"
     if (key === "c" && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      const cssBtn = document.getElementById("btn-hero-copy-css");
+      const cssBtn = document.getElementById("btn-hero-copy-css") || document.getElementById("floating-btn-copy-css");
       if (cssBtn) cssBtn.click();
     }
   });
