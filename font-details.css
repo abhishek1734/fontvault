@@ -196,7 +196,7 @@ section {
   line-height: 1.6;
   color: var(--text-secondary);
   max-width: 680px;
-  margin: 0 auto 2.5rem auto;
+  margin: 0 auto 1.2rem auto;
 }
 
 /* Metadata Cards Grid */
@@ -206,7 +206,7 @@ section {
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
   width: 100%;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.2rem;
 }
 .metadata-item {
   padding: 1.25rem 1rem;
@@ -243,7 +243,7 @@ section {
 .hero-actions {
   display: flex;
   gap: 1rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
   justify-content: center;
 }

@@ -732,6 +732,15 @@ function initPremiumInteractions(font) {
   if (window.gsap && window.ScrollTrigger) {
     window.gsap.registerPlugin(window.ScrollTrigger);
 
+    // Immediate fade-in for hero elements on load
+    window.gsap.to("#hero .cascade-item", {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      stagger: 0.1,
+      ease: "power2.out"
+    });
+
     // Hero title scale down and fade out on scroll
     window.gsap.to(".hero-font-title", {
       scrollTrigger: {
