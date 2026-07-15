@@ -356,12 +356,11 @@ function renderFontDetails(font) {
 
             <!-- Canvas Theme Picker -->
             <div class="control-group">
-              <span class="control-label">Theme</span>
-              <div class="color-picker-row" id="color-theme-picker">
-                <div class="color-circle active" data-bg="#F9F9F9" data-text="#111" style="background-color: #F9F9F9; border: 1px solid #ddd;"></div>
-                <div class="color-circle" data-bg="#111" data-text="#FFF" style="background-color: #111;"></div>
-                <div class="color-circle" data-bg="rgba(var(--accent-rgb), 0.05)" data-text="var(--accent-color)" style="background-color: rgba(217, 119, 6, 0.2);"></div>
-                <div class="color-circle" data-bg="#090909" data-text="#34D399" style="background-color: #090909; color: #34D399; font-family: monospace; font-size: 8px;">&lt;&gt;</div>
+              <span class="control-label">Theme</span>              <div class="color-theme-picker" id="color-theme-picker" style="display: flex; gap: 0.5rem;">
+                <div class="color-circle active" data-bg="#F9F9F9" data-text="#111" style="background-color: #F9F9F9; border: 1px solid #ddd; width: 24px; height: 24px; cursor: pointer;"></div>
+                <div class="color-circle" data-bg="#111" data-text="#FFF" style="background-color: #111; width: 24px; height: 24px; cursor: pointer;"></div>
+                <div class="color-circle" data-bg="rgba(var(--accent-rgb), 0.05)" data-text="var(--accent-color)" style="background-color: rgba(255, 59, 0, 0.2); width: 24px; height: 24px; cursor: pointer;"></div>
+                <div class="color-circle" data-bg="#090909" data-text="#34D399" style="background-color: #090909; color: #34D399; font-family: monospace; font-size: 8px; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&lt;&gt;</div>
               </div>
             </div>
 

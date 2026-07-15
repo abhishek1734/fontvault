@@ -19,9 +19,9 @@
   --shadow-lg: none;
   
   /* Brand Accent */
-  --accent-color: #D97706; /* Warm signal orange */
-  --accent-hover: #B45309;
-  --accent-rgb: 217, 119, 6;
+  --accent-color: #FF3B00; /* Brand signal red */
+  --accent-hover: #D83200;
+  --accent-rgb: 255, 59, 0;
   
   --transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-medium: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
