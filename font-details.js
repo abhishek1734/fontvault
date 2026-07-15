@@ -206,19 +206,6 @@ function renderFontDetails(font) {
           ${font.description || 'A highly crafted typographic specimen optimized for digital interfaces, editorial layout, and modern brand design languages.'}
         </p>
 
-        <!-- Vertical spacer gap -->
-        <div style="height: 3.5rem;"></div>
-
-        <!-- Huge editable specimen card -->
-        <div class="hero-specimen-card cascade-item">
-          <div class="specimen-card-header">
-            <span class="specimen-card-tag">${font.name} Regular specimen</span>
-            <span class="specimen-card-indicator">Interactive Canvas</span>
-          </div>
-          <div class="hero-specimen-editable" id="hero-editable-specimen" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif;">
-            Typing updates this specimen instantly.
-          </div>
-        </div>
       </div>
     </section>
 
@@ -713,18 +700,6 @@ function initPremiumInteractions(font) {
       },
       scale: 0.85,
       opacity: 0.15,
-      ease: "power2.out",
-    });
-
-    // Massive Specimen card slide up on scroll
-    window.gsap.to(".hero-specimen-card", {
-      scrollTrigger: {
-        trigger: "#hero",
-        start: "top center",
-        end: "bottom top",
-        scrub: true,
-      },
-      y: -60,
       ease: "power2.out",
     });
 
