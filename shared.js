@@ -228,7 +228,6 @@ function renderUniversalNavbar() {
           </div>
         </div>
       </div>
-      <a href="/font-pairing.html" class="nav-link" id="nav-font-pairing">Font Pairing</a>
       <button id="vault-btn" class="nav-btn">
         My Vault
       </button>
@@ -257,7 +256,6 @@ function renderUniversalNavbar() {
         </div>
       </div>
       <!-- Nav links -->
-      <a href="/font-pairing.html" class="mobile-menu-item">Font Pairing</a>
       <a href="/blog.html" class="mobile-menu-item">Blog</a>
       <a href="/collections.html" class="mobile-menu-item">Collections</a>
       <div class="mobile-menu-divider"></div>
@@ -265,14 +263,6 @@ function renderUniversalNavbar() {
       <button id="mobile-login-btn" class="mobile-menu-item accent-item">My Vault</button>
     </div>
   `;
-
-  // Dynamically hide Font Pairing tab if we are on the Font Pairing page
-  if (window.location.pathname.includes("font-pairing.html")) {
-    const fontPairingBtn = navbar.querySelector("#nav-font-pairing");
-    if (fontPairingBtn) fontPairingBtn.remove();
-    const mobileFontPairingBtn = navbar.querySelector('.mobile-menu-item[href="font-pairing.html"]');
-    if (mobileFontPairingBtn) mobileFontPairingBtn.remove();
-  }
 }
 
 let sharedEventListenersSetup = false;
