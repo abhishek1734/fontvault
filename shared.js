@@ -429,23 +429,24 @@ function setupSharedEventListeners() {
       }
 
       const q = query.toLowerCase();
-      const matches = fontsData.filter(font => {
+      const fontList = typeof fontsData !== "undefined" ? fontsData : [];
+      const matches = fontList.filter(font => {
         return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
-          .some(v => v && v.toLowerCase().includes(q));
+          .some(v => v && String(v).toLowerCase().includes(q));
       }).slice(0, 5); // top 5 results
   
       if (matches.length === 0) {
         searchDropdownList.innerHTML = `<div class="search-dropdown-item" style="cursor:default;color:#888;">No fonts found matching "${query}"</div>`;
       } else {
         searchDropdownList.innerHTML = matches.map(font => {
-          loadExternalFont(font);
+          if (typeof loadExternalFont === "function") loadExternalFont(font);
           const fam = font.cssFamily || `'${font.name}'`;
-          const providerLabel = { google:"Google Fonts", fontshare:"Fontshare", dafont:"Dafont" }[font.provider] || font.provider;
+          const providerLabel = { google:"Google Fonts", fontshare:"Fontshare", dafont:"Dafont" }[font.provider] || font.provider || "Font";
           return `
             <div class="search-dropdown-item" data-id="${font.id}">
               <div class="search-dropdown-item-left">
                 <span class="search-dropdown-name" style="font-family:${fam},sans-serif;">${font.name}</span>
-                <span class="search-dropdown-meta">${font.style} &middot; ${font.designer || font.foundry || 'Unknown Designer'}</span>
+                <span class="search-dropdown-meta">${font.style || 'Sans-Serif'} &middot; ${font.designer || font.foundry || 'Unknown Designer'}</span>
               </div>
               <span class="search-dropdown-provider">${providerLabel}</span>
             </div>
@@ -455,7 +456,8 @@ function setupSharedEventListeners() {
         // Add click to dropdown items
         searchDropdownList.querySelectorAll(".search-dropdown-item").forEach(item => {
           item.addEventListener("click", () => {
-            const font = fontsData.find(f => f.id === item.dataset.id);
+            const fontList = typeof fontsData !== "undefined" ? fontsData : [];
+            const font = fontList.find(f => f.id === item.dataset.id);
             const query = searchInput.value.trim();
             saveRecentSearch(query);
             if (window.FontVaultAnalytics) {
@@ -467,7 +469,7 @@ function setupSharedEventListeners() {
         });
       }
   
-      searchDropdownTerm.textContent = query;
+      if (searchDropdownTerm) searchDropdownTerm.textContent = query;
       searchDropdown.classList.add("visible");
     }
   
@@ -784,6 +786,9 @@ window.toggleFavorite = function(fontId, btnElement) {
   const runInit = () => {
     renderUniversalNavbar();
     setupSharedEventListeners();
+    if (typeof loadCustomFontsFromSupabase === "function") {
+      loadCustomFontsFromSupabase().catch(err => console.warn(err));
+    }
   };
   
   if (document.readyState === "loading") {
