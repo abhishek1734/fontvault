@@ -504,7 +504,8 @@ function setupSharedEventListeners() {
       const q = query.toLowerCase();
       const fontList = typeof fontsData !== "undefined" ? fontsData : [];
       const matches = fontList.filter(font => {
-        return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
+        const tagsStr = Array.isArray(font.tags) ? font.tags.join(' ') : (font.tags || '');
+        return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase, tagsStr]
           .some(v => v && String(v).toLowerCase().includes(q));
       }).slice(0, 5); // top 5 results
   
@@ -603,8 +604,9 @@ function setupSharedEventListeners() {
         
         if (window.FontVaultAnalytics) {
           const matchesCount = typeof fontsData !== "undefined" ? fontsData.filter(font => {
-            return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase]
-              .some(v => v && v.toLowerCase().includes(query.toLowerCase()));
+            const tagsStr = Array.isArray(font.tags) ? font.tags.join(' ') : (font.tags || '');
+            return [font.name, font.designer, font.foundry, font.style, font.provider, font.mood, font.useCase, tagsStr]
+              .some(v => v && String(v).toLowerCase().includes(query.toLowerCase()));
           }).length : 0;
           window.FontVaultAnalytics.trackSearch(query, matchesCount);
         }
