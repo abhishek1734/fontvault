@@ -4,14 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog Post — FontVault</title>
-  <meta name="description" content="Read typography tutorials and guides on FontVault.">
-  <link rel="canonical" href="https://fontvault.com/blog-post.html">
+  <meta name="description" content="Read in-depth typography tutorials, font pairing strategies, and design guides on FontVault.">
+  <link rel="canonical" href="https://fontvault.vercel.app/blog-post.html">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fontvault.vercel.app/blog-post.html">
+  <meta property="og:title" content="Typography &amp; Design Article — FontVault">
+  <meta property="og:description" content="Read in-depth typography tutorials, font pairing strategies, and design guides on FontVault.">
+  <meta property="og:image" content="https://fontvault.vercel.app/assets/branding.png">
+  <meta property="og:site_name" content="FontVault">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://fontvault.vercel.app/blog-post.html">
+  <meta name="twitter:title" content="Typography &amp; Design Article — FontVault">
+  <meta name="twitter:description" content="Read in-depth typography tutorials, font pairing strategies, and design guides on FontVault.">
+  <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
+
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=5.29">
   <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
   <script src="blog-data.js?v=1.0"></script>
+  <script src="shared.js?v=5.29"></script>
   <script>
     (function() {
       const savedDark = localStorage.getItem("fontvault-dark");
@@ -79,8 +96,11 @@
 </head>
 <body>
 
+  <!-- ACCESSIBLE SKIP NAVIGATION LINK (WCAG 2.1 AA) -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
   <!-- NAVIGATION BAR -->
-  <header id="navbar">
+  <header id="navbar" role="banner">
     <a href="index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
       <a href="index.html" class="nav-link">Home</a>
@@ -102,7 +122,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
-          <input type="text" id="mobile-search-input" placeholder="Search fonts..." autocomplete="off">
+          <input type="text" id="mobile-search-input" placeholder="Search fonts..." autocomplete="off" aria-label="Search fonts">
         </div>
       </div>
       <a href="index.html" class="mobile-menu-item">Home</a>
@@ -112,7 +132,7 @@
   </header>
 
   <!-- MAIN -->
-  <main class="post-container">
+  <main class="post-container" id="main-content" role="main">
     <!-- Breadcrumbs -->
     <div id="breadcrumbs-injection-point" style="margin-bottom: 2rem;"></div>
 
@@ -122,15 +142,22 @@
   </main>
 
   <!-- FOOTER -->
-  <footer>
+  <footer role="contentinfo">
     <div class="footer-content">
       <div class="footer-branding">
         <a href="index.html" class="logo">FONTVAULT</a>
         <p style="margin-top: 1rem;">Curated typography discovery. Built for designers.</p>
+        <div style="margin-top: 1.25rem;">
+          <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Contact Support
+          </a>
+        </div>
       </div>
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 FontVault. All rights reserved.</span>
+      <span><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a></span>
     </div>
   </footer>
 

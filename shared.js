@@ -7,6 +7,89 @@ function getBadgeClass(a) {
 }
 
 // ─────────────────────────────────────────────────
+//  UNIVERSAL TOAST NOTIFICATION SYSTEM
+// ─────────────────────────────────────────────────
+window.showToast = function(message, type = "success", duration = 3500) {
+  let container = document.getElementById("fv-toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "fv-toast-container";
+    container.className = "fv-toast-container";
+    container.setAttribute("role", "status");
+    container.setAttribute("aria-live", "polite");
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `fv-toast fv-toast-${type}`;
+  
+  let iconSvg = "";
+  if (type === "success") {
+    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+  } else if (type === "error") {
+    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+  } else {
+    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+  }
+
+  toast.innerHTML = `
+    <div class="fv-toast-icon">${iconSvg}</div>
+    <div class="fv-toast-msg">${message}</div>
+    <button class="fv-toast-close" aria-label="Close notification">&times;</button>
+  `;
+
+  const closeBtn = toast.querySelector(".fv-toast-close");
+  closeBtn.addEventListener("click", () => {
+    toast.classList.add("fv-toast-hiding");
+    setTimeout(() => toast.remove(), 250);
+  });
+
+  container.appendChild(toast);
+
+  // Auto remove
+  setTimeout(() => {
+    if (toast.parentElement) {
+      toast.classList.add("fv-toast-hiding");
+      setTimeout(() => toast.remove(), 250);
+    }
+  }, duration);
+};
+
+// ─────────────────────────────────────────────────
+//  FORM VALIDATION & SUPPORT HELPERS
+// ─────────────────────────────────────────────────
+window.handleFontSubmission = function(e, form) {
+  if (e) e.preventDefault();
+  const input = form ? form.querySelector("input") : document.querySelector(".newsletter-form input");
+  if (!input) return false;
+  
+  const val = input.value.trim();
+  if (!val) {
+    window.showToast("Please enter a font name or foundry link to submit.", "error");
+    input.focus();
+    return false;
+  }
+  
+  if (val.length < 2) {
+    window.showToast("Please provide a valid font name or URL.", "error");
+    input.focus();
+    return false;
+  }
+
+  window.showToast("Thank you! Your font submission has been received for review.", "success");
+  input.value = "";
+  return false;
+};
+
+window.openContactSupport = function(e) {
+  if (e) e.preventDefault();
+  const email = "support@fontvault.com";
+  const subject = encodeURIComponent("FontVault Support & Inquiries");
+  const body = encodeURIComponent("Hi FontVault Team,\n\nI need assistance with: \n\n[Please describe your question or issue here]\n\nBest,\n");
+  window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+};
+
+// ─────────────────────────────────────────────────
 //  SHARED: LOAD CUSTOM FONTS FROM SUPABASE
 //  Called on both index.html and font.html (detail page)
 //  so admin-uploaded fonts appear everywhere.
@@ -209,12 +292,12 @@ function renderUniversalNavbar() {
   navbar.innerHTML = `
     <a href="/index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
-      <div class="search-container" id="search-container">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="search-container" id="search-container" role="search">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input type="text" id="search-input" placeholder="Search fonts, categories, designers..." autocomplete="off">
-        <svg id="search-clear-btn" class="search-clear-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <input type="text" id="search-input" placeholder="Search fonts, categories, designers..." autocomplete="off" aria-label="Search fonts by name, category, or designer" aria-autocomplete="list" aria-controls="search-dropdown">
+        <svg id="search-clear-btn" class="search-clear-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" role="button" aria-label="Clear search">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
         
@@ -252,7 +335,7 @@ function renderUniversalNavbar() {
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
-          <input type="text" id="mobile-search-input" placeholder="Search fonts..." autocomplete="off">
+          <input type="text" id="mobile-search-input" placeholder="Search fonts..." autocomplete="off" aria-label="Search fonts">
         </div>
       </div>
       <!-- Nav links -->
@@ -476,8 +559,45 @@ function setupSharedEventListeners() {
       }
     });
 
+    let activeDropdownIndex = -1;
+
     searchInput.addEventListener("keydown", e => {
+      const items = searchDropdownList ? Array.from(searchDropdownList.querySelectorAll(".search-dropdown-item, .search-dropdown-recent-item")) : [];
+
+      if (e.key === "Escape") {
+        searchDropdown.classList.remove("visible");
+        activeDropdownIndex = -1;
+        return;
+      }
+
+      if (e.key === "ArrowDown" && items.length > 0) {
+        e.preventDefault();
+        activeDropdownIndex = (activeDropdownIndex + 1) % items.length;
+        items.forEach((it, idx) => it.classList.toggle("dropdown-keyboard-active", idx === activeDropdownIndex));
+        if (items[activeDropdownIndex]) {
+          items[activeDropdownIndex].scrollIntoView({ block: "nearest" });
+        }
+        return;
+      }
+
+      if (e.key === "ArrowUp" && items.length > 0) {
+        e.preventDefault();
+        activeDropdownIndex = (activeDropdownIndex - 1 + items.length) % items.length;
+        items.forEach((it, idx) => it.classList.toggle("dropdown-keyboard-active", idx === activeDropdownIndex));
+        if (items[activeDropdownIndex]) {
+          items[activeDropdownIndex].scrollIntoView({ block: "nearest" });
+        }
+        return;
+      }
+
       if (e.key === "Enter") {
+        if (activeDropdownIndex >= 0 && items[activeDropdownIndex]) {
+          e.preventDefault();
+          items[activeDropdownIndex].click();
+          activeDropdownIndex = -1;
+          return;
+        }
+
         const query = searchInput.value.trim();
         saveRecentSearch(query);
         
@@ -491,6 +611,7 @@ function setupSharedEventListeners() {
 
         e.preventDefault();
         searchDropdown.classList.remove("visible");
+        activeDropdownIndex = -1;
         if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
           const gridSection = document.getElementById("font-grid");
           if (gridSection) {

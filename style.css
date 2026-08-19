@@ -5663,7 +5663,168 @@ header#navbar {
     position: relative;
     top: 0;
   }
+/* ============================================================
+   ACCESSIBILITY, FEEDBACK & UX OVERHAUL STYLES
+   ============================================================ */
+
+/* 1. Accessible Skip to Content Link (WCAG 2.1 AA) */
+.skip-to-content {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  background: var(--signal-red, #ff3b00);
+  color: #ffffff !important;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  z-index: 100000;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.skip-to-content:focus {
+  top: 1rem;
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
 }
 
+/* 2. Universal Toast Notification Engine */
+.fv-toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  pointer-events: none;
+  max-width: 420px;
+  width: calc(100vw - 4rem);
+}
 
+.fv-toast {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(18, 18, 22, 0.94);
+  color: #ffffff;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.85rem 1.15rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  pointer-events: auto;
+  animation: fvToastEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
 
+[data-theme="light"] .fv-toast {
+  background: rgba(255, 255, 255, 0.96);
+  color: #111111;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.fv-toast.fv-toast-hiding {
+  opacity: 0;
+  transform: translateY(12px) scale(0.96);
+}
+
+.fv-toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.fv-toast-success .fv-toast-icon { color: #10B981; }
+.fv-toast-error .fv-toast-icon { color: #EF4444; }
+.fv-toast-info .fv-toast-icon { color: #3B82F6; }
+
+.fv-toast-msg {
+  flex: 1;
+  font-weight: 500;
+}
+
+.fv-toast-close {
+  background: none;
+  border: none;
+  color: currentColor;
+  opacity: 0.6;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 0 0.5rem;
+  transition: opacity 0.15s ease;
+}
+.fv-toast-close:hover {
+  opacity: 1;
+}
+
+@keyframes fvToastEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 3. Search Dropdown Keyboard Active State */
+.search-dropdown-item.dropdown-keyboard-active,
+.search-dropdown-recent-item.dropdown-keyboard-active {
+  background: rgba(255, 255, 255, 0.12) !important;
+  outline: none;
+}
+[data-theme="light"] .search-dropdown-item.dropdown-keyboard-active,
+[data-theme="light"] .search-dropdown-recent-item.dropdown-keyboard-active {
+  background: var(--off-white, #f2f2f2) !important;
+}
+
+/* 4. Filter Tooltips & Explanations */
+.pill[title] {
+  position: relative;
+  cursor: pointer;
+}
+
+/* 5. Contact Support & Footer Enhancements */
+.footer-support-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+}
+.footer-support-btn:hover {
+  background: var(--signal-red, #ff3b00);
+  border-color: var(--signal-red, #ff3b00);
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+[data-theme="light"] .footer-support-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #111111;
+}
+[data-theme="light"] .footer-support-btn:hover {
+  background: var(--signal-red, #ff3b00);
+  color: #ffffff;
+  border-color: var(--signal-red, #ff3b00);
+}

@@ -50,11 +50,14 @@
 </head>
 <body>
 
+  <!-- ACCESSIBLE SKIP NAVIGATION LINK (WCAG 2.1 AA) -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
   <!-- SCROLL PROGRESS BAR -->
   <div id="progress-bar" class="progress-bar"></div>
 
   <!-- NAVIGATION BAR -->
-  <header id="navbar">
+  <header id="navbar" role="banner">
     <a href="#" class="logo">FONTVAULT</a>
     <div class="nav-actions">
       <div class="search-container" id="search-container">
@@ -125,16 +128,17 @@
       </div>
     </div>
 
-    <div class="hero-count">No.<b> 001</b> — Specimen</div>
+    <div class="hero-count">Featured Specimen · Interactive Preview</div>
 
-    <div class="scroll-indicator" id="scroll-arrow">
+    <div class="scroll-indicator" id="scroll-arrow" aria-label="Scroll down to trending fonts" role="button">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
   </section>
 
-  <!-- AI FONT FINDER SECTION REMOVED — now on /ai-font-finder.html -->
+  <!-- MAIN CONTENT AREA -->
+  <main id="main-content" role="main">
 
   <!-- TRENDING THIS WEEK -->
   <section class="trending-section-new" id="trending-section" style="width: 100%; padding: 4rem 3rem 0; box-sizing: border-box;">
@@ -353,8 +357,8 @@
       <section class="grid-area">
         <div class="global-preview-bar">
           <div class="search-input-wrapper" style="flex: 1; position: relative; display: flex; align-items: center;">
-            <input type="text" id="global-preview-input" placeholder="Type here to preview text across all fonts..." autocomplete="off" style="width: 100%;">
-            <div class="global-preview-clear" id="global-preview-clear" title="Clear text">
+            <input type="text" id="global-preview-input" placeholder="Type here to preview text across all fonts..." autocomplete="off" style="width: 100%;" aria-label="Global custom preview text for testing all fonts">
+            <div class="global-preview-clear" id="global-preview-clear" title="Clear text" role="button" aria-label="Clear custom preview text">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -364,11 +368,11 @@
             <!-- Size Slider -->
             <div class="toolbar-slider-wrap">
               <span>SIZE</span>
-              <input type="range" id="font-size-slider" min="40" max="220" value="120">
+              <input type="range" id="font-size-slider" min="40" max="220" value="120" aria-label="Adjust font preview size slider">
               <div class="size-input-container">
-                <input type="number" id="global-size-input" value="120" min="40" max="220">
+                <input type="number" id="global-size-input" value="120" min="40" max="220" aria-label="Font preview size in pixels">
                 <span>px</span>
-                <span id="global-size-reset" class="size-reset-btn">Reset</span>
+                <span id="global-size-reset" class="size-reset-btn" role="button" aria-label="Reset font size to default">Reset</span>
               </div>
             </div>
             <!-- View / Layout Toggle -->
@@ -500,29 +504,37 @@
       </div>
     </div>
   </section>
+  </main>
 
   <!-- FOOTER -->
-  <footer>
+  <footer role="contentinfo">
     <div class="footer-content">
       <div class="footer-branding">
         <a href="#" class="logo">FONTVAULT</a>
         <p style="margin-top: 1rem;">The premium font discovery and licensing platform. Built for modern designers, brand builders, and type lovers.</p>
+        <div style="margin-top: 1.25rem;">
+          <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Contact Support
+          </a>
+        </div>
       </div>
       <div class="footer-links">
-        <h4>Explore</h4>
+        <h4>Explore & Support</h4>
         <ul>
           <li><a href="#hero" id="footer-browse-link">Browse Fonts</a></li>
           <li><a href="#submit-font">Submit a Font</a></li>
+          <li><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)">Help &amp; Support</a></li>
           <li><a href="admin.html" target="_blank">Admin Panel</a></li>
         </ul>
       </div>
       <div class="footer-newsletter" id="submit-font">
         <h4>Submit a Font</h4>
         <p>Found or designed a stunning typeface? Let us know.</p>
-        <form class="newsletter-form" id="newsletter-form" onsubmit="event.preventDefault(); alert('Submission sent! Thank you for supporting the typography community.'); this.reset();">
-          <input type="email" placeholder="Enter foundry URL or font name" required>
-          <button type="submit">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <form class="newsletter-form" id="newsletter-form" onsubmit="return handleFontSubmission(event, this);">
+          <input type="text" placeholder="Enter foundry URL or font name" required aria-label="Font name or foundry submission URL">
+          <button type="submit" aria-label="Submit font recommendation">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -531,7 +543,7 @@
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 FontVault. All rights reserved.</span>
-      <span>BUILT FOR TYPE LOVERS</span>
+      <span><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a> &middot; BUILT FOR TYPE LOVERS</span>
     </div>
   </footer>
 

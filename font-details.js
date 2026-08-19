@@ -1180,7 +1180,11 @@ function initPremiumInteractions(font) {
       btn.addEventListener("click", async () => {
         const url = font.downloadUrl;
         if (!url || url === '#') {
-          alert("This font is external or does not have a direct file download path.");
+          if (window.showToast) {
+            window.showToast("This font is external or does not have a direct file download path.", "error");
+          } else {
+            alert("This font is external or does not have a direct file download path.");
+          }
           return;
         }
 
@@ -1198,6 +1202,10 @@ function initPremiumInteractions(font) {
 
         btn.textContent = '↓ Fetching...';
         btn.disabled = true;
+
+        if (window.showToast) {
+          window.showToast(`Downloading ${font.name} (${ext.toUpperCase()})...`, "info", 2000);
+        }
 
         try {
           let proxyUrl;
@@ -1225,10 +1233,17 @@ function initPremiumInteractions(font) {
           btn.innerHTML = `<i data-lucide="check" style="width: 14px; height: 14px;"></i> Downloaded`;
           btn.style.backgroundColor = '#22c55e';
           btn.style.color = '#FFF';
+
+          if (window.showToast) {
+            window.showToast(`Successfully downloaded ${font.name}!`, "success");
+          }
         } catch (err) {
           console.warn('[FontVault] Detail page download failed:', err);
           btn.textContent = 'Failed';
           btn.disabled = false;
+          if (window.showToast) {
+            window.showToast(`Download failed for ${font.name}. Please try again.`, "error");
+          }
         }
       });
     }

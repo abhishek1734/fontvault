@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="font-pairing.css?v=2.0">
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
+  <script src="shared.js?v=5.29"></script>
   
   <script>
     (function() {
@@ -53,8 +54,11 @@
 </head>
 <body class="font-pairing-page">
 
+  <!-- ACCESSIBLE SKIP NAVIGATION LINK (WCAG 2.1 AA) -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
   <!-- NAVIGATION BAR -->
-  <header id="navbar">
+  <header id="navbar" role="banner">
     <a href="index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
       <a href="index.html" class="nav-link" id="nav-home">Home</a>
@@ -77,6 +81,9 @@
 
   <!-- BACKGROUND GRADIENT GLOW -->
   <div class="fp-glow-bg" aria-hidden="true"></div>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content" role="main">
 
   <!-- 1. HERO SECTION -->
   <section class="fp-hero-section" id="hero">
@@ -327,31 +334,37 @@
       <!-- Full details content injected dynamically -->
     </div>
   </div>
-
-
+  </main>
 
   <!-- FOOTER -->
-  <footer style="display: none;">
+  <footer role="contentinfo" style="display: none;">
     <div class="footer-content">
       <div class="footer-branding">
-        <a href="#" class="logo">FONTVAULT</a>
+        <a href="index.html" class="logo">FONTVAULT</a>
         <p style="margin-top: 1rem;">The premium font discovery and licensing platform. Built for modern designers, brand builders, and type lovers.</p>
+        <div style="margin-top: 1.25rem;">
+          <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Contact Support
+          </a>
+        </div>
       </div>
       <div class="footer-links">
-        <h4>Explore</h4>
+        <h4>Explore & Support</h4>
         <ul>
           <li><a href="index.html#hero" id="footer-browse-link">Browse Fonts</a></li>
           <li><a href="index.html#submit-font">Submit a Font</a></li>
+          <li><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)">Help &amp; Support</a></li>
           <li><a href="admin.html" target="_blank">Admin Panel</a></li>
         </ul>
       </div>
       <div class="footer-newsletter" id="submit-font">
         <h4>Submit a Font</h4>
         <p>Found or designed a stunning typeface? Let us know.</p>
-        <form class="newsletter-form" id="newsletter-form" onsubmit="event.preventDefault(); alert('Submission sent! Thank you for supporting the typography community.'); this.reset();">
-          <input type="email" placeholder="Enter foundry URL or font name" required>
-          <button type="submit">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <form class="newsletter-form" id="newsletter-form" onsubmit="return handleFontSubmission(event, this);">
+          <input type="text" placeholder="Enter foundry URL or font name" required aria-label="Font name or foundry submission URL">
+          <button type="submit" aria-label="Submit font recommendation">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -359,7 +372,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2026 FontVault. All rights reserved.</p>
+      <p>&copy; 2026 FontVault. All rights reserved. &middot; <a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a></p>
     </div>
   </footer>
 

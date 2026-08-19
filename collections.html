@@ -5,7 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Typography Collections — FontVault</title>
   <meta name="description" content="Explore curated typography collections organized by style, mood, and industry applications.">
-  <link rel="canonical" href="https://fontvault.com/collections.html">
+  <link rel="canonical" href="https://fontvault.vercel.app/collections.html">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fontvault.vercel.app/collections.html">
+  <meta property="og:title" content="Typography Collections — FontVault">
+  <meta property="og:description" content="Explore curated typography collections organized by style, mood, and industry applications.">
+  <meta property="og:image" content="https://fontvault.vercel.app/assets/branding.png">
+  <meta property="og:site_name" content="FontVault">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://fontvault.vercel.app/collections.html">
+  <meta name="twitter:title" content="Typography Collections — FontVault">
+  <meta name="twitter:description" content="Explore curated typography collections organized by style, mood, and industry applications.">
+  <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
+
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=5.29">
   <script src="config.js?v=5.28"></script>
@@ -18,7 +34,6 @@
       if (savedDark === "1") {
         document.documentElement.setAttribute("data-theme", "dark");
       } else {
-        document.documentElement.setAttribute("data-theme-theme", "light"); // fallback
         document.documentElement.setAttribute("data-theme", "light");
       }
     })();
@@ -83,11 +98,14 @@
 </head>
 <body>
 
+  <!-- ACCESSIBLE SKIP NAVIGATION LINK (WCAG 2.1 AA) -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
   <!-- SCROLL PROGRESS BAR -->
   <div id="progress-bar" class="progress-bar"></div>
 
   <!-- NAVIGATION BAR -->
-  <header id="navbar">
+  <header id="navbar" role="banner">
     <a href="index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
       <a href="index.html" class="nav-link">Home</a>
@@ -109,7 +127,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
-          <input type="text" id="mobile-search-input" placeholder="Search fonts..." autocomplete="off">
+          <input type="text" id="mobile-search-input" placeholder="Search fonts..." autocomplete="off" aria-label="Search fonts">
         </div>
       </div>
       <a href="index.html" class="mobile-menu-item">Home</a>
@@ -119,7 +137,7 @@
   </header>
 
   <!-- MAIN -->
-  <main style="min-height: 80vh; padding-top: 4rem;">
+  <main id="main-content" role="main" style="min-height: 80vh; padding-top: 4rem;">
     <!-- Breadcrumbs Point -->
     <div id="breadcrumbs-injection-point" style="max-width: 1400px; margin: 0 auto; padding: 2rem 4rem 0;"></div>
 
@@ -129,24 +147,31 @@
   </main>
 
   <!-- FOOTER -->
-  <footer>
+  <footer role="contentinfo">
     <div class="footer-content">
       <div class="footer-branding">
         <a href="index.html" class="logo">FONTVAULT</a>
         <p style="margin-top: 1rem;">Curated typography discovery. Built for designers.</p>
+        <div style="margin-top: 1.25rem;">
+          <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Contact Support
+          </a>
+        </div>
       </div>
       <div class="footer-links">
-        <h4>Explore</h4>
+        <h4>Explore & Support</h4>
         <ul>
           <li><a href="index.html#hero">Browse Fonts</a></li>
           <li><a href="font-pairing.html">Font Pairing</a></li>
           <li><a href="blog.html">Blog</a></li>
+          <li><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)">Help &amp; Support</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 FontVault. All rights reserved.</span>
-      <span>BUILT FOR TYPE LOVERS</span>
+      <span><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a> &middot; BUILT FOR TYPE LOVERS</span>
     </div>
   </footer>
 

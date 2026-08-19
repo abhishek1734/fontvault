@@ -104,8 +104,43 @@ const el = {
 };
 
 // ─────────────────────────────────────────────────
-//  FILTERS
+//  FILTERS & DESCRIPTIONS (TOOLTIPS)
 // ─────────────────────────────────────────────────
+const filterDescriptions = {
+  // Styles
+  "Serif": "Classic letterforms with decorative strokes/serifs, ideal for editorial & books",
+  "Sans-Serif": "Clean, modern, geometric or humanist letterforms without serifs",
+  "Display": "Expressive, high-character typefaces made for large headlines & logos",
+  "Monospace": "Fixed-width fonts ideal for coding, data tables, and technical aesthetics",
+  "Script": "Fluid, handwritten, or calligraphic letterforms with artistic flair",
+  
+  // Moods
+  "Elegant": "Refined, high-contrast, luxurious aesthetics",
+  "Minimal": "Understated, simple, distraction-free geometry",
+  "Vintage": "Heritage, retro, and nostalgic typography",
+  "Bold": "Heavy, commanding, and impactful weight",
+  "Playful": "Fun, dynamic, quirky, and approachable feel",
+  "Formal": "Authoritative, traditional, and serious corporate tones",
+  "Modern": "Contemporary, futuristic, and forward-looking",
+
+  // Use Cases
+  "Editorial": "Magazines, book layouts, journalism, and long-form articles",
+  "UI": "Optimized for interfaces, buttons, menus, and dashboards",
+  "Poster": "Large-scale printing, banners, and advertising displays",
+  "Web": "Fast rendering, versatile typography for websites and landing pages",
+  "Packaging": "Labels, boxes, merchandise, and luxury physical goods",
+  "Branding": "Logos, brand identities, and design system guidelines",
+
+  // Providers & Availability
+  "Google Fonts": "Open-source, free fonts hosted on Google Fonts CDN",
+  "Fontshare": "Quality free typefaces from the Indian Type Foundry",
+  "Dafont": "Curated independent & creative typefaces",
+  "Free": "100% free for personal and commercial use",
+  "Free for Personal": "Free for non-commercial personal projects",
+  "Premium": "Commercial licensed typefaces",
+  "Custom": "Locally hosted or uploaded custom fonts"
+};
+
 function setupFilters() {
   el.filterContainer.innerHTML = "";
   Object.entries(filterGroups).forEach(([group, options], idx) => {
@@ -124,6 +159,13 @@ function setupFilters() {
       const pill = document.createElement("span");
       pill.className = "pill";
       pill.textContent = opt;
+      const desc = filterDescriptions[opt];
+      if (desc) {
+        pill.title = `${opt}: ${desc}`;
+        pill.setAttribute("aria-label", `${opt} filter — ${desc}`);
+      } else {
+        pill.setAttribute("aria-label", `${opt} filter`);
+      }
       const isActive = activeFilters[group] === opt;
       if (isActive) pill.classList.add("active");
       pill.addEventListener("click", () => handleFilterClick(group, opt));
@@ -697,9 +739,18 @@ function renderGrid(resetLimit = true) {
 
   if (filtered.length === 0) {
     el.fontGrid.innerHTML = `
-      <div style="grid-column:span 3;text-align:center;padding:4rem 1rem;color:#777;width:100%;">
-        <p style="font-size:var(--ts-lg);font-family:var(--font-display);">No fonts matched your search.</p>
-        <span style="font-size:var(--ts-sm);cursor:pointer;text-decoration:underline;margin-top:1rem;display:inline-block;" onclick="clearAllFilters()">Clear all filters</span>
+      <div class="empty-search-state" style="grid-column: 1 / -1; text-align:center; padding: 4.5rem 1.5rem; width: 100%; border: 1px dashed var(--border-grey); border-radius: 12px; background: var(--off-white); margin: 2rem 0;" role="status">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--signal-red); margin: 0 auto 1rem auto; display: block; opacity: 0.85;">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <h3 style="font-size: 1.4rem; font-family: var(--font-display); margin-bottom: 0.5rem; color: var(--near-black);">No typography matched your criteria</h3>
+        <p style="color: #666; font-size: 0.95rem; max-width: 460px; margin: 0 auto 1.5rem auto; line-height: 1.5;">
+          Try searching for a broader term like <em>Serif</em>, <em>Modern</em>, or <em>Display</em>, or clear your active filters to browse all fonts.
+        </p>
+        <button class="btn btn-outline" style="padding: 0.65rem 1.4rem; font-size: 0.85rem; cursor: pointer;" onclick="clearAllFilters()">
+          Clear All Active Filters
+        </button>
       </div>`;
     updateLoadMoreBtn(0, 0);
     return;
@@ -940,11 +991,19 @@ function setupEventListeners() {
       vaultBtn.classList.toggle("active", activeFilters["Favorites"]);
       
       if (activeFilters["Favorites"]) {
+        const favCount = window.favoritesSet ? window.favoritesSet.size : 0;
+        if (window.showToast) {
+          window.showToast(`My Vault: Showing ${favCount} saved favorite ${favCount === 1 ? 'font' : 'fonts'}. Click hearts on cards to add more.`, "info");
+        }
         // Smooth scroll to the font grid
         if (el.fontGrid) {
           setTimeout(() => {
             el.fontGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 100);
+        }
+      } else {
+        if (window.showToast) {
+          window.showToast("Exited My Vault. Showing full font library.", "info");
         }
       }
       renderGrid(true);
@@ -1376,6 +1435,10 @@ window.downloadFont = async function(fontId, url, fontName, format) {
     btn.style.pointerEvents = 'none';
   }
 
+  if (window.showToast) {
+    window.showToast(`Preparing download for ${fontName}...`, "info", 2000);
+  }
+
   // If the url is a data URL (base64 local custom font), download directly
   if (url.startsWith('data:')) {
     const a = document.createElement('a');
@@ -1390,6 +1453,9 @@ window.downloadFont = async function(fontId, url, fontName, format) {
       btn.classList.remove('downloading');
       btn.classList.add('downloaded');
       btn.style.pointerEvents = '';
+    }
+    if (window.showToast) {
+      window.showToast(`Downloaded ${fontName}! Happy designing.`, "success");
     }
     return;
   }
@@ -1432,6 +1498,9 @@ window.downloadFont = async function(fontId, url, fontName, format) {
       btn.classList.add('downloaded');
       btn.style.pointerEvents = '';
     }
+    if (window.showToast) {
+      window.showToast(`Downloaded ${fontName} (${ext.toUpperCase()})!`, "success");
+    }
 
   } catch (err) {
     console.warn('[FontVault] Download failed:', err);
@@ -1439,6 +1508,9 @@ window.downloadFont = async function(fontId, url, fontName, format) {
       btn.classList.remove('downloading');
       btn.style.pointerEvents = '';
       if (countEl) countEl.textContent = 'RETRY';
+    }
+    if (window.showToast) {
+      window.showToast(`Download failed for ${fontName}. Please try again.`, "error");
     }
   }
 
