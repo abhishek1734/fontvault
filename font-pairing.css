@@ -1658,3 +1658,95 @@
   transform: translateY(0);
   transition-delay: 0.32s !important;
 }
+
+
+/* ============================================================
+   RESPONSIVE ENHANCEMENTS — FONT PAIRING STUDIO
+   ============================================================ */
+@media (max-width: 768px) {
+  .fp-hero-section {
+    padding: 5rem 1.25rem 3rem !important;
+    min-height: auto !important;
+  }
+  .fp-hero-title {
+    font-size: clamp(2rem, 7vw, 3.5rem) !important;
+  }
+  .fp-hero-subtitle {
+    font-size: 1rem !important;
+    padding: 0 0.5rem !important;
+  }
+  .fp-app-container {
+    padding: 2rem 1.25rem !important;
+  }
+  .fp-generator-grid,
+  .fp-prompt-controls-row {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .fp-card-header {
+    padding: 1rem 1.25rem !important;
+  }
+  .fp-card-middle {
+    padding: 1rem 1.25rem !important;
+    gap: 0.75rem !important;
+  }
+  .fp-preview-canvas {
+    padding: 1.75rem 1.25rem !important;
+  }
+  .specimen-title {
+    font-size: clamp(1.75rem, 6vw, 2.5rem) !important;
+  }
+  .fp-card-bottom {
+    padding: 1.25rem 1.25rem !important;
+  }
+  .card-actions-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+  .card-buttons {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+  .fp-sticky-toolbar {
+    padding: 0.75rem 0 !important;
+    top: 56px !important;
+  }
+  .fp-toolbar-content {
+    padding: 0 1.25rem !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .fp-compare-drawer {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+  .fp-analysis-card {
+    padding: 1.5rem 1.25rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .fp-app-container {
+    padding: 1.5rem 1rem !important;
+  }
+  .fp-card-header,
+  .fp-card-middle,
+  .fp-preview-canvas,
+  .fp-card-bottom {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .card-font-chip {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+  .chip-val {
+    max-width: 160px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}

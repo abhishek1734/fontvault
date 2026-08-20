@@ -1239,3 +1239,152 @@ section {
   opacity: 0.95;
   filter: brightness(1.2);
 }
+
+
+/* ============================================================
+   RESPONSIVE ENHANCEMENTS — FONT DETAILS SPECIMEN PAGE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .playground-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  .playground-canvas {
+    min-height: 320px !important;
+    width: 100% !important;
+  }
+  .playground-controls {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .hero-metadata-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .metadata-item:nth-child(3) {
+    border-right: none !important;
+  }
+  .details-list-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .pairings-row {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-wrapper {
+    padding-top: 4rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+  .hero-font-title {
+    font-size: clamp(2.75rem, 9vw, 5.5rem) !important;
+  }
+  .hero-font-description {
+    font-size: 1.05rem !important;
+    padding: 0 1rem !important;
+  }
+  .hero-metadata-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .metadata-item:nth-child(2) {
+    border-right: none !important;
+  }
+  .metadata-item {
+    padding: 1rem 0.75rem !important;
+  }
+  .hero-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 340px !important;
+    margin: 0 auto 1.5rem auto !important;
+  }
+  .cta-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .hero-specimen-card {
+    padding: 1.5rem 1.25rem !important;
+    border-radius: 16px !important;
+  }
+  .hero-specimen-editable {
+    font-size: clamp(2rem, 6vw, 4rem) !important;
+  }
+  .playground-controls {
+    padding: 1.25rem 1rem !important;
+    border-radius: 16px !important;
+  }
+  .custom-range::-webkit-slider-thumb {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  .color-circle {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .glyphs-grid {
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)) !important;
+    gap: 4px !important;
+  }
+  .glyph-card {
+    height: 46px !important;
+    font-size: 1.15rem !important;
+  }
+  .details-list-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .download-cta-banner {
+    padding: 2.5rem 1.25rem !important;
+    border-radius: 20px !important;
+  }
+  .download-banner-title {
+    font-size: clamp(2rem, 6vw, 3.25rem) !important;
+  }
+  .sticky-floating-bar {
+    width: calc(100% - 2rem) !important;
+    max-width: 380px !important;
+    bottom: 1rem !important;
+    padding: 0.5rem 0.85rem !important;
+    gap: 0.75rem !important;
+    justify-content: space-between !important;
+  }
+  .floating-bar-info {
+    padding-right: 0.75rem !important;
+  }
+  .floating-bar-name {
+    font-size: 0.85rem !important;
+  }
+  .compare-modal-card {
+    padding: 1.5rem 1rem !important;
+    width: 95% !important;
+    max-height: 90vh !important;
+    border-radius: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-metadata-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .metadata-item {
+    padding: 0.85rem 0.5rem !important;
+  }
+  .metadata-label {
+    font-size: 0.6rem !important;
+  }
+  .metadata-value {
+    font-size: 0.85rem !important;
+  }
+  .pairing-showcase-card {
+    padding: 1.25rem 1rem !important;
+    border-radius: 16px !important;
+  }
+  .pairing-headline {
+    font-size: clamp(1.75rem, 6vw, 2.25rem) !important;
+  }
+  .carousel-card {
+    min-width: 260px !important;
+    max-width: 260px !important;
+  }
+}

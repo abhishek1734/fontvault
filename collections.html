@@ -23,7 +23,7 @@
   <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
 
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=5.29">
+  <link rel="stylesheet" href="style.css?v=6.0">
   <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
@@ -47,11 +47,32 @@
     }
     .col-grid {
       display: grid;
-      grid-cols: 1;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 2rem;
-      padding: 4rem;
+      padding: 3rem 2rem;
       max-width: 1400px;
       margin: 0 auto;
+    }
+    @media (max-width: 768px) {
+      .col-grid {
+        grid-template-columns: 1fr;
+        padding: 2rem 1.25rem;
+        gap: 1.5rem;
+      }
+      .col-benefits {
+        grid-template-columns: 1fr !important;
+      }
+      .faq-sec {
+        padding: 2.5rem 1.25rem !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .col-grid {
+        padding: 1.5rem 1rem;
+      }
+      .faq-sec {
+        padding: 2rem 1rem !important;
+      }
     }
     @media (min-width: 768px) {
       .col-grid {
@@ -139,7 +160,7 @@
   <!-- MAIN -->
   <main id="main-content" role="main" style="min-height: 80vh; padding-top: 4rem;">
     <!-- Breadcrumbs Point -->
-    <div id="breadcrumbs-injection-point" style="max-width: 1400px; margin: 0 auto; padding: 2rem 4rem 0;"></div>
+    <div id="breadcrumbs-injection-point" style="max-width: 1400px; margin: 0 auto; padding: 1.5rem 1.5rem 0;"></div>
 
     <div id="collection-root">
       <!-- Injected Dynamically -->

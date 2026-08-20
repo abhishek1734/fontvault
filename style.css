@@ -5196,8 +5196,9 @@ header#navbar {
 
 .trending-section-new {
   width: 100%;
+  padding: 4rem 3rem 0;
   box-sizing: border-box;
-  overflow: visible; /* Let hover transforms extend outside section */
+  overflow: visible;
   position: relative;
 }
 
@@ -5749,4 +5750,157 @@ header#navbar {
   background: var(--signal-red, #ff3b00);
   color: #ffffff;
   border-color: var(--signal-red, #ff3b00);
+}
+
+
+/* ============================================================
+   RESPONSIVE ENHANCEMENTS & SAFE AREA SYSTEM
+   ============================================================ */
+
+/* Fluid preview text font size */
+@media (max-width: 768px) {
+  :root {
+    --preview-font-size: clamp(36px, 8vw, 64px) !important;
+  }
+  .trending-section-new {
+    padding: 2.5rem 1.25rem 1.5rem !important;
+  }
+  .trending-mood-row {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: none !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .trending-mood-row::-webkit-scrollbar {
+    display: none !important;
+  }
+  .trending-mood-chip {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    padding: 6px 14px !important;
+    min-height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+  .card-header-row {
+    gap: 0.5rem !important;
+  }
+  .card-footer-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  .card-footer-right {
+    width: 100% !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  .card-download-btn,
+  .view-family-hover-btn {
+    min-height: 38px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .home-faq-section {
+    padding: 3rem 1.25rem !important;
+  }
+  .faq-container {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  .faq-info-col {
+    position: relative !important;
+    top: 0 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .fv-toast-container {
+    bottom: 1rem !important;
+    left: 1rem !important;
+    right: 1rem !important;
+    width: auto !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+  .fv-toast {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.8rem !important;
+  }
+  .compare-tray {
+    height: auto !important;
+    min-height: 56px !important;
+    padding: 0.5rem 0.75rem !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  .compare-tray-label {
+    display: none !important;
+  }
+  .compare-tray-fonts {
+    flex: 1 1 auto !important;
+    overflow-x: auto !important;
+  }
+  .compare-overlay-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+  }
+  .compare-overlay-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem !important;
+  }
+  .compare-shared-text-wrap {
+    width: 100% !important;
+  }
+  .compare-shared-text-wrap input {
+    flex: 1 !important;
+    width: 100% !important;
+  }
+  .compare-overlay-body {
+    flex-direction: column !important;
+    overflow-y: auto !important;
+  }
+  .compare-col {
+    padding: 1.25rem 1rem !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-grey) !important;
+  }
+  .compare-specimen {
+    font-size: clamp(1.75rem, 6vw, 2.5rem) !important;
+    min-height: 60px !important;
+  }
+  .auth-modal {
+    width: calc(100vw - 2rem) !important;
+    max-width: 400px !important;
+    padding: 2rem 1.25rem 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .trending-section-new {
+    padding: 2rem 1rem 1.5rem !important;
+  }
+  .home-faq-section {
+    padding: 2.5rem 1rem !important;
+  }
+  .font-card {
+    padding: 1rem 0.85rem !important;
+  }
+  .card-meta-right {
+    gap: 0.35rem !important;
+  }
+  .meta-item {
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+  }
+  .footer-support-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
 }

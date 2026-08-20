@@ -23,7 +23,7 @@
   <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
 
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=5.29">
+  <link rel="stylesheet" href="style.css?v=6.0">
   <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
@@ -43,7 +43,20 @@
     .post-container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 6rem 2rem;
+      padding: 4rem 1.5rem;
+    }
+    @media (max-width: 768px) {
+      .post-container {
+        padding: 2.5rem 1.25rem !important;
+      }
+      .post-header h1 {
+        font-size: clamp(2rem, 7vw, 2.75rem) !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .post-container {
+        padding: 2rem 1rem !important;
+      }
     }
     .post-header {
       margin-bottom: 3rem;
