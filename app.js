@@ -21,7 +21,7 @@ fontsData.forEach(f => loadExternalFont(f));
 //  FILTER CONFIG & STATE
 // ─────────────────────────────────────────────────
 const filterGroups = {
-  "Provider":     ["All Providers","Google Fonts","Fontshare","Dafont"],
+  "Provider":     ["All Providers","Google Fonts","Fontshare","Dafont","Adobe Fonts"],
   "Availability": ["All","Free","Free for Personal","Premium","Custom"],
   "Style":        ["Serif","Sans-Serif","Display","Monospace","Script"],
   "Mood":         ["Elegant","Minimal","Vintage","Bold","Playful","Formal","Modern"],
@@ -267,7 +267,7 @@ function getFilteredFonts() {
       if (!match) return false;
     }
     if (activeFilters["Provider"] !== "All Providers") {
-      const provMap = {"Google Fonts":"google","Fontshare":"fontshare","Dafont":"dafont"};
+      const provMap = {"Google Fonts":"google","Fontshare":"fontshare","Dafont":"dafont","Adobe Fonts":"adobe"};
       if (font.provider !== provMap[activeFilters["Provider"]]) return false;
     }
     if (activeFilters["Availability"] !== "All") {
@@ -299,7 +299,7 @@ const cardObserver = new IntersectionObserver((entries, observer) => {
 }, { root: null, rootMargin: '50px', threshold: 0.1 });
 
 function appendFontCard(font, delay, index) {
-  const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT" }[font.provider] || font.provider.toUpperCase();
+  const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT", adobe:"ADOBE FONTS" }[font.provider] || font.provider.toUpperCase();
   const isInCompare = compareSet.has(font.id);
 
   const card = document.createElement("div");

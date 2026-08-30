@@ -244,6 +244,16 @@ function loadExternalFont(font) {
     const n = fallback.replace(/\s+/g, '+');
     link.href = `https://fonts.googleapis.com/css2?family=${n}&display=swap`;
     font.cssFamily = `'${fallback}', cursive`;
+  } else if (font.provider === "adobe") {
+    const savedKit = localStorage.getItem('fontvault-adobe-kit-id');
+    const kitId = font.adobeKitId || savedKit;
+    if (font.adobeCssUrl) {
+      link.href = font.adobeCssUrl;
+    } else if (kitId) {
+      link.href = kitId.startsWith('http') ? kitId : `https://use.typekit.net/${kitId}.css`;
+    } else {
+      link.href = `https://use.typekit.net/${font.id}.css`;
+    }
   }
 
   document.head.appendChild(link);
@@ -515,7 +525,7 @@ function setupSharedEventListeners() {
         searchDropdownList.innerHTML = matches.map(font => {
           if (typeof loadExternalFont === "function") loadExternalFont(font);
           const fam = font.cssFamily || `'${font.name}'`;
-          const providerLabel = { google:"Google Fonts", fontshare:"Fontshare", dafont:"Dafont" }[font.provider] || font.provider || "Font";
+          const providerLabel = { google:"Google Fonts", fontshare:"Fontshare", dafont:"Dafont", adobe:"Adobe Fonts" }[font.provider] || font.provider || "Font";
           return `
             <div class="search-dropdown-item" data-id="${font.id}">
               <div class="search-dropdown-item-left">

@@ -1554,7 +1554,7 @@ function getFontWeights(font) {
       return Array.from(weights).sort((a, b) => a - b);
     }
   }
-  if (font.provider === 'google' || font.provider === 'fontshare') {
+  if (font.provider === 'google' || font.provider === 'fontshare' || font.provider === 'adobe') {
     if (font.stylesCount === 1) return [400];
     return [300, 400, 500, 700];
   }
