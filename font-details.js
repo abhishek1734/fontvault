@@ -190,12 +190,8 @@ function renderFontDetails(font) {
     <!-- 1. CINEMATIC HERO -->
     <section class="hero-section" id="hero" style="padding-top: 4rem;">
       <div class="container hero-wrapper">
-        <div class="breadcrumb-nav">
-          <a href="index.html">Home</a>
-          <span>/</span>
-          <a href="index.html#hero">Fonts</a>
-          <span>/</span>
-          <span style="color: var(--text-primary); font-weight: 500;">${font.name}</span>
+        <div class="hero-foundry-eyebrow">
+          <span>${font.foundry || font.designer || 'Independent Foundry'}</span>
         </div>
 
         <div class="hero-font-title-wrapper" style="margin-top: 1.5rem;">
