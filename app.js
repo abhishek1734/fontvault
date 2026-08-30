@@ -21,7 +21,7 @@ fontsData.forEach(f => loadExternalFont(f));
 //  FILTER CONFIG & STATE
 // ─────────────────────────────────────────────────
 const filterGroups = {
-  "Provider":     ["All Providers","Google Fonts","Adobe Fonts","Fontshare","Dafont"],
+  "Provider":     ["All Providers","Adobe Fonts","Google Fonts","Fontshare","Dafont"],
   "Availability": ["All","Free","Free for Personal","Premium","Custom"],
   "Style":        ["Serif","Sans-Serif","Display","Monospace","Script"],
   "Mood":         ["Elegant","Minimal","Vintage","Bold","Playful","Formal","Modern"],
