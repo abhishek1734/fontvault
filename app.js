@@ -21,7 +21,7 @@ fontsData.forEach(f => loadExternalFont(f));
 //  FILTER CONFIG & STATE
 // ─────────────────────────────────────────────────
 const filterGroups = {
-  "Provider":     ["All Providers","Google Fonts","Fontshare","Dafont","Adobe Fonts"],
+  "Provider":     ["All Providers","Google Fonts","Adobe Fonts","Fontshare","Dafont"],
   "Availability": ["All","Free","Free for Personal","Premium","Custom"],
   "Style":        ["Serif","Sans-Serif","Display","Monospace","Script"],
   "Mood":         ["Elegant","Minimal","Vintage","Bold","Playful","Formal","Modern"],
@@ -133,6 +133,7 @@ const filterDescriptions = {
 
   // Providers & Availability
   "Google Fonts": "Open-source, free fonts hosted on Google Fonts CDN",
+  "Adobe Fonts": "Professional typefaces from the Adobe Fonts library",
   "Fontshare": "Quality free typefaces from the Indian Type Foundry",
   "Dafont": "Curated independent & creative typefaces",
   "Free": "100% free for personal and commercial use",
@@ -809,7 +810,7 @@ function renderTrending() {
   trending.forEach((font, i) => {
     loadExternalFont(font);
     const fam = font.cssFamily || `'${font.name}'`;
-    const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT" }[font.provider] || font.provider.toUpperCase();
+    const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT", adobe:"ADOBE FONTS" }[font.provider] || font.provider.toUpperCase();
 
     const card = document.createElement("div");
     card.className = "trending-card";
@@ -925,7 +926,7 @@ function renderCompareOverlay() {
     if (!font) return;
     loadExternalFont(font);
     const fam = font.cssFamily || `'${font.name}'`;
-    const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT" }[font.provider] || font.provider.toUpperCase();
+    const providerLabel = { google:"GOOGLE FONTS", fontshare:"FONTSHARE", dafont:"DAFONT", adobe:"ADOBE FONTS" }[font.provider] || font.provider.toUpperCase();
 
     const col = document.createElement("div");
     col.className = "compare-col";
