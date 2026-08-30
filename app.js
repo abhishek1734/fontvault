@@ -2266,26 +2266,41 @@ function setupFaqAccordion() {
     const content = item.querySelector(".faq-content");
     
     if (trigger && content) {
-      trigger.addEventListener("click", () => {
+      // Ensure initial accessibility state
+      trigger.setAttribute("aria-expanded", item.classList.contains("active") ? "true" : "false");
+
+      trigger.addEventListener("click", (e) => {
+        e.preventDefault();
         const isActive = item.classList.contains("active");
         
         // Close all other accordion items
         items.forEach(otherItem => {
           if (otherItem !== item) {
             otherItem.classList.remove("active");
-            otherItem.querySelector(".faq-content").style.maxHeight = null;
+            const otherTrigger = otherItem.querySelector(".faq-trigger");
+            const otherContent = otherItem.querySelector(".faq-content");
+            if (otherTrigger) otherTrigger.setAttribute("aria-expanded", "false");
+            if (otherContent) otherContent.style.maxHeight = null;
           }
         });
         
         // Toggle current item
         if (isActive) {
           item.classList.remove("active");
+          trigger.setAttribute("aria-expanded", "false");
           content.style.maxHeight = null;
         } else {
           item.classList.add("active");
+          trigger.setAttribute("aria-expanded", "true");
           content.style.maxHeight = content.scrollHeight + "px";
         }
       });
     }
   });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupFaqAccordion);
+} else {
+  setupFaqAccordion();
 }
