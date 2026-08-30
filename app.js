@@ -403,10 +403,13 @@ function appendFontCard(font, delay, index) {
   `;
 
   // Compare add/remove button
-  card.querySelector(".compare-add-btn").addEventListener("click", e => {
-    e.stopPropagation();
-    toggleCompare(font.id);
-  });
+  const compareBtn = card.querySelector(".compare-add-btn");
+  if (compareBtn) {
+    compareBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      toggleCompare(font.id);
+    });
+  }
 
   // Prevent click propagation on View Family hover button
   const viewFamilyBtn = card.querySelector(".view-family-hover-btn");
@@ -1229,152 +1232,6 @@ function setupEventListeners() {
   setupCollectionCards();
 }
 
-// ─────────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────────
-async function init() {
-  // Apply saved dark mode preference
-  const savedDark = localStorage.getItem("fontvault-dark");
-  if (savedDark === "1") {
-    applyTheme(true);
-  } else {
-    applyTheme(false);
-  }
-
-  // Show a loading state
-  if (el.fontGrid) {
-    el.fontGrid.innerHTML = `
-      <div style="grid-column:span 3;text-align:center;padding:4rem 1rem;color:var(--signal-red);width:100%;">
-        <p style="font-size:var(--ts-xl);font-family:var(--font-mono);animation:pulse 1.5s infinite;">CONNECTING TO GOOGLE FONTS API...</p>
-      </div>`;
-  }
-
-  // Await the fetch
-  await initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY');
-
-  // Parse search query from URL if coming from font detail page
-  const params = new URLSearchParams(window.location.search);
-  const q = params.get("search");
-  if (q && el.searchInput) {
-    el.searchInput.value = q;
-    window.searchQuery = q;
-  }
-  if (params.get("vault") === "true") {
-    activeFilters["Favorites"] = true;
-    const vaultBtn = document.getElementById("vault-btn");
-    if (vaultBtn) {
-      vaultBtn.classList.add("active");
-    }
-  }
-
-  setupFilters();
-  renderGrid(true);
-  renderTrending();
-  setupEventListeners();
-
-  // Load custom fonts from Supabase
-  await loadCustomFontsFromSupabase();
-
-  if ((params.get("scroll") === "true" || params.get("vault") === "true") && el.fontGrid) {
-    // Small timeout to allow grid to render
-    setTimeout(() => {
-      el.fontGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }
-  setupSharedEventListeners();
-  updateClearButtonVisibility();
-
-  // Create global edit tooltip dynamically
-  const tooltip = document.createElement("div");
-  tooltip.id = "edit-tooltip";
-  tooltip.className = "edit-tooltip";
-  tooltip.textContent = "Click on text to edit";
-  document.body.appendChild(tooltip);
-
-  // Tooltip mouse movement listener with 5s fade timeout
-  if (el.fontGrid) {
-    let lastHoveredCard = null;
-    let tooltipTimeout = null;
-    let fadeOutTimeout = null;
-
-    // Instantly hide tooltip when entering edit mode
-    document.addEventListener("focusin", e => {
-      if (e.target.closest(".huge-preview-text")) {
-        const tooltipEl = document.getElementById("edit-tooltip");
-        if (tooltipEl) {
-          tooltipEl.style.display = "none";
-          tooltipEl.classList.add("fade-out");
-          clearTimeout(tooltipTimeout);
-          clearTimeout(fadeOutTimeout);
-          lastHoveredCard = null;
-        }
-      }
-    });
-
-    el.fontGrid.addEventListener("mousemove", e => {
-      const card = e.target.closest(".font-card");
-      const tooltipEl = document.getElementById("edit-tooltip");
-      if (card && tooltipEl) {
-        const activeEl = document.activeElement;
-        const isEditing = activeEl && activeEl.closest(".huge-preview-text") && activeEl.closest(".font-card") === card;
-
-        // Hide tooltip if hovering interactive controls or currently editing
-        if (e.target.closest(".compare-add-btn") || e.target.closest(".favorite-add-btn") || e.target.closest(".view-family-hover-btn") || e.target.closest(".custom-font-delete-btn") || isEditing) {
-          tooltipEl.style.display = "none";
-          clearTimeout(tooltipTimeout);
-          clearTimeout(fadeOutTimeout);
-          lastHoveredCard = null;
-          return;
-        }
-
-        // If entering a different card, show tooltip and start 5-second timer
-        if (card !== lastHoveredCard) {
-          lastHoveredCard = card;
-          clearTimeout(tooltipTimeout);
-          clearTimeout(fadeOutTimeout);
-          
-          tooltipEl.style.display = "block";
-          tooltipEl.offsetHeight; // Force reflow for smooth transition
-          tooltipEl.classList.remove("fade-out");
-          
-          tooltipTimeout = setTimeout(() => {
-            tooltipEl.classList.add("fade-out");
-            fadeOutTimeout = setTimeout(() => {
-              tooltipEl.style.display = "none";
-            }, 300);
-          }, 5000);
-        }
-
-        // Only update position if it's currently visible
-        if (tooltipEl.style.display !== "none" && !tooltipEl.classList.contains("fade-out")) {
-          tooltipEl.style.left = (e.clientX + 15) + "px";
-          tooltipEl.style.top = (e.clientY + 15) + "px";
-        }
-      } else if (tooltipEl) {
-        tooltipEl.style.display = "none";
-        clearTimeout(tooltipTimeout);
-        clearTimeout(fadeOutTimeout);
-        lastHoveredCard = null;
-      }
-    });
-
-    el.fontGrid.addEventListener("mouseleave", () => {
-      const tooltipEl = document.getElementById("edit-tooltip");
-      if (tooltipEl) {
-        tooltipEl.style.display = "none";
-        tooltipEl.classList.remove("fade-out");
-      }
-      clearTimeout(tooltipTimeout);
-      clearTimeout(fadeOutTimeout);
-      lastHoveredCard = null;
-    });
-  }
-
-  if (q && document.getElementById("search-clear-btn")) {
-    document.getElementById("search-clear-btn").classList.add("visible");
-  }
-}
-
 // removeCustomFont: only removes LOCAL preview fonts (those dragged & dropped this session).
 // Admin-uploaded fonts (from Supabase) can only be deleted via the Admin Dashboard.
 // This function never touches Supabase storage or database.
@@ -2062,16 +1919,7 @@ async function init() {
     applyTheme(false);
   }
 
-  // Show a loading state
-  if (el.fontGrid) {
-    el.fontGrid.innerHTML = `
-      <div style="grid-column:span 3;text-align:center;padding:4rem 1rem;color:var(--signal-red);width:100%;">
-        <p style="font-size:var(--ts-xl);font-family:var(--font-mono);animation:pulse 1.5s infinite;">CONNECTING TO GOOGLE FONTS API...</p>
-      </div>`;
-  }
-
-  // Await the fetch
-  await initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY');
+  // Fonts data loaded from fonts.js
 
   // Parse search query from URL if coming from font detail page
   const params = new URLSearchParams(window.location.search);
