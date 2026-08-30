@@ -21,11 +21,14 @@ try {
 // Load fonts
 let fontsData = [];
 try {
-  const fontsFile = fs.readFileSync(path.join(__dirname, 'fonts.js'), 'utf8');
-  // Evaluate the fontsData array by replacing let declaration with a global variable
-  const code = fontsFile.replace(/^let\s+fontsData\s*=/, 'global.fontsData =') + ';\nreturn global.fontsData;';
-  const fn = new Function('global', code);
-  fontsData = fn(global) || [];
+  const mod = require('./fonts.js');
+  fontsData = mod.fontsData || [];
+  if (fontsData.length === 0) {
+    const fontsFile = fs.readFileSync(path.join(__dirname, 'fonts.js'), 'utf8');
+    const code = fontsFile.replace(/let\s+fontsData\s*=/, 'global.fontsData =') + ';\nreturn global.fontsData;';
+    const fn = new Function('global', code);
+    fontsData = fn(global) || [];
+  }
 } catch (e) {
   console.error("Failed to load fonts.js:", e.message);
 }
