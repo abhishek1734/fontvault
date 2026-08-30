@@ -1274,12 +1274,18 @@ window.formatDownloadCount = function(n) {
 window.downloadFont = async function(fontId, url, fontName, format) {
   if (!url || url === '#') return;
 
-  const isGoogleFont = url.includes('fonts.google.com');
-  const ext = isGoogleFont ? 'zip'
+  const fontObj = typeof fontsData !== 'undefined' ? fontsData.find(f => f.id === fontId || f.name === fontName) : null;
+  const provider = (fontObj && fontObj.provider) || (url.includes('google') ? 'google' : (url.includes('adobe') ? 'adobe' : (url.includes('fontshare') ? 'fontshare' : 'custom')));
+
+  const isGoogleFont = provider === 'google' || url.includes('fonts.google.com');
+  const isAdobeFont = provider === 'adobe' || url.includes('fonts.adobe.com');
+  const isFontshare = provider === 'fontshare' || url.includes('fontshare.com');
+
+  const ext = (isGoogleFont || isAdobeFont || isFontshare) ? 'zip'
             : format === 'truetype' ? 'ttf'
             : format === 'opentype' ? 'otf'
             : (format || 'woff2');
-  const safeFilename = `${fontName.replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_')}${isGoogleFont ? '_fonts' : ''}.${ext}`;
+  const safeFilename = `${fontName.replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_')}_fonts.${ext}`;
 
   if (window.FontVaultAnalytics) {
     window.FontVaultAnalytics.trackDownload(fontName, ext);
@@ -1320,45 +1326,64 @@ window.downloadFont = async function(fontId, url, fontName, format) {
   }
 
   try {
-    // ── Build the proxy URL ───────────────────────────────────
     let proxyUrl;
 
-    if (isGoogleFont) {
-      // Extract family name from Google Fonts specimen URL
-      const familyMatch = url.match(/specimen\/([^?#]+)/);
-      const family = familyMatch
-        ? decodeURIComponent(familyMatch[1].replace(/\+/g, ' '))
-        : fontName;
-      proxyUrl = `/api/download?family=${encodeURIComponent(family)}&filename=${encodeURIComponent(safeFilename)}`;
+    if (isGoogleFont || isAdobeFont || isFontshare) {
+      // First try fetching full ZIP package by font family name
+      proxyUrl = `/api/download?family=${encodeURIComponent(fontName)}&filename=${encodeURIComponent(safeFilename)}`;
     } else {
-      // Direct font file URL (Supabase, gstatic, Fontshare, etc.)
+      // Direct font file URL (Supabase, gstatic, etc.)
       proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(safeFilename)}`;
     }
 
     // ── Fetch blob through proxy ──────────────────────────────
     const resp = await fetch(proxyUrl);
-    if (!resp.ok) throw new Error(`Proxy returned ${resp.status}`);
-    const blob = await resp.blob();
+    if (resp.ok) {
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = safeFilename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
 
-    // ── Trigger browser save dialog ───────────────────────────
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = safeFilename;
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-
-    // ── Success state on button ───────────────────────────────
-    if (btn) {
-      btn.classList.remove('downloading');
-      btn.classList.add('downloaded');
-      btn.style.pointerEvents = '';
-    }
-    if (window.showToast) {
-      window.showToast(`Downloaded ${fontName} (${ext.toUpperCase()})!`, "success");
+      // ── Success state on button ───────────────────────────────
+      if (btn) {
+        btn.classList.remove('downloading');
+        btn.classList.add('downloaded');
+        btn.style.pointerEvents = '';
+      }
+      if (window.showToast) {
+        window.showToast(`Downloaded ${fontName} (${ext.toUpperCase()})!`, "success");
+      }
+    } else {
+      // Fallback for proprietary cloud-activated fonts (Adobe CC / external foundries)
+      if (isAdobeFont) {
+        window.open(url, '_blank');
+        if (btn) {
+          btn.classList.remove('downloading');
+          btn.style.pointerEvents = '';
+          if (countEl) countEl.textContent = 'ACTIVATE';
+        }
+        if (window.showToast) {
+          window.showToast(`Opening Adobe Fonts activation page for ${fontName}...`, "info", 4000);
+        }
+      } else if (isFontshare) {
+        window.open(url, '_blank');
+        if (btn) {
+          btn.classList.remove('downloading');
+          btn.style.pointerEvents = '';
+          if (countEl) countEl.textContent = 'DOWNLOAD';
+        }
+        if (window.showToast) {
+          window.showToast(`Opening Fontshare download page for ${fontName}...`, "info", 4000);
+        }
+      } else {
+        throw new Error(`Proxy returned ${resp.status}`);
+      }
     }
 
   } catch (err) {

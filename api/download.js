@@ -1,10 +1,9 @@
 // api/download.js — Vercel Serverless Function
 // Downloads fonts as installable files:
-//   Google Fonts:
-//     - Strategy 1: Google's JSON manifest API (contains exact filenames, static/ folders, and gstatic URLs)
-//     - Strategy 2: CSS parsing fallback (for Google Sans / unlisted fonts, maps and downloads all TTFs)
-//   Direct URL:
-//     - Proxies the file as-is (TTF/OTF/WOFF2)
+//   - Strategy 1: Google JSON manifest API (contains exact filenames, static/ folders, and gstatic URLs)
+//   - Strategy 2: Google CSS parsing fallback (for Google Sans / unlisted fonts, maps and downloads all TTFs)
+//   - Strategy 3: Fontshare CDN parsing (downloads Fontshare font files directly)
+//   - Strategy 4: Direct URL file proxy (Supabase, TTF, OTF, WOFF2)
 
 // ── Minimal pure-Node ZIP builder (no npm needed) ────────────────
 function buildZip(entries) {
@@ -99,80 +98,79 @@ async function fetchFromManifest(family) {
 
     // Download files in parallel
     const entries = (await Promise.all(
-      fileRefs.map(async file => {
+      fileRefs.map(async (ref) => {
         try {
-          const r = await fetch(file.url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+          const fileUrl = ref.url;
+          if (!fileUrl) return null;
+
+          const r = await fetch(fileUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0' },
+          });
           if (!r.ok) return null;
-          const buf = Buffer.from(await r.arrayBuffer());
-          // Use filename from manifest, fallback to URL basename
-          const name = file.filename || file.url.split('/').pop().split('?')[0];
-          return { name, data: buf };
-        } catch { return null; }
+
+          const data = Buffer.from(await r.arrayBuffer());
+          const cleanName = (ref.filename || fileUrl.split('/').pop().split('?')[0] || 'font.ttf')
+            .replace(/^[\/\\]+/, '');
+
+          return { name: cleanName, data };
+        } catch {
+          return null;
+        }
       })
     )).filter(Boolean);
 
     return entries.length > 0 ? entries : null;
 
   } catch (err) {
-    console.warn(`[download] Manifest fetch failed for "${family}":`, err.message);
+    console.warn(`[download] fetchFromManifest error for "${family}":`, err.message);
     return null;
   }
 }
 
-// ── Strategy 2: CSS v2 API parsing fallback (for Google Sans / unlisted fonts) ──
+// ── Strategy 2: Fallback for unlisted/Google Sans fonts via CSS v2 API ──
 async function fetchStaticFontsFromCSS(family) {
-  const cleanFamily = family.trim();
-  const weightsParam = 'ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900';
-  const cssUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(cleanFamily)}:${weightsParam}`;
-  
+  const n = family.replace(/\s+/g, '+');
+  const cssUrl = `https://fonts.googleapis.com/css2?family=${n}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap`;
+
   try {
-    // First try with empty User-Agent (gets TTF links in CSS)
     const cssResp = await fetch(cssUrl, {
-      headers: { 'User-Agent': '' }
+      headers: {
+        'User-Agent': 'Mozilla/4.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1',
+      },
     });
 
     if (!cssResp.ok) return [];
+    const cssText = await cssResp.text();
 
-    const css = await cssResp.text();
-    const blocks = css.split('@font-face');
+    const blocks = cssText.split('@font-face').slice(1);
     const filesToDownload = [];
-    
-    const weightNames = {
-      '100': 'Thin', '200': 'ExtraLight', '300': 'Light', '400': 'Regular',
-      '500': 'Medium', '600': 'SemiBold', '700': 'Bold', '800': 'ExtraBold', '900': 'Black'
+
+    const weightMap = {
+      100: 'Thin', 200: 'ExtraLight', 300: 'Light', 400: 'Regular',
+      500: 'Medium', 600: 'SemiBold', 700: 'Bold', 800: 'ExtraBold', 900: 'Black',
     };
 
     for (const block of blocks) {
-      if (!block.includes('src:')) continue;
-      const styleMatch = block.match(/font-style:\s*(\w+)/);
-      const weightMatch = block.match(/font-weight:\s*(\d+)/);
-      // Match TTF first, then WOFF2 as fallback
-      const urlMatch = block.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.(?:ttf|woff2))\)/);
-      
-      if (styleMatch && weightMatch && urlMatch) {
-        const style = styleMatch[1];
-        const weight = weightMatch[1];
-        const fontFileUrl = urlMatch[1];
-        const isTTF = fontFileUrl.endsWith('.ttf');
-        const ext = isTTF ? 'ttf' : 'woff2';
-        
-        const weightName = weightNames[weight] || weight;
-        let fontFileName = '';
-        if (style === 'italic') {
-          fontFileName = weightName === 'Regular' ? 'Italic' : `${weightName}Italic`;
-        } else {
-          fontFileName = weightName;
-        }
-        
-        const name = `${cleanFamily.replace(/\s+/g, '')}-${fontFileName}.${ext}`;
-        
-        if (!filesToDownload.find(f => f.name === name)) {
-          filesToDownload.push({ name, url: fontFileUrl });
-        }
+      const isLatin = /latin|subset/i.test(block) || !/subset/i.test(block);
+      if (!isLatin) continue;
+
+      const urlMatch = block.match(/src:\s*url\((https:\/\/[^)]+)\)/);
+      if (!urlMatch) continue;
+
+      const wMatch = block.match(/font-weight:\s*(\d+)/);
+      const sMatch = block.match(/font-style:\s*(italic|normal)/);
+
+      const weight = wMatch ? parseInt(wMatch[1], 10) : 400;
+      const isItalic = sMatch && sMatch[1] === 'italic';
+
+      const weightName = weightMap[weight] || `${weight}`;
+      const styleSuffix = isItalic ? (weightName === 'Regular' ? 'Italic' : `${weightName}Italic`) : weightName;
+      const fileName = `${family.replace(/\s+/g, '_')}-${styleSuffix}.ttf`;
+
+      if (!filesToDownload.some(f => f.name === fileName)) {
+        filesToDownload.push({ name: fileName, url: urlMatch[1] });
       }
     }
-
-    if (filesToDownload.length === 0) return [];
 
     const entries = (await Promise.all(
       filesToDownload.map(async f => {
@@ -193,6 +191,44 @@ async function fetchStaticFontsFromCSS(family) {
   }
 }
 
+// ── Strategy 3: Fontshare CDN Downloader ──
+async function fetchFromFontshare(family) {
+  const slug = family.toLowerCase().replace(/\s+/g, '-');
+  const cssUrl = `https://api.fontshare.com/v2/css?f=${slug}@100,200,300,400,500,600,700,800,900&display=swap`;
+  try {
+    const resp = await fetch(cssUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!resp.ok) return null;
+    const cssText = await resp.text();
+    const regex = /url\(['"]?([^'")]+)['"]?\)/g;
+    const urls = new Set();
+    let m;
+    while ((m = regex.exec(cssText)) !== null) {
+      let u = m[1];
+      if (u.startsWith('//')) u = 'https:' + u;
+      urls.add(u);
+    }
+    if (urls.size === 0) return null;
+
+    const entries = (await Promise.all(
+      Array.from(urls).map(async (u, idx) => {
+        try {
+          const r = await fetch(u, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+          if (!r.ok) return null;
+          const ext = u.endsWith('.ttf') ? 'ttf' : (u.endsWith('.otf') ? 'otf' : (u.endsWith('.woff2') ? 'woff2' : 'woff'));
+          const fileName = `${family.replace(/\s+/g, '_')}_style_${idx + 1}.${ext}`;
+          const data = Buffer.from(await r.arrayBuffer());
+          return { name: fileName, data };
+        } catch { return null; }
+      })
+    )).filter(Boolean);
+
+    return entries.length > 0 ? entries : null;
+  } catch (err) {
+    console.warn('[download] fetchFromFontshare failed:', err.message);
+    return null;
+  }
+}
+
 module.exports = async (req, res) => {
   const { family, url, filename } = req.query;
 
@@ -201,16 +237,16 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // ── Path A: Google Fonts family → TTF ZIP ────────────────────
+    // ── Path A: Font family name → ZIP bundle ────────────────────
     if (family) {
       const cleanFamily = family.trim();
       const zipName     = filename || `${cleanFamily.replace(/\s+/g, '_')}_fonts.zip`;
 
-      console.log(`[download] Generating ZIP bundle for Google Font: "${cleanFamily}"`);
+      console.log(`[download] Generating ZIP bundle for font family: "${cleanFamily}"`);
 
-      // 1. Try Google's official JSON manifest endpoint (variable + static + OFL)
+      // 1. Try Google's official JSON manifest endpoint (works for Google Fonts + open-source Adobe Fonts)
       const manifestEntries = await fetchFromManifest(cleanFamily);
-      if (manifestEntries) {
+      if (manifestEntries && manifestEntries.length > 0) {
         console.log(`[download] Manifest success: found ${manifestEntries.length} files`);
         const zip = buildZip(manifestEntries);
         res.setHeader('Content-Type', 'application/zip');
@@ -220,12 +256,24 @@ module.exports = async (req, res) => {
         return res.status(200).send(zip);
       }
 
-      // 2. CSS v2 API parsing fallback (for Google Sans / unlisted fonts)
-      console.log(`[download] Manifest miss, falling back to CSS parse for "${cleanFamily}"`);
+      // 2. Google CSS v2 API parsing fallback
+      console.log(`[download] Manifest miss, checking CSS parse for "${cleanFamily}"`);
       const staticEntries = await fetchStaticFontsFromCSS(cleanFamily);
-
-      if (staticEntries.length > 0) {
+      if (staticEntries && staticEntries.length > 0) {
         const zip = buildZip(staticEntries);
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
+        res.setHeader('Content-Length', zip.length);
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+        return res.status(200).send(zip);
+      }
+
+      // 3. Try Fontshare CDN bundle
+      console.log(`[download] Checking Fontshare CDN for "${cleanFamily}"`);
+      const fontshareEntries = await fetchFromFontshare(cleanFamily);
+      if (fontshareEntries && fontshareEntries.length > 0) {
+        console.log(`[download] Fontshare success: found ${fontshareEntries.length} files`);
+        const zip = buildZip(fontshareEntries);
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename="${zipName}"`);
         res.setHeader('Content-Length', zip.length);
@@ -241,7 +289,7 @@ module.exports = async (req, res) => {
     // ── Path B: Direct font file URL ─────────────────────────────
     else if (url) {
       const allowed = /\.(woff2?|ttf|otf|eot|zip)(\?.*)?$/i;
-      if (!allowed.test(url) && !url.includes('fonts.gstatic.com') && !url.includes('supabase')) {
+      if (!allowed.test(url) && !url.includes('fonts.gstatic.com') && !url.includes('supabase') && !url.includes('cdn.fontshare.com')) {
         return res.status(400).json({ error: 'URL does not appear to be a font file' });
       }
 
