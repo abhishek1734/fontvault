@@ -184,7 +184,7 @@
 
     if (pageType === "home") {
       const title = "FontVault — Discover, Preview & Pair Fonts with AI";
-      const desc = "Explore thousands of premium and free fonts, AI-powered font pairing studio, typography collections, and designer resources.";
+      const desc = "A free font discovery tool to search, compare, and pair 220+ free and open-source typefaces from Google Fonts, Fontshare, and Adobe Fonts on live layouts.";
       const canonical = CANONICAL_HOST + "/";
       
       updateMetadata(title, desc, canonical, pageType);
@@ -223,7 +223,7 @@
             "name": "What is FontVault?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "FontVault is a curated typography platform that allows designers to explore, test, and pair premium and free typefaces inside real-world design mockups."
+              "text": "FontVault is a free font discovery tool built by one person to help designers and developers search, test, and pair 220+ free and open-source fonts in one place without jumping between multiple websites."
             }
           },
           {
@@ -239,7 +239,7 @@
             "name": "Are the fonts on FontVault free to use?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "We feature a mix of open-source, free for personal use, and commercial typefaces. Each font detail page lists the designer, foundry, and license type."
+              "text": "Every font on FontVault is 100% free and open-source (OFL, Apache, or free for commercial/personal use). You will never find a paid license or paywall here."
             }
           }
         ]

@@ -3,27 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Typography Collections — FontVault</title>
-  <meta name="description" content="Explore curated typography collections organized by style, mood, and industry applications.">
+  <title>Free Font Collections — FontVault</title>
+  <meta name="description" content="Explore free font collections organized by style, mood, and design use cases.">
   <link rel="canonical" href="https://fontvault.vercel.app/collections.html">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fontvault.vercel.app/collections.html">
-  <meta property="og:title" content="Typography Collections — FontVault">
-  <meta property="og:description" content="Explore curated typography collections organized by style, mood, and industry applications.">
+  <meta property="og:title" content="Free Font Collections — FontVault">
+  <meta property="og:description" content="Explore free font collections organized by style, mood, and design use cases.">
   <meta property="og:image" content="https://fontvault.vercel.app/assets/branding.png">
   <meta property="og:site_name" content="FontVault">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://fontvault.vercel.app/collections.html">
-  <meta name="twitter:title" content="Typography Collections — FontVault">
-  <meta name="twitter:description" content="Explore curated typography collections organized by style, mood, and industry applications.">
+  <meta name="twitter:title" content="Free Font Collections — FontVault">
+  <meta name="twitter:description" content="Explore free font collections organized by style, mood, and design use cases.">
   <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
 
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=6.0">
+  <link rel="stylesheet" href="style.css?v=6.8">
   <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
@@ -65,72 +65,41 @@
       .faq-sec {
         padding: 2.5rem 1.25rem !important;
       }
-    }
-    @media (max-width: 480px) {
-      .col-grid {
-        padding: 1.5rem 1rem;
-      }
-      .faq-sec {
-        padding: 2rem 1rem !important;
-      }
-    }
-    @media (min-width: 768px) {
-      .col-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    @media (min-width: 1024px) {
-      .col-grid {
-        grid-template-columns: repeat(3, 1fr);
+      .col-hero {
+        padding: 3rem 1.25rem 2rem !important;
       }
     }
     .col-benefits {
-      margin-top: 2rem;
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
-    }
-    @media (min-width: 768px) {
-      .col-benefits {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      margin-top: 2rem;
     }
     .benefit-card {
-      background: var(--card-bg, rgba(0,0,0,0.02));
+      background: var(--bg-card);
       border: 1px solid var(--border-grey);
       padding: 1.5rem;
       border-radius: 4px;
     }
     .faq-sec {
-      padding: 4rem;
-      background: var(--card-bg, rgba(0,0,0,0.01));
-      border-top: 1px solid var(--border-grey);
-      max-width: 1400px;
+      padding: 4rem 2rem;
+      max-width: 1000px;
       margin: 0 auto;
-    }
-    .faq-item {
-      margin-bottom: 2rem;
-    }
-    .faq-item h4 {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
+      border-top: 1px solid var(--border-grey);
     }
   </style>
 </head>
 <body>
 
-  <!-- ACCESSIBLE SKIP NAVIGATION LINK (WCAG 2.1 AA) -->
+  <!-- ACCESSIBLE SKIP NAVIGATION LINK -->
   <a href="#main-content" class="skip-to-content">Skip to content</a>
-
-  <!-- SCROLL PROGRESS BAR -->
-  <div id="progress-bar" class="progress-bar"></div>
 
   <!-- NAVIGATION BAR -->
   <header id="navbar" role="banner">
     <a href="index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
       <a href="index.html" class="nav-link">Home</a>
-      <a href="blog.html" class="nav-link">Blog</a>
+      <a href="collections.html" class="nav-link active">Collections</a>
       <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -152,8 +121,8 @@
         </div>
       </div>
       <a href="index.html" class="mobile-menu-item">Home</a>
-      <a href="blog.html" class="mobile-menu-item">Blog</a>
       <a href="collections.html" class="mobile-menu-item active">Collections</a>
+      <a href="blog.html" class="mobile-menu-item">Blog</a>
     </div>
   </header>
 
@@ -172,7 +141,7 @@
     <div class="footer-content">
       <div class="footer-branding">
         <a href="index.html" class="logo">FONTVAULT</a>
-        <p style="margin-top: 1rem;">Curated typography discovery. Built for designers.</p>
+        <p style="margin-top: 1rem;">A free font discovery tool to search, compare, and pair 220+ open-source typefaces across real layouts.</p>
         <div style="margin-top: 1.25rem;">
           <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -183,7 +152,7 @@
       <div class="footer-links">
         <h4>Explore & Support</h4>
         <ul>
-          <li><a href="index.html#hero">Browse Fonts</a></li>
+          <li><a href="index.html#main-content">Browse Fonts</a></li>
           <li><a href="font-pairing.html">Font Pairing</a></li>
           <li><a href="blog.html">Blog</a></li>
           <li><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)">Help &amp; Support</a></li>
@@ -268,7 +237,7 @@
       // Render Layout
       let html = `
         <div class="col-hero">
-          <p style="font-family:var(--font-mono); color:#888; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem;">CURATED COLLECTION</p>
+          <p style="font-family:var(--font-mono); color:#888; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem;">FREE FONT COLLECTION</p>
           <h1 style="font-family:var(--font-display); font-size:clamp(2.5rem, 5vw, 4.5rem); line-height:1.1; margin-bottom:1.5rem;">${col.title}</h1>
           <p style="font-size:1.2rem; line-height:1.6; color:#555; max-width:800px; margin-bottom:2.5rem;">${col.introduction}</p>
           
@@ -305,15 +274,13 @@
         </div>
 
         <div class="faq-sec">
-          <h3 style="font-family:var(--font-display); font-size:2rem; margin-bottom:2.5rem;">Frequently Asked Questions</h3>
-          <div style="max-width:800px;">
-            ${col.faqs.map(f => `
-              <div class="faq-item">
-                <h4 style="font-weight:600; color:var(--near-black);">${f.q}</h4>
-                <p style="color:#555; line-height:1.6; font-size:0.95rem; margin-top:0.5rem;">${f.a}</p>
-              </div>
-            `).join('')}
-          </div>
+          <h2 style="font-family:var(--font-display); font-size:2rem; margin-bottom:2rem;">Frequently Asked Questions</h2>
+          ${col.faqs.map(f => `
+            <div style="margin-bottom:1.5rem;">
+              <h4 style="font-size:1.1rem; margin-bottom:0.5rem;">${f.q}</h4>
+              <p style="color:#666; line-height:1.6;">${f.a}</p>
+            </div>
+          `).join('')}
         </div>
       `;
 

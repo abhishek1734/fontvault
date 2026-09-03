@@ -529,7 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- DEFAULT CURATED SHOWCASE DATA ---
   const curatedPairings = [
     {
-      pairName: "Premium Serif Luxury",
+      pairName: "Editorial Serif Luxury",
       matchScore: 98,
       header: "Playfair Display",
       body: "Inter",
@@ -583,14 +583,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- LOCAL TYPOGRAPHIC SEMANTIC MATCHING ENGINE ---
   const fontPairingsDatabase = [
     {
-      pairName: "Premium Serif Luxury",
+      pairName: "Editorial Serif Luxury",
       header: "Playfair Display",
       body: "Inter",
       accent: "Satoshi",
       reason: "Playfair Display establishes immediate luxury authority while Inter provides modern digital readability.",
       useCases: "High-end fashion blog, cosmetic retail, editorial magazine",
       alternativeBody: "Switzer",
-      tags: ["editorial", "luxury", "magazine", "fashion", "premium", "elegant", "lifestyle", "skincare", "cosmetics"],
+      tags: ["editorial", "luxury", "magazine", "fashion", "elegant", "lifestyle", "skincare", "cosmetics"],
       mood: "Elegant",
       style: "Serif",
       strengthMetrics: { elegance: 96, readability: 88, contrast: 95, uniqueness: 78, versatility: 84 }

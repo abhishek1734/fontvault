@@ -3,27 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Typography &amp; Design Blog | FontVault</title>
-  <meta name="description" content="Read expert tutorials, design guides, and research studies on typography, brand fonts, and UI/UX legibility.">
+  <title>Typography &amp; Design Notes | FontVault</title>
+  <meta name="description" content="Practical guides, font pairing tips, and design observations on web typography.">
   <link rel="canonical" href="https://fontvault.vercel.app/blog.html">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fontvault.vercel.app/blog.html">
-  <meta property="og:title" content="Typography &amp; Design Blog | FontVault">
-  <meta property="og:description" content="Read expert tutorials, design guides, and research studies on typography, brand fonts, and UI/UX legibility.">
+  <meta property="og:title" content="Typography &amp; Design Notes | FontVault">
+  <meta property="og:description" content="Practical guides, font pairing tips, and design observations on web typography.">
   <meta property="og:image" content="https://fontvault.vercel.app/assets/branding.png">
   <meta property="og:site_name" content="FontVault">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://fontvault.vercel.app/blog.html">
-  <meta name="twitter:title" content="Typography &amp; Design Blog | FontVault">
-  <meta name="twitter:description" content="Read expert tutorials, design guides, and research studies on typography, brand fonts, and UI/UX legibility.">
+  <meta name="twitter:title" content="Typography &amp; Design Notes | FontVault">
+  <meta name="twitter:description" content="Practical guides, font pairing tips, and design observations on web typography.">
   <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
 
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=6.0">
+  <link rel="stylesheet" href="style.css?v=6.8">
   <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
@@ -143,7 +143,7 @@
 
     <div class="blog-header">
       <h1 style="font-family: var(--font-display); font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem;">FontVault Blog</h1>
-      <p style="color: #666; font-size: 1.1rem; max-width: 600px;">Typography wisdom, layout guidelines, legibility studies, and brand identity checklists.</p>
+      <p style="color: #666; font-size: 1.1rem; max-width: 600px;">Typography wisdom, layout guidelines, legibility tips, and practical font pairing strategies.</p>
     </div>
 
     <div class="blog-grid" id="blog-posts-grid">
@@ -156,7 +156,7 @@
     <div class="footer-content">
       <div class="footer-branding">
         <a href="index.html" class="logo">FONTVAULT</a>
-        <p style="margin-top: 1rem;">Curated typography discovery. Built for designers.</p>
+        <p style="margin-top: 1rem;">A free font discovery tool to search, compare, and pair 220+ open-source typefaces across real layouts.</p>
         <div style="margin-top: 1.25rem;">
           <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -167,7 +167,7 @@
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 FontVault. All rights reserved.</span>
-      <span><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a></span>
+      <span><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a> &middot; BUILT FOR TYPE LOVERS</span>
     </div>
   </footer>
 
@@ -183,47 +183,40 @@
         });
       }
 
-      // Inject Breadcrumbs
+      // Breadcrumbs
       if (window.FontVaultSEO) {
         const crumbs = [
           { name: "Home", url: "/" },
-          { name: "Blog", url: "/blog" }
+          { name: "Blog", url: "/blog.html" }
         ];
         document.getElementById('breadcrumbs-injection-point').innerHTML = window.FontVaultSEO.renderBreadcrumbs(crumbs);
-        
-        // Inject schema
-        const schema = {
-          "@context": "https://schema.org",
-          "@type": "Blog",
-          "name": "FontVault Blog",
-          "url": `${window.FontVaultSEO.CANONICAL_HOST}/blog`,
-          "description": "Tutorials, guidelines and resources about web typography and design."
-        };
-        window.FontVaultSEO.injectSchema(schema, "blog-schema");
       }
 
-      // Render posts
-      const postsHtml = blogPosts.map(p => `
-        <article class="blog-card">
-          <div>
-            <div class="blog-meta">
-              <span>${p.category}</span>
-              <span>&middot;</span>
-              <span>${p.readTime}</span>
+      // Render Blog Cards
+      const grid = document.getElementById('blog-posts-grid');
+      const postsHtml = Object.keys(blogData).map(slug => {
+        const post = blogData[slug];
+        return `
+          <article class="blog-card">
+            <div>
+              <div class="blog-meta">
+                <span>${post.category}</span>
+                <span>&middot;</span>
+                <span>${post.readTime} Read</span>
+              </div>
+              <h2 style="font-family: var(--font-display); font-size: 1.75rem; line-height: 1.25; margin-bottom: 1rem;">
+                <a href="/blog/${slug}" style="text-decoration: none; color: inherit;">${post.title}</a>
+              </h2>
+              <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem;">${post.description}</p>
             </div>
-            <h2 style="font-family: var(--font-display); font-size: 1.8rem; line-height: 1.2; margin-bottom: 1rem;">
-              <a href="/blog/${p.slug}" style="text-decoration:none; color:inherit;">${p.title}</a>
-            </h2>
-            <p style="color:#555; font-size:0.95rem; line-height:1.6; margin-bottom:2rem;">${p.description}</p>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed var(--border-grey); padding-top:1.5rem; margin-top:auto;">
-            <span style="font-size:0.8rem; color:#888;">By ${p.author}</span>
-            <a href="/blog/${p.slug}" style="font-family: var(--font-mono); font-size:0.8rem; font-weight:bold; color:var(--near-black); text-decoration:none;">READ POST &rarr;</a>
-          </div>
-        </article>
-      `).join('');
+            <div>
+              <a href="/blog/${slug}" class="btn-text" style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: bold; text-decoration: none; color: var(--near-black); letter-spacing: 0.05em;">READ ARTICLE &rarr;</a>
+            </div>
+          </article>
+        `;
+      }).join('');
 
-      document.getElementById('blog-posts-grid').innerHTML = postsHtml;
+      grid.innerHTML = postsHtml;
     });
   </script>
 </body>

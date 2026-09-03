@@ -1,5 +1,5 @@
 // =============================================================
-//  FONTVAULT — app.js  (50+ fonts, dark mode, compare, pairings)
+//  FONTVAULT — app.js  (220+ free fonts, dark mode, compare, pairings)
 // =============================================================
 
 // --- CURATED MULTI-PROVIDER DATABASE ---
@@ -133,12 +133,11 @@ const filterDescriptions = {
 
   // Providers & Availability
   "Google Fonts": "Open-source, free fonts hosted on Google Fonts CDN",
-  "Adobe Fonts": "Professional typefaces from the Adobe Fonts library",
+  "Adobe Fonts": "Free typefaces from the Adobe Fonts library",
   "Fontshare": "Quality free typefaces from the Indian Type Foundry",
-  "Dafont": "Curated independent & creative typefaces",
+  "Dafont": "Independent & creative typefaces",
   "Free": "100% free for personal and commercial use",
   "Free for Personal": "Free for non-commercial personal projects",
-  "Premium": "Commercial licensed typefaces",
   "Custom": "Locally hosted or uploaded custom fonts"
 };
 

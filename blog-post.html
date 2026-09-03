@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog Post — FontVault</title>
-  <meta name="description" content="Read in-depth typography tutorials, font pairing strategies, and design guides on FontVault.">
+  <meta name="description" content="Read practical typography guides, font pairing strategies, and design tips on FontVault.">
   <link rel="canonical" href="https://fontvault.vercel.app/blog-post.html">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://fontvault.vercel.app/blog-post.html">
   <meta property="og:title" content="Typography &amp; Design Article — FontVault">
-  <meta property="og:description" content="Read in-depth typography tutorials, font pairing strategies, and design guides on FontVault.">
+  <meta property="og:description" content="Read practical typography guides, font pairing strategies, and design tips on FontVault.">
   <meta property="og:image" content="https://fontvault.vercel.app/assets/branding.png">
   <meta property="og:site_name" content="FontVault">
 
@@ -19,11 +19,11 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://fontvault.vercel.app/blog-post.html">
   <meta name="twitter:title" content="Typography &amp; Design Article — FontVault">
-  <meta name="twitter:description" content="Read in-depth typography tutorials, font pairing strategies, and design guides on FontVault.">
+  <meta name="twitter:description" content="Read practical typography guides, font pairing strategies, and design tips on FontVault.">
   <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
 
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=6.0">
+  <link rel="stylesheet" href="style.css?v=6.8">
   <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
@@ -43,67 +43,64 @@
     .post-container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 4rem 1.5rem;
-    }
-    @media (max-width: 768px) {
-      .post-container {
-        padding: 2.5rem 1.25rem !important;
-      }
-      .post-header h1 {
-        font-size: clamp(2rem, 7vw, 2.75rem) !important;
-      }
-    }
-    @media (max-width: 480px) {
-      .post-container {
-        padding: 2rem 1rem !important;
-      }
+      padding: 6rem 2rem;
     }
     .post-header {
-      margin-bottom: 3rem;
+      margin-bottom: 3.5rem;
       border-bottom: 1px solid var(--border-grey);
-      padding-bottom: 2rem;
+      padding-bottom: 2.5rem;
     }
     .post-meta {
       font-family: var(--font-mono), monospace;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #888;
       text-transform: uppercase;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       display: flex;
-      gap: 1.5rem;
+      gap: 1rem;
     }
     .post-body {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       line-height: 1.8;
       color: var(--near-black);
     }
     .post-body p {
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .post-body h2 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      margin: 3rem 0 1.5rem;
     }
     .share-container {
       margin-top: 4rem;
       padding-top: 2rem;
       border-top: 1px solid var(--border-grey);
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
     }
     .share-btn {
-      background: transparent;
+      background: var(--bg-card);
       border: 1px solid var(--border-grey);
       padding: 0.5rem 1rem;
-      font-family: var(--font-mono), monospace;
-      font-size: 0.75rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
       cursor: pointer;
-      text-transform: uppercase;
     }
-    .share-btn:hover {
-      background: var(--near-black);
-      color: white;
-    }
-    [data-theme="dark"] .share-btn:hover {
-      background: white;
-      color: black;
+    @media (max-width: 768px) {
+      .post-container {
+        padding: 3rem 1.25rem !important;
+      }
+      .post-header h1 {
+        font-size: clamp(2rem, 6vw, 2.75rem) !important;
+      }
+      .share-container {
+        flex-direction: column;
+        gap: 1.25rem;
+        align-items: flex-start !important;
+      }
     }
   </style>
 </head>
@@ -117,7 +114,7 @@
     <a href="index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
       <a href="index.html" class="nav-link">Home</a>
-      <a href="blog.html" class="nav-link">Blog</a>
+      <a href="blog.html" class="nav-link active">Blog</a>
       <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -159,7 +156,7 @@
     <div class="footer-content">
       <div class="footer-branding">
         <a href="index.html" class="logo">FONTVAULT</a>
-        <p style="margin-top: 1rem;">Curated typography discovery. Built for designers.</p>
+        <p style="margin-top: 1rem;">A free font discovery tool to search, compare, and pair 220+ open-source typefaces across real layouts.</p>
         <div style="margin-top: 1.25rem;">
           <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -170,7 +167,7 @@
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 FontVault. All rights reserved.</span>
-      <span><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a></span>
+      <span><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a> &middot; BUILT FOR TYPE LOVERS</span>
     </div>
   </footer>
 
@@ -186,39 +183,30 @@
         });
       }
 
-      // Resolve post slug
+      // Resolve Post Slug
       const urlParams = new URLSearchParams(window.location.search);
-      let postSlug = urlParams.get('post') || window.location.pathname.split("/blog/")[1] || "best-fonts-for-ui-design";
+      let postSlug = urlParams.get('slug') || window.location.pathname.split("/blog/")[1] || "pairing-serif-sans-guide";
 
-      const post = blogPosts.find(p => p.slug === postSlug);
+      const post = blogData[postSlug];
       if (!post) {
-        document.getElementById('post-root').innerHTML = `<div style="text-align:center; padding:10rem 0;"><h2>Article Not Found</h2><a href="blog.html">Return to Blog</a></div>`;
+        document.getElementById('post-root').innerHTML = `<div style="text-align:center; padding: 4rem;"><h2>Post Not Found</h2><a href="/blog.html">Back to Blog</a></div>`;
         return;
       }
 
-      // Render Dynamic SEO & Canonical
+      // Render Dynamic SEO
       if (window.FontVaultSEO) {
         const canonical = `${window.FontVaultSEO.CANONICAL_HOST}/blog/${postSlug}`;
-        const title = `${post.title} | FontVault Blog`;
-        window.FontVaultSEO.updateMetadata(title, post.description, canonical, "blog-post");
+        window.FontVaultSEO.updateMetadata(post.title + " | FontVault Blog", post.description, canonical, "article");
 
-        // Schema JSON-LD Article + Breadcrumbs
-        const crumbs = [
-          { name: "Home", url: "/" },
-          { name: "Blog", url: "/blog" },
-          { name: post.title, url: `/blog/${post.slug}` }
-        ];
-        document.getElementById('breadcrumbs-injection-point').innerHTML = window.FontVaultSEO.renderBreadcrumbs(crumbs);
-
+        // Schemas
         const breadcrumbSchema = {
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
-          "itemListElement": crumbs.map((c, i) => ({
-            "@type": "ListItem",
-            "position": i + 1,
-            "name": c.name,
-            "item": c.url.startsWith("http") ? c.url : `${window.FontVaultSEO.CANONICAL_HOST}${c.url}`
-          }))
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": `${window.FontVaultSEO.CANONICAL_HOST}/` },
+            { "@type": "ListItem", "position": 2, "name": "Blog", "item": `${window.FontVaultSEO.CANONICAL_HOST}/blog.html` },
+            { "@type": "ListItem", "position": 3, "name": post.title, "item": canonical }
+          ]
         };
 
         const articleSchema = {
@@ -230,14 +218,6 @@
             "@type": "Person",
             "name": post.author
           },
-          "publisher": {
-            "@type": "Organization",
-            "name": "FontVault",
-            "logo": {
-              "@type": "ImageObject",
-              "url": `${window.FontVaultSEO.CANONICAL_HOST}/favicon.png`
-            }
-          },
           "datePublished": post.datePublished,
           "dateModified": post.dateModified || post.datePublished,
           "mainEntityOfPage": canonical,
@@ -246,6 +226,14 @@
 
         window.FontVaultSEO.injectSchema(breadcrumbSchema, "breadcrumb-schema");
         window.FontVaultSEO.injectSchema(articleSchema, "article-schema");
+
+        // Visual crumbs
+        const crumbs = [
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog.html" },
+          { name: post.title, url: `/blog/${postSlug}` }
+        ];
+        document.getElementById('breadcrumbs-injection-point').innerHTML = window.FontVaultSEO.renderBreadcrumbs(crumbs);
       }
 
       // Render Layout
@@ -264,7 +252,7 @@
 
         <section class="post-body">
           <p>${post.content}</p>
-          <p>Effective typography is critical. When designing brand experiences, selecting typography requires focusing on readability, visual personality, and cross-platform technical rendering. In future guides, we will detail other typeface categories in depth.</p>
+          <p>Practical typography matters. When designing web layouts, testing fonts on live mockups before implementation saves hours of guesswork. In future articles, we will explore other open-source typefaces in depth.</p>
         </section>
 
         <div class="share-container">
