@@ -210,59 +210,203 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- RENDER RESULTS IN GRID ---
+  // --- FONT CATEGORY HELPER ---
+  function getFontCategory(fontName) {
+    const f = (typeof fontsData !== "undefined" && Array.isArray(fontsData))
+      ? fontsData.find(x => x.name.toLowerCase() === fontName.toLowerCase())
+      : null;
+    if (f && f.style) return f.style;
+    if (typeof FontVaultPairing !== "undefined" && typeof FontVaultPairing.classifyFont === "function") {
+      const c = FontVaultPairing.classifyFont({ name: fontName });
+      return c.category;
+    }
+    return "Serif";
+  }
+
+  // --- RENDER RESULTS IN GRID (REDESIGNED CARDS) ---
   function renderPairCards(pairingsList, targetGrid) {
     if (!targetGrid) return;
     targetGrid.innerHTML = "";
 
     if (pairingsList.length === 0) {
-      targetGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:4rem; color:var(--fp-text-sec); font-family:var(--font-mono);">No pairings matched your current criteria. Try adjusting filters or select another base font.</div>`;
+      targetGrid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:4rem; color:var(--fp-text-sec); font-family:var(--font-mono);">No pairings matched your current criteria. Try adjusting filters or select another base font.</div>';
       return;
     }
+
+    const customText = (customTextInput?.value || "").trim();
+    const currentSpacing = spacingSlider?.value || 0;
+    const currentSize = sizeSlider?.value || 38;
+    const cardHeadlineSize = Math.max(20, Math.min(32, Math.round(currentSize * 0.58)));
+
+    const sampleTexts = [
+      "Good design creates visual clarity without drawing undue attention to itself. Balanced letterforms and proportional spacing allow content to shine effortlessly.",
+      "The interplay between expressive headline architecture and screen-optimized body text creates an intuitive visual hierarchy for modern digital interfaces.",
+      "Refined typography commands attention at display sizes while providing calm, fatigue-free readability for long-form editorial paragraphs.",
+      "Designed for seamless harmony across interfaces, combining distinct character in the header with ultra-crisp digital clarity in the body."
+    ];
 
     pairingsList.forEach((pair, index) => {
       loadAndInjectFont(pair.header);
       loadAndInjectFont(pair.body);
 
+      const headerCat = getFontCategory(pair.header);
+      const bodyCat = getFontCategory(pair.body);
+      const isSaved = savedCollections.some(s => s.pairName === pair.pairName);
+      const sampleBody = sampleTexts[index % sampleTexts.length];
+      const defaultHeadline = customText || pair.header;
+
+      // Extract rule badges
+      const ruleBadges = [];
+      ruleBadges.push(headerCat + " + " + bodyCat);
+      if (pair.matchedRules && pair.matchedRules.includes("curated_classic")) {
+        ruleBadges.push("Curated Classic");
+      } else if (pair.matchedRules && pair.matchedRules.includes("stroke_contrast_balance")) {
+        ruleBadges.push("High Contrast");
+      } else if (pair.tags && pair.tags.length > 0) {
+        ruleBadges.push(pair.tags[0]);
+      }
+      const ruleBadgesHtml = ruleBadges.map(t => '<span class="fp-rule-tag">' + t + '</span>').join("");
+
       const card = document.createElement("div");
       card.className = "fp-pair-card animate-fade-in";
-      card.style.animationDelay = `${index * 0.08}s`;
+      card.style.animationDelay = (index * 0.08) + "s";
       card.dataset.id = pair.pairName.toLowerCase().replace(/\s+/g, "-");
 
       card.innerHTML = `
-        <!-- Thumbnail / Live Preview Box -->
-        <div class="fp-card-thumbnail" style="font-family: '${pair.header}', serif; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 160px; background: var(--fp-box-bg); border-bottom: 1px solid var(--fp-border);">
-          <div class="glow-orb" style="position:absolute; top:-30%; left:-10%; width:80%; height:80%; background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, transparent 70%); filter: blur(20px); pointer-events: none;"></div>
-          <span style="position: relative; z-index: 2; font-size: 3.5rem; font-weight: 500; color: var(--fp-text);">Aa</span>
-        </div>
-
-        <!-- Card Info & Rationale -->
-        <div class="fp-card-info" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; flex-grow: 1; text-align: left;">
-          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <span style="font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--fp-text-sec); letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px;">
-              ${pair.pairName}
+        <!-- 1. Card Top Bar -->
+        <div class="fp-card-header">
+          <div class="fp-card-font-tags">
+            <span class="fp-role-badge fp-role-heading" title="Heading font: ${pair.header}">
+              <span class="fp-badge-dot"></span>
+              <span class="fp-badge-name">${pair.header}</span>
+              <span class="fp-badge-cat">${headerCat}</span>
             </span>
-            <span class="card-match-badge" style="margin: 0; padding: 2px 8px; font-size: 0.65rem; font-family: var(--font-mono); background: var(--fp-gold-light); color: var(--fp-gold); font-weight: 700; border: 1px solid var(--fp-gold);">
-              ${pair.matchScore}% Match
+            <span class="fp-pair-plus">+</span>
+            <span class="fp-role-badge fp-role-body" title="Body font: ${pair.body}">
+              <span class="fp-badge-dot"></span>
+              <span class="fp-badge-name">${pair.body}</span>
+              <span class="fp-badge-cat">${bodyCat}</span>
             </span>
           </div>
+          <div class="fp-match-pill" title="Typographic compatibility score">
+            <span class="fp-match-pct">${pair.matchScore}% Match</span>
+          </div>
+        </div>
 
-          <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 500; margin: 0; color: var(--fp-text);">
-            ${pair.header}
+        <!-- 2. Dual-Font Typographic Live Specimen Canvas -->
+        <div class="fp-card-specimen">
+          <h3 class="fp-specimen-headline specimen-title-elem" data-default-title="${pair.header}" style="font-family: '${pair.header}', serif; font-size: ${cardHeadlineSize}px; letter-spacing: ${currentSpacing}px;">
+            ${defaultHeadline}
           </h3>
-          <p style="font-size: 0.75rem; color: var(--fp-text-sec); margin: 0;">
-            Heading pairs with <strong style="color: var(--fp-text); font-weight: 600;">${pair.body}</strong>
+          <p class="fp-specimen-body" style="font-family: '${pair.body}', sans-serif;">
+            ${sampleBody}
           </p>
+          <div class="fp-specimen-hover-hint">
+            <span>Click to open studio specimen &rarr;</span>
+          </div>
+        </div>
 
-          <p style="font-size: 0.78rem; line-height: 1.5; color: var(--fp-text-sec); margin: 0.4rem 0 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+        <!-- 3. Typography Design Rationale & Tag Bar -->
+        <div class="fp-card-meta-bar">
+          <div class="fp-rule-tags">
+            ${ruleBadgesHtml}
+          </div>
+          <p class="fp-card-rationale" title="${pair.reason}">
             ${pair.reason}
           </p>
         </div>
+
+        <!-- 4. Quick Actions Footer -->
+        <div class="fp-card-actions">
+          <button class="fp-btn-inspect" type="button" title="Open full specimen & test layouts">
+            <span>Inspect Pair</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+          <div class="fp-action-icons">
+            <button class="fp-icon-btn fp-swap-btn" type="button" title="Swap Heading & Body roles" aria-label="Swap roles">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8v12M17 20l4-4M17 20l-4-4"/></svg>
+            </button>
+            <button class="fp-icon-btn fp-copy-css-btn" type="button" title="Copy CSS rules" aria-label="Copy CSS">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+            <button class="fp-icon-btn fp-fav-btn ${isSaved ? "active" : ""}" type="button" title="${isSaved ? "Saved in Vault" : "Save to Vault"}" aria-label="Save pair">
+              <svg class="heart-icon" width="15" height="15" viewBox="0 0 24 24" fill="${isSaved ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </button>
+          </div>
+        </div>
       `;
 
+      // Open drawer on whole card click or inspect button click
       card.addEventListener("click", () => {
         openPairDetailsDrawer(pair);
       });
+
+      // Quick Swap Button
+      const swapBtn = card.querySelector(".fp-swap-btn");
+      if (swapBtn) {
+        swapBtn.addEventListener("click", e => {
+          e.stopPropagation();
+          const temp = pair.header;
+          pair.header = pair.body;
+          pair.body = temp;
+          pair.pairName = pair.header + " + " + pair.body;
+          renderPairCards(pairingsList, targetGrid);
+          if (window.showToast) {
+            window.showToast("Swapped roles: " + pair.header + " (Heading) + " + pair.body + " (Body)");
+          }
+        });
+      }
+
+      // Quick Copy CSS Button
+      const copyBtn = card.querySelector(".fp-copy-css-btn");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", e => {
+          e.stopPropagation();
+          const cssSnippet = "/* FontVault Pairing: " + pair.pairName + " */\n/* Heading */\nfont-family: '" + pair.header + "', serif;\n\n/* Body */\nfont-family: '" + pair.body + "', sans-serif;";
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(cssSnippet).then(() => {
+              if (window.showToast) window.showToast("CSS copied to clipboard!");
+              else alert("CSS copied to clipboard!");
+            }).catch(() => {
+              fallbackCopy(cssSnippet);
+            });
+          } else {
+            fallbackCopy(cssSnippet);
+          }
+        });
+      }
+
+      function fallbackCopy(text) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        if (window.showToast) window.showToast("CSS copied to clipboard!");
+      }
+
+      // Quick Favorite Button
+      const favBtn = card.querySelector(".fp-fav-btn");
+      if (favBtn) {
+        favBtn.addEventListener("click", e => {
+          e.stopPropagation();
+          const savedIndex = savedCollections.findIndex(s => s.pairName === pair.pairName);
+          if (savedIndex !== -1) {
+            savedCollections.splice(savedIndex, 1);
+            favBtn.classList.remove("active");
+            favBtn.querySelector(".heart-icon")?.setAttribute("fill", "none");
+            if (window.showToast) window.showToast("Removed from saved pairings");
+          } else {
+            savedCollections.push(pair);
+            favBtn.classList.add("active");
+            favBtn.querySelector(".heart-icon")?.setAttribute("fill", "currentColor");
+            if (window.showToast) window.showToast("Saved to My Vault!");
+          }
+          localStorage.setItem("fontvault-saved-pairings", JSON.stringify(savedCollections));
+          renderSavedCollections();
+        });
+      }
 
       targetGrid.appendChild(card);
     });
@@ -415,25 +559,29 @@ document.addEventListener("DOMContentLoaded", () => {
   detailsCloseBtn?.addEventListener("click", () => detailsDrawer?.classList.remove("active"));
   drawerCloseBtn?.addEventListener("click", () => compareDrawer?.classList.remove("active"));
 
-  // --- STICKY TOOLBAR EVENT LISTENERS ---
+  // --- STICKY TOOLBAR EVENT LISTENERS (LIVE CARD & DRAWER SYNC) ---
   customTextInput?.addEventListener("input", e => {
-    const val = e.target.value.trim() || "The quick brown fox jumps over the lazy dog";
+    const val = e.target.value.trim();
     document.querySelectorAll(".specimen-title-elem").forEach(el => {
-      el.textContent = val;
+      el.textContent = val || el.getAttribute("data-default-title") || "FontVault is the future of typography";
     });
   });
 
   sizeSlider?.addEventListener("input", e => {
-    const val = e.target.value;
-    document.querySelectorAll(".specimen-title-elem").forEach(el => {
-      el.style.fontSize = `${val}px`;
+    const val = Number(e.target.value);
+    document.querySelectorAll(".specimen-title-elem:not(.fp-specimen-headline)").forEach(el => {
+      el.style.fontSize = val + "px";
+    });
+    const cardScale = Math.max(18, Math.min(34, Math.round(val * 0.55)));
+    document.querySelectorAll(".fp-specimen-headline").forEach(el => {
+      el.style.fontSize = cardScale + "px";
     });
   });
 
   spacingSlider?.addEventListener("input", e => {
     const val = e.target.value;
     document.querySelectorAll(".specimen-title-elem").forEach(el => {
-      el.style.letterSpacing = `${val}px`;
+      el.style.letterSpacing = val + "px";
     });
   });
 
