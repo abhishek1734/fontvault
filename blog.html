@@ -24,7 +24,6 @@
 
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=6.8">
-  <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
   <script src="blog-data.js?v=1.0"></script>
@@ -205,12 +204,12 @@
                 <span>${post.readTime} Read</span>
               </div>
               <h2 style="font-family: var(--font-display); font-size: 1.75rem; line-height: 1.25; margin-bottom: 1rem;">
-                <a href="/blog/${slug}" style="text-decoration: none; color: inherit;">${post.title}</a>
+                <a href="blog-post.html?slug=${slug}" style="text-decoration: none; color: inherit;">${post.title}</a>
               </h2>
               <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem;">${post.description}</p>
             </div>
             <div>
-              <a href="/blog/${slug}" class="btn-text" style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: bold; text-decoration: none; color: var(--near-black); letter-spacing: 0.05em;">READ ARTICLE &rarr;</a>
+              <a href="blog-post.html?slug=${slug}" class="btn-text" style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: bold; text-decoration: none; color: var(--near-black); letter-spacing: 0.05em;">READ ARTICLE &rarr;</a>
             </div>
           </article>
         `;

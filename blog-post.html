@@ -24,7 +24,6 @@
 
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=6.8">
-  <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
   <script src="blog-data.js?v=1.0"></script>
@@ -185,7 +184,7 @@
 
       // Resolve Post Slug
       const urlParams = new URLSearchParams(window.location.search);
-      let postSlug = urlParams.get('slug') || window.location.pathname.split("/blog/")[1] || "pairing-serif-sans-guide";
+      let postSlug = urlParams.get('slug') || urlParams.get('post') || window.location.pathname.split("/blog/")[1] || "pairing-serif-sans-guide";
 
       const post = blogData[postSlug];
       if (!post) {

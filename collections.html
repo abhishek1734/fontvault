@@ -24,7 +24,6 @@
 
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=6.8">
-  <script src="config.js?v=5.28"></script>
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
   <script src="collections-data.js?v=1.0"></script>
@@ -228,7 +227,7 @@
         // Inject visual breadcrumbs
         const crumbs = [
           { name: "Home", url: "/" },
-          { name: "Collections", url: "#" },
+          { name: "Collections", url: "collections.html" },
           { name: col.title, url: `/collections/${colId}` }
         ];
         document.getElementById('breadcrumbs-injection-point').innerHTML = window.FontVaultSEO.renderBreadcrumbs(crumbs);
@@ -266,7 +265,7 @@
                 </div>
                 <div style="display:flex; justify-content:between; align-items:center; margin-top:auto; padding-top:1rem; border-top:1px dashed var(--border-grey);">
                   <span style="font-size:0.8rem; color:#888;">By ${f.designer || 'Unknown'}</span>
-                  <a href="/fonts/${fontId}" class="btn-text" style="font-family:var(--font-mono); font-size:0.8rem; font-weight:bold; text-decoration:none; color:var(--near-black);">VIEW SPECIMEN &rarr;</a>
+                  <a href="font.html?id=${fontId}" class="btn-text" style="font-family:var(--font-mono); font-size:0.8rem; font-weight:bold; text-decoration:none; color:var(--near-black);">VIEW SPECIMEN &rarr;</a>
                 </div>
               </div>
             `;

@@ -3,13 +3,7 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /api/
-Disallow: /debug.js
-Disallow: /debug_ai.py
-Disallow: /gemini_tracker.py
-Disallow: /generate_fonts.js
-Disallow: /generate_sitemap.js
-Disallow: /test_*.py
-Disallow: /test_*.html
+Disallow: /generate_*.js
 
 # Explicitly allow OpenAI crawlers (used by ChatGPT browsing)
 User-agent: GPTBot

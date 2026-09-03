@@ -49,17 +49,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       </style>
     `;
 
-    // Load Google Fonts AND custom admin-uploaded fonts in parallel with a timeout race
+    // Load custom admin-uploaded fonts if available
     try {
       await Promise.race([
-        Promise.all([
-          initGoogleFonts('AIzaSyBEmEMaIu15j6c1zxo2OlPnzfHTcfZYasY'),
-          loadCustomFontsFromSupabase()
-        ]),
-        new Promise(resolve => setTimeout(resolve, 2000)) // 2-second fallback timeout
+        loadCustomFontsFromSupabase(),
+        new Promise(resolve => setTimeout(resolve, 2000))
       ]);
     } catch (e) {
-      console.warn("Non-blocking load error:", e);
+      // Non-blocking fallback
     }
 
     const font = fontsData.find(f => f.id === fontId);
