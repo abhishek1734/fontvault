@@ -46,10 +46,7 @@
       } else {
         document.documentElement.setAttribute("data-theme", "light");
       }
-      
-      // Auto-write Gemini API key to bypass manual popups/caching
-      localStorage.setItem("fontvault-gemini-key", ["AQ.Ab8RN6K66mAc5-XeGSqn", "6KiP1LGPKvF4UgV1qSr1vp800suU9A"].join(""));
-    })();
+})();
   </script>
 </head>
 <body class="font-pairing-page">
@@ -89,12 +86,51 @@
   <section class="fp-hero-section" id="hero">
     <!-- Content wrapper -->
     <div class="fp-hero-content">
-      <div class="fp-hero-eyebrow">AI Pairing Studio</div>
+      <div class="fp-hero-eyebrow">Typography Pairing Studio</div>
       <h1 class="fp-hero-title">Find typography pairings<br>that actually <em>work together</em></h1>
       <p class="fp-hero-subtitle">Describe your project or visual mood, and test matching heading and body fonts on live layouts.</p>
 
-      <!-- 2. AI INPUT SECTION (Sleek Row-Based Glass Container) -->
+      <!-- MODE SWITCHER -->
+      <div class="fp-mode-switcher">
+        <button class="fp-mode-btn active" id="fp-mode-prompt" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Describe Project / Mood
+        </button>
+        <button class="fp-mode-btn" id="fp-mode-basefont" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+          Pair from a Font
+        </button>
+      </div>
+
+      <!-- 2. INPUT SECTION -->
       <div class="fp-input-section" style="width: 100%; margin-bottom: 0; padding: 0 !important;">
+        <!-- PANEL B: Base Font Picker (Hidden by default) -->
+        <div id="fp-panel-basefont" class="fp-base-font-panel" style="display: none;">
+          <div class="fp-base-controls-row">
+            <div class="fp-base-select-wrap" style="flex: 2;">
+              <label class="fp-base-select-label" for="fp-base-font-select">Select a Base Font</label>
+              <select id="fp-base-font-select" class="fp-base-select">
+                <option value="">Choose a font to pair with...</option>
+              </select>
+            </div>
+            <div class="fp-base-select-wrap" style="flex: 1;">
+              <label class="fp-base-select-label" for="fp-base-role-select">Role</label>
+              <select id="fp-base-role-select" class="fp-base-select">
+                <option value="heading">Use as Heading (Find Body Fonts)</option>
+                <option value="body">Use as Body (Find Heading Fonts)</option>
+              </select>
+            </div>
+            <button class="fp-base-submit-btn" id="fp-base-submit-btn" type="button">
+              Recommend Pairs &rarr;
+            </button>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--fp-text-sec); margin: 0.5rem 0 0; font-family: var(--font-mono);">
+            Scored by typography rules: Serif + Sans harmony, stroke contrast balance, and curated classics.
+          </p>
+        </div>
+
+        <!-- PANEL A: Prompt & Mood Input (Active by default) -->
+        <div id="fp-panel-prompt">
         
         <!-- Row 1: Textarea & Mic & Orange Send Button -->
         <div class="fp-input-row-wrapper">
@@ -227,6 +263,7 @@
             </div>
           </div>
         </div>
+        </div> <!-- end #fp-panel-prompt -->
       </div>
     </div>
 
@@ -251,7 +288,7 @@
           </div>
         </div>
         <h3 class="fp-loader-title" id="fp-loader-status-text">Analyzing brand intent...</h3>
-        <p class="fp-loader-desc">Gemini is querying catalog metrics and layout compatibility models.</p>
+        <p class="fp-loader-desc">Evaluating stroke contrast, category balance, and catalog typography metrics.</p>
       </div>
     </section>
 
@@ -379,7 +416,9 @@
 
   <script src="fonts.js?v=2.3"></script>
   <script src="shared.js?v=2.3"></script>
-  <script src="font-pairing.js?v=2.3"></script>
+  <script src="curated-pairings.js?v=1.0"></script>
+  <script src="pairing-engine.js?v=1.0"></script>
+  <script src="font-pairing.js?v=3.0"></script>
   <!-- INTERACTIVE SPECIMEN HERO LETTER ANIMATION & CURSOR GLOW -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
