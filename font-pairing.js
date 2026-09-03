@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mode Switcher
   const modePromptBtn = document.getElementById("fp-mode-prompt");
   const modeBasefontBtn = document.getElementById("fp-mode-basefont");
+  const modeRandomBtn = document.getElementById("fp-mode-random");
+  const shufflePairsBtn = document.getElementById("fp-shuffle-pairs-btn");
+  const randomBaseBtn = document.getElementById("fp-random-base-btn");
   const panelPrompt = document.getElementById("fp-panel-prompt");
   const panelBasefont = document.getElementById("fp-panel-basefont");
 
@@ -690,6 +693,56 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         renderPairCards(activePairings, resultsGrid);
       });
+    });
+  }
+
+  // --- 3. RANDOM PAIRING TRIGGER ---
+  function triggerRandomPairing() {
+    if (loaderStatusText) {
+      const messages = [
+        "Rolling typography dice...",
+        "Evaluating stroke contrasts & harmonic ratios...",
+        "Discovering unexpected font combinations...",
+        "Balancing x-heights & optical rhythm..."
+      ];
+      loaderStatusText.textContent = messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    showProcessingAndDisplay(() => {
+      if (window.FontVaultPairing && typeof fontsData !== "undefined") {
+        activePairings = window.FontVaultPairing.recommendRandomPairings(fontsData, 4);
+      }
+      renderPairCards(activePairings, resultsGrid);
+      if (window.showToast) {
+        window.showToast("🎲 Generated 4 fresh typography pairings!");
+      }
+    });
+  }
+
+  // Hook up Random Pairing buttons
+  if (modeRandomBtn) {
+    modeRandomBtn.addEventListener("click", () => {
+      modePromptBtn?.classList.remove("active");
+      modeBasefontBtn?.classList.remove("active");
+      modeRandomBtn.classList.add("active");
+      triggerRandomPairing();
+    });
+  }
+
+  if (shufflePairsBtn) {
+    shufflePairsBtn.addEventListener("click", triggerRandomPairing);
+  }
+
+  if (randomBaseBtn && baseFontSelect) {
+    randomBaseBtn.addEventListener("click", () => {
+      const options = Array.from(baseFontSelect.options).filter(o => o.value !== "");
+      if (options.length > 0) {
+        const picked = options[Math.floor(Math.random() * options.length)];
+        baseFontSelect.value = picked.value;
+        if (baseSubmitBtn) {
+          baseSubmitBtn.click();
+        }
+      }
     });
   }
 

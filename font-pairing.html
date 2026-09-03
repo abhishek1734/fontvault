@@ -137,6 +137,10 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>
           Pair from a Font
         </button>
+        <button class="fp-mode-btn" id="fp-mode-random" type="button" title="Instant random typography pairing">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="8" cy="8" r="1"/><circle cx="16" cy="8" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/></svg>
+          Random Pairing
+        </button>
       </div>
 
       <!-- 2. INPUT SECTION -->
@@ -145,7 +149,12 @@
         <div id="fp-panel-basefont" class="fp-base-font-panel" style="display: none;">
           <div class="fp-base-controls-row">
             <div class="fp-base-select-wrap" style="flex: 2;">
-              <label class="fp-base-select-label" for="fp-base-font-select">Select a Base Font</label>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <label class="fp-base-select-label" for="fp-base-font-select" style="margin-bottom: 0;">Select a Base Font</label>
+                <button type="button" id="fp-random-base-btn" class="fp-quick-random-link" title="Pick a random base font">
+                  🎲 Random Font
+                </button>
+              </div>
               <select id="fp-base-font-select" class="fp-base-select">
                 <option value="">Choose a font to pair with...</option>
               </select>
@@ -344,6 +353,12 @@
             <button class="fp-tb-btn" data-filter="serif-serif">Serif + Serif</button>
             <button class="fp-tb-btn" data-filter="display-sans">Display + Sans</button>
           </div>
+        </div>
+        <div class="fp-toolbar-section">
+          <button class="fp-random-tb-btn" id="fp-shuffle-pairs-btn" type="button" title="Generate new random pairings">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; vertical-align: -1px;"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="8" cy="8" r="1"/><circle cx="16" cy="8" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/></svg>
+            Random Pair
+          </button>
         </div>
 
         <!-- Custom Preview Text Input -->
