@@ -184,7 +184,7 @@
 
     if (pageType === "home") {
       const title = "FontVault — Discover, Preview & Pair Fonts with AI";
-      const desc = "A free font discovery tool to search, compare, and pair 220+ free and open-source typefaces from Google Fonts, Fontshare, and Adobe Fonts on live layouts.";
+      const desc = "A free font discovery tool to search, compare, and pair free and open-source typefaces from Google Fonts, Fontshare, and Adobe Fonts on live layouts.";
       const canonical = CANONICAL_HOST + "/";
       
       updateMetadata(title, desc, canonical, pageType);
@@ -223,7 +223,7 @@
             "name": "What is FontVault?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "FontVault is a free font discovery tool built by one person to help designers and developers search, test, and pair 220+ free and open-source fonts in one place without jumping between multiple websites."
+              "text": "FontVault is a free font discovery tool built by one person to help designers and developers search, test, and pair free and open-source fonts in one place without jumping between multiple websites."
             }
           },
           {

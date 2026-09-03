@@ -1,5 +1,5 @@
 // =============================================================
-//  FONTVAULT — app.js  (220+ free fonts, dark mode, compare, pairings)
+//  FONTVAULT — app.js  (Free fonts, dark mode, compare, pairings)
 // =============================================================
 
 // --- CURATED MULTI-PROVIDER DATABASE ---
