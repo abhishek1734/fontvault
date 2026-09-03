@@ -4062,43 +4062,43 @@ input[type=number] {
 
 /* --- HOMEPAGE HEADER OVERRIDES (when transparent over the dark aurora hero) --- */
 /* Dark mode only — white text over dark hero background */
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) {
   background-color: transparent;
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .logo {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .logo {
   color: #ffffff;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link,
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .nav-link,
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .nav-btn {
   color: rgba(255, 255, 255, 0.85) !important;
   border-left-color: rgba(255, 255, 255, 0.1) !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link:hover,
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn:hover {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .nav-link:hover,
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .nav-btn:hover {
   color: #ffffff !important;
   background-color: rgba(255, 255, 255, 0.06) !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-container {
   background-color: rgba(255, 255, 255, 0.06) !important;
   border-left-color: rgba(255, 255, 255, 0.1) !important;
   border-right-color: rgba(255, 255, 255, 0.1) !important;
   border-bottom: none !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container:focus-within {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-container:focus-within {
   background-color: rgba(255, 255, 255, 0.12) !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) #search-input {
   color: #ffffff !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input::placeholder {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) #search-input::placeholder {
   color: rgba(255, 255, 255, 0.4) !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container svg {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-container svg {
   color: rgba(255, 255, 255, 0.6) !important;
 }
 /* ── Search dropdown: frosted-glass dark hero treatment (both themes, hero is always dark) ── */
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown {
   background: rgba(8, 8, 12, 0.82) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
@@ -4106,114 +4106,114 @@ body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.06) !important;
   color: #f0f0f0 !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-item {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-item {
   color: rgba(255, 255, 255, 0.88) !important;
   border-bottom-color: rgba(255, 255, 255, 0.07) !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-item:hover {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-item:hover {
   background: rgba(255, 255, 255, 0.07) !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-name {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-name {
   color: #ffffff !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-meta {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-meta {
   color: rgba(255, 255, 255, 0.45) !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-provider {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-provider {
   background: rgba(255, 255, 255, 0.1) !important;
   color: rgba(255, 255, 255, 0.7) !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-footer {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-footer {
   background: rgba(255, 255, 255, 0.04) !important;
   border-top-color: rgba(255, 255, 255, 0.07) !important;
   color: rgba(255, 255, 255, 0.5) !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-footer:hover {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-footer:hover {
   background: rgba(255, 255, 255, 0.09) !important;
   color: #ffffff !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-recent-item {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-recent-item {
   color: rgba(255, 255, 255, 0.75) !important;
   border-bottom-color: rgba(255, 255, 255, 0.07) !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown-recent-item:hover {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown-recent-item:hover {
   background: rgba(255, 255, 255, 0.07) !important;
   color: #ffffff !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .delete-recent-search-btn {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .delete-recent-search-btn {
   color: rgba(255, 255, 255, 0.35) !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .delete-recent-search-btn:hover {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .delete-recent-search-btn:hover {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 /* Section labels (e.g. "Recent Searches", "Results") */
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown .search-section-label,
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown [class*="section-label"],
-body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-dropdown [class*="recent-label"] {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown .search-section-label,
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown [class*="section-label"],
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-dropdown [class*="recent-label"] {
   color: rgba(255, 255, 255, 0.35) !important;
   border-bottom-color: rgba(255, 255, 255, 0.07) !important;
 }
-[data-theme="dark"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
+[data-theme="dark"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
   color: #ffffff !important;
 }
 /* Override hardcoded !important colors on specific nav buttons */
-body:not(.ai-finder-page) header:not(.navbar-scrolled) #vault-btn {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) #vault-btn {
   color: rgba(255, 255, 255, 0.85) !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
   background-color: transparent !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) #vault-btn:hover {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) #vault-btn:hover {
   color: #ffffff !important;
   background-color: rgba(255, 255, 255, 0.1) !important;
   border-color: rgba(255, 255, 255, 0.3) !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) #submit-font-nav-btn {
   color: rgba(255, 255, 255, 0.85) !important;
   background: transparent !important;
   border-bottom-color: transparent !important;
 }
-body:not(.ai-finder-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hover {
+body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) #submit-font-nav-btn:hover {
   color: #ffffff !important;
   border-bottom-color: rgba(255, 255, 255, 0.6) !important;
 }
 
 /* Light mode — hero is always dark, so navbar text must be white for contrast */
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) {
   background-color: transparent;
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .logo {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .logo {
   color: #ffffff !important;
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link,
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .nav-link,
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .nav-btn {
   color: rgba(255, 255, 255, 0.85) !important;
   border-left-color: rgba(255, 255, 255, 0.1) !important;
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-link:hover,
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .nav-btn:hover {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .nav-link:hover,
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .nav-btn:hover {
   color: #ffffff !important;
   background-color: rgba(255, 255, 255, 0.06) !important;
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-container {
   background-color: rgba(255, 255, 255, 0.06) !important;
   border-left-color: rgba(255, 255, 255, 0.1) !important;
   border-right-color: rgba(255, 255, 255, 0.1) !important;
   border-bottom: none !important;
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container:focus-within {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-container:focus-within {
   background-color: rgba(255, 255, 255, 0.12) !important;
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) #search-input {
   color: #ffffff !important;
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) #search-input::placeholder {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) #search-input::placeholder {
   color: rgba(255, 255, 255, 0.4) !important;
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .search-container svg {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .search-container svg {
   color: rgba(255, 255, 255, 0.6) !important;
 }
-[data-theme="light"] body:not(.ai-finder-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
+[data-theme="light"] body:not(.ai-finder-page):not(.font-pairing-page) header:not(.navbar-scrolled) .dark-toggle-btn svg {
   color: #ffffff !important;
 }
 

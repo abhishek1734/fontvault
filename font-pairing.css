@@ -2129,3 +2129,81 @@
     width: 100%;
   }
 }
+
+/* ==========================================================================
+   FONT PAIRING PAGE NAVBAR STYLES (CRISP THEMED CONTRAST)
+   ========================================================================== */
+.font-pairing-page header#navbar {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid var(--fp-border) !important;
+  transition: background-color 0.25s ease, border-color 0.25s ease, height 0.25s ease !important;
+}
+
+[data-theme="dark"] .font-pairing-page header#navbar {
+  background-color: rgba(8, 8, 10, 0.92) !important;
+  border-bottom-color: var(--fp-border) !important;
+}
+
+.font-pairing-page header#navbar .logo {
+  color: var(--fp-text) !important;
+  font-weight: 600 !important;
+}
+
+.font-pairing-page header#navbar .nav-link,
+.font-pairing-page header#navbar .nav-btn {
+  color: var(--fp-text) !important;
+  border-left-color: var(--fp-border) !important;
+  background: transparent !important;
+}
+
+.font-pairing-page header#navbar .nav-link:hover,
+.font-pairing-page header#navbar .nav-btn:hover {
+  background-color: var(--fp-box-bg) !important;
+  color: var(--fp-text) !important;
+}
+
+.font-pairing-page header#navbar .search-container {
+  background-color: var(--fp-box-bg) !important;
+  border-left: 1px solid var(--fp-border) !important;
+  border-right: 1px solid var(--fp-border) !important;
+  border-bottom: none !important;
+}
+
+.font-pairing-page header#navbar #search-input {
+  color: var(--fp-text) !important;
+}
+
+.font-pairing-page header#navbar #search-input::placeholder {
+  color: var(--fp-text-sec) !important;
+  opacity: 0.8 !important;
+}
+
+.font-pairing-page header#navbar .search-container svg {
+  color: var(--fp-text-sec) !important;
+}
+
+.font-pairing-page header#navbar .dark-toggle-btn svg {
+  color: var(--fp-text) !important;
+}
+
+.font-pairing-page header#navbar #vault-btn {
+  color: var(--fp-text) !important;
+  background-color: transparent !important;
+  border-color: var(--fp-border) !important;
+}
+
+.font-pairing-page header#navbar #vault-btn:hover {
+  background-color: var(--fp-box-bg) !important;
+  color: var(--fp-text) !important;
+}
+
+.font-pairing-page header#navbar #submit-font-nav-btn {
+  color: var(--fp-text) !important;
+  background: transparent !important;
+}
+
+.font-pairing-page header#navbar #submit-font-nav-btn:hover {
+  background-color: var(--fp-box-bg) !important;
+}

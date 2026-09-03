@@ -883,7 +883,7 @@ window.toggleFavorite = function(fontId, btnElement) {
     // Height collapse globally on scroll
     navbar.classList.toggle("collapsed", window.scrollY > 80);
 
-    const hero = document.querySelector(".hero, .aiff-hero, .fp-hero-section");
+    const hero = document.querySelector("body:not(.font-pairing-page) .hero");
     if (!hero) {
       navbar.classList.add("navbar-scrolled");
       return;
