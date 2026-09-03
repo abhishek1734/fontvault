@@ -298,7 +298,7 @@ function renderUniversalNavbar() {
   if (!navbar) return;
 
   navbar.innerHTML = `
-    <a href="/index.html" class="logo">FONTVAULT</a>
+    <a href="index.html" class="logo">FONTVAULT</a>
     <div class="nav-actions">
       <div class="search-container" id="search-container" role="search">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -347,8 +347,10 @@ function renderUniversalNavbar() {
         </div>
       </div>
       <!-- Nav links -->
-      <a href="/blog.html" class="mobile-menu-item">Blog</a>
-      <a href="/collections.html" class="mobile-menu-item">Collections</a>
+      <a href="index.html" class="mobile-menu-item">Home</a>
+      <a href="font-pairing.html" class="mobile-menu-item">Font Pairing</a>
+      <a href="collections.html" class="mobile-menu-item">Collections</a>
+      <a href="blog.html" class="mobile-menu-item">Blog</a>
       <div class="mobile-menu-divider"></div>
       <button id="mobile-submit-btn" class="mobile-menu-item">Submit a Font</button>
       <button id="mobile-login-btn" class="mobile-menu-item accent-item">My Vault</button>
@@ -382,9 +384,23 @@ function setupSharedEventListeners() {
   });
 
   const vaultBtn = document.getElementById("vault-btn");
-  if (vaultBtn && window.location.pathname.includes('font.html')) {
+  if (vaultBtn) {
     vaultBtn.addEventListener("click", () => {
-      window.location.href = '/index.html?vault=true';
+      const isHome = window.location.pathname === '/' || window.location.pathname.endsWith('index.html') || window.location.pathname === '';
+      if (!isHome) {
+        window.location.href = '/index.html?vault=true';
+      }
+    });
+  }
+
+  const submitNavBtn = document.getElementById("submit-font-nav-btn");
+  if (submitNavBtn) {
+    submitNavBtn.addEventListener("click", () => {
+      if (typeof openAuthModal === "function") {
+        openAuthModal();
+      } else {
+        window.location.href = '/index.html#submit';
+      }
     });
   }
 
@@ -883,7 +899,7 @@ window.toggleFavorite = function(fontId, btnElement) {
     // Height collapse globally on scroll
     navbar.classList.toggle("collapsed", window.scrollY > 80);
 
-    const hero = document.querySelector("body:not(.font-pairing-page) .hero");
+    const hero = document.querySelector(".hero, .fp-hero-section");
     if (!hero) {
       navbar.classList.add("navbar-scrolled");
       return;
