@@ -5957,7 +5957,12 @@ header:not(.collapsed) ~ * .sticky-font-controls {
   align-items: center;
   justify-content: flex-end;
   gap: 1.25rem;
+  width: 100%;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, gap 0.25s ease;
+}
+
+.sticky-preview-options-cluster .toolbar-controls-group {
+  flex-shrink: 0;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -6010,9 +6015,10 @@ header:not(.collapsed) ~ * .sticky-font-controls {
 
 /* Auto-Adjusting Text Preview Input Width */
 .global-preview-input-wrap {
-  flex: 1 1 320px;
-  min-width: 180px;
-  max-width: 440px;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 200px;
+  max-width: none;
   position: relative;
   display: flex;
   align-items: center;
@@ -6020,6 +6026,7 @@ header:not(.collapsed) ~ * .sticky-font-controls {
 }
 
 .sticky-font-controls.is-sticky .global-preview-input-wrap {
+  flex: 1 1 320px;
   max-width: 320px;
   min-width: 160px;
 }
