@@ -141,70 +141,303 @@ const filterDescriptions = {
   "Custom": "Locally hosted or uploaded custom fonts"
 };
 
-function setupFilters() {
-  el.filterContainer.innerHTML = "";
-  Object.entries(filterGroups).forEach(([group, options], idx) => {
-    const groupEl = document.createElement("details");
-    groupEl.className = "filter-group";
-    groupEl.open = true; // Open by default
-    
-    const titleEl = document.createElement("summary");
-    titleEl.className = "filter-group-title";
-    titleEl.textContent = group;
-    groupEl.appendChild(titleEl);
-    
-    const pillWrap = document.createElement("div");
-    pillWrap.className = "pill-container";
-    options.forEach(opt => {
-      const pill = document.createElement("span");
-      pill.className = "pill";
-      pill.textContent = opt;
-      const desc = filterDescriptions[opt];
-      if (desc) {
-        pill.title = `${opt}: ${desc}`;
-        pill.setAttribute("aria-label", `${opt} filter — ${desc}`);
-      } else {
-        pill.setAttribute("aria-label", `${opt} filter`);
-      }
-      const isActive = activeFilters[group] === opt;
-      if (isActive) pill.classList.add("active");
-      pill.addEventListener("click", () => handleFilterClick(group, opt));
-      pillWrap.appendChild(pill);
-    });
-    groupEl.appendChild(pillWrap);
-    el.filterContainer.appendChild(groupEl);
+// ─────────────────────────────────────────────────
+//  HORIZONTAL FILTER ENGINE & REAL-TIME COUNTS
+// ─────────────────────────────────────────────────
+function closeAllFilterDropdowns() {
+  document.querySelectorAll(".filter-dropdown-menu").forEach(m => m.classList.remove("open"));
+  document.querySelectorAll(".filter-dropdown-btn").forEach(b => b.setAttribute("aria-expanded", "false"));
+}
+
+document.addEventListener("click", e => {
+  if (!e.target.closest(".filter-dropdown-wrapper")) {
+    closeAllFilterDropdowns();
+  }
+});
+
+let filterDropdownTogglesInitialized = false;
+function setupFilterDropdownToggles() {
+  if (filterDropdownTogglesInitialized) return;
+  filterDropdownTogglesInitialized = true;
+
+  ["provider", "mood"].forEach(type => {
+    const btn = document.getElementById(`${type}-filter-btn`);
+    const menu = document.getElementById(`${type}-dropdown-menu`);
+    if (btn && menu) {
+      btn.addEventListener("click", e => {
+        e.stopPropagation();
+        const isOpen = menu.classList.contains("open");
+        closeAllFilterDropdowns();
+        if (!isOpen) {
+          menu.classList.add("open");
+          btn.setAttribute("aria-expanded", "true");
+        }
+      });
+    }
   });
 }
 
-function handleFilterClick(group, value) {
-  if (group === "Provider") {
-    activeFilters[group] = value;
-  } else if (group === "Availability") {
-    activeFilters[group] = value;
+function updateResultsCounter() {
+  const countEl = document.getElementById("font-results-count");
+  if (!countEl) return;
+  const filtered = getFilteredFonts();
+  const total = fontsData.length;
+  if (filtered.length === total) {
+    countEl.textContent = `Showing all ${total} typefaces`;
   } else {
-    activeFilters[group] = activeFilters[group] === value ? null : value;
+    countEl.textContent = `Showing ${filtered.length} of ${total} typefaces`;
   }
-  updateClearButtonVisibility();
-  setupFilters();
-  renderGrid();
+}
+
+function renderActiveTags() {
+  const tagsContainer = document.getElementById("active-filter-tags");
+  if (!tagsContainer) return;
+  tagsContainer.innerHTML = "";
+
+  const activeItems = [];
+  if (activeFilters["Style"]) {
+    activeItems.push({
+      label: activeFilters["Style"],
+      clear: () => { activeFilters["Style"] = null; }
+    });
+  }
+  if (activeFilters["Favorites"]) {
+    activeItems.push({
+      label: "♥ Saved",
+      clear: () => {
+        activeFilters["Favorites"] = false;
+        const vb = document.getElementById("vault-btn");
+        if (vb) vb.classList.remove("active");
+      }
+    });
+  }
+  if (activeFilters["Provider"] && activeFilters["Provider"] !== "All Providers") {
+    activeItems.push({
+      label: activeFilters["Provider"],
+      clear: () => { activeFilters["Provider"] = "All Providers"; }
+    });
+  }
+  if (activeFilters["Mood"] && activeFilters["Mood"] !== "All Moods") {
+    activeItems.push({
+      label: activeFilters["Mood"],
+      clear: () => { activeFilters["Mood"] = null; }
+    });
+  }
+  if (window.searchQuery) {
+    activeItems.push({
+      label: `"${window.searchQuery}"`,
+      clear: () => {
+        window.searchQuery = "";
+        const si = document.getElementById("search-input");
+        if (si) si.value = "";
+      }
+    });
+  }
+
+  activeItems.forEach(item => {
+    const tag = document.createElement("span");
+    tag.className = "active-filter-badge";
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = item.label;
+    tag.appendChild(labelSpan);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "remove-tag-btn";
+    removeBtn.setAttribute("aria-label", "Remove filter");
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      item.clear();
+      setupFilters();
+      renderGrid();
+    });
+    tag.appendChild(removeBtn);
+    tagsContainer.appendChild(tag);
+  });
 }
 
 function updateClearButtonVisibility() {
   const hasActive = activeFilters["Provider"] !== "All Providers" ||
     activeFilters["Availability"] !== "All" ||
-    Object.entries(activeFilters).some(([g,v]) =>
-      g !== "Provider" && g !== "Availability" && v !== null
-    );
-  el.clearFiltersBtn.style.display = hasActive ? "block" : "none";
+    Boolean(activeFilters["Style"]) ||
+    Boolean(activeFilters["Mood"]) ||
+    Boolean(activeFilters["Use Case"]) ||
+    Boolean(activeFilters["Favorites"]) ||
+    Boolean(window.searchQuery);
+
+  const clearBtn = document.getElementById("clear-filters-btn") || el.clearFiltersBtn;
+  if (clearBtn) {
+    clearBtn.style.display = hasActive ? "inline-block" : "none";
+  }
 }
 
 function clearAllFilters() {
-  activeFilters = { "Provider":"All Providers","Availability":"All","Style":null,"Mood":null,"Use Case":null, "Favorites": false };
+  activeFilters = {
+    "Provider": "All Providers",
+    "Availability": "All",
+    "Style": null,
+    "Mood": null,
+    "Use Case": null,
+    "Favorites": false
+  };
   window.searchQuery = "";
-  el.searchInput.value = "";
-  updateClearButtonVisibility();
+  if (el.searchInput) el.searchInput.value = "";
+  const vaultBtn = document.getElementById("vault-btn");
+  if (vaultBtn) vaultBtn.classList.remove("active");
   setupFilters();
   renderGrid();
+}
+
+function setupFilters() {
+  setupFilterDropdownToggles();
+
+  // 1. Calculate dynamic category counts
+  const counts = {
+    all: fontsData.length,
+    "Sans-Serif": 0,
+    "Serif": 0,
+    "Display": 0,
+    "Monospace": 0,
+    "Script": 0,
+    saved: window.favoritesSet ? window.favoritesSet.size : 0
+  };
+
+  const providerCounts = {
+    "All Providers": fontsData.length,
+    "Google Fonts": 0,
+    "Fontshare": 0,
+    "Adobe Fonts": 0,
+    "Dafont": 0
+  };
+
+  const moodCounts = {
+    "All Moods": fontsData.length
+  };
+
+  const provMapReverse = { google: "Google Fonts", fontshare: "Fontshare", adobe: "Adobe Fonts", dafont: "Dafont" };
+
+  fontsData.forEach(f => {
+    if (counts[f.style] !== undefined) counts[f.style]++;
+    const pName = provMapReverse[f.provider];
+    if (pName && providerCounts[pName] !== undefined) providerCounts[pName]++;
+    if (f.mood) {
+      moodCounts[f.mood] = (moodCounts[f.mood] || 0) + 1;
+    }
+  });
+
+  // 2. Render Category Pills Row
+  const catContainer = document.getElementById("category-pills-container");
+  if (catContainer) {
+    catContainer.innerHTML = "";
+
+    const categories = [
+      { id: "all", label: "All", count: counts.all },
+      { id: "Sans-Serif", label: "Sans-Serif", count: counts["Sans-Serif"] },
+      { id: "Serif", label: "Serif", count: counts["Serif"] },
+      { id: "Display", label: "Display", count: counts["Display"] },
+      { id: "Monospace", label: "Monospace", count: counts["Monospace"] },
+      { id: "Script", label: "Script", count: counts["Script"] },
+      { id: "saved", label: "♥ Saved", count: counts.saved }
+    ];
+
+    categories.forEach(cat => {
+      const pill = document.createElement("button");
+      pill.type = "button";
+      pill.className = "cat-pill";
+
+      let isActive = false;
+      if (cat.id === "all") {
+        isActive = !activeFilters["Style"] && !activeFilters["Favorites"];
+      } else if (cat.id === "saved") {
+        isActive = Boolean(activeFilters["Favorites"]);
+      } else {
+        isActive = activeFilters["Style"] === cat.id && !activeFilters["Favorites"];
+      }
+
+      if (isActive) pill.classList.add("active");
+
+      pill.innerHTML = `
+        <span class="cat-pill-label">${cat.label}</span>
+        <span class="cat-pill-count">${cat.count}</span>
+      `;
+
+      pill.addEventListener("click", () => {
+        if (cat.id === "all") {
+          activeFilters["Style"] = null;
+          activeFilters["Favorites"] = false;
+        } else if (cat.id === "saved") {
+          activeFilters["Favorites"] = !activeFilters["Favorites"];
+          activeFilters["Style"] = null;
+        } else {
+          activeFilters["Favorites"] = false;
+          activeFilters["Style"] = activeFilters["Style"] === cat.id ? null : cat.id;
+        }
+        const vaultBtn = document.getElementById("vault-btn");
+        if (vaultBtn) vaultBtn.classList.toggle("active", Boolean(activeFilters["Favorites"]));
+        setupFilters();
+        renderGrid();
+      });
+
+      catContainer.appendChild(pill);
+    });
+  }
+
+  // 3. Populate Provider Dropdown Menu
+  const provMenu = document.getElementById("provider-dropdown-menu");
+  const provVal = document.getElementById("provider-selected-val");
+  if (provVal) provVal.textContent = activeFilters["Provider"] || "All Providers";
+  if (provMenu) {
+    provMenu.innerHTML = "";
+    Object.entries(providerCounts).forEach(([name, count]) => {
+      const opt = document.createElement("button");
+      opt.type = "button";
+      opt.className = "dropdown-item" + (activeFilters["Provider"] === name ? " active" : "");
+      opt.innerHTML = `<span>${name}</span><span class="dropdown-item-count">${count}</span>`;
+      opt.addEventListener("click", () => {
+        activeFilters["Provider"] = name;
+        closeAllFilterDropdowns();
+        setupFilters();
+        renderGrid();
+      });
+      provMenu.appendChild(opt);
+    });
+  }
+
+  // 4. Populate Mood Dropdown Menu
+  const moodMenu = document.getElementById("mood-dropdown-menu");
+  const moodVal = document.getElementById("mood-selected-val");
+  if (moodVal) moodVal.textContent = activeFilters["Mood"] || "All Moods";
+  if (moodMenu) {
+    moodMenu.innerHTML = "";
+    const moodOptions = ["All Moods", "Modern", "Playful", "Elegant", "Bold", "Minimal", "Formal", "Vintage"];
+    moodOptions.forEach(m => {
+      const count = m === "All Moods" ? fontsData.length : (moodCounts[m] || 0);
+      const opt = document.createElement("button");
+      opt.type = "button";
+      const isAct = (m === "All Moods" && !activeFilters["Mood"]) || activeFilters["Mood"] === m;
+      opt.className = "dropdown-item" + (isAct ? " active" : "");
+      opt.innerHTML = `<span>${m}</span><span class="dropdown-item-count">${count}</span>`;
+      opt.addEventListener("click", () => {
+        activeFilters["Mood"] = m === "All Moods" ? null : m;
+        closeAllFilterDropdowns();
+        setupFilters();
+        renderGrid();
+      });
+      moodMenu.appendChild(opt);
+    });
+  }
+
+  // 5. Connect Clear All button
+  const clearBtn = document.getElementById("clear-filters-btn");
+  if (clearBtn && !clearBtn.dataset.bound) {
+    clearBtn.dataset.bound = "true";
+    clearBtn.addEventListener("click", clearAllFilters);
+  }
+
+  renderActiveTags();
+  updateResultsCounter();
+  updateClearButtonVisibility();
 }
 
 // ─────────────────────────────────────────────────
