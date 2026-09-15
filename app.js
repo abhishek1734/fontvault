@@ -289,8 +289,40 @@ function clearAllFilters() {
   renderGrid();
 }
 
+// ─────────────────────────────────────────────────
+//  STICKY UNIFIED CONTROLS SCROLL HANDLER
+// ─────────────────────────────────────────────────
+let stickyControlsInitialized = false;
+function setupStickyControls() {
+  if (stickyControlsInitialized) return;
+  const bar = document.getElementById("sticky-font-controls");
+  const section = document.getElementById("font-library-section");
+  if (!bar || !section) return;
+  stickyControlsInitialized = true;
+
+  function checkSticky() {
+    if (typeof section.getBoundingClientRect !== "function") return;
+    const rect = section.getBoundingClientRect();
+    const nav = document.querySelector("header#navbar") || document.querySelector("header");
+    const isCollapsed = nav?.classList?.contains("collapsed");
+    const navHeight = isCollapsed ? 48 : 64;
+
+    // When font-library-section top scrolls under or near the navbar
+    if (rect.top <= navHeight + 10) {
+      bar.classList.add("is-sticky");
+    } else {
+      bar.classList.remove("is-sticky");
+    }
+  }
+
+  window.addEventListener("scroll", checkSticky, { passive: true });
+  window.addEventListener("resize", checkSticky, { passive: true });
+  checkSticky();
+}
+
 function setupFilters() {
   setupFilterDropdownToggles();
+  setupStickyControls();
 
   // 1. Calculate dynamic category counts
   const counts = {

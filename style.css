@@ -5893,3 +5893,151 @@ header#navbar {
   padding: 2.25rem 2rem !important;
   width: 100% !important;
 }
+
+/* ==========================================================================
+   STICKY UNIFIED FONT CONTROLS (FILTERS + PREVIEW BAR + OPTIONS)
+   ========================================================================== */
+.sticky-font-controls {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 64px !important;
+  z-index: 92;
+  background-color: var(--pure-white);
+  padding: 0.85rem 0 1rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-grey);
+  transition: top 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, padding 0.25s ease, border-color 0.25s ease;
+}
+
+[data-theme="dark"] .sticky-font-controls {
+  background-color: var(--near-black);
+}
+
+header.collapsed ~ #main-content .sticky-font-controls,
+header.collapsed ~ * .sticky-font-controls,
+header.collapsed ~ .main-container .sticky-font-controls {
+  top: 48px !important;
+}
+
+header:not(.collapsed) ~ #main-content .sticky-font-controls,
+header:not(.collapsed) ~ * .sticky-font-controls {
+  top: 64px !important;
+}
+
+/* Scrolled Sticky State: Frosted glass & compact spacing */
+.sticky-font-controls.is-sticky {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+  padding: 0.55rem 0 0.7rem 0;
+}
+
+[data-theme="dark"] .sticky-font-controls.is-sticky {
+  background-color: rgba(12, 12, 16, 0.94) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.sticky-font-controls.is-sticky .cat-pill {
+  padding: 0.38rem 0.82rem;
+  font-size: 0.78rem;
+}
+
+/* Merged Unified Row */
+.sticky-controls-unified-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-top: 0.85rem;
+  flex-wrap: nowrap;
+  transition: gap 0.25s ease, margin-top 0.25s ease;
+}
+
+.sticky-font-controls.is-sticky .sticky-controls-unified-row {
+  margin-top: 0.55rem;
+  gap: 0.9rem;
+}
+
+/* Auto-Adjusting Text Preview Input Width */
+.global-preview-input-wrap {
+  flex: 1 1 340px;
+  min-width: 200px;
+  max-width: 480px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.3s ease;
+}
+
+/* When sticky, width gets adjusted compactly to fit all options together */
+.sticky-font-controls.is-sticky .global-preview-input-wrap {
+  max-width: 380px;
+  min-width: 170px;
+}
+
+.global-preview-input-wrap input {
+  width: 100%;
+  padding: 0.48rem 2.2rem 0.48rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-grey);
+  background: var(--off-white);
+  color: var(--near-black);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.global-preview-input-wrap input:focus {
+  border-color: var(--near-black);
+  background: var(--pure-white);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .global-preview-input-wrap input {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--pure-white);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .global-preview-input-wrap input:focus {
+  border-color: var(--pure-white);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive wrap on narrower viewports */
+@media (max-width: 1060px) {
+  .sticky-controls-unified-row {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .global-preview-input-wrap {
+    order: 2;
+    flex: 1 1 100%;
+    max-width: 100% !important;
+  }
+  .toolbar-controls-group {
+    order: 3;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .sticky-controls-unified-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+  .refinement-dropdowns {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .toolbar-controls-group {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+  }
+}

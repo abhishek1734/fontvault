@@ -344,17 +344,18 @@
       <div class="font-results-count" id="font-results-count">Showing 222 typefaces</div>
     </div>
 
-    <!-- MODERN HORIZONTAL FILTER BAR -->
-    <div class="horizontal-filter-bar" id="filter-wrapper">
-      <!-- Row 1: Primary Category Pills with Counts -->
+    <!-- UNIFIED STICKY CONTROLS (Filters + Preview Bar + Options) -->
+    <div class="sticky-font-controls" id="sticky-font-controls">
+      <!-- Tier 1: Primary Category Pills with Counts -->
       <div class="category-pills-scroll">
         <div class="category-pills-row" id="category-pills-container">
           <!-- Injected dynamically by app.js: All, Sans-Serif, Serif, Display, Monospace, Script, Saved -->
         </div>
       </div>
 
-      <!-- Row 2: Secondary Refinements, Active Tags & Clear All -->
-      <div class="filter-refinements-row">
+      <!-- Tier 2: Merged Filters & Preview Bar with Adjusted Width -->
+      <div class="sticky-controls-unified-row" id="sticky-controls-unified-row">
+        <!-- Secondary Refinements (Provider & Mood) -->
         <div class="refinement-dropdowns">
           <!-- Provider Dropdown -->
           <div class="filter-dropdown-wrapper" id="provider-dropdown-wrapper">
@@ -363,9 +364,7 @@
               <span class="dropdown-selected-val" id="provider-selected-val">All Providers</span>
               <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="filter-dropdown-menu" id="provider-dropdown-menu">
-              <!-- Options populated by app.js -->
-            </div>
+            <div class="filter-dropdown-menu" id="provider-dropdown-menu"></div>
           </div>
 
           <!-- Mood Dropdown -->
@@ -375,18 +374,64 @@
               <span class="dropdown-selected-val" id="mood-selected-val">All Moods</span>
               <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div class="filter-dropdown-menu" id="mood-dropdown-menu">
-              <!-- Options populated by app.js -->
-            </div>
+            <div class="filter-dropdown-menu" id="mood-dropdown-menu"></div>
+          </div>
+
+          <!-- Active Filter Tags Strip & Clear All -->
+          <div class="active-filters-strip" id="active-filters-strip">
+            <div class="active-filter-tags" id="active-filter-tags"></div>
+            <button type="button" class="clear-all-filters-btn" id="clear-filters-btn" style="display: none;">
+              Clear all
+            </button>
           </div>
         </div>
 
-        <!-- Active Filter Tags Strip & Clear All -->
-        <div class="active-filters-strip" id="active-filters-strip">
-          <div class="active-filter-tags" id="active-filter-tags"></div>
-          <button type="button" class="clear-all-filters-btn" id="clear-filters-btn" style="display: none;">
-            Clear all
-          </button>
+        <!-- Preview Text Input with Auto-Adjusting Width -->
+        <div class="search-input-wrapper global-preview-input-wrap">
+          <input type="text" id="global-preview-input" placeholder="Type here to preview text across all fonts..." autocomplete="off" aria-label="Global custom preview text for testing all fonts">
+          <div class="global-preview-clear" id="global-preview-clear" title="Clear text" role="button" aria-label="Clear custom preview text">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Toolbar Controls: Size Slider & View Toggle -->
+        <div class="toolbar-controls-group">
+          <!-- Size Slider -->
+          <div class="toolbar-slider-wrap">
+            <span>SIZE</span>
+            <input type="range" id="font-size-slider" min="40" max="220" value="120" aria-label="Adjust font preview size slider">
+            <div class="size-input-container">
+              <input type="number" id="global-size-input" value="120" min="40" max="220" aria-label="Font preview size in pixels">
+              <span>px</span>
+              <span id="global-size-reset" class="size-reset-btn" role="button" aria-label="Reset font size to default">Reset</span>
+            </div>
+          </div>
+          <!-- View / Layout Toggle -->
+          <div class="toolbar-display-wrap">
+            <span class="display-label">VIEW</span>
+            <div class="display-pill-toggle">
+              <button class="display-toggle-btn active" id="layout-list-btn" title="List View" aria-label="List View">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </button>
+              <button class="display-toggle-btn" id="layout-grid-btn" title="Grid View" aria-label="Grid View">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -395,52 +440,6 @@
     <div class="content-layout">
       <!-- GRID AREA -->
       <section class="grid-area">
-        <div class="global-preview-bar">
-          <div class="search-input-wrapper" style="flex: 1; position: relative; display: flex; align-items: center;">
-            <input type="text" id="global-preview-input" placeholder="Type here to preview text across all fonts..." autocomplete="off" style="width: 100%;" aria-label="Global custom preview text for testing all fonts">
-            <div class="global-preview-clear" id="global-preview-clear" title="Clear text" role="button" aria-label="Clear custom preview text">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-          </div>
-          <div class="toolbar-controls-group">
-            <!-- Size Slider -->
-            <div class="toolbar-slider-wrap">
-              <span>SIZE</span>
-              <input type="range" id="font-size-slider" min="40" max="220" value="120" aria-label="Adjust font preview size slider">
-              <div class="size-input-container">
-                <input type="number" id="global-size-input" value="120" min="40" max="220" aria-label="Font preview size in pixels">
-                <span>px</span>
-                <span id="global-size-reset" class="size-reset-btn" role="button" aria-label="Reset font size to default">Reset</span>
-              </div>
-            </div>
-            <!-- View / Layout Toggle -->
-            <div class="toolbar-display-wrap">
-              <span class="display-label">VIEW</span>
-              <div class="display-pill-toggle">
-                <button class="display-toggle-btn active" id="layout-list-btn" title="List View" aria-label="List View">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="8" y1="6" x2="21" y2="6"></line>
-                    <line x1="8" y1="12" x2="21" y2="12"></line>
-                    <line x1="8" y1="18" x2="21" y2="18"></line>
-                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                  </svg>
-                </button>
-                <button class="display-toggle-btn" id="layout-grid-btn" title="Grid View" aria-label="Grid View">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="masonry-grid" id="font-grid">
           <!-- Font Cards dynamically injected -->
         </div>
