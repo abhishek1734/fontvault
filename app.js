@@ -29,10 +29,10 @@ const filterGroups = {
 };
 
 let activeFilters = {
-  "Provider":     "All Providers",
+  "Provider":     new Set(),
   "Availability": "All",
   "Style":        null,
-  "Mood":         null,
+  "Mood":         new Set(),
   "Use Case":     null,
   "Favorites":    false
 };
@@ -142,8 +142,27 @@ const filterDescriptions = {
 };
 
 // ─────────────────────────────────────────────────
-//  HORIZONTAL FILTER ENGINE & REAL-TIME COUNTS
+//  MULTI-SELECT PROVIDER & MOOD FILTER ENGINE
 // ─────────────────────────────────────────────────
+function getSelectedProviders() {
+  if (activeFilters["Provider"] instanceof Set) return activeFilters["Provider"];
+  if (Array.isArray(activeFilters["Provider"])) return new Set(activeFilters["Provider"]);
+  if (typeof activeFilters["Provider"] === "string" && activeFilters["Provider"] !== "All Providers") {
+    const provMap = { "Google Fonts": "google", "Fontshare": "fontshare", "Dafont": "dafont", "Adobe Fonts": "adobe" };
+    return new Set([provMap[activeFilters["Provider"]] || activeFilters["Provider"].toLowerCase()]);
+  }
+  return new Set();
+}
+
+function getSelectedMoods() {
+  if (activeFilters["Mood"] instanceof Set) return activeFilters["Mood"];
+  if (Array.isArray(activeFilters["Mood"])) return new Set(activeFilters["Mood"]);
+  if (typeof activeFilters["Mood"] === "string" && activeFilters["Mood"] !== "All Moods") {
+    return new Set([activeFilters["Mood"]]);
+  }
+  return new Set();
+}
+
 function closeAllFilterDropdowns() {
   document.querySelectorAll(".filter-dropdown-menu").forEach(m => m.classList.remove("open"));
   document.querySelectorAll(".filter-dropdown-btn").forEach(b => b.setAttribute("aria-expanded", "false"));
@@ -211,18 +230,32 @@ function renderActiveTags() {
       }
     });
   }
-  if (activeFilters["Provider"] && activeFilters["Provider"] !== "All Providers") {
+
+  // Multi-select providers
+  const selProviders = getSelectedProviders();
+  const provNames = { google: "Google Fonts", fontshare: "Fontshare", adobe: "Adobe Fonts", dafont: "Dafont" };
+  selProviders.forEach(pKey => {
     activeItems.push({
-      label: activeFilters["Provider"],
-      clear: () => { activeFilters["Provider"] = "All Providers"; }
+      label: provNames[pKey] || pKey,
+      clear: () => {
+        selProviders.delete(pKey);
+        activeFilters["Provider"] = selProviders;
+      }
     });
-  }
-  if (activeFilters["Mood"] && activeFilters["Mood"] !== "All Moods") {
+  });
+
+  // Multi-select moods
+  const selMoods = getSelectedMoods();
+  selMoods.forEach(mName => {
     activeItems.push({
-      label: activeFilters["Mood"],
-      clear: () => { activeFilters["Mood"] = null; }
+      label: mName,
+      clear: () => {
+        selMoods.delete(mName);
+        activeFilters["Mood"] = selMoods;
+      }
     });
-  }
+  });
+
   if (window.searchQuery) {
     activeItems.push({
       label: `"${window.searchQuery}"`,
@@ -258,10 +291,13 @@ function renderActiveTags() {
 }
 
 function updateClearButtonVisibility() {
-  const hasActive = activeFilters["Provider"] !== "All Providers" ||
+  const selProviders = getSelectedProviders();
+  const selMoods = getSelectedMoods();
+
+  const hasActive = selProviders.size > 0 ||
     activeFilters["Availability"] !== "All" ||
     Boolean(activeFilters["Style"]) ||
-    Boolean(activeFilters["Mood"]) ||
+    selMoods.size > 0 ||
     Boolean(activeFilters["Use Case"]) ||
     Boolean(activeFilters["Favorites"]) ||
     Boolean(window.searchQuery);
@@ -274,10 +310,10 @@ function updateClearButtonVisibility() {
 
 function clearAllFilters() {
   activeFilters = {
-    "Provider": "All Providers",
+    "Provider": new Set(),
     "Availability": "All",
     "Style": null,
-    "Mood": null,
+    "Mood": new Set(),
     "Use Case": null,
     "Favorites": false
   };
@@ -289,9 +325,6 @@ function clearAllFilters() {
   renderGrid();
 }
 
-// ─────────────────────────────────────────────────
-//  STICKY UNIFIED CONTROLS SCROLL HANDLER
-// ─────────────────────────────────────────────────
 let stickyControlsInitialized = false;
 function setupStickyControls() {
   if (stickyControlsInitialized) return;
@@ -336,23 +369,17 @@ function setupFilters() {
   };
 
   const providerCounts = {
-    "All Providers": fontsData.length,
-    "Google Fonts": 0,
-    "Fontshare": 0,
-    "Adobe Fonts": 0,
-    "Dafont": 0
+    google: 0,
+    fontshare: 0,
+    adobe: 0,
+    dafont: 0
   };
 
-  const moodCounts = {
-    "All Moods": fontsData.length
-  };
-
-  const provMapReverse = { google: "Google Fonts", fontshare: "Fontshare", adobe: "Adobe Fonts", dafont: "Dafont" };
+  const moodCounts = {};
 
   fontsData.forEach(f => {
     if (counts[f.style] !== undefined) counts[f.style]++;
-    const pName = provMapReverse[f.provider];
-    if (pName && providerCounts[pName] !== undefined) providerCounts[pName]++;
+    if (providerCounts[f.provider] !== undefined) providerCounts[f.provider]++;
     if (f.mood) {
       moodCounts[f.mood] = (moodCounts[f.mood] || 0) + 1;
     }
@@ -415,48 +442,195 @@ function setupFilters() {
     });
   }
 
-  // 3. Populate Provider Dropdown Menu
+  // 3. Populate MULTI-SELECT Provider Dropdown
   const provMenu = document.getElementById("provider-dropdown-menu");
   const provVal = document.getElementById("provider-selected-val");
-  if (provVal) provVal.textContent = activeFilters["Provider"] || "All Providers";
+  const selProviders = getSelectedProviders();
+
+  if (provVal) {
+    if (selProviders.size === 0) {
+      provVal.textContent = "All Providers";
+    } else if (selProviders.size === 1) {
+      const pKey = Array.from(selProviders)[0];
+      const provLabels = { google: "Google Fonts", fontshare: "Fontshare", adobe: "Adobe Fonts", dafont: "Dafont" };
+      provVal.textContent = provLabels[pKey] || pKey;
+    } else {
+      provVal.innerHTML = `${selProviders.size} Selected <span class="dropdown-count-badge">${selProviders.size}</span>`;
+    }
+  }
+
   if (provMenu) {
     provMenu.innerHTML = "";
-    Object.entries(providerCounts).forEach(([name, count]) => {
-      const opt = document.createElement("button");
-      opt.type = "button";
-      opt.className = "dropdown-item" + (activeFilters["Provider"] === name ? " active" : "");
-      opt.innerHTML = `<span>${name}</span><span class="dropdown-item-count">${count}</span>`;
-      opt.addEventListener("click", () => {
-        activeFilters["Provider"] = name;
-        closeAllFilterDropdowns();
+    // Header actions
+    const headerActions = document.createElement("div");
+    headerActions.className = "multiselect-header-actions";
+    
+    const selectAllBtn = document.createElement("button");
+    selectAllBtn.type = "button";
+    selectAllBtn.className = "multiselect-action-btn";
+    selectAllBtn.textContent = "Select all";
+    selectAllBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      activeFilters["Provider"] = new Set(["google", "fontshare", "adobe", "dafont"]);
+      setupFilters();
+      renderGrid();
+    });
+
+    const clearAllBtn = document.createElement("button");
+    clearAllBtn.type = "button";
+    clearAllBtn.className = "multiselect-action-btn";
+    clearAllBtn.textContent = "Clear";
+    clearAllBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      activeFilters["Provider"] = new Set();
+      setupFilters();
+      renderGrid();
+    });
+
+    headerActions.appendChild(selectAllBtn);
+    headerActions.appendChild(clearAllBtn);
+    provMenu.appendChild(headerActions);
+
+    const providerList = [
+      { key: "google", name: "Google Fonts", count: providerCounts.google },
+      { key: "fontshare", name: "Fontshare", count: providerCounts.fontshare },
+      { key: "adobe", name: "Adobe Fonts", count: providerCounts.adobe },
+      { key: "dafont", name: "Dafont", count: providerCounts.dafont }
+    ];
+
+    providerList.forEach(item => {
+      const isChecked = selProviders.has(item.key);
+      const row = document.createElement("label");
+      row.className = "dropdown-checkbox-item" + (isChecked ? " checked" : "");
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = item.key;
+      if (isChecked) input.checked = true;
+
+      const labelWrap = document.createElement("div");
+      labelWrap.className = "checkbox-label-wrap";
+      labelWrap.innerHTML = `
+        <span class="custom-checkbox-box">
+          <svg class="custom-checkbox-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <span class="multiselect-item-name">${item.name}</span>
+      `;
+
+      const countSpan = document.createElement("span");
+      countSpan.className = "multiselect-item-count";
+      countSpan.textContent = item.count;
+
+      input.addEventListener("change", e => {
+        e.stopPropagation();
+        if (input.checked) {
+          selProviders.add(item.key);
+        } else {
+          selProviders.delete(item.key);
+        }
+        activeFilters["Provider"] = selProviders;
         setupFilters();
         renderGrid();
       });
-      provMenu.appendChild(opt);
+
+      row.appendChild(input);
+      row.appendChild(labelWrap);
+      row.appendChild(countSpan);
+      provMenu.appendChild(row);
     });
   }
 
-  // 4. Populate Mood Dropdown Menu
+  // 4. Populate MULTI-SELECT Mood Dropdown
   const moodMenu = document.getElementById("mood-dropdown-menu");
   const moodVal = document.getElementById("mood-selected-val");
-  if (moodVal) moodVal.textContent = activeFilters["Mood"] || "All Moods";
+  const selMoods = getSelectedMoods();
+
+  if (moodVal) {
+    if (selMoods.size === 0) {
+      moodVal.textContent = "All Moods";
+    } else if (selMoods.size === 1) {
+      moodVal.textContent = Array.from(selMoods)[0];
+    } else {
+      moodVal.innerHTML = `${selMoods.size} Selected <span class="dropdown-count-badge">${selMoods.size}</span>`;
+    }
+  }
+
   if (moodMenu) {
     moodMenu.innerHTML = "";
-    const moodOptions = ["All Moods", "Modern", "Playful", "Elegant", "Bold", "Minimal", "Formal", "Vintage"];
+    // Header actions
+    const headerActions = document.createElement("div");
+    headerActions.className = "multiselect-header-actions";
+
+    const selectAllBtn = document.createElement("button");
+    selectAllBtn.type = "button";
+    selectAllBtn.className = "multiselect-action-btn";
+    selectAllBtn.textContent = "Select all";
+    const moodOptions = ["Modern", "Playful", "Elegant", "Bold", "Minimal", "Formal", "Vintage"];
+    selectAllBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      activeFilters["Mood"] = new Set(moodOptions);
+      setupFilters();
+      renderGrid();
+    });
+
+    const clearAllBtn = document.createElement("button");
+    clearAllBtn.type = "button";
+    clearAllBtn.className = "multiselect-action-btn";
+    clearAllBtn.textContent = "Clear";
+    clearAllBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      activeFilters["Mood"] = new Set();
+      setupFilters();
+      renderGrid();
+    });
+
+    headerActions.appendChild(selectAllBtn);
+    headerActions.appendChild(clearAllBtn);
+    moodMenu.appendChild(headerActions);
+
     moodOptions.forEach(m => {
-      const count = m === "All Moods" ? fontsData.length : (moodCounts[m] || 0);
-      const opt = document.createElement("button");
-      opt.type = "button";
-      const isAct = (m === "All Moods" && !activeFilters["Mood"]) || activeFilters["Mood"] === m;
-      opt.className = "dropdown-item" + (isAct ? " active" : "");
-      opt.innerHTML = `<span>${m}</span><span class="dropdown-item-count">${count}</span>`;
-      opt.addEventListener("click", () => {
-        activeFilters["Mood"] = m === "All Moods" ? null : m;
-        closeAllFilterDropdowns();
+      const isChecked = selMoods.has(m);
+      const row = document.createElement("label");
+      row.className = "dropdown-checkbox-item" + (isChecked ? " checked" : "");
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = m;
+      if (isChecked) input.checked = true;
+
+      const labelWrap = document.createElement("div");
+      labelWrap.className = "checkbox-label-wrap";
+      labelWrap.innerHTML = `
+        <span class="custom-checkbox-box">
+          <svg class="custom-checkbox-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+        <span class="multiselect-item-name">${m}</span>
+      `;
+
+      const countSpan = document.createElement("span");
+      countSpan.className = "multiselect-item-count";
+      countSpan.textContent = moodCounts[m] || 0;
+
+      input.addEventListener("change", e => {
+        e.stopPropagation();
+        if (input.checked) {
+          selMoods.add(m);
+        } else {
+          selMoods.delete(m);
+        }
+        activeFilters["Mood"] = selMoods;
         setupFilters();
         renderGrid();
       });
-      moodMenu.appendChild(opt);
+
+      row.appendChild(input);
+      row.appendChild(labelWrap);
+      row.appendChild(countSpan);
+      moodMenu.appendChild(row);
     });
   }
 
@@ -531,10 +705,9 @@ function getFilteredFonts() {
         .some(v => v && String(v).toLowerCase().includes(q));
       if (!match) return false;
     }
-    if (activeFilters["Provider"] !== "All Providers") {
-      const provMap = {"Google Fonts":"google","Fontshare":"fontshare","Dafont":"dafont","Adobe Fonts":"adobe"};
-      if (font.provider !== provMap[activeFilters["Provider"]]) return false;
-    }
+    const selProviders = getSelectedProviders();
+    if (selProviders.size > 0 && !selProviders.has(font.provider)) return false;
+
     if (activeFilters["Availability"] !== "All") {
       if (activeFilters["Availability"] === "Custom") {
         if (font.provider !== "custom") return false;
@@ -543,7 +716,9 @@ function getFilteredFonts() {
       }
     }
     if (activeFilters["Style"] && font.style !== activeFilters["Style"]) return false;
-    if (activeFilters["Mood"] && font.mood !== activeFilters["Mood"]) return false;
+
+    const selMoods = getSelectedMoods();
+    if (selMoods.size > 0 && (!font.mood || !selMoods.has(font.mood))) return false;
     if (activeFilters["Use Case"] && font.useCase !== activeFilters["Use Case"]) return false;
     return true;
   });

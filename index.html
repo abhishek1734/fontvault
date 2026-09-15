@@ -344,49 +344,17 @@
       <div class="font-results-count" id="font-results-count">Showing 222 typefaces</div>
     </div>
 
-    <!-- UNIFIED STICKY CONTROLS (Filters + Preview Bar + Options) -->
+    <!-- UNIFIED STICKY CONTROLS (Pills + Sliding Preview Bar + Multi-Select Filters) -->
     <div class="sticky-font-controls" id="sticky-font-controls">
-      <!-- Tier 1: Primary Category Pills with Counts -->
-      <div class="category-pills-scroll">
+      <!-- Category Pills Scrollable Row -->
+      <div class="category-pills-scroll" id="category-pills-scroll">
         <div class="category-pills-row" id="category-pills-container">
           <!-- Injected dynamically by app.js: All, Sans-Serif, Serif, Display, Monospace, Script, Saved -->
         </div>
       </div>
 
-      <!-- Tier 2: Merged Filters & Preview Bar with Adjusted Width -->
-      <div class="sticky-controls-unified-row" id="sticky-controls-unified-row">
-        <!-- Secondary Refinements (Provider & Mood) -->
-        <div class="refinement-dropdowns">
-          <!-- Provider Dropdown -->
-          <div class="filter-dropdown-wrapper" id="provider-dropdown-wrapper">
-            <button type="button" class="filter-dropdown-btn" id="provider-filter-btn" aria-haspopup="true" aria-expanded="false">
-              <span class="dropdown-label-prefix">Source:</span>
-              <span class="dropdown-selected-val" id="provider-selected-val">All Providers</span>
-              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="filter-dropdown-menu" id="provider-dropdown-menu"></div>
-          </div>
-
-          <!-- Mood Dropdown -->
-          <div class="filter-dropdown-wrapper" id="mood-dropdown-wrapper">
-            <button type="button" class="filter-dropdown-btn" id="mood-filter-btn" aria-haspopup="true" aria-expanded="false">
-              <span class="dropdown-label-prefix">Mood:</span>
-              <span class="dropdown-selected-val" id="mood-selected-val">All Moods</span>
-              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="filter-dropdown-menu" id="mood-dropdown-menu"></div>
-          </div>
-
-          <!-- Active Filter Tags Strip & Clear All -->
-          <div class="active-filters-strip" id="active-filters-strip">
-            <div class="active-filter-tags" id="active-filter-tags"></div>
-            <button type="button" class="clear-all-filters-btn" id="clear-filters-btn" style="display: none;">
-              Clear all
-            </button>
-          </div>
-        </div>
-
-        <!-- Preview Text Input with Auto-Adjusting Width -->
+      <!-- Preview Bar & Controls Cluster (Slides upward to Row 1 next to Saved pill on scroll) -->
+      <div class="sticky-preview-options-cluster" id="sticky-preview-options-cluster">
         <div class="search-input-wrapper global-preview-input-wrap">
           <input type="text" id="global-preview-input" placeholder="Type here to preview text across all fonts..." autocomplete="off" aria-label="Global custom preview text for testing all fonts">
           <div class="global-preview-clear" id="global-preview-clear" title="Clear text" role="button" aria-label="Clear custom preview text">
@@ -396,7 +364,6 @@
           </div>
         </div>
 
-        <!-- Toolbar Controls: Size Slider & View Toggle -->
         <div class="toolbar-controls-group">
           <!-- Size Slider -->
           <div class="toolbar-slider-wrap">
@@ -431,6 +398,39 @@
                 </svg>
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Refinements (Multi-Select Source & Mood) -->
+      <div class="sticky-controls-bottom-tier" id="sticky-controls-bottom-tier">
+        <div class="refinement-dropdowns">
+          <!-- Provider Dropdown (Multi-Select) -->
+          <div class="filter-dropdown-wrapper" id="provider-dropdown-wrapper">
+            <button type="button" class="filter-dropdown-btn" id="provider-filter-btn" aria-haspopup="true" aria-expanded="false">
+              <span class="dropdown-label-prefix">Source:</span>
+              <span class="dropdown-selected-val" id="provider-selected-val">All Providers</span>
+              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="filter-dropdown-menu filter-multiselect-menu" id="provider-dropdown-menu"></div>
+          </div>
+
+          <!-- Mood Dropdown (Multi-Select) -->
+          <div class="filter-dropdown-wrapper" id="mood-dropdown-wrapper">
+            <button type="button" class="filter-dropdown-btn" id="mood-filter-btn" aria-haspopup="true" aria-expanded="false">
+              <span class="dropdown-label-prefix">Mood:</span>
+              <span class="dropdown-selected-val" id="mood-selected-val">All Moods</span>
+              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="filter-dropdown-menu filter-multiselect-menu" id="mood-dropdown-menu"></div>
+          </div>
+
+          <!-- Active Filter Tags Strip & Clear All -->
+          <div class="active-filters-strip" id="active-filters-strip">
+            <div class="active-filter-tags" id="active-filter-tags"></div>
+            <button type="button" class="clear-all-filters-btn" id="clear-filters-btn" style="display: none;">
+              Clear all
+            </button>
           </div>
         </div>
       </div>
