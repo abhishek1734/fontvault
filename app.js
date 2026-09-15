@@ -325,7 +325,75 @@ function clearAllFilters() {
   renderGrid();
 }
 
+// ─────────────────────────────────────────────────
+//  STICKY CONTROLS WITH FLUID FLIP TRANSITION
+// ─────────────────────────────────────────────────
 let stickyControlsInitialized = false;
+let currentStickySlotState = 'row2';
+
+function transitionPreviewCluster(toSlotName) {
+  if (currentStickySlotState === toSlotName) return;
+  const cluster = document.getElementById("sticky-preview-options-cluster");
+  const slot1 = document.getElementById("sticky-slot-row1");
+  const slot2 = document.getElementById("sticky-slot-row2");
+  if (!cluster || !slot1 || !slot2) return;
+
+  const targetSlot = toSlotName === 'row1' ? slot1 : slot2;
+  if (cluster.parentElement === targetSlot) {
+    currentStickySlotState = toSlotName;
+    return;
+  }
+
+  // Check if preview input had focus before reparenting
+  const previewInput = document.getElementById("global-preview-input");
+  const hadFocus = (document.activeElement === previewInput);
+
+  // Only animate on larger viewports where row1 has space
+  const isDesktop = typeof window !== 'undefined' && window.innerWidth > 1060;
+  if (!isDesktop || typeof cluster.getBoundingClientRect !== 'function') {
+    targetSlot.appendChild(cluster);
+    currentStickySlotState = toSlotName;
+    if (hadFocus && previewInput) previewInput.focus({ preventScroll: true });
+    return;
+  }
+
+  // FLIP: First - capture current on-screen position
+  const first = cluster.getBoundingClientRect();
+
+  // Reset any prior inline transform before moving
+  cluster.style.transition = 'none';
+  cluster.style.transform = 'none';
+
+  // Move DOM node into destination slot
+  targetSlot.appendChild(cluster);
+  if (hadFocus && previewInput) previewInput.focus({ preventScroll: true });
+
+  // FLIP: Last - capture resting position in destination slot
+  const last = cluster.getBoundingClientRect();
+
+  const dx = first.left - last.left;
+  const dy = first.top - last.top;
+
+  // FLIP: Invert - immediately position cluster where it was visually
+  cluster.style.transform = `translate(${dx}px, ${dy}px)`;
+  cluster.offsetHeight; // force synchronous layout reflow
+
+  // FLIP: Play - animate smoothly to (0, 0)
+  currentStickySlotState = toSlotName;
+  requestAnimationFrame(() => {
+    cluster.style.transition = 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1)';
+    cluster.style.transform = 'translate(0, 0)';
+
+    const onEnd = (e) => {
+      if (e && e.target !== cluster) return;
+      cluster.style.transition = '';
+      cluster.style.transform = '';
+      cluster.removeEventListener('transitionend', onEnd);
+    };
+    cluster.addEventListener('transitionend', onEnd);
+  });
+}
+
 function setupStickyControls() {
   if (stickyControlsInitialized) return;
   const bar = document.getElementById("sticky-font-controls");
@@ -333,24 +401,53 @@ function setupStickyControls() {
   if (!bar || !section) return;
   stickyControlsInitialized = true;
 
-  function checkSticky() {
+  function checkSticky(isInitial = false) {
     if (typeof section.getBoundingClientRect !== "function") return;
     const rect = section.getBoundingClientRect();
     const nav = document.querySelector("header#navbar") || document.querySelector("header");
     const isCollapsed = nav?.classList?.contains("collapsed");
     const navHeight = isCollapsed ? 48 : 64;
 
-    // When font-library-section top scrolls under or near the navbar
-    if (rect.top <= navHeight + 10) {
+    // Hysteresis threshold to prevent scroll jitter
+    const isStickyNow = bar.classList.contains("is-sticky");
+    const enterThreshold = navHeight + 8;
+    const exitThreshold = navHeight + 28;
+
+    if (!isStickyNow && rect.top <= enterThreshold) {
       bar.classList.add("is-sticky");
-    } else {
+      if (isInitial) {
+        const slot1 = document.getElementById("sticky-slot-row1");
+        const cluster = document.getElementById("sticky-preview-options-cluster");
+        if (slot1 && cluster) {
+          slot1.appendChild(cluster);
+          currentStickySlotState = 'row1';
+        }
+      } else {
+        transitionPreviewCluster('row1');
+      }
+    } else if (isStickyNow && rect.top > exitThreshold) {
       bar.classList.remove("is-sticky");
+      if (isInitial) {
+        const slot2 = document.getElementById("sticky-slot-row2");
+        const cluster = document.getElementById("sticky-preview-options-cluster");
+        if (slot2 && cluster) {
+          slot2.appendChild(cluster);
+          currentStickySlotState = 'row2';
+        }
+      } else {
+        transitionPreviewCluster('row2');
+      }
     }
   }
 
-  window.addEventListener("scroll", checkSticky, { passive: true });
-  window.addEventListener("resize", checkSticky, { passive: true });
-  checkSticky();
+  window.addEventListener("scroll", () => checkSticky(false), { passive: true });
+  window.addEventListener("resize", () => {
+    checkSticky(false);
+    if (window.innerWidth <= 1060 && currentStickySlotState !== 'row2') {
+      transitionPreviewCluster('row2');
+    }
+  }, { passive: true });
+  checkSticky(true);
 }
 
 function setupFilters() {
