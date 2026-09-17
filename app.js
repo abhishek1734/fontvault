@@ -405,8 +405,8 @@ function setupStickyControls() {
     if (typeof section.getBoundingClientRect !== "function") return;
     const rect = section.getBoundingClientRect();
     const nav = document.querySelector("header#navbar") || document.querySelector("header");
-    const isCollapsed = nav?.classList?.contains("collapsed");
-    const navHeight = isCollapsed ? 48 : 64;
+    const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+    const navHeight = isMobile ? 56 : (isCollapsed ? 48 : 64);
 
     // Hysteresis threshold to prevent scroll jitter
     const isStickyNow = bar.classList.contains("is-sticky");

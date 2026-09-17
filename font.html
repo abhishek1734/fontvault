@@ -88,6 +88,12 @@
       <button id="submit-font-nav-btn" class="nav-btn">
         Submit a Font
       </button>
+      <button id="mobile-search-toggle-btn" class="nav-btn mobile-search-toggle-btn" aria-label="Search fonts" title="Search fonts">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
       <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -98,6 +104,17 @@
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
       </button>
+    </div>
+    <!-- MOBILE SEARCH EXPANDABLE DRAWER -->
+    <div id="mobile-search-drawer" class="mobile-search-drawer" aria-hidden="true">
+      <div class="mobile-search-drawer-inner">
+        <svg class="mobile-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="mobile-header-search-input" placeholder="Search fonts, styles, designers..." autocomplete="off" aria-label="Search fonts on mobile">
+        <button type="button" id="mobile-search-clear-btn" class="mobile-search-clear" aria-label="Clear search text">&times;</button>
+      </div>
     </div>
     <div id="mobile-menu" class="mobile-menu">
       <div class="mobile-search-wrap">

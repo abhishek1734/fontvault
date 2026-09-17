@@ -2173,3 +2173,75 @@
   opacity: 0.8;
   text-decoration: underline;
 }
+
+/* ============================================================
+   RESPONSIVE ENHANCEMENTS — 320px - 768px PAIRING STUDIO
+   ============================================================ */
+@media (max-width: 768px) {
+  .fp-main-container,
+  .fp-layout {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .fp-mode-switcher {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .fp-mode-switcher::-webkit-scrollbar { display: none !important; }
+
+  .fp-mode-btn {
+    flex-shrink: 0 !important;
+    min-height: 40px !important;
+    padding: 0.5rem 0.9rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  .card-buttons button {
+    min-height: 42px !important;
+    padding: 0.5rem 1rem !important;
+  }
+
+  .fp-sticky-toolbar {
+    top: 56px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .fp-hero-title {
+    font-size: 2.1rem !important;
+  }
+
+  .card-actions-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  .card-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 0.5rem !important;
+  }
+
+  .card-buttons button {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .fp-hero-title {
+    font-size: 1.75rem !important;
+  }
+}

@@ -325,6 +325,12 @@ function renderUniversalNavbar() {
       <button id="submit-font-nav-btn" class="nav-btn">
         Submit a Font
       </button>
+      <button id="mobile-search-toggle-btn" class="nav-btn mobile-search-toggle-btn" aria-label="Search fonts" title="Search fonts">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
       <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -335,6 +341,17 @@ function renderUniversalNavbar() {
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
       </button>
+    </div>
+    <!-- MOBILE SEARCH EXPANDABLE DRAWER -->
+    <div id="mobile-search-drawer" class="mobile-search-drawer" aria-hidden="true">
+      <div class="mobile-search-drawer-inner">
+        <svg class="mobile-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="mobile-header-search-input" placeholder="Search fonts, styles, designers..." autocomplete="off" aria-label="Search fonts on mobile">
+        <button type="button" id="mobile-search-clear-btn" class="mobile-search-clear" aria-label="Clear search text">&times;</button>
+      </div>
     </div>
     <div id="mobile-menu" class="mobile-menu">
       <!-- Search inside mobile menu -->
@@ -771,6 +788,90 @@ function setupSharedEventListeners() {
     });
   }
 
+  // Mobile Search Drawer Logic
+  const mobileSearchToggleBtn = document.getElementById("mobile-search-toggle-btn");
+  const mobileSearchDrawer = document.getElementById("mobile-search-drawer");
+  const mobileHeaderSearchInput = document.getElementById("mobile-header-search-input");
+  const mobileSearchClearBtn = document.getElementById("mobile-search-clear-btn");
+
+  if (mobileSearchToggleBtn && mobileSearchDrawer) {
+    mobileSearchToggleBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = mobileSearchDrawer.classList.toggle("open");
+      mobileSearchToggleBtn.classList.toggle("active", isOpen);
+      mobileSearchDrawer.setAttribute("aria-hidden", !isOpen);
+      if (isOpen) {
+        const mobileMenu = document.getElementById("mobile-menu");
+        const hamburgerBtn = document.getElementById("hamburger-btn");
+        if (mobileMenu && hamburgerBtn) {
+          mobileMenu.classList.remove("open");
+          hamburgerBtn.classList.remove("open");
+          hamburgerBtn.setAttribute("aria-expanded", "false");
+        }
+        if (mobileHeaderSearchInput) {
+          setTimeout(() => mobileHeaderSearchInput.focus(), 150);
+        }
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!mobileSearchDrawer.contains(e.target) && !mobileSearchToggleBtn.contains(e.target)) {
+        mobileSearchDrawer.classList.remove("open");
+        mobileSearchToggleBtn.classList.remove("active");
+        mobileSearchDrawer.setAttribute("aria-hidden", "true");
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        mobileSearchDrawer.classList.remove("open");
+        mobileSearchToggleBtn.classList.remove("active");
+        mobileSearchDrawer.setAttribute("aria-hidden", "true");
+      }
+    });
+  }
+
+  if (mobileSearchClearBtn && mobileHeaderSearchInput) {
+    mobileSearchClearBtn.addEventListener("click", () => {
+      mobileHeaderSearchInput.value = "";
+      const mainSearch = document.getElementById("search-input");
+      if (mainSearch) {
+        mainSearch.value = "";
+        mainSearch.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      mobileHeaderSearchInput.focus();
+    });
+  }
+
+  if (mobileHeaderSearchInput) {
+    mobileHeaderSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const q = mobileHeaderSearchInput.value.trim();
+        if (!q) return;
+        const mainSearch = document.getElementById("search-input");
+        if (mainSearch) {
+          mainSearch.value = q;
+          mainSearch.dispatchEvent(new Event("input", { bubbles: true }));
+          mobileSearchDrawer?.classList.remove("open");
+          mobileSearchToggleBtn?.classList.remove("active");
+          mobileSearchDrawer?.setAttribute("aria-hidden", "true");
+          const grid = document.getElementById("font-library-section") || document.getElementById("main-content");
+          if (grid) grid.scrollIntoView({ behavior: "smooth" });
+        } else {
+          window.location.href = `index.html?search=${encodeURIComponent(q)}`;
+        }
+      }
+    });
+
+    mobileHeaderSearchInput.addEventListener("input", (e) => {
+      const mainSearch = document.getElementById("search-input");
+      if (mainSearch) {
+        mainSearch.value = e.target.value;
+        mainSearch.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+  }
+
   // Mobile Hamburger Menu Logic
   const hamburgerBtn = document.getElementById("hamburger-btn");
   const mobileMenu = document.getElementById("mobile-menu");
@@ -780,6 +881,11 @@ function setupSharedEventListeners() {
   if (hamburgerBtn && mobileMenu) {
     hamburgerBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+      if (mobileSearchDrawer) {
+        mobileSearchDrawer.classList.remove("open");
+        mobileSearchToggleBtn?.classList.remove("active");
+        mobileSearchDrawer.setAttribute("aria-hidden", "true");
+      }
       const isOpen = mobileMenu.classList.toggle("open");
       hamburgerBtn.classList.toggle("open");
       hamburgerBtn.setAttribute("aria-expanded", isOpen);
