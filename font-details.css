@@ -2553,3 +2553,387 @@ section {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ============================================================
+   EDITORIAL TYPOGRAPHY SECTIONS (What it feels like, Where it belongs, Story)
+   ============================================================ */
+.hero-attribution-row {
+  margin-top: 0.85rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.hero-attribution-row strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.hero-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.hero-actions-row .cta-btn,
+.hero-actions-row .cta-icon-btn {
+  border-radius: 6px !important;
+  font-size: 0.88rem;
+  padding: 0.75rem 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.hero-fav-btn {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 6px !important;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.hero-fav-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* Pangram Selector Bar */
+.pangram-selector-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.pangram-bar-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.pangram-pills-list {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.pangram-pills-list::-webkit-scrollbar {
+  display: none;
+}
+
+.pangram-pill {
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 99px !important;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.pangram-pill:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.pangram-pill.active {
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border-color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* What does it feel like? — Grid */
+.editorial-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.editorial-feature-card {
+  border: 1px solid var(--border-color);
+  background: var(--card-bg-subtle);
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.editorial-feature-card:hover {
+  border-color: var(--text-muted);
+  transform: translateY(-2px);
+}
+
+.editorial-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.editorial-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.editorial-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+.editorial-card-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 0 0 0.85rem 0;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.editorial-card-body {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Where it belongs — Grid */
+.where-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.where-card {
+  border: 1px solid var(--border-color);
+  background: var(--card-bg-subtle);
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.where-card:hover {
+  border-color: var(--text-muted);
+  transform: translateY(-2px);
+}
+
+.where-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.where-card-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.where-card-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+.where-apps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.where-app-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.where-app-domain {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.where-app-desc {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.where-specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.where-spec-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.where-spec-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.where-spec-val {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Story Behind the Type */
+.story-container-card {
+  border: 1px solid var(--border-color);
+  background: var(--card-bg-subtle);
+  padding: 3rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.story-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.story-kicker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.story-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.story-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.story-attribution {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.story-lead-paragraph {
+  font-size: 1.15rem;
+  line-height: 1.75;
+  color: var(--text-primary);
+  max-width: 900px;
+  margin: 0;
+}
+
+/* Curated Source Banner */
+.cta-banner-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent-color);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.cta-banner-licensing-sub {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0.5rem auto 0;
+  line-height: 1.5;
+}
+
+.playground-editable-text:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Tablet & Mobile Overrides for new sections */
+@media (max-width: 900px) {
+  .editorial-cards-grid,
+  .where-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .story-container-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .story-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-actions-row {
+    width: 100%;
+  }
+
+  .hero-actions-row .cta-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}

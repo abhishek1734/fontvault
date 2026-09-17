@@ -121,6 +121,422 @@ function updateDynamicSEO(font) {
 }
 
 // Render dynamic sections
+// ============================================================
+// EDITORIAL HELPERS (Personality, Suitability, Story, Contextual CTAs)
+// ============================================================
+
+function getEditorialDescription(font) {
+  const desc = font.description || '';
+  const isGeneric = desc.toLowerCase().includes('high-grade professional typeface from the adobe fonts library') ||
+                    desc.toLowerCase().includes('highly crafted typographic specimen optimized for digital interfaces') ||
+                    !desc.trim();
+
+  if (!isGeneric) {
+    return desc;
+  }
+
+  const style = (font.style || font.category || 'Serif').toLowerCase();
+  const mood = (font.mood || 'Modern').toLowerCase();
+
+  if (style.includes('mono')) {
+    return 'A rigorously constructed monospaced typeface balancing mechanical consistency with visual rhythm. Features widened tabular spacing, open counters, and deliberate glyph distinctions tailored for code syntax, data-dense terminals, and technical interfaces.';
+  }
+  if (style.includes('script')) {
+    return 'A fluid calligraphic script capturing authentic hand motion, expressive entry strokes, and organic baseline cadence. Adds a refined human gesture to boutique packaging, invitations, and identity marks.';
+  }
+  if (style.includes('display') || mood.includes('bold') || mood.includes('loud')) {
+    return 'A high-impact display face characterized by authoritative weight, dramatic verticality, and tight kerning dynamics. Commands visual hierarchy across editorial mastheads, posters, and prominent campaign headlines.';
+  }
+  if (style.includes('serif')) {
+    if (mood.includes('elegant') || mood.includes('vintage') || mood.includes('formal')) {
+      return 'A distinguished serif typeface defined by graceful stroke modulation, balanced proportion, and bookish composure. Engineered for sustained reading comfort across editorial periodicals, literary publications, and fine branding.';
+    }
+    return 'A versatile contemporary serif combining classical proportion with crisp digital execution. Offers reliable legibility across long-form reading, sub-headings, and curated web publishing.';
+  }
+
+  // Sans-Serif
+  if (mood.includes('playful')) {
+    return 'A warm, approachable sans-serif crafted with inviting contours and friendly letter proportions. Softens digital interfaces while maintaining clarity across varied device resolutions.';
+  }
+  return 'A clean, rational sans-serif built with disciplined geometry and clear apertures. Designed to deliver uncompromised legibility and neutral structural clarity across responsive interfaces and complex design systems.';
+}
+
+function getTypographicPersonality(font) {
+  const style = (font.style || font.category || '').toLowerCase();
+  const mood = (font.mood || '').toLowerCase();
+  
+  if (style.includes('mono')) {
+    return {
+      voiceKicker: 'Visual Voice',
+      voiceTitle: 'Technical Precision & Structural Honesty',
+      voiceBody: 'Grounded in fixed-pitch metrics and disciplined tabular cadence. Operates with mechanical candor, eschewing decorative flair in favor of visual consistency and structured information hierarchy.',
+      strokeKicker: 'Stroke Dynamics',
+      strokeTitle: 'Standardized Rhythm & Tabular Apertures',
+      strokeBody: 'Each character occupies an identical horizontal bounding box. Widened glyphs for traditionally narrow letters and compact capitals maintain consistent optical weight across code lines.',
+      microKicker: 'Micro-Typography',
+      microTitle: 'Differentiated Glyphs & Technical Operators',
+      microBody: 'Features pronounced punctuation marks, distinct zeros with internal dots or slashes, and generously scaled mathematical operators to eliminate ambiguity during extended reading sessions.'
+    };
+  }
+  
+  if (style.includes('script')) {
+    return {
+      voiceKicker: 'Visual Voice',
+      voiceTitle: 'Calligraphic Gesture & Organic Fluidity',
+      voiceBody: 'Celebrates the cadence of the human hand in motion. Flowing terminal curves and dynamic angle variations infuse headlines and packaging with artisanal warmth and personal presence.',
+      strokeKicker: 'Stroke Dynamics',
+      strokeTitle: 'Dynamic Pressure & Modulated Modulation',
+      strokeBody: 'Emulates varying tool pressure, transitioning effortlessly from bold downstrokes into delicate, hairline connecting entry strokes that maintain rhythm across phrases.',
+      microKicker: 'Micro-Typography',
+      microTitle: 'Contextual Baseline Rhythm & Ligatures',
+      microBody: 'Carefully engineered entry swashes and baseline variations prevent visual stiffness, ensuring that successive character connections feel spontaneous rather than mechanical.'
+    };
+  }
+
+  if (style.includes('display') || mood.includes('loud') || mood.includes('bold')) {
+    return {
+      voiceKicker: 'Visual Voice',
+      voiceTitle: 'Monumental Presence & Architectural Drama',
+      voiceBody: 'Formulated to seize optical hierarchy at scale. Confident silhouettes and assertive proportions give words immediate physical authority in mastheads, billboards, and hero treatments.',
+      strokeKicker: 'Stroke Dynamics',
+      strokeTitle: 'Extreme Contrast & Controlled Tension',
+      strokeBody: 'Exaggerated weight distribution creates high-energy optical tension. Solid vertical stems dominate negative space, while compact counter-forms retain punchy legibility at grand display sizes.',
+      microKicker: 'Micro-Typography',
+      microTitle: 'Sculptural Terminals & Compact Kerning',
+      microBody: 'Tightly drawn letter-spacing allows glyphs to lock together seamlessly into rhythmic typographic blocks, generating exceptional headline impact per square centimeter of canvas.'
+    };
+  }
+
+  if (style.includes('serif')) {
+    if (mood.includes('elegant') || mood.includes('vintage') || mood.includes('formal')) {
+      return {
+        voiceKicker: 'Visual Voice',
+        voiceTitle: 'Literary Gravitas & Historical Equilibrium',
+        voiceBody: 'Reflects centuries of publishing tradition through intellectual calm and measured poise. Its proportioned letterforms evoke editorial prestige, literary depth, and quiet authority.',
+        strokeKicker: 'Stroke Dynamics',
+        strokeTitle: 'Refined Modulation & Axial Bias',
+        strokeBody: 'Features pronounced stroke modulation with vertical or subtly angled stress. Counter-forms are optically tuned to retain internal illumination, softening digital screen glare.',
+        microKicker: 'Micro-Typography',
+        microTitle: 'Bracketed Serifs & Proportional Numerals',
+        microBody: 'Delicately bracketed serifs anchor the eye along reading baselines, reducing fatigue during long-form immersion. Nuanced punctuation marks add rhythmic polish to continuous prose.'
+      };
+    } else {
+      return {
+        voiceKicker: 'Visual Voice',
+        voiceTitle: 'Transitional Balance & Modern Structure',
+        voiceBody: 'Bridges classical book typography with modern editorial clarity. Strikes a refined balance between functional legibility and distinctive letterform personality.',
+        strokeKicker: 'Stroke Dynamics',
+        strokeTitle: 'Even Optical Density & Open Apertures',
+        strokeBody: 'Moderate stroke contrast provides crisp definition without overwhelming digital displays. Generous counters ensure interior letter shapes remain distinct across resolutions.',
+        microKicker: 'Micro-Typography',
+        microTitle: 'Balanced X-Height & Robust Terminals',
+        microBody: 'A calibrated x-height supports effortless reading at intermediate point sizes, while finely sculpted terminals lend a touch of contemporary craft to every headline.'
+      };
+    }
+  }
+
+  // Default: Sans-Serif
+  if (mood.includes('playful')) {
+    return {
+      voiceKicker: 'Visual Voice',
+      voiceTitle: 'Humanist Warmth & Welcoming Rhythm',
+      voiceBody: 'Softens digital interactions through rounded contours, generous proportions, and an approachable character voice designed to make applications feel friendly and intuitive.',
+      strokeKicker: 'Stroke Dynamics',
+      strokeTitle: 'Low Contrast & Fluid Connections',
+      strokeBody: 'Near-monolinear strokes keep visual weight consistent, while subtle smoothing at junction intersections eliminates distracting dark spots in body paragraphs.',
+      microKicker: 'Micro-Typography',
+      microTitle: 'Open Counters & High Legibility',
+      microBody: 'Wide open counters and unconstrained apertures ensure instant letter recognition even at small sizes on mobile devices and high-density screens.'
+    };
+  }
+
+  return {
+    voiceKicker: 'Visual Voice',
+    voiceTitle: 'Rational Geometry & Neutral Clarism',
+    voiceBody: 'Operates as an invisible, transparent vessel for visual communication. Clean, objective letter geometry projects modernism and systemic clarity across interfaces.',
+    strokeKicker: 'Stroke Dynamics',
+    strokeTitle: 'Disciplined Monolinear Uniformity',
+    strokeBody: 'Maintains uniform stroke weight with subtle optical thinning at stem intersections to eliminate visual bloat, keeping paragraph texture clean and evenly distributed.',
+    microKicker: 'Micro-Typography',
+    microTitle: 'Elevated X-Height & Clear Disambiguation',
+    microBody: 'A tall x-height maximizes legibility across responsive screens, while tailored differences between characters like lowercase "l" and uppercase "I" prevent reading errors.'
+  };
+}
+
+function getWhereItBelongs(font) {
+  const style = (font.style || font.category || '').toLowerCase();
+  const mood = (font.mood || '').toLowerCase();
+
+  if (style.includes('mono')) {
+    return {
+      environments: [
+        { domain: 'Code Editors & Developer Tools', desc: 'Syntax highlighting, terminal interfaces, and developer dashboard utilities requiring exact vertical glyph alignment.' },
+        { domain: 'Tabular Financial Interfaces', desc: 'Accounting ledgers, cryptocurrency tickers, and metrics tables where numerical digits must line up across rows.' },
+        { domain: 'Technical Publications & Specs', desc: 'Engineering documentation, architecture diagrams, and system manuals communicating technical precision.' }
+      ],
+      scales: [
+        { label: 'Code & Tabular Data', val: '12px — 15px (Calibrated line spacing for effortless multi-line scanning)' },
+        { label: 'Terminal & Command Heads', val: '16px — 24px (Distinct monospaced presence for technical lead text)' },
+        { label: 'Branding & Monospace Display', val: '28px — 64px (High-contrast tech identity and brutalist poster titles)' }
+      ],
+      readability: [
+        { label: 'Tracking Parameter', val: 'Keep tracking at 0.00em. Expanding or contracting fixed-pitch metrics disrupts tabular harmony.' },
+        { label: 'Leading Recommendation', val: '1.5x to 1.7x for continuous source code blocks; 1.25x for compact table cells.' },
+        { label: 'Pairing Strategy', val: 'Pairs seamlessly with neutral grotesque sans-serifs (Inter, Satoshi) for surrounding UI chrome.' }
+      ]
+    };
+  }
+
+  if (style.includes('script')) {
+    return {
+      environments: [
+        { domain: 'Artisanal & Luxury Packaging', desc: 'Wine labels, organic cosmetic packaging, and heritage goods seeking tactile bespoke craftsmanship.' },
+        { domain: 'Invitations & Brand Signatures', desc: 'Ceremonial invitations, signature logotypes, and hospitality identity touchpoints.' },
+        { domain: 'Editorial Accent Elements', desc: 'Pull quotes, chapter headers, and decorative accents contrasting against austere body columns.' }
+      ],
+      scales: [
+        { label: 'Display Titles & Marks', val: '36px — 80px (Preserves delicate hairline swashes and character loops)' },
+        { label: 'Sub-Headings & Names', val: '22px — 32px (Ensure ample line spacing to avoid ascender-descender collision)' },
+        { label: 'Body Text Boundary', val: 'Not recommended for multi-sentence body text; reserve exclusively for display accents.' }
+      ],
+      readability: [
+        { label: 'Tracking Parameter', val: 'Strictly 0.00em tracking. Manual kerning changes can detach cursive stroke connections.' },
+        { label: 'Leading Recommendation', val: '1.4x to 1.8x to accommodate sweeping swashes and exuberant ascenders.' },
+        { label: 'Pairing Strategy', val: 'Pair with quiet, restrained serif or sans-serif companions that yield center stage to the script.' }
+      ]
+    };
+  }
+
+  if (style.includes('display') || mood.includes('bold') || mood.includes('loud')) {
+    return {
+      environments: [
+        { domain: 'Editorial Mastheads & Covers', desc: 'Magazine front covers, cultural posters, and bold publication mastheads demanding instant visual gravity.' },
+        { domain: 'High-Impact Brand Campaigns', desc: 'Billboard hero statements, streetwear identity systems, and assertive exhibition signage.' },
+        { domain: 'Digital Hero Titles', desc: 'Above-the-fold website landing page headlines establishing immediate brand character.' }
+      ],
+      scales: [
+        { label: 'Headline & Hero Scales', val: '48px — 160px (Optimal structural density and stroke clarity)' },
+        { label: 'Section Decks', val: '24px — 36px (Maintain tight line leading for compact graphic presence)' },
+        { label: 'Continuous Text Boundary', val: 'Avoid using for body copy; high contrast and heavy weight hinder continuous reading.' }
+      ],
+      readability: [
+        { label: 'Tracking Parameter', val: '-0.01em to -0.02em at large display sizes; loosen to +0.03em if set in all-caps.' },
+        { label: 'Leading Recommendation', val: '0.95x to 1.1x for tight, punchy headlines without awkward gaps.' },
+        { label: 'Pairing Strategy', val: 'Pair with transparent, highly readable sans-serif body fonts like Inter, Work Sans, or Lato.' }
+      ]
+    };
+  }
+
+  if (style.includes('serif')) {
+    return {
+      environments: [
+        { domain: 'Literary Journals & Publishing', desc: 'In-depth essays, cultural criticism, and book typography where reader immersion is paramount.' },
+        { domain: 'Luxury & Cultural Identity', desc: 'Museum identity systems, haute couture branding, and prestige editorial publications.' },
+        { domain: 'Corporate Annuals & Whitepapers', desc: 'Executive briefings, legal publications, and institutional reports conveying sober credibility.' }
+      ],
+      scales: [
+        { label: 'Display & Editorial Titles', val: '38px — 96px (Reveals nuanced stroke modulation and elegant serifs)' },
+        { label: 'Section Decks & Decks', val: '20px — 28px (Clear hierarchy with dignified typographic cadence)' },
+        { label: 'Long-Form Body Copy', val: '15px — 18px (Gentle baseline anchoring for relaxed, prolonged reading sessions)' }
+      ],
+      readability: [
+        { label: 'Tracking Parameter', val: '0.00em for body text; apply subtle negative tracking (-0.01em) on large display headlines.' },
+        { label: 'Leading Recommendation', val: '1.5x to 1.65x for editorial body paragraphs to let line rhythm breathe.' },
+        { label: 'Pairing Strategy', val: 'Pairs harmoniously with neutral grotesque sans-serifs or geometric companions for metadata and UI.' }
+      ]
+    };
+  }
+
+  // Default: Sans-Serif
+  return {
+    environments: [
+      { domain: 'Complex Application Interfaces', desc: 'SaaS dashboards, responsive mobile apps, and multi-platform design systems with high data density.' },
+      { domain: 'Modern Brand Identity Programs', desc: 'Omnichannel brand collateral, technology marketing, and crisp consumer packaging.' },
+      { domain: 'Wayfinding & Ambient Signage', desc: 'High-legibility directional signage, kiosks, and responsive heads-up displays.' }
+    ],
+    scales: [
+      { label: 'Interface Headlines', val: '28px — 64px (Clean modern impact without gratuitous ornamentation)' },
+      { label: 'Sub-Headings & Card Titles', val: '18px — 24px (Crisp definition across varied contrast ratios)' },
+      { label: 'Continuous UI Body & Labels', val: '13px — 16px (Uncompromised legibility across micro-screens and desktop viewports)' }
+    ],
+    readability: [
+      { label: 'Tracking Parameter', val: '0.00em for body; subtle positive tracking (+0.01em to +0.02em) for small caps and micro-labels.' },
+      { label: 'Leading Recommendation', val: '1.4x to 1.55x for multi-line UI text; 1.2x for concise multi-line titles.' },
+      { label: 'Pairing Strategy', val: 'Pairs with expressive display serifs (Playfair, Instrument Serif) or characterful editorial typefaces.' }
+    ]
+  };
+}
+
+function getVerifiedStory(font) {
+  const desc = (font.description || '').toLowerCase();
+  const name = (font.name || '').toLowerCase();
+  const id = (font.id || '').toLowerCase();
+
+  const verifiedHistories = {
+    'libre-baskerville': {
+      title: 'Rooted in 1941 Metal Type Heritage',
+      attribution: 'Historical Heritage · Impallari Type & American Type Founders',
+      text: 'Libre Baskerville is an open-source revival optimized specifically for reading at small body sizes on modern screens. Its structural anatomy traces directly to the American Type Founders Baskerville cut of 1941, featuring a taller x-height, wider counter-forms, and slightly reduced stroke contrast to maintain legibility in digital reading environments.'
+    },
+    'impact-local': {
+      title: 'Born in 1965 Industrial Britain',
+      attribution: 'Design History · Geoffrey Lee & Stephenson Blake',
+      text: 'Designed by Geoffrey Lee in 1965 and cut by the Sheffield foundry Stephenson Blake, Impact was engineered with an ultra-thick stroke weight and razor-thin apertures to command instant attention on posters and billboards. Its extreme x-height and narrow set width make it an enduring icon of 20th-century display typography.'
+    },
+    'coolvetica': {
+      title: 'A Homage to 1970s Custom Logo Culture',
+      attribution: 'Design History · Ray Larabie & Typodermic',
+      text: 'Designed by Ray Larabie in 1999, Coolvetica recreates the custom-modified Helvetica letterforms that dominated North American retail logos and corporate signage throughout the 1970s. It features unusually tight tracking, rounded curls, and distinct geometric curls that evoke the playful warmth of vintage American commerce.'
+    },
+    'coolvetica-local': {
+      title: 'A Homage to 1970s Custom Logo Culture',
+      attribution: 'Design History · Ray Larabie & Typodermic',
+      text: 'Designed by Ray Larabie in 1999, Coolvetica recreates the custom-modified Helvetica letterforms that dominated North American retail logos and corporate signage throughout the 1970s. It features unusually tight tracking, rounded curls, and distinct geometric curls that evoke the playful warmth of vintage American commerce.'
+    },
+    'inter': {
+      title: 'Crafted from the Ground Up for Computer Displays',
+      attribution: 'Digital Typography · Rasmus Andersson',
+      text: 'Inter began as an ambitious research project by Swedish designer Rasmus Andersson to create a typeface specifically optimized for high-density computer screens. With its tall x-height, wide counter-forms, and specialized micro-spacing, Inter excels at clarifying complex digital user interfaces across screen sizes from micro-watches to massive monitors.'
+    },
+    'cinzel': {
+      title: 'Echoes of Classical First-Century Epigraphy',
+      attribution: 'Classical Origins · Natanael Gama',
+      text: 'Cinzel is drawn from classical Roman epigraphy of the first century CE, observing the monumental proportions recorded on the Trajan Column in Rome. Natanael Gama re-envisioned these ancient chiseled forms with modern digital precision, giving the letterforms timeless ceremonial dignity for luxury packaging and editorial headlines.'
+    },
+    'jetbrains-mono': {
+      title: 'Engineered for Cognitive Endurance',
+      attribution: 'Developer Typography · Philipp Nurullin & JetBrains',
+      text: 'JetBrains Mono was created through deep analysis of developer eye fatigue during extended programming sessions. With widened character widths, asymmetric oval counters, and carefully balanced code ligatures, it minimizes cognitive friction when scanning complex, nested codebases.'
+    },
+    'montserrat': {
+      title: 'Rescuing Buenos Aires Urban Heritage',
+      attribution: 'Urban Documentation · Julieta Ulanovsky',
+      text: 'Designer Julieta Ulanovsky launched the Montserrat project to document and preserve the vernacular typography found on historic signboards, storefronts, and cafe windows in the central Montserrat neighborhood of Buenos Aires before urban redevelopment wiped them away.'
+    },
+    'space-grotesk': {
+      title: 'From Fixed-Pitch to Proportional Space',
+      attribution: 'Typographic Evolution · Florian Karsten',
+      text: 'Space Grotesk evolved directly from Colophon’s Space Mono. Florian Karsten adapted the monospaced letterforms into a proportional grotesque, preserving idiosyncratic technical quirks while enabling smooth horizontal flow for headlines and editorial paragraphs.'
+    },
+    'syne': {
+      title: 'Bespoke Identity for the French Avant-Garde',
+      attribution: 'Art Direction · Bonjour Monde',
+      text: 'Originally commissioned in 2017 for the Synesthésie art and contemporary culture association in Saint-Denis, France, Syne was designed to shift smoothly between quiet, structural light weights and radical, hyper-expressive bold weights that redefine display proportions.'
+    },
+    'playfair-display': {
+      title: 'Influenced by the Enlightenment Press',
+      attribution: 'Type History · Claus Eggers Sørensen',
+      text: 'Playfair Display draws inspiration from the transitional typefaces developed during the European Enlightenment, particularly John Baskerville’s work in Birmingham and the emergence of modern punch-cutting techniques. Its dramatic contrast and delicate ball terminals evoke the prestige of early printed periodicals.'
+    },
+    'oswald': {
+      title: 'Re-imagining the Alternate Gothic Aesthetic',
+      attribution: 'Revival Design · Vernon Adams',
+      text: 'Oswald is a reworking of the classic style historically represented by the Alternate Gothic typefaces designed by Morris Fuller Benton in the early 1900s. Vernon Adams redesigned the characters for digital screens, tightening letterspacing and optimizing apertures for crisp rendering.'
+    },
+    'barlow': {
+      title: 'Drawn from California Highway Signage',
+      attribution: 'Signage & Public Design · Jeremy Tribby',
+      text: 'Barlow is inspired by the visual style of the California public highway system and municipal signboards. Its slightly rounded low-contrast contours and clean grotesque proportions reflect the utilitarian clarity of West Coast transportation infrastructure.'
+    },
+    'righteous': {
+      title: 'Inspired by Mid-Century Art Deco Signage',
+      attribution: 'Retro Display Design · Astigmatic',
+      text: 'Righteous draws from mid-20th century American chrome signage and neon theatre marquees. By infusing grid-based Art Deco geometry with modern digital curve smoothing, it captures the optimism of mid-century commercial lettering.'
+    },
+    'pacifico': {
+      title: 'Echoes of 1950s American Surf Culture',
+      attribution: 'Vernacular Script · Vernon Adams',
+      text: 'Pacifico was inspired by the casual sign-painting and surfboard decal lettering popular along the American coastline during the 1950s and 1960s. Its fluid, continuous brush strokes create a cheerful, relaxed aesthetic.'
+    },
+    'cormorant-garamond': {
+      title: 'A High-Resolution Display Tribute to Claude Garamont',
+      attribution: 'Historical Tribute · Christian Thalmann',
+      text: 'Cormorant Garamond is Christian Thalmann’s ambitious open-source tribute to the 16th-century French punchcutter Claude Garamont. Rather than scaling a text face up, Cormorant was designed specifically for large display scales, preserving razor-sharp serifs and expressive calligraphic tension.'
+    }
+  };
+
+  for (const [key, val] of Object.entries(verifiedHistories)) {
+    if (id === key || id.startsWith(key) || name.includes(key.replace(/-/g, ' '))) {
+      return { hasStory: true, ...val };
+    }
+  }
+
+  const isGenericTemplate = desc.includes('high-grade professional typeface from the adobe fonts library') ||
+                            desc.includes('highly crafted typographic specimen optimized for digital interfaces');
+
+  if (!isGenericTemplate) {
+    if (desc.includes('1941') || desc.includes('1965') || desc.includes('1970s') || desc.includes('buenos aires') || desc.includes('art center in france') || desc.includes('programming ligatures')) {
+      return {
+        hasStory: true,
+        title: `Design Origins of ${font.name}`,
+        attribution: `${font.foundry || font.designer || 'Design Archives'} · Historical Notes`,
+        text: font.description
+      };
+    }
+  }
+
+  return { hasStory: false, title: '', attribution: '', text: '' };
+}
+
+function getContextualCTA(font) {
+  const provider = (font.provider || '').toLowerCase();
+  const url = font.downloadUrl || '';
+
+  if (provider === 'google' || url.includes('fonts.google.com')) {
+    return {
+      label: 'Get on Google Fonts',
+      floatingLabel: 'Get Font',
+      subtext: 'Open Font License (OFL) · Available for 100% free commercial and personal use.',
+      badge: 'Open Font License',
+      url: url && url !== '#' ? url : `https://fonts.google.com/specimen/${encodeURIComponent(font.name)}`,
+      icon: 'external-link',
+      isExternal: true
+    };
+  }
+  if (provider === 'fontshare' || url.includes('fontshare.com')) {
+    return {
+      label: 'Download on Fontshare',
+      floatingLabel: 'Get Font',
+      subtext: 'Indian Type Foundry (ITF) Free License · 100% free for commercial use.',
+      badge: 'ITF Free License',
+      url: url && url !== '#' ? url : `https://www.fontshare.com/fonts/${font.id || font.slug || font.name.toLowerCase().replace(/\s+/g, '-')}`,
+      icon: 'download',
+      isExternal: true
+    };
+  }
+  if (provider === 'adobe' || url.includes('fonts.adobe.com') || font.adobeKitId) {
+    return {
+      label: 'Explore on Adobe Fonts',
+      floatingLabel: 'Explore License',
+      subtext: 'Included with Adobe Creative Cloud subscription · Web & desktop publishing rights.',
+      badge: 'Creative Cloud License',
+      url: url && url !== '#' ? url : `https://fonts.adobe.com/fonts/${font.id || font.slug || font.name.toLowerCase().replace(/\s+/g, '-')}`,
+      icon: 'external-link',
+      isExternal: true
+    };
+  }
+  if (provider === 'dafont' || url.includes('dafont.com')) {
+    return {
+      label: 'Visit DaFont Source',
+      floatingLabel: 'Visit Source',
+      subtext: 'Author-distributed typeface · Check individual license terms for commercial usage.',
+      badge: 'Author License',
+      url: url && url !== '#' ? url : 'https://www.dafont.com/',
+      icon: 'external-link',
+      isExternal: true
+    };
+  }
+  return {
+    label: 'Download Font Files',
+    floatingLabel: 'Download',
+    subtext: 'Direct font package download with webfont and desktop distribution formats.',
+    badge: 'Direct Download',
+    url: url || '#',
+    icon: 'download',
+    isExternal: false
+  };
+}
+
 function renderFontDetails(font) {
   const root = document.getElementById('font-detail-root');
   const fam = font.cssFamily || `'${font.name}'`;
@@ -128,6 +544,12 @@ function renderFontDetails(font) {
   const weights = getFontWeights(font);
   const defaultWeight = weights.includes(400) ? 400 : weights[0];
   
+  const cta = getContextualCTA(font);
+  const personality = getTypographicPersonality(font);
+  const where = getWhereItBelongs(font);
+  const story = getVerifiedStory(font);
+  const editorialDesc = getEditorialDescription(font);
+
   // Generate styles grid preview cards HTML
   const stylesHtml = weights.map(w => `
     <div class="style-card cascade-item" data-weight="${w}">
@@ -178,46 +600,84 @@ function renderFontDetails(font) {
     `;
   }).join('');
 
+  // Story HTML conditional block
+  const storyHtml = story.hasStory ? `
+    <!-- 4.5. STORY BEHIND THE TYPE (Conditional on verified history) -->
+    <section class="story-section" id="story">
+      <div class="container">
+        <div class="story-container-card cascade-item">
+          <div class="story-header-row">
+            <div class="story-kicker-wrap">
+              <span class="story-kicker">Story Behind the Type</span>
+              <h3 class="story-title">${story.title}</h3>
+            </div>
+            <span class="story-attribution">${story.attribution}</span>
+          </div>
+          <p class="story-lead-paragraph">${story.text}</p>
+        </div>
+      </div>
+    </section>
+  ` : '';
+
   // Main UI skeleton
   root.innerHTML = `
     <!-- Ambient mesh background & noise filter -->
     <div class="mesh-glow"></div>
     <div class="noise-overlay"></div>
 
-    <!-- 1. CINEMATIC HERO -->
+    <!-- 1. EDITORIAL SPECIMEN HERO -->
     <section class="hero-section" id="hero" style="padding-top: 4rem;">
       <div class="container hero-wrapper">
         <div class="hero-foundry-wrapper" style="display: flex; justify-content: center; margin-bottom: 0.75rem;">
-          <span class="hero-foundry-badge">${font.foundry || font.designer || 'Independent Foundry'} &middot; ${font.style || font.category || 'Serif'}</span>
+          <span class="hero-foundry-badge">Curated Typography Index &middot; ${font.style || font.category || 'Serif'}</span>
         </div>
 
         <div class="hero-font-title-wrapper" style="margin-top: 1.5rem;">
           <h1 class="hero-font-title" style="font-family: ${fam}, serif;">${font.name}</h1>
         </div>
+
+        <div class="hero-attribution-row">
+          Designed by <strong>${font.designer || 'Independent Designer'}</strong>${font.foundry ? ` &middot; Published by <strong>${font.foundry}</strong>` : ''}${font.year && font.year !== 'N/A' ? ` &middot; ${font.year}` : ''}
+        </div>
+
         <div class="hero-tags-pill-row">
           <span class="hero-tag-pill">${font.style || font.category || 'Serif'}</span>
+          <span class="hero-tag-pill">${font.mood || 'Refined'}</span>
           <span class="hero-tag-pill">${font.price || 'Free Font'}</span>
           <span class="hero-tag-pill">${weights.length} Weights</span>
           ${font.isVariable || font.name.toLowerCase().includes('variable') ? '<span class="hero-tag-pill accent-tag">Variable</span>' : ''}
         </div>
 
         <p class="hero-font-description">
-          ${font.description || 'A highly crafted typographic specimen optimized for digital interfaces, editorial layout, and modern brand design languages.'}
+          ${editorialDesc}
         </p>
 
+        <!-- Direct Editorial CTAs -->
+        <div class="hero-actions-row">
+          <button class="cta-btn cta-secondary" onclick="document.getElementById('playground').scrollIntoView({ behavior: 'smooth' })">
+            <i data-lucide="compass" style="width: 15px; height: 15px;"></i> Explore Specimen
+          </button>
+          <button class="cta-btn cta-primary" id="btn-hero-download">
+            <i data-lucide="${cta.icon}" style="width: 15px; height: 15px;"></i> ${cta.label}
+          </button>
+          <button class="hero-fav-btn" id="btn-hero-favorite" onclick="toggleFavoriteState('${font.id}', this)" title="Save to Vault">
+            <i data-lucide="heart" style="width: 16px; height: 16px;"></i>
+          </button>
+        </div>
+
         <!-- Scroll down indicator -->
-        <div class="hero-scroll-indicator" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 5rem; cursor: pointer; animation: fade-in-indicator 1.5s ease-out;" onclick="document.getElementById('playground').scrollIntoView({ behavior: 'smooth' })">
+        <div class="hero-scroll-indicator" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 4.5rem; cursor: pointer; animation: fade-in-indicator 1.5s ease-out;" onclick="document.getElementById('playground').scrollIntoView({ behavior: 'smooth' })">
           <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em;">Scroll Down</span>
           <i data-lucide="arrow-down" style="width: 16px; height: 16px; color: var(--accent-color); animation: arrow-bounce 2s infinite;"></i>
         </div>
       </div>
     </section>
 
-    <!-- 2. SPECIMEN PLAYGROUND (Highlight) -->
+    <!-- 2. THE SPECIMEN (Interactive Playground) -->
     <section class="playground-section" id="playground">
       <div class="container">
-        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Interactive Playground</h2>
-        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Customize design axes, adjust variable sliders, alignment, or canvas colors to see the letters react.</p>
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">The Specimen</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 2.5rem 0; font-size: 1.1rem; max-width: 650px;">An interactive testing canvas. Tune scale, weight distribution, letter spacing, and surface contrast.</p>
 
         <div class="playground-grid">
           <!-- Left: Big Specimen Preview -->
@@ -226,8 +686,18 @@ function renderFontDetails(font) {
               <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;" id="p-canvas-label">Active specs</span>
               <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;" id="p-canvas-font-name">${font.name}</span>
             </div>
-            <div class="playground-editable-text" id="p-editable-text" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-weight: ${defaultWeight};">
-              The quick brown fox jumps over the lazy dog.
+            <div class="playground-editable-text" id="p-editable-text" contenteditable="true" spellcheck="false" data-placeholder="Type something worth reading..." style="font-family: ${fam}, serif; font-weight: ${defaultWeight};">Type something worth reading...</div>
+          </div>
+
+          <!-- Pangram & Quotes Quick Selector Bar -->
+          <div class="pangram-selector-bar">
+            <span class="pangram-bar-label">Pangrams &amp; Quotes:</span>
+            <div class="pangram-pills-list" id="pangram-pills-container">
+              <button type="button" class="pangram-pill active" data-text="Type something worth reading...">Worth reading</button>
+              <button type="button" class="pangram-pill" data-text="A quick movement of the hands, and the letters took flight across the page.">The quick movement</button>
+              <button type="button" class="pangram-pill" data-text="Typography is the craft of endowing human language with durable visual form.">Craft of language</button>
+              <button type="button" class="pangram-pill" data-text="Sphinx of black quartz, judge my vow.">Sphinx of quartz</button>
+              <button type="button" class="pangram-pill" data-text="Handgloves &amp; Hamburgevons 123">Hamburgevons</button>
             </div>
           </div>
 
@@ -268,7 +738,7 @@ function renderFontDetails(font) {
             <!-- Font Size -->
             <div class="control-group">
               <div class="control-header">
-                <span class="control-label">Size</span>
+                <span class="control-label">Scale (Size)</span>
                 <span class="control-value" id="val-size">64px</span>
               </div>
               <input type="range" class="custom-range" id="slider-size" min="16" max="180" value="64">
@@ -277,7 +747,7 @@ function renderFontDetails(font) {
             <!-- Font Weight -->
             <div class="control-group">
               <div class="control-header">
-                <span class="control-label">Weight</span>
+                <span class="control-label">Optical Weight</span>
                 <span class="control-value" id="val-weight">${defaultWeight}</span>
               </div>
               <input type="range" class="custom-range" id="slider-weight" min="100" max="900" step="100" value="${defaultWeight}">
@@ -286,7 +756,7 @@ function renderFontDetails(font) {
             <!-- Letter Spacing -->
             <div class="control-group">
               <div class="control-header">
-                <span class="control-label">Letter Spacing</span>
+                <span class="control-label">Tracking (Letter Spacing)</span>
                 <span class="control-value" id="val-tracking">0.00em</span>
               </div>
               <input type="range" class="custom-range" id="slider-tracking" min="-0.1" max="0.3" step="0.01" value="0">
@@ -295,7 +765,7 @@ function renderFontDetails(font) {
             <!-- Line Height -->
             <div class="control-group">
               <div class="control-header">
-                <span class="control-label">Line Height</span>
+                <span class="control-label">Leading (Line Height)</span>
                 <span class="control-value" id="val-leading">1.2</span>
               </div>
               <input type="range" class="custom-range" id="slider-leading" min="0.8" max="2.5" step="0.1" value="1.2">
@@ -332,7 +802,7 @@ function renderFontDetails(font) {
 
             <!-- Text Transform -->
             <div class="control-group">
-              <span class="control-label">Text Transform</span>
+              <span class="control-label">Casing</span>
               <div class="segmented-control" id="seg-transform">
                 <button class="segment-btn active" data-transform="none">None</button>
                 <button class="segment-btn" data-transform="uppercase">Caps</button>
@@ -342,7 +812,8 @@ function renderFontDetails(font) {
 
             <!-- Canvas Theme Picker -->
             <div class="control-group">
-              <span class="control-label">Theme</span>              <div class="color-theme-picker" id="color-theme-picker" style="display: flex; gap: 0.5rem;">
+              <span class="control-label">Canvas Contrast</span>
+              <div class="color-theme-picker" id="color-theme-picker" style="display: flex; gap: 0.5rem;">
                 <div class="color-circle active" data-bg="#F9F9F9" data-text="#111" style="background-color: #F9F9F9; border: 1px solid #ddd; width: 24px; height: 24px; cursor: pointer;"></div>
                 <div class="color-circle" data-bg="#111" data-text="#FFF" style="background-color: #111; width: 24px; height: 24px; cursor: pointer;"></div>
                 <div class="color-circle" data-bg="rgba(var(--accent-rgb), 0.05)" data-text="var(--accent-color)" style="background-color: rgba(255, 59, 0, 0.2); width: 24px; height: 24px; cursor: pointer;"></div>
@@ -477,7 +948,108 @@ function renderFontDetails(font) {
       </div>
     </section>
 
-    <!-- 3. STYLE FAMILY DETAILS -->
+    <!-- 3. WHAT DOES IT FEEL LIKE? (Typographic Personality) -->
+    <section class="editorial-feel-section" id="feel">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">What does it feel like?</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 3.5rem 0; font-size: 1.1rem; max-width: 650px;">Typographic character, stroke rhythm, and emotional resonance.</p>
+
+        <div class="editorial-cards-grid">
+          <!-- Card 1: Visual Voice -->
+          <div class="editorial-feature-card cascade-item">
+            <div class="editorial-card-header">
+              <span class="editorial-kicker">${personality.voiceKicker}</span>
+              <i data-lucide="sparkles" class="editorial-icon"></i>
+            </div>
+            <h3 class="editorial-card-title">${personality.voiceTitle}</h3>
+            <p class="editorial-card-body">${personality.voiceBody}</p>
+          </div>
+
+          <!-- Card 2: Stroke Dynamics -->
+          <div class="editorial-feature-card cascade-item">
+            <div class="editorial-card-header">
+              <span class="editorial-kicker">${personality.strokeKicker}</span>
+              <i data-lucide="activity" class="editorial-icon"></i>
+            </div>
+            <h3 class="editorial-card-title">${personality.strokeTitle}</h3>
+            <p class="editorial-card-body">${personality.strokeBody}</p>
+          </div>
+
+          <!-- Card 3: Micro-Typography -->
+          <div class="editorial-feature-card cascade-item">
+            <div class="editorial-card-header">
+              <span class="editorial-kicker">${personality.microKicker}</span>
+              <i data-lucide="eye" class="editorial-icon"></i>
+            </div>
+            <h3 class="editorial-card-title">${personality.microTitle}</h3>
+            <p class="editorial-card-body">${personality.microBody}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. WHERE IT BELONGS (Suitability & Scale) -->
+    <section class="where-it-belongs-section" id="where">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Where it belongs</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 3.5rem 0; font-size: 1.1rem; max-width: 650px;">Recommended environments, scale boundaries, and layout pairing rationale.</p>
+
+        <div class="where-cards-grid">
+          <!-- Card 1: Recommended Environments -->
+          <div class="where-card cascade-item">
+            <div class="where-card-header">
+              <span class="where-card-kicker">Ideal Applications</span>
+              <i data-lucide="layout" class="where-card-icon"></i>
+            </div>
+            <div class="where-apps-list">
+              ${where.environments.map(env => `
+                <div class="where-app-item">
+                  <span class="where-app-domain">${env.domain}</span>
+                  <span class="where-app-desc">${env.desc}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Card 2: Scale Boundaries -->
+          <div class="where-card cascade-item">
+            <div class="where-card-header">
+              <span class="where-card-kicker">Scale Boundaries</span>
+              <i data-lucide="sliders-horizontal" class="where-card-icon"></i>
+            </div>
+            <div class="where-specs-list">
+              ${where.scales.map(s => `
+                <div class="where-spec-row">
+                  <span class="where-spec-label">${s.label}</span>
+                  <span class="where-spec-val">${s.val}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Card 3: Readability & Pairing -->
+          <div class="where-card cascade-item">
+            <div class="where-card-header">
+              <span class="where-card-kicker">Readability &amp; Pairing</span>
+              <i data-lucide="book-open" class="where-card-icon"></i>
+            </div>
+            <div class="where-specs-list">
+              ${where.readability.map(r => `
+                <div class="where-spec-row">
+                  <span class="where-spec-label">${r.label}</span>
+                  <span class="where-spec-val">${r.val}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4.5. STORY BEHIND THE TYPE (Conditional on verified history) -->
+    ${storyHtml}
+
+    <!-- 5. STYLES & WEIGHTS -->
     <section class="styles-section" id="styles">
       <div class="container">
         <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Styles &amp; Weights</h2>
@@ -488,11 +1060,11 @@ function renderFontDetails(font) {
       </div>
     </section>
 
-    <!-- 3.5. SPECIMEN CHARACTER & BODY SHOWCASE -->
+    <!-- 6. THE COMPLETE SET (Character & Layout Showcase) -->
     <section class="specimen-showcase-section" id="specimen-showcase">
       <div class="container">
-        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Character &amp; Layout Showcase</h2>
-        <p style="color: var(--text-secondary); margin: 0 0 2.5rem 0; font-size: 1.1rem; max-width: 600px;">Complete alphabet, numerical figures, glyph symbols, and editorial paragraph textures rendered in ${font.name}.</p>
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">The Complete Set</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 2.5rem 0; font-size: 1.1rem; max-width: 600px;">Glyph inventory, numeral figures, punctuation marks, and editorial body rhythm rendered in ${font.name}.</p>
 
         <!-- Specimen Navigation Tabs for Mobile and Desktop -->
         <div class="specimen-nav-tabs" id="specimen-nav-tabs">
@@ -589,7 +1161,7 @@ function renderFontDetails(font) {
       </div>
     </section>
 
-    <!-- 4. GLYPHS EXPLORER -->
+    <!-- 7. GLYPHS EXPLORER -->
     <section class="glyphs-section" id="glyphs">
       <div class="container">
         <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Glyphs &amp; Characters</h2>
@@ -648,7 +1220,7 @@ function renderFontDetails(font) {
       </div>
     </section>
 
-    <!-- 5. FONT IN USE SHOWCASE (Parallax Mockups) -->
+    <!-- 8. FONT IN USE SHOWCASE (Parallax Mockups) -->
     <section class="showcase-section" id="showcase">
       <div class="container">
         <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Font in Use</h2>
@@ -695,7 +1267,6 @@ function renderFontDetails(font) {
                     <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">94.2%</h4>
                     <p style="font-size: 0.7rem; color: #22c55e; margin: 0.1rem 0 0; font-family: var(--font-mono); font-weight: 500;">&uarr; 12.4%</p>
                   </div>
-                  <!-- Premium Minimal Bar Chart -->
                   <div style="display: flex; gap: 4px; align-items: flex-end; height: 35px; margin-top: 0.8rem; width: 100%;">
                     <div class="metric-bar" style="flex: 1; height: 10px; background: #22c55e; opacity: 0.4;"></div>
                     <div class="metric-bar" style="flex: 1; height: 14px; background: #22c55e; opacity: 0.5;"></div>
@@ -715,7 +1286,6 @@ function renderFontDetails(font) {
                     <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">18.5k</h4>
                     <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0.1rem 0 0; font-family: var(--font-mono);">Peak: 2.4k/min</p>
                   </div>
-                  <!-- Premium Minimal Bar Chart -->
                   <div style="display: flex; gap: 4px; align-items: flex-end; height: 35px; margin-top: 0.8rem; width: 100%;">
                     <div class="metric-bar" style="flex: 1; height: 22px; background: var(--text-primary); opacity: 0.15;"></div>
                     <div class="metric-bar" style="flex: 1; height: 18px; background: var(--text-primary); opacity: 0.25;"></div>
@@ -735,7 +1305,6 @@ function renderFontDetails(font) {
                     <h4 style="font-family: ${fam}, serif; font-size: clamp(2rem, 3vw, 2.8rem); margin: 0.2rem 0 0; font-weight: 500; color: var(--text-primary);">8.42<span style="font-size: 1.1rem;">TB</span></h4>
                     <p style="font-size: 0.7rem; color: #EF4444; margin: 0.1rem 0 0; font-family: var(--font-mono); font-weight: 500;">82% Capacity</p>
                   </div>
-                  <!-- Premium Segmented Storage Bar -->
                   <div style="display: flex; gap: 3px; margin-top: 1rem; width: 100%;">
                     <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
                     <div class="metric-segment" style="flex: 1; height: 6px; background: #EF4444;"></div>
@@ -760,7 +1329,7 @@ function renderFontDetails(font) {
       </div>
     </section>
 
-    <!-- 6. FONT PAIRINGS -->
+    <!-- 9. RECOMMENDED PAIRINGS -->
     <section class="pairings-section" id="pairings">
       <div class="container">
         <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Recommended Pairings</h2>
@@ -771,11 +1340,11 @@ function renderFontDetails(font) {
       </div>
     </section>
 
-    <!-- 7. TECHNICAL SPECIFICATIONS -->
+    <!-- 10. AT A GLANCE (Specifications) -->
     <section class="specs-section" id="specs">
       <div class="container">
-        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Specifications</h2>
-        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Technical attributes, supported character boundaries, weights count, and file sizes.</p>
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">At a glance</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Technical attributes, foundry credits, and licensing parameters.</p>
 
         <div class="details-list-grid">
           <!-- Card 1 -->
@@ -853,14 +1422,15 @@ function renderFontDetails(font) {
                 <i data-lucide="award" class="specs-acc-icon"></i>
                 <div class="specs-acc-texts">
                   <span class="specs-acc-label">License &amp; Usage Rights</span>
-                  <span class="specs-acc-val-preview">${font.price || 'Free for Commercial & Personal Use'}</span>
+                  <span class="specs-acc-val-preview">${cta.badge} &middot; ${font.price || 'Free'}</span>
                 </div>
               </div>
               <i data-lucide="chevron-down" class="specs-acc-chevron"></i>
             </button>
             <div class="specs-accordion-body">
               <div class="specs-acc-content">
-                <p class="specs-detail-lead"><strong>License:</strong> ${font.price || 'Open Source / Free'}</p>
+                <p class="specs-detail-lead"><strong>License Model:</strong> ${cta.badge} (${font.price || 'Free'})</p>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">${cta.subtext}</p>
                 <ul class="specs-detail-list">
                   <li><i data-lucide="check" style="width:14px;height:14px;color:#22c55e;"></i> Commercial projects (Web, Apps, Print)</li>
                   <li><i data-lucide="check" style="width:14px;height:14px;color:#22c55e;"></i> Personal &amp; portfolio projects</li>
@@ -957,17 +1527,19 @@ function renderFontDetails(font) {
       </div>
     </section>
 
-    <!-- 8. APPLE-STYLE DOWNLOAD BANNER -->
+    <!-- 11. CURATED SOURCE & LICENSING ACTION BANNER -->
     <section class="download-cta-section" id="download-banner">
       <div class="container">
         <div class="download-cta-banner cascade-item">
           <div class="mesh-glow" style="opacity: 0.1;"></div>
+          <span class="cta-banner-kicker">Curated Distribution Source</span>
           <h2 class="download-banner-title">Ready to build with ${font.name}?</h2>
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; z-index: 2;">
+          <p class="cta-banner-licensing-sub">${cta.subtext}</p>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; z-index: 2; margin-top: 2rem;">
             <button class="cta-btn cta-primary" id="btn-banner-download" style="padding: 1.2rem 3.5rem; font-size: 1.05rem;">
-              <i data-lucide="download" style="width: 18px; height: 18px;"></i> Download Font Family
+              <i data-lucide="${cta.icon}" style="width: 18px; height: 18px;"></i> ${cta.label}
             </button>
-            <button class="cta-btn cta-secondary" id="btn-banner-fav" style="padding: 1.2rem 2.2rem;" onclick="toggleFavoriteState('${font.id}', this)">
+            <button class="cta-btn cta-secondary" id="btn-banner-fav" style="padding: 1.2rem 2.2rem;" onclick="toggleFavoriteState('${font.id}', this)" title="Save to Vault">
               <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
             </button>
           </div>
@@ -975,13 +1547,13 @@ function renderFontDetails(font) {
       </div>
     </section>
 
-    <!-- 9. RELATED FONTS CAROUSEL -->
+    <!-- 12. MORE IN THIS MOOD (Related Fonts Carousel) -->
     <section class="related-section" id="related-fonts">
       <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem;">
           <div>
-            <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">You Might Also Like</h2>
-            <p style="color: var(--text-secondary); margin: 0; font-size: 1.1rem; max-width: 600px;">Explore similar typefaces in the FontVault catalog.</p>
+            <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">More in this mood</h2>
+            <p style="color: var(--text-secondary); margin: 0; font-size: 1.1rem; max-width: 600px;">Carefully curated typefaces sharing ${font.name}’s ${font.mood ? font.mood.toLowerCase() : 'refined'} aesthetic and structural sensibilities.</p>
           </div>
           <div style="display: flex; gap: 0.5rem; z-index: 2;">
             <button class="cta-icon-btn" id="btn-carousel-left" title="Scroll left"><i data-lucide="chevron-left" style="width: 18px; height: 18px;"></i></button>
@@ -999,8 +1571,6 @@ function renderFontDetails(font) {
   `;
 }
 
-// -------------------------------------------------
-// PREMIUM ACTIONS & LISTENERS SETUP
 // -------------------------------------------------
 function initPremiumInteractions(font) {
   const fam = font.cssFamily || `'${font.name}'`;
@@ -1061,7 +1631,7 @@ function initPremiumInteractions(font) {
     });
 
     // Sections fade-in cascade staggered scrub animations (scrubs both directions!)
-    const cascadeSections = ["#playground", "#styles", "#glyphs", "#showcase", "#pairings", "#specs", "#download-banner", "#related-fonts"];
+    const cascadeSections = ["#playground", "#feel", "#where", "#story", "#styles", "#specimen-showcase", "#glyphs", "#showcase", "#pairings", "#specs", "#download-banner", "#related-fonts"];
     cascadeSections.forEach(sectionId => {
       const section = document.querySelector(sectionId);
       if (!section) return;
@@ -1101,7 +1671,12 @@ function initPremiumInteractions(font) {
   const floatingBarName = document.getElementById("floating-bar-font-name");
   if (floatingBarName) floatingBarName.textContent = font.name;
   const floatingBarMeta = document.getElementById("floating-bar-font-meta");
-  if (floatingBarMeta) floatingBarMeta.textContent = `${font.style || font.category || 'Specimen'} · ${font.price || 'Free'}`;
+  const cta = getContextualCTA(font);
+  if (floatingBarMeta) floatingBarMeta.textContent = `${font.style || font.category || 'Specimen'} · ${cta.badge || font.price || 'Free'}`;
+  const floatingBtnDownload = document.getElementById("floating-btn-download");
+  if (floatingBtnDownload) {
+    floatingBtnDownload.innerHTML = `<i data-lucide="${cta.icon}" style="width: 14px; height: 14px;"></i> ${cta.floatingLabel}`;
+  }
 
   const backToTopBtn = document.getElementById("back-to-top-btn");
   const progressEdge = document.getElementById("scroll-progress-edge");
@@ -1247,6 +1822,19 @@ function initPremiumInteractions(font) {
 
     checkPlaygroundChanges();
   }
+
+  // --- PANGRAM QUICK SELECTION PILLS ---
+  const pangramPills = document.querySelectorAll(".pangram-pill");
+  pangramPills.forEach(pill => {
+    pill.addEventListener("click", () => {
+      pangramPills.forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      if (pEditableText) {
+        pEditableText.textContent = pill.dataset.text;
+        checkPlaygroundChanges();
+      }
+    });
+  });
 
   [sliderSize, sliderWeight, sliderTracking, sliderLeading].forEach(slider => {
     if (slider) slider.addEventListener("input", updatePlaygroundValues);
@@ -1785,7 +2373,9 @@ function initPremiumInteractions(font) {
   const btnCarouselRight = document.getElementById("btn-carousel-right");
 
   if (carouselTrack) {
-    const relatedFonts = fontsData.filter(f => f.id !== font.id).slice(0, 6);
+    const moodMatches = fontsData.filter(f => f.id !== font.id && f.mood === font.mood);
+    const otherMatches = fontsData.filter(f => f.id !== font.id && f.mood !== font.mood);
+    const relatedFonts = [...moodMatches, ...otherMatches].slice(0, 8);
     
     carouselTrack.innerHTML = relatedFonts.map(rf => `
       <div class="carousel-card" onclick="window.location.href='font.html?id=${rf.id}'">
