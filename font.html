@@ -94,6 +94,11 @@
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
       </button>
+      <button id="mobile-vault-nav-btn" class="nav-btn mobile-vault-nav-btn" aria-label="My Vault / Save font" title="Save font">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+      </button>
       <button id="dark-toggle" class="nav-btn dark-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="dark-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -234,21 +239,22 @@
   <div class="sticky-floating-bar" id="sticky-floating-actions-bar">
     <div class="floating-bar-info">
       <span class="floating-bar-name" id="floating-bar-font-name">Font Family</span>
+      <span class="floating-bar-meta" id="floating-bar-font-meta">Free Specimen</span>
     </div>
     <div class="floating-bar-actions">
-      <button class="cta-btn cta-primary floating-bar-btn" id="floating-btn-download">
-        <i data-lucide="download" style="width: 14px; height: 14px;"></i> Download
+      <button class="cta-btn cta-primary floating-bar-btn" id="floating-btn-download" title="Download font">
+        <i data-lucide="download" style="width: 14px; height: 14px;"></i> <span class="floating-dl-text">Download</span>
       </button>
-      <button class="cta-icon-btn" id="floating-btn-favorite" title="Favorite font">
+      <button class="cta-icon-btn floating-bar-fav-btn" id="floating-btn-favorite" title="Save font to vault" aria-label="Save to Vault">
         <i data-lucide="heart" style="width: 16px; height: 16px;"></i>
       </button>
-      <button class="cta-icon-btn" id="floating-btn-share" title="Share link">
+      <button class="cta-icon-btn floating-bar-desktop-only" id="floating-btn-share" title="Share link" aria-label="Share font link">
         <i data-lucide="share-2" style="width: 16px; height: 16px;"></i>
       </button>
-      <button class="cta-icon-btn" id="floating-btn-copy-css" title="Copy CSS">
+      <button class="cta-icon-btn floating-bar-desktop-only" id="floating-btn-copy-css" title="Copy CSS" aria-label="Copy CSS rules">
         <i data-lucide="code" style="width: 16px; height: 16px;"></i>
       </button>
-      <button class="cta-secondary floating-bar-btn" id="floating-btn-compare">
+      <button class="cta-secondary floating-bar-btn floating-bar-desktop-only" id="floating-btn-compare" title="Compare font">
         <i data-lucide="columns" style="width: 14px; height: 14px;"></i> Compare
       </button>
     </div>

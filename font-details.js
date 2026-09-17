@@ -188,11 +188,17 @@ function renderFontDetails(font) {
     <section class="hero-section" id="hero" style="padding-top: 4rem;">
       <div class="container hero-wrapper">
         <div class="hero-foundry-wrapper" style="display: flex; justify-content: center; margin-bottom: 0.75rem;">
-          <span class="hero-foundry-badge">${font.foundry || font.designer || 'Independent Foundry'}</span>
+          <span class="hero-foundry-badge">${font.foundry || font.designer || 'Independent Foundry'} &middot; ${font.style || font.category || 'Serif'}</span>
         </div>
 
         <div class="hero-font-title-wrapper" style="margin-top: 1.5rem;">
           <h1 class="hero-font-title" style="font-family: ${fam}, serif;">${font.name}</h1>
+        </div>
+        <div class="hero-tags-pill-row">
+          <span class="hero-tag-pill">${font.style || font.category || 'Serif'}</span>
+          <span class="hero-tag-pill">${font.price || 'Free Font'}</span>
+          <span class="hero-tag-pill">${weights.length} Weights</span>
+          ${font.isVariable || font.name.toLowerCase().includes('variable') ? '<span class="hero-tag-pill accent-tag">Variable</span>' : ''}
         </div>
 
         <p class="hero-font-description">
@@ -223,6 +229,31 @@ function renderFontDetails(font) {
             <div class="playground-editable-text" id="p-editable-text" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif; font-weight: ${defaultWeight};">
               The quick brown fox jumps over the lazy dog.
             </div>
+          </div>
+
+          <!-- Mobile Quick Specimen Toolbar (<= 768px) -->
+          <div class="mobile-quick-toolbar" id="mobile-quick-toolbar">
+            <div class="quick-size-control">
+              <span class="quick-size-label">Size</span>
+              <button type="button" class="quick-step-btn" id="btn-quick-size-dec" aria-label="Decrease size">&minus;</button>
+              <span class="quick-size-val" id="mobile-val-size">64px</span>
+              <button type="button" class="quick-step-btn" id="btn-quick-size-inc" aria-label="Increase size">&plus;</button>
+            </div>
+            <div class="quick-align-toggles" id="mobile-quick-align">
+              <button type="button" class="quick-align-btn active" data-align="left" title="Align Left">
+                <i data-lucide="align-left" style="width:15px;height:15px;"></i>
+              </button>
+              <button type="button" class="quick-align-btn" data-align="center" title="Align Center">
+                <i data-lucide="align-center" style="width:15px;height:15px;"></i>
+              </button>
+              <button type="button" class="quick-align-btn" data-align="right" title="Align Right">
+                <i data-lucide="align-right" style="width:15px;height:15px;"></i>
+              </button>
+            </div>
+            <button type="button" class="mobile-drawer-trigger-btn" id="btn-open-mobile-drawer" aria-label="Open font controls">
+              <i data-lucide="sliders" style="width:14px;height:14px;"></i>
+              <span>Controls</span>
+            </button>
           </div>
 
           <!-- Right: Controls -->
@@ -328,6 +359,115 @@ function renderFontDetails(font) {
           </div>
         </div>
       </div>
+
+      <!-- Mobile Typography Drawer Backdrop -->
+      <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop"></div>
+
+      <!-- Mobile Typography Bottom Sheet Drawer -->
+      <div class="mobile-typography-drawer" id="mobile-typography-drawer" role="dialog" aria-modal="true" aria-label="Typography Controls">
+        <div class="drawer-header-drag" id="drawer-drag-handle">
+          <div class="drawer-handle-bar"></div>
+        </div>
+        <div class="drawer-title-row">
+          <div class="drawer-title-text">
+            <h3 class="drawer-title">Typography Controls</h3>
+            <p class="drawer-subtitle">Adjust type specimen parameters in real-time</p>
+          </div>
+          <button type="button" class="drawer-close-btn" id="btn-close-mobile-drawer" aria-label="Close controls">&times;</button>
+        </div>
+        <div class="drawer-content-scroll">
+          <!-- Size Slider -->
+          <div class="drawer-control-group">
+            <div class="control-header">
+              <span class="control-label">Size</span>
+              <span class="control-value" id="drawer-val-size">64px</span>
+            </div>
+            <input type="range" class="custom-range drawer-slider" id="drawer-slider-size" min="16" max="180" value="64">
+          </div>
+          <!-- Weight Slider -->
+          <div class="drawer-control-group">
+            <div class="control-header">
+              <span class="control-label">Weight</span>
+              <span class="control-value" id="drawer-val-weight">${defaultWeight}</span>
+            </div>
+            <input type="range" class="custom-range drawer-slider" id="drawer-slider-weight" min="100" max="900" step="100" value="${defaultWeight}">
+          </div>
+          <!-- Letter Spacing Slider -->
+          <div class="drawer-control-group">
+            <div class="control-header">
+              <span class="control-label">Letter Spacing</span>
+              <span class="control-value" id="drawer-val-tracking">0.00em</span>
+            </div>
+            <input type="range" class="custom-range drawer-slider" id="drawer-slider-tracking" min="-0.1" max="0.3" step="0.01" value="0">
+          </div>
+          <!-- Line Height Slider -->
+          <div class="drawer-control-group">
+            <div class="control-header">
+              <span class="control-label">Line Height</span>
+              <span class="control-value" id="drawer-val-leading">1.2</span>
+            </div>
+            <input type="range" class="custom-range drawer-slider" id="drawer-slider-leading" min="0.8" max="2.5" step="0.1" value="1.2">
+          </div>
+          <!-- Variable Font Sliders (if variable) -->
+          ${font.isVariable || font.name.toLowerCase().includes('variable') ? `
+            <div class="drawer-control-group">
+              <div class="control-header">
+                <span class="control-label" style="color: var(--accent-color);">Variable Width</span>
+                <span class="control-value" id="drawer-val-var-width">100</span>
+              </div>
+              <input type="range" class="custom-range drawer-slider" id="drawer-slider-var-width" min="50" max="150" value="100">
+            </div>
+            <div class="drawer-control-group">
+              <div class="control-header">
+                <span class="control-label" style="color: var(--accent-color);">Optical Size</span>
+                <span class="control-value" id="drawer-val-var-opsz">14</span>
+              </div>
+              <input type="range" class="custom-range drawer-slider" id="drawer-slider-var-opsz" min="6" max="72" value="14">
+            </div>
+          ` : ''}
+          <!-- Alignment Segmented Control -->
+          <div class="drawer-control-group">
+            <span class="control-label">Alignment</span>
+            <div class="segmented-control" id="drawer-seg-alignment">
+              <button type="button" class="segment-btn active" data-align="left">Left</button>
+              <button type="button" class="segment-btn" data-align="center">Center</button>
+              <button type="button" class="segment-btn" data-align="right">Right</button>
+              <button type="button" class="segment-btn" data-align="justify">Justify</button>
+            </div>
+          </div>
+          <!-- Text Transform -->
+          <div class="drawer-control-group">
+            <span class="control-label">Text Transform</span>
+            <div class="segmented-control" id="drawer-seg-transform">
+              <button type="button" class="segment-btn active" data-transform="none">None</button>
+              <button type="button" class="segment-btn" data-transform="uppercase">Caps</button>
+              <button type="button" class="segment-btn" data-transform="lowercase">Lower</button>
+            </div>
+          </div>
+          <!-- Style / Italic -->
+          <div class="drawer-control-group switch-control">
+            <span class="control-label">Italic Style</span>
+            <div>
+              <input type="checkbox" id="drawer-switch-italic" class="switch-input">
+              <label for="drawer-switch-italic" class="switch-label"></label>
+            </div>
+          </div>
+          <!-- Canvas Theme Picker -->
+          <div class="drawer-control-group">
+            <span class="control-label">Canvas Theme</span>
+            <div class="color-theme-picker" id="drawer-theme-picker" style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+              <div class="color-circle active" data-bg="#F9F9F9" data-text="#111" style="background-color: #F9F9F9; border: 1px solid #ddd; width: 32px; height: 32px; cursor: pointer;"></div>
+              <div class="color-circle" data-bg="#111" data-text="#FFF" style="background-color: #111; width: 32px; height: 32px; cursor: pointer;"></div>
+              <div class="color-circle" data-bg="rgba(var(--accent-rgb), 0.05)" data-text="var(--accent-color)" style="background-color: rgba(255, 59, 0, 0.2); width: 32px; height: 32px; cursor: pointer;"></div>
+              <div class="color-circle" data-bg="#090909" data-text="#34D399" style="background-color: #090909; color: #34D399; font-family: monospace; font-size: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center;">&lt;&gt;</div>
+            </div>
+          </div>
+          <!-- Reset Button -->
+          <button type="button" class="cta-btn cta-secondary" id="btn-drawer-reset" style="margin-top: 1.5rem; width: 100%; justify-content: center; min-height: 44px;">
+            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Reset Controls
+          </button>
+        </div>
+      </div>
     </section>
 
     <!-- 3. STYLE FAMILY DETAILS -->
@@ -337,6 +477,107 @@ function renderFontDetails(font) {
         <p style="color: var(--text-secondary); margin: 0 0 4rem 0; font-size: 1.1rem; max-width: 600px;">Review weights from thin hairline formats to heavy black profiles. Hover cards to test previews, click to load weight directly to playground.</p>
         <div class="styles-grid" id="weights-grid-container">
           ${stylesHtml}
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.5. SPECIMEN CHARACTER & BODY SHOWCASE -->
+    <section class="specimen-showcase-section" id="specimen-showcase">
+      <div class="container">
+        <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Character &amp; Layout Showcase</h2>
+        <p style="color: var(--text-secondary); margin: 0 0 2.5rem 0; font-size: 1.1rem; max-width: 600px;">Complete alphabet, numerical figures, glyph symbols, and editorial paragraph textures rendered in ${font.name}.</p>
+
+        <!-- Specimen Navigation Tabs for Mobile and Desktop -->
+        <div class="specimen-nav-tabs" id="specimen-nav-tabs">
+          <button type="button" class="specimen-nav-tab active" data-target="specimen-large">Display</button>
+          <button type="button" class="specimen-nav-tab" data-target="specimen-upper">Uppercase</button>
+          <button type="button" class="specimen-nav-tab" data-target="specimen-lower">Lowercase</button>
+          <button type="button" class="specimen-nav-tab" data-target="specimen-nums">Numbers</button>
+          <button type="button" class="specimen-nav-tab" data-target="specimen-symbols">Symbols</button>
+          <button type="button" class="specimen-nav-tab" data-target="specimen-body">Paragraph</button>
+        </div>
+
+        <div class="specimen-cards-stack">
+          <!-- Card 1: Large Display Preview -->
+          <div class="specimen-showcase-card specimen-pane active" id="specimen-large">
+            <div class="specimen-card-top">
+              <span class="specimen-card-kicker">Large Display Preview</span>
+              <span class="specimen-card-badge">Display Scale</span>
+            </div>
+            <div class="specimen-card-inner">
+              <div class="specimen-display-headline" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif;">
+                Sphinx of black quartz, judge my vow.
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Uppercase Alphabet -->
+          <div class="specimen-showcase-card specimen-pane" id="specimen-upper">
+            <div class="specimen-card-top">
+              <span class="specimen-card-kicker">Uppercase Alphabet</span>
+              <span class="specimen-card-badge">A &mdash; Z (26 Characters)</span>
+            </div>
+            <div class="specimen-card-inner">
+              <div class="specimen-alphabet-line" style="font-family: ${fam}, serif;">
+                A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Lowercase Alphabet -->
+          <div class="specimen-showcase-card specimen-pane" id="specimen-lower">
+            <div class="specimen-card-top">
+              <span class="specimen-card-kicker">Lowercase Alphabet</span>
+              <span class="specimen-card-badge">a &mdash; z (26 Characters)</span>
+            </div>
+            <div class="specimen-card-inner">
+              <div class="specimen-alphabet-line" style="font-family: ${fam}, serif;">
+                a b c d e f g h i j k l m n o p q r s t u v w x y z
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: Numbers & Figures -->
+          <div class="specimen-showcase-card specimen-pane" id="specimen-nums">
+            <div class="specimen-card-top">
+              <span class="specimen-card-kicker">Numbers &amp; Figures</span>
+              <span class="specimen-card-badge">0 &mdash; 9 &middot; Currency &amp; Fractions</span>
+            </div>
+            <div class="specimen-card-inner">
+              <div class="specimen-numbers-line" style="font-family: ${fam}, serif;">
+                0 1 2 3 4 5 6 7 8 9
+              </div>
+              <div class="specimen-extra-symbols-line" style="font-family: ${fam}, serif;">
+                $ &euro; &pound; &yen; &cent; &middot; 1/2 1/4 3/4 &middot; 99.9%
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 5: Symbols & Punctuation -->
+          <div class="specimen-showcase-card specimen-pane" id="specimen-symbols">
+            <div class="specimen-card-top">
+              <span class="specimen-card-kicker">Symbols &amp; Punctuation</span>
+              <span class="specimen-card-badge">Glyphs &amp; Special Characters</span>
+            </div>
+            <div class="specimen-card-inner">
+              <div class="specimen-symbols-line" style="font-family: ${fam}, serif;">
+                &amp; @ # $ % * ! ? &ldquo; &rdquo; &lsquo; &rsquo; : ; , . ( ) [ ] { } / \ &lt; &gt; + = - _ &mdash; &ndash;
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 6: Editorial Paragraph -->
+          <div class="specimen-showcase-card specimen-pane" id="specimen-body">
+            <div class="specimen-card-top">
+              <span class="specimen-card-kicker">Editorial Body Paragraph</span>
+              <span class="specimen-card-badge">Reading Rhythm &middot; 18px</span>
+            </div>
+            <div class="specimen-card-inner">
+              <p class="specimen-body-paragraph" contenteditable="true" spellcheck="false" style="font-family: ${fam}, serif;">
+                Typography is the craft of endowing human language with a durable visual form. Good typography communicates subtly: it invites reading, guides comprehension, and establishes an authentic atmosphere without drawing gratuitous attention to itself. When characters balance proportion, rhythm, and terminal shapes, complex ideas unfold effortlessly across the page.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -595,6 +836,117 @@ function renderFontDetails(font) {
             </div>
           </div>
         </div>
+
+        <!-- Mobile Expandable Metadata Accordion (<= 768px) -->
+        <div class="mobile-specs-accordion" id="mobile-specs-accordion">
+          <!-- Item 1: License & Usage Rights -->
+          <div class="specs-accordion-item" data-section="license">
+            <button type="button" class="specs-accordion-header" aria-expanded="false">
+              <div class="specs-acc-title-wrap">
+                <i data-lucide="award" class="specs-acc-icon"></i>
+                <div class="specs-acc-texts">
+                  <span class="specs-acc-label">License &amp; Usage Rights</span>
+                  <span class="specs-acc-val-preview">${font.price || 'Free for Commercial & Personal Use'}</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-down" class="specs-acc-chevron"></i>
+            </button>
+            <div class="specs-accordion-body">
+              <div class="specs-acc-content">
+                <p class="specs-detail-lead"><strong>License:</strong> ${font.price || 'Open Source / Free'}</p>
+                <ul class="specs-detail-list">
+                  <li><i data-lucide="check" style="width:14px;height:14px;color:#22c55e;"></i> Commercial projects (Web, Apps, Print)</li>
+                  <li><i data-lucide="check" style="width:14px;height:14px;color:#22c55e;"></i> Personal &amp; portfolio projects</li>
+                  <li><i data-lucide="check" style="width:14px;height:14px;color:#22c55e;"></i> Webfont embedding via @font-face</li>
+                  <li><i data-lucide="check" style="width:14px;height:14px;color:#22c55e;"></i> Modification &amp; self-hosting allowed</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: Styles & Available Weights -->
+          <div class="specs-accordion-item" data-section="weights">
+            <button type="button" class="specs-accordion-header" aria-expanded="false">
+              <div class="specs-acc-title-wrap">
+                <i data-lucide="layers" class="specs-acc-icon"></i>
+                <div class="specs-acc-texts">
+                  <span class="specs-acc-label">Available Weights &amp; Styles</span>
+                  <span class="specs-acc-val-preview">${weights.length} Weights &middot; ${font.stylesCount || weights.length} Styles</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-down" class="specs-acc-chevron"></i>
+            </button>
+            <div class="specs-accordion-body">
+              <div class="specs-acc-content">
+                <div class="specs-weights-pill-grid">
+                  ${weights.map(w => `<span class="specs-weight-pill"><strong>${w}</strong> ${getWeightLabel(w)}</span>`).join('')}
+                </div>
+                ${font.isVariable || font.name.toLowerCase().includes('variable') ? `
+                  <p class="specs-variable-badge"><i data-lucide="sliders" style="width:13px;height:13px;"></i> Continuous Variable Weight Interpolation (100–900)</p>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3: Language Support -->
+          <div class="specs-accordion-item" data-section="languages">
+            <button type="button" class="specs-accordion-header" aria-expanded="false">
+              <div class="specs-acc-title-wrap">
+                <i data-lucide="languages" class="specs-acc-icon"></i>
+                <div class="specs-acc-texts">
+                  <span class="specs-acc-label">Language Support &amp; Encodings</span>
+                  <span class="specs-acc-val-preview">${(font.languages && font.languages.length) ? font.languages.join(', ') : 'Latin, Latin Extended'}</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-down" class="specs-acc-chevron"></i>
+            </button>
+            <div class="specs-accordion-body">
+              <div class="specs-acc-content">
+                <p class="specs-detail-lead">Extensive character set supporting global typography:</p>
+                <div class="specs-languages-tag-cloud">
+                  <span class="lang-tag">Western European</span>
+                  <span class="lang-tag">Central European</span>
+                  <span class="lang-tag">South Eastern European</span>
+                  <span class="lang-tag">Latin Extended-A</span>
+                  <span class="lang-tag">English</span>
+                  <span class="lang-tag">Spanish</span>
+                  <span class="lang-tag">French</span>
+                  <span class="lang-tag">German</span>
+                  <span class="lang-tag">Italian</span>
+                  <span class="lang-tag">Portuguese</span>
+                  <span class="lang-tag">Danish</span>
+                  <span class="lang-tag">Dutch</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4: Technical & File Specifications -->
+          <div class="specs-accordion-item" data-section="files">
+            <button type="button" class="specs-accordion-header" aria-expanded="false">
+              <div class="specs-acc-title-wrap">
+                <i data-lucide="file-type" class="specs-acc-icon"></i>
+                <div class="specs-acc-texts">
+                  <span class="specs-acc-label">Technical &amp; File Specifications</span>
+                  <span class="specs-acc-val-preview">${font.format ? font.format.toUpperCase() : 'WOFF2'} &middot; ${font.fileSize || 'Standard Webfont'}</span>
+                </div>
+              </div>
+              <i data-lucide="chevron-down" class="specs-acc-chevron"></i>
+            </button>
+            <div class="specs-accordion-body">
+              <div class="specs-acc-content">
+                <div class="specs-meta-keyvals">
+                  <div class="specs-meta-kv"><span class="k">Format</span><span class="v">${font.format ? font.format.toUpperCase() : 'WOFF2, TTF'}</span></div>
+                  <div class="specs-meta-kv"><span class="k">File Size</span><span class="v">${font.fileSize || 'Standard Webfont'}</span></div>
+                  <div class="specs-meta-kv"><span class="k">Designer</span><span class="v">${font.designer || 'Independent'}</span></div>
+                  <div class="specs-meta-kv"><span class="k">Foundry</span><span class="v">${font.foundry || 'Independent'}</span></div>
+                  <div class="specs-meta-kv"><span class="k">Glyph Count</span><span class="v">240+ Vector Glyphs</span></div>
+                  <div class="specs-meta-kv"><span class="k">Hinting</span><span class="v">Screen &amp; Print Optimized</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -621,7 +973,7 @@ function renderFontDetails(font) {
       <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem;">
           <div>
-            <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">Related Fonts</h2>
+            <h2 style="font-family: var(--font-display); font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0; letter-spacing: -0.02em;">You Might Also Like</h2>
             <p style="color: var(--text-secondary); margin: 0; font-size: 1.1rem; max-width: 600px;">Explore similar typefaces in the FontVault catalog.</p>
           </div>
           <div style="display: flex; gap: 0.5rem; z-index: 2;">
@@ -741,6 +1093,8 @@ function initPremiumInteractions(font) {
   const floatingBar = document.getElementById("sticky-floating-actions-bar");
   const floatingBarName = document.getElementById("floating-bar-font-name");
   if (floatingBarName) floatingBarName.textContent = font.name;
+  const floatingBarMeta = document.getElementById("floating-bar-font-meta");
+  if (floatingBarMeta) floatingBarMeta.textContent = `${font.style || font.category || 'Specimen'} · ${font.price || 'Free'}`;
 
   const backToTopBtn = document.getElementById("back-to-top-btn");
   const progressEdge = document.getElementById("scroll-progress-edge");
@@ -755,9 +1109,10 @@ function initPremiumInteractions(font) {
       progressEdge.style.width = `${pct}%`;
     }
 
-    // Floating Sticky Action Bar visibility
+    // Floating Sticky Action Bar visibility (early activation on mobile)
     if (floatingBar) {
-      if (sTop > 600) {
+      const triggerTop = window.innerWidth <= 768 ? 200 : 600;
+      if (sTop > triggerTop) {
         floatingBar.classList.add("active");
       } else {
         floatingBar.classList.remove("active");
@@ -941,6 +1296,292 @@ function initPremiumInteractions(font) {
     switchItalic.addEventListener("change", () => {
       if (pEditableText) {
         pEditableText.style.fontStyle = switchItalic.checked ? "italic" : "normal";
+      }
+      const drawerSwitch = document.getElementById("drawer-switch-italic");
+      if (drawerSwitch && drawerSwitch.checked !== switchItalic.checked) {
+        drawerSwitch.checked = switchItalic.checked;
+      }
+    });
+  }
+
+  // --- MOBILE QUICK TOOLBAR & BOTTOM SHEET DRAWER BINDINGS ---
+  const mobileDrawer = document.getElementById("mobile-typography-drawer");
+  const mobileBackdrop = document.getElementById("mobile-drawer-backdrop");
+  const openDrawerBtn = document.getElementById("btn-open-mobile-drawer");
+  const closeDrawerBtn = document.getElementById("btn-close-mobile-drawer");
+  const drawerDragHandle = document.getElementById("drawer-drag-handle");
+  const mobileValSize = document.getElementById("mobile-val-size");
+
+  function openMobileDrawer() {
+    if (mobileDrawer && mobileBackdrop) {
+      mobileDrawer.classList.add("open");
+      mobileBackdrop.classList.add("open");
+      document.body.classList.add("drawer-modal-open");
+    }
+  }
+
+  function closeMobileDrawer() {
+    if (mobileDrawer && mobileBackdrop) {
+      mobileDrawer.classList.remove("open");
+      mobileBackdrop.classList.remove("open");
+      document.body.classList.remove("drawer-modal-open");
+    }
+  }
+
+  if (openDrawerBtn) openDrawerBtn.addEventListener("click", openMobileDrawer);
+  if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", closeMobileDrawer);
+  if (mobileBackdrop) mobileBackdrop.addEventListener("click", closeMobileDrawer);
+  if (drawerDragHandle) drawerDragHandle.addEventListener("click", closeMobileDrawer);
+
+  // Mobile quick size buttons (+/- 4px)
+  const quickSizeDec = document.getElementById("btn-quick-size-dec");
+  const quickSizeInc = document.getElementById("btn-quick-size-inc");
+  if (quickSizeDec && sliderSize) {
+    quickSizeDec.addEventListener("click", () => {
+      sliderSize.value = Math.max(16, Number(sliderSize.value) - 4);
+      updatePlaygroundValues();
+    });
+  }
+  if (quickSizeInc && sliderSize) {
+    quickSizeInc.addEventListener("click", () => {
+      sliderSize.value = Math.min(180, Number(sliderSize.value) + 4);
+      updatePlaygroundValues();
+    });
+  }
+
+  // Mobile quick align buttons
+  const quickAlignBtns = document.querySelectorAll("#mobile-quick-align .quick-align-btn");
+  quickAlignBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      quickAlignBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const align = btn.dataset.align;
+      if (pEditableText) pEditableText.style.textAlign = align;
+
+      // Sync desktop segmented align
+      const deskAlignBtns = document.querySelectorAll("#seg-alignment .segment-btn");
+      deskAlignBtns.forEach(b => b.classList.toggle("active", b.dataset.align === align));
+
+      // Sync drawer align
+      const drawerAlignBtns = document.querySelectorAll("#drawer-seg-alignment .segment-btn");
+      drawerAlignBtns.forEach(b => b.classList.toggle("active", b.dataset.align === align));
+    });
+  });
+
+  // Drawer Slider elements
+  const drawerSliderSize = document.getElementById("drawer-slider-size");
+  const drawerSliderWeight = document.getElementById("drawer-slider-weight");
+  const drawerSliderTracking = document.getElementById("drawer-slider-tracking");
+  const drawerSliderLeading = document.getElementById("drawer-slider-leading");
+  const drawerValSize = document.getElementById("drawer-val-size");
+  const drawerValWeight = document.getElementById("drawer-val-weight");
+  const drawerValTracking = document.getElementById("drawer-val-tracking");
+  const drawerValLeading = document.getElementById("drawer-val-leading");
+
+  function syncDrawerControls() {
+    if (!sliderSize) return;
+    if (drawerSliderSize && drawerValSize) {
+      drawerSliderSize.value = sliderSize.value;
+      drawerValSize.textContent = `${sliderSize.value}px`;
+    }
+    if (mobileValSize) {
+      mobileValSize.textContent = `${sliderSize.value}px`;
+    }
+    if (drawerSliderWeight && drawerValWeight && sliderWeight) {
+      drawerSliderWeight.value = sliderWeight.value;
+      drawerValWeight.textContent = sliderWeight.value;
+    }
+    if (drawerSliderTracking && drawerValTracking && sliderTracking) {
+      drawerSliderTracking.value = sliderTracking.value;
+      drawerValTracking.textContent = `${Number(sliderTracking.value).toFixed(2)}em`;
+    }
+    if (drawerSliderLeading && drawerValLeading && sliderLeading) {
+      drawerSliderLeading.value = sliderLeading.value;
+      drawerValLeading.textContent = Number(sliderLeading.value).toFixed(1);
+    }
+  }
+
+  // Forward drawer slider inputs to main sliders & update
+  if (drawerSliderSize) {
+    drawerSliderSize.addEventListener("input", (e) => {
+      if (sliderSize) {
+        sliderSize.value = e.target.value;
+        updatePlaygroundValues();
+      }
+    });
+  }
+  if (drawerSliderWeight) {
+    drawerSliderWeight.addEventListener("input", (e) => {
+      if (sliderWeight) {
+        sliderWeight.value = e.target.value;
+        updatePlaygroundValues();
+      }
+    });
+  }
+  if (drawerSliderTracking) {
+    drawerSliderTracking.addEventListener("input", (e) => {
+      if (sliderTracking) {
+        sliderTracking.value = e.target.value;
+        updatePlaygroundValues();
+      }
+    });
+  }
+  if (drawerSliderLeading) {
+    drawerSliderLeading.addEventListener("input", (e) => {
+      if (sliderLeading) {
+        sliderLeading.value = e.target.value;
+        updatePlaygroundValues();
+      }
+    });
+  }
+
+  // Drawer Variable Sliders
+  const drawerSliderWidth = document.getElementById("drawer-slider-var-width");
+  const drawerValWidth = document.getElementById("drawer-val-var-width");
+  if (drawerSliderWidth && sliderWidth) {
+    drawerSliderWidth.addEventListener("input", (e) => {
+      sliderWidth.value = e.target.value;
+      updatePlaygroundValues();
+      if (drawerValWidth) drawerValWidth.textContent = e.target.value;
+    });
+  }
+  const drawerSliderOpsz = document.getElementById("drawer-slider-var-opsz");
+  const drawerValOpsz = document.getElementById("drawer-val-var-opsz");
+  if (drawerSliderOpsz && sliderOpsz) {
+    drawerSliderOpsz.addEventListener("input", (e) => {
+      sliderOpsz.value = e.target.value;
+      updatePlaygroundValues();
+      if (drawerValOpsz) drawerValOpsz.textContent = e.target.value;
+    });
+  }
+
+  // Drawer alignment buttons
+  const drawerAlignBtns = document.querySelectorAll("#drawer-seg-alignment .segment-btn");
+  drawerAlignBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      drawerAlignBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const align = btn.dataset.align;
+      if (pEditableText) pEditableText.style.textAlign = align;
+
+      // Sync desktop
+      const deskAlignBtns = document.querySelectorAll("#seg-alignment .segment-btn");
+      deskAlignBtns.forEach(b => b.classList.toggle("active", b.dataset.align === align));
+      // Sync quick toolbar
+      quickAlignBtns.forEach(b => b.classList.toggle("active", b.dataset.align === align));
+    });
+  });
+
+  // Drawer transform buttons
+  const drawerTransBtns = document.querySelectorAll("#drawer-seg-transform .segment-btn");
+  drawerTransBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      drawerTransBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const tr = btn.dataset.transform;
+      if (pEditableText) pEditableText.style.textTransform = tr;
+
+      // Sync desktop
+      const deskTransBtns = document.querySelectorAll("#seg-transform .segment-btn");
+      deskTransBtns.forEach(b => b.classList.toggle("active", b.dataset.transform === tr));
+    });
+  });
+
+  // Drawer italic toggle
+  const drawerSwitchItalic = document.getElementById("drawer-switch-italic");
+  if (drawerSwitchItalic) {
+    drawerSwitchItalic.addEventListener("change", () => {
+      if (pEditableText) {
+        pEditableText.style.fontStyle = drawerSwitchItalic.checked ? "italic" : "normal";
+      }
+      if (switchItalic && switchItalic.checked !== drawerSwitchItalic.checked) {
+        switchItalic.checked = drawerSwitchItalic.checked;
+      }
+    });
+  }
+
+  // Drawer theme picker
+  const drawerThemeCircles = document.querySelectorAll("#drawer-theme-picker .color-circle");
+  drawerThemeCircles.forEach(circle => {
+    circle.addEventListener("click", () => {
+      drawerThemeCircles.forEach(c => c.classList.remove("active"));
+      circle.classList.add("active");
+      const canvas = document.getElementById("p-canvas");
+      if (canvas) {
+        canvas.style.backgroundColor = circle.dataset.bg;
+        if (pEditableText) pEditableText.style.color = circle.dataset.text;
+      }
+      // Sync desktop circles
+      const deskCircles = document.querySelectorAll("#color-theme-picker .color-circle");
+      deskCircles.forEach((dc, idx) => {
+        if (dc.dataset.bg === circle.dataset.bg) {
+          deskCircles.forEach(c => c.classList.remove("active"));
+          dc.classList.add("active");
+        }
+      });
+    });
+  });
+
+  // Drawer reset button
+  const drawerResetBtn = document.getElementById("btn-drawer-reset");
+  if (drawerResetBtn) {
+    drawerResetBtn.addEventListener("click", () => {
+      const mainReset = document.getElementById("btn-reset-playground");
+      if (mainReset) mainReset.click();
+      if (drawerSwitchItalic) drawerSwitchItalic.checked = false;
+      drawerAlignBtns.forEach(b => b.classList.toggle("active", b.dataset.align === "left"));
+      drawerTransBtns.forEach(b => b.classList.toggle("active", b.dataset.transform === "none"));
+      drawerThemeCircles.forEach((c, i) => c.classList.toggle("active", i === 0));
+      syncDrawerControls();
+    });
+  }
+
+  // --- SPECIMEN SHOWCASE TABS BINDINGS ---
+  const specimenTabs = document.querySelectorAll("#specimen-nav-tabs .specimen-nav-tab");
+  const specimenPanes = document.querySelectorAll(".specimen-cards-stack .specimen-pane");
+  specimenTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      specimenTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const targetId = tab.dataset.target;
+      specimenPanes.forEach(pane => {
+        if (pane.id === targetId) {
+          pane.classList.add("active");
+          pane.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          pane.classList.remove("active");
+        }
+      });
+    });
+  });
+
+  // --- METADATA ACCORDION BINDINGS ---
+  const accordionHeaders = document.querySelectorAll(".mobile-specs-accordion .specs-accordion-header");
+  accordionHeaders.forEach(hdr => {
+    hdr.addEventListener("click", () => {
+      const item = hdr.closest(".specs-accordion-item");
+      const isOpen = item.classList.contains("open");
+      // Optional: close other items or allow multi-expand
+      item.classList.toggle("open", !isOpen);
+      hdr.setAttribute("aria-expanded", String(!isOpen));
+    });
+  });
+
+  // --- MOBILE HEADER SAVE / VAULT BUTTON BINDING ---
+  const mobileVaultNavBtn = document.getElementById("mobile-vault-nav-btn");
+  if (mobileVaultNavBtn) {
+    if (window.favoritesSet && window.favoritesSet.has(font.id)) {
+      mobileVaultNavBtn.classList.add("active");
+    }
+    mobileVaultNavBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      toggleFavoriteState(font.id, mobileVaultNavBtn);
+      const isFav = window.favoritesSet && window.favoritesSet.has(font.id);
+      if (floatingFavBtn) floatingFavBtn.classList.toggle("active", isFav);
+      const heroFavBtn = document.getElementById("btn-hero-favorite");
+      if (heroFavBtn) heroFavBtn.classList.toggle("active", isFav);
+      if (window.showToast) {
+        window.showToast(isFav ? `${font.name} saved to My Vault!` : `${font.name} removed from My Vault`, isFav ? "success" : "info");
       }
     });
   }
