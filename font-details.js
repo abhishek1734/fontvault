@@ -373,6 +373,16 @@ function getVerifiedStory(font) {
   const id = (font.id || '').toLowerCase();
 
   const verifiedHistories = {
+    'fraunces': {
+      title: 'Wonky Roots in Early 20th-Century Type',
+      attribution: 'Type History · Phaedra Charles, Flavia Zimbardi & Undercase Type',
+      text: 'Fraunces is a variable oldstyle serif created by Phaedra Charles and Flavia Zimbardi at Undercase Type. Inspired by early 20th-century typefaces such as Windsor, Souvenir, and Cooper Black, Fraunces celebrates the tactile quirks and warmth of historic bookprinting while harnessing modern variable axes for optical size, weight, and softness.'
+    },
+    'dm-sans': {
+      title: 'Geometric Clarity Commissioned by Google',
+      attribution: 'Geometric Sans · Colophon Foundry',
+      text: 'DM Sans is a low-contrast geometric sans-serif family designed by British studio Colophon Foundry. Commissioned by Google alongside DM Serif Display, it features wide apertures, clean circular counter-forms, and neutral stroke terminals engineered for effortless scanning on screen interfaces.'
+    },
     'libre-baskerville': {
       title: 'Rooted in 1941 Metal Type Heritage',
       attribution: 'Historical Heritage · Impallari Type & American Type Founders',

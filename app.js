@@ -2115,28 +2115,40 @@ function setupTrendingNew() {
   if (grid) {
     // Duplicate innerHTML to create a seamless infinite marquee scroll loop
     grid.innerHTML += grid.innerHTML;
-  }
 
-  const cards = document.querySelectorAll(".trending-new-card");
-  const chips = document.querySelectorAll(".trending-mood-chip");
-
-  // Click on cards to open detail panel
-  cards.forEach(card => {
-    card.addEventListener("click", () => {
+    // Delegated click listener on the marquee track ensures every card and cloned card responds
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest(".trending-new-card");
+      if (!card) return;
       const fontId = card.dataset.id;
       if (!fontId) return;
       
       let font = fontsData.find(f => f.id === fontId);
       if (!font) {
-        // Fallback case-insensitive / space match
         font = fontsData.find(f => f.name.toLowerCase() === fontId.replace(/-/g, ' '));
       }
-
       if (font) {
         openDetailPanel(font);
       } else {
-        // Direct redirection fallback
-        window.location.href = `font.html?id=${fontId}`;
+        window.location.href = `font.html?id=${encodeURIComponent(fontId)}`;
+      }
+    });
+  }
+
+  const cards = document.querySelectorAll(".trending-new-card");
+  const chips = document.querySelectorAll(".trending-mood-chip");
+
+  // Keyboard navigation & accessibility for cards
+  cards.forEach(card => {
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        const fontId = card.dataset.id;
+        if (fontId) {
+          window.location.href = `font.html?id=${encodeURIComponent(fontId)}`;
+        }
       }
     });
   });
