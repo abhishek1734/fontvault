@@ -227,4 +227,5 @@ let fontsData = [
   {"id":"karma","name":"Karma","provider":"fontshare","designer":"Joana Correia","foundry":"Indian Type Foundry","year":"2022","stylesCount":6,"languages":["Latin","Devanagari"],"description":"<div>Karma was developed for use in body text on screen. The characters feature a construction style that tends toward the monolinear. Karma’s characters are economic in width, and the Latin sports a tall x-height. Joana Correia designed Ka...","availability":"Free","mood":"Formal","useCase":"Editorial","style":"Serif","language":"Latin","downloadUrl":"https://www.fontshare.com/fonts/karma","price":"Free","mockupType":"editorial","mockupTitle":"Karma Specimen","mockupSubtitle":"A free high-grade Fontshare typeface","fileSize":"0.6 MB","cssFamily":"'Karma', serif","tags":["fontshare","serif","formal","editorial","banners","editorial"],"pairsWith":[]},
 ];
 
+if (typeof window !== 'undefined') window.fontsData = fontsData;
 if (typeof module !== 'undefined') module.exports = { fontsData };

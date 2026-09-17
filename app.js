@@ -412,6 +412,7 @@ function setupStickyControls() {
     const rect = section.getBoundingClientRect();
     const nav = document.querySelector("header#navbar") || document.querySelector("header");
     const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+    const isCollapsed = nav ? nav.classList.contains("collapsed") : false;
     const navHeight = isMobile ? 56 : (isCollapsed ? 48 : 64);
 
     // Hysteresis threshold to prevent scroll jitter
