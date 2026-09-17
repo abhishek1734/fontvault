@@ -349,10 +349,13 @@ function transitionPreviewCluster(toSlotName) {
   const hadFocus = (document.activeElement === previewInput);
 
   // Only animate on larger viewports where row1 has space
-  const isDesktop = typeof window !== 'undefined' && window.innerWidth > 1060;
+  const isDesktop = typeof window !== 'undefined' && window.innerWidth > 1024;
   if (!isDesktop || typeof cluster.getBoundingClientRect !== 'function') {
     targetSlot.appendChild(cluster);
     currentStickySlotState = toSlotName;
+    if (previewInput) {
+      previewInput.placeholder = toSlotName === 'row1' ? 'Type to preview fonts...' : 'Type here to preview text across all fonts...';
+    }
     if (hadFocus && previewInput) previewInput.focus({ preventScroll: true });
     return;
   }
@@ -366,6 +369,9 @@ function transitionPreviewCluster(toSlotName) {
 
   // Move DOM node into destination slot
   targetSlot.appendChild(cluster);
+  if (previewInput) {
+    previewInput.placeholder = toSlotName === 'row1' ? 'Type to preview fonts...' : 'Type here to preview text across all fonts...';
+  }
   if (hadFocus && previewInput) previewInput.focus({ preventScroll: true });
 
   // FLIP: Last - capture resting position in destination slot
@@ -422,6 +428,8 @@ function setupStickyControls() {
           slot1.appendChild(cluster);
           currentStickySlotState = 'row1';
         }
+        const previewInput = document.getElementById("global-preview-input");
+        if (previewInput) previewInput.placeholder = 'Type to preview fonts...';
       } else {
         transitionPreviewCluster('row1');
       }
@@ -434,6 +442,8 @@ function setupStickyControls() {
           slot2.appendChild(cluster);
           currentStickySlotState = 'row2';
         }
+        const previewInput = document.getElementById("global-preview-input");
+        if (previewInput) previewInput.placeholder = 'Type here to preview text across all fonts...';
       } else {
         transitionPreviewCluster('row2');
       }
@@ -443,7 +453,7 @@ function setupStickyControls() {
   window.addEventListener("scroll", () => checkSticky(false), { passive: true });
   window.addEventListener("resize", () => {
     checkSticky(false);
-    if (window.innerWidth <= 1060 && currentStickySlotState !== 'row2') {
+    if (window.innerWidth <= 1024 && currentStickySlotState !== 'row2') {
       transitionPreviewCluster('row2');
     }
   }, { passive: true });
