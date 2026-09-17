@@ -350,11 +350,13 @@ function transitionPreviewCluster(toSlotName) {
 
   // Only animate on larger viewports where row1 has space
   const isDesktop = typeof window !== 'undefined' && window.innerWidth > 1024;
-  if (!isDesktop || typeof cluster.getBoundingClientRect !== 'function') {
-    targetSlot.appendChild(cluster);
-    currentStickySlotState = toSlotName;
+  if (!isDesktop) {
+    if (slot2 && cluster.parentElement !== slot2) {
+      slot2.appendChild(cluster);
+    }
+    currentStickySlotState = 'row2';
     if (previewInput) {
-      previewInput.placeholder = toSlotName === 'row1' ? 'Type to preview fonts...' : 'Type here to preview text across all fonts...';
+      previewInput.placeholder = 'Type to preview fonts...';
     }
     if (hadFocus && previewInput) previewInput.focus({ preventScroll: true });
     return;
@@ -415,48 +417,81 @@ function setupStickyControls() {
     const isCollapsed = nav ? nav.classList.contains("collapsed") : false;
     const navHeight = isMobile ? 56 : (isCollapsed ? 48 : 64);
 
-    // Hysteresis threshold to prevent scroll jitter
     const isStickyNow = bar.classList.contains("is-sticky");
-    const enterThreshold = navHeight + 8;
-    const exitThreshold = navHeight + 28;
+    const barOffsetFromSection = bar.offsetTop || 0;
+    const barCurrentTop = rect.top + barOffsetFromSection;
+    const enterThreshold = navHeight + (isMobile ? 2 : 8);
+    const exitThreshold = navHeight + (isMobile ? 14 : 28);
+    const shouldBeSticky = isMobile ? (barCurrentTop <= enterThreshold) : (rect.top <= enterThreshold);
+    const shouldExitSticky = isMobile ? (barCurrentTop > exitThreshold) : (rect.top > exitThreshold);
 
-    if (!isStickyNow && rect.top <= enterThreshold) {
+    if (!isStickyNow && shouldBeSticky) {
       bar.classList.add("is-sticky");
-      if (isInitial) {
-        const slot1 = document.getElementById("sticky-slot-row1");
-        const cluster = document.getElementById("sticky-preview-options-cluster");
-        if (slot1 && cluster) {
-          slot1.appendChild(cluster);
-          currentStickySlotState = 'row1';
+      if (!isMobile) {
+        if (isInitial) {
+          const slot1 = document.getElementById("sticky-slot-row1");
+          const cluster = document.getElementById("sticky-preview-options-cluster");
+          if (slot1 && cluster) {
+            slot1.appendChild(cluster);
+            currentStickySlotState = 'row1';
+          }
+          const previewInput = document.getElementById("global-preview-input");
+          if (previewInput) previewInput.placeholder = 'Type to preview fonts...';
+        } else {
+          transitionPreviewCluster('row1');
         }
-        const previewInput = document.getElementById("global-preview-input");
-        if (previewInput) previewInput.placeholder = 'Type to preview fonts...';
       } else {
-        transitionPreviewCluster('row1');
-      }
-    } else if (isStickyNow && rect.top > exitThreshold) {
-      bar.classList.remove("is-sticky");
-      if (isInitial) {
+        // Mobile: ensure cluster remains in row2
         const slot2 = document.getElementById("sticky-slot-row2");
         const cluster = document.getElementById("sticky-preview-options-cluster");
-        if (slot2 && cluster) {
+        if (slot2 && cluster && cluster.parentElement !== slot2) {
           slot2.appendChild(cluster);
-          currentStickySlotState = 'row2';
         }
+        currentStickySlotState = 'row2';
+        const previewInput = document.getElementById("global-preview-input");
+        if (previewInput) previewInput.placeholder = 'Type to preview fonts...';
+      }
+    } else if (isStickyNow && shouldExitSticky) {
+      bar.classList.remove("is-sticky");
+      if (!isMobile) {
+        if (isInitial) {
+          const slot2 = document.getElementById("sticky-slot-row2");
+          const cluster = document.getElementById("sticky-preview-options-cluster");
+          if (slot2 && cluster) {
+            slot2.appendChild(cluster);
+            currentStickySlotState = 'row2';
+          }
+          const previewInput = document.getElementById("global-preview-input");
+          if (previewInput) previewInput.placeholder = 'Type here to preview text across all fonts...';
+        } else {
+          transitionPreviewCluster('row2');
+        }
+      } else {
+        // Mobile: keep in row2
+        const slot2 = document.getElementById("sticky-slot-row2");
+        const cluster = document.getElementById("sticky-preview-options-cluster");
+        if (slot2 && cluster && cluster.parentElement !== slot2) {
+          slot2.appendChild(cluster);
+        }
+        currentStickySlotState = 'row2';
         const previewInput = document.getElementById("global-preview-input");
         if (previewInput) previewInput.placeholder = 'Type here to preview text across all fonts...';
-      } else {
-        transitionPreviewCluster('row2');
       }
     }
   }
 
   window.addEventListener("scroll", () => checkSticky(false), { passive: true });
   window.addEventListener("resize", () => {
-    checkSticky(false);
-    if (window.innerWidth <= 1024 && currentStickySlotState !== 'row2') {
-      transitionPreviewCluster('row2');
+    const isMobile = window.innerWidth <= 1024;
+    if (isMobile && currentStickySlotState !== 'row2') {
+      const slot2 = document.getElementById("sticky-slot-row2");
+      const cluster = document.getElementById("sticky-preview-options-cluster");
+      if (slot2 && cluster && cluster.parentElement !== slot2) {
+        slot2.appendChild(cluster);
+        currentStickySlotState = 'row2';
+      }
     }
+    checkSticky(false);
   }, { passive: true });
   checkSticky(true);
 }
