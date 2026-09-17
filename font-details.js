@@ -257,7 +257,14 @@ function renderFontDetails(font) {
           </div>
 
           <!-- Right: Controls -->
-          <div class="playground-controls">
+          <div class="playground-controls" id="playground-controls">
+            <div class="playground-controls-header">
+              <div class="controls-header-badge">
+                <i data-lucide="sliders" style="width:14px;height:14px;"></i>
+                <span>Typography Controls</span>
+              </div>
+              <span class="controls-header-sub">Live Specimen Tuning</span>
+            </div>
             <!-- Font Size -->
             <div class="control-group">
               <div class="control-header">
@@ -1207,6 +1214,8 @@ function initPremiumInteractions(font) {
     const leading = sliderLeading.value;
 
     valSize.textContent = `${size}px`;
+    const mValSize = document.getElementById("mobile-val-size");
+    if (mValSize) mValSize.textContent = `${size}px`;
     valWeight.textContent = weight;
     valTracking.textContent = `${Number(tracking).toFixed(2)}em`;
     valLeading.textContent = Number(leading).toFixed(1);
@@ -1313,6 +1322,13 @@ function initPremiumInteractions(font) {
   const mobileValSize = document.getElementById("mobile-val-size");
 
   function openMobileDrawer() {
+    const pgControls = document.getElementById("playground-controls");
+    if (pgControls) {
+      pgControls.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      pgControls.classList.add("highlight-pulse");
+      setTimeout(() => pgControls.classList.remove("highlight-pulse"), 1200);
+      return;
+    }
     if (mobileDrawer && mobileBackdrop) {
       mobileDrawer.classList.add("open");
       mobileBackdrop.classList.add("open");
