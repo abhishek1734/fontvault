@@ -98,9 +98,8 @@ button, input {
 /* --- NAVIGATION BAR --- */
 header,
 header#navbar {
-  position: -webkit-sticky !important;
-  position: sticky !important;
-  top: 0 !important;
+  position: relative !important;
+  top: auto !important;
   left: 0 !important;
   right: 0 !important;
   width: 100% !important;
@@ -1749,7 +1748,7 @@ footer {
     padding: 0 1rem 0 1.25rem !important;
     flex-wrap: nowrap !important;
     gap: 0 !important;
-    position: sticky !important;
+    position: relative !important; top: auto !important;
     top: 0 !important;
     z-index: 200 !important;
     overflow: visible !important;
@@ -7594,4 +7593,312 @@ footer .logo-img-dark {
   header#navbar {
     padding: 0 1rem !important;
   }
+}
+
+
+/* ============================================================
+   USER CUSTOMIZATIONS OVERHAUL (v9.0)
+   1. Non-sticky navbar
+   2. Base grid soft radial fade-in effect
+   3. Structured & responsive filter controls
+   4. Hide submit a font button
+   5. Clean consistent layout
+   ============================================================ */
+
+/* ── 1. Navbar is NOT sticky ── */
+header,
+header#navbar,
+header.collapsed,
+header#navbar.collapsed {
+  position: relative !important;
+  top: auto !important;
+  bottom: auto !important;
+  height: 64px !important;
+  background-color: #0A0B0D !important;
+  background: #0A0B0D !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Hide 'Submit a Font' button everywhere */
+#submit-font-nav-btn,
+.nav-actions #submit-font-nav-btn {
+  display: none !important;
+}
+
+/* ── 2. Grid Background: Soft radial fade-out vignette + fade-in animation ── */
+.hero-base-grid {
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px) !important;
+  background-size: 38px 38px !important;
+  -webkit-mask-image: radial-gradient(ellipse 62% 52% at 50% 48%, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 88%) !important;
+  mask-image: radial-gradient(ellipse 62% 52% at 50% 48%, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 88%) !important;
+  animation: gridSoftFadeIn 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  z-index: 0 !important;
+}
+
+@keyframes gridSoftFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── 3. Logo Display: Crisp White Wordmark on Dark ── */
+.logo-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  text-decoration: none !important;
+}
+header#navbar .logo-img-light {
+  display: block !important;
+  height: 32px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+header#navbar .logo-img-dark {
+  display: none !important;
+}
+
+footer .logo-img-light {
+  display: block !important;
+  height: 36px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+footer .logo-img-dark {
+  display: none !important;
+}
+
+/* ── 4. Structured & Responsive Filter Section ── */
+.sticky-font-controls {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 920 !important;
+  background: rgba(10, 11, 13, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  padding: 0.85rem 1.5rem !important;
+  margin-left: -1.5rem !important;
+  margin-right: -1.5rem !important;
+  width: calc(100% + 3rem) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.85rem !important;
+}
+
+/* Row 1: Category Pills */
+.sticky-row-primary {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 1rem !important;
+}
+
+.category-pills-scroll {
+  flex: 1 1 auto !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+}
+.category-pills-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+.category-pills-row {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+.cat-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 14px !important;
+  font-family: var(--font-body), sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #8A8F98 !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 99px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.2s ease !important;
+}
+
+.cat-pill:hover {
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.cat-pill.active {
+  color: #0A0B0D !important;
+  background: #FFFFFF !important;
+  border-color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+
+.cat-pill-count {
+  font-family: var(--font-mono), monospace !important;
+  font-size: 11px !important;
+  opacity: 0.75 !important;
+}
+
+/* Row 2: Secondary Controls (Filters on Left, Toolbar on Right) */
+.sticky-row-secondary {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+  width: 100% !important;
+}
+
+.refinement-dropdowns {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.filter-dropdown-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 7px 12px !important;
+  font-size: 12.5px !important;
+  color: #ABB2BF !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.filter-dropdown-btn:hover {
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.sticky-preview-options-cluster {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+.global-preview-input-wrap {
+  min-width: 260px !important;
+  max-width: 420px !important;
+}
+.global-preview-input-wrap input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  font-size: 13px !important;
+}
+.global-preview-input-wrap input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.toolbar-controls-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.toolbar-slider-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-family: var(--font-mono), monospace !important;
+  font-size: 11px !important;
+  color: #8A8F98 !important;
+}
+
+.toolbar-slider-wrap input[type="range"] {
+  accent-color: #3DDC84 !important;
+  width: 90px !important;
+}
+
+.size-input-container input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+  border-radius: 4px !important;
+  padding: 2px 4px !important;
+  width: 40px !important;
+  text-align: center !important;
+  font-size: 12px !important;
+}
+
+.display-pill-toggle {
+  display: inline-flex !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 2px !important;
+  gap: 2px !important;
+}
+.display-toggle-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #8A8F98 !important;
+  padding: 6px 8px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.display-toggle-btn.active {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #FFFFFF !important;
+}
+
+/* Responsive Breakpoints for Filters */
+@media (max-width: 1024px) {
+  .sticky-font-controls {
+    position: relative !important;
+    top: auto !important;
+    padding: 1rem 1rem !important;
+    margin-left: -1rem !important;
+    margin-right: -1rem !important;
+    width: calc(100% + 2rem) !important;
+  }
+  .sticky-row-secondary {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .global-preview-input-wrap {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  .sticky-preview-options-cluster {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  header#navbar .logo-img-light { height: 24px !important; }
+  footer .logo-img-light { height: 28px !important; }
+  .toolbar-slider-wrap { display: none !important; }
 }
