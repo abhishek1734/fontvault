@@ -2139,7 +2139,7 @@ async function init() {
   setupLayoutToggles();
 
   // Initialize FAQ accordion functionality
-  setupFaqAccordion();
+  setTimeout(setupFaqAccordion, 100);
 }
 
 // ─────────────────────────────────────────────────
@@ -2289,46 +2289,59 @@ init();
 // ─────────────────────────────────────────────────
 function setupFaqAccordion() {
   const items = document.querySelectorAll(".faq-accordion-item");
+  if (!items.length) return;
+
   items.forEach(item => {
     const trigger = item.querySelector(".faq-trigger");
     const content = item.querySelector(".faq-content");
-    
-    if (trigger && content) {
-      // Ensure initial accessibility state
-      trigger.setAttribute("aria-expanded", item.classList.contains("active") ? "true" : "false");
 
-      trigger.addEventListener("click", (e) => {
-        e.preventDefault();
-        const isActive = item.classList.contains("active");
-        
-        // Close all other accordion items
-        items.forEach(otherItem => {
-          if (otherItem !== item) {
-            otherItem.classList.remove("active");
-            const otherTrigger = otherItem.querySelector(".faq-trigger");
-            const otherContent = otherItem.querySelector(".faq-content");
-            if (otherTrigger) otherTrigger.setAttribute("aria-expanded", "false");
-            if (otherContent) otherContent.style.maxHeight = null;
-          }
-        });
-        
-        // Toggle current item
-        if (isActive) {
-          item.classList.remove("active");
-          trigger.setAttribute("aria-expanded", "false");
-          content.style.maxHeight = null;
-        } else {
-          item.classList.add("active");
-          trigger.setAttribute("aria-expanded", "true");
-          content.style.maxHeight = content.scrollHeight + "px";
+    if (!trigger || !content) return;
+
+    // Set initial aria state
+    trigger.setAttribute("aria-expanded", item.classList.contains("active") ? "true" : "false");
+
+    trigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      const isActive = item.classList.contains("active");
+
+      // Close all other accordion items
+      items.forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.classList.remove("active");
+          const otherTrigger = otherItem.querySelector(".faq-trigger");
+          const otherContent = otherItem.querySelector(".faq-content");
+          if (otherTrigger) otherTrigger.setAttribute("aria-expanded", "false");
+          if (otherContent) otherContent.style.maxHeight = "0px";
         }
       });
-    }
+
+      // Toggle current item
+      if (isActive) {
+        item.classList.remove("active");
+        trigger.setAttribute("aria-expanded", "false");
+        content.style.maxHeight = "0px";
+      } else {
+        item.classList.add("active");
+        trigger.setAttribute("aria-expanded", "true");
+        // Force reflow to get correct scrollHeight
+        content.style.maxHeight = "none";
+        const h = content.scrollHeight;
+        content.style.maxHeight = "0px";
+        // Trigger transition
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            content.style.maxHeight = (h > 0 ? h : 500) + "px";
+          });
+        });
+      }
+    });
   });
 }
 
+// Run after DOM is ready
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", setupFaqAccordion);
 } else {
-  setupFaqAccordion();
+  // Small delay to ensure all layout is computed
+  setTimeout(setupFaqAccordion, 50);
 }

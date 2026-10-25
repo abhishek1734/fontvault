@@ -57,8 +57,14 @@
 
   <!-- NAVIGATION BAR -->
   <header id="navbar" role="banner">
-    <a href="index.html" class="logo">FONTVAULT</a>
+    <a href="index.html" class="logo logo-link">
+      <img src="assets/logo-dark.png" alt="FontVault" class="logo-img logo-img-dark">
+      <img src="assets/logo-light.png" alt="FontVault" class="logo-img logo-img-light">
+    </a>
     <div class="nav-actions">
+      <a href="font-pairing.html" class="nav-link">Font Pairing</a>
+      <a href="collections.html" class="nav-link">Collections</a>
+      <a href="blog.html" class="nav-link">Blog</a>
       <div class="search-container" id="search-container" role="search">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -592,7 +598,10 @@
   <footer role="contentinfo">
     <div class="footer-content">
       <div class="footer-branding">
-        <a href="#" class="logo">FONTVAULT</a>
+        <a href="index.html" class="logo logo-link">
+        <img src="assets/logo-dark.png" alt="FontVault" class="logo-img logo-img-dark">
+        <img src="assets/logo-light.png" alt="FontVault" class="logo-img logo-img-light">
+      </a>
         <p style="margin-top: 1rem;">A free font discovery tool to search, compare, and pair open-source typefaces across real layouts.</p>
         <div style="margin-top: 1.25rem;">
           <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">
@@ -625,6 +634,7 @@
     </div>
     <div class="footer-bottom">
       <span>&copy; 2026 FontVault. All rights reserved.</span>
+      <span class="footer-credit">Made with curiosity by <a href="https://www.linkedin.com/in/abhishekumardesign/" target="_blank" rel="noopener noreferrer" class="footer-credit-link">Abhishek Kumar</a></span>
       <span><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)" style="color:inherit;text-decoration:underline;">support@fontvault.com</a> &middot; BUILT FOR TYPE LOVERS</span>
     </div>
   </footer>
@@ -635,7 +645,7 @@
       <button class="auth-close" id="auth-close" aria-label="Close">&times;</button>
 
       <div class="auth-brand">
-        <span class="logo" style="font-size:1.1rem;">FONTVAULT</span>
+        <span class="logo logo-link" style="display:inline-flex;align-items:center;"><img src="assets/logo-dark.png" alt="FontVault" class="logo-img logo-img-dark" style="height:1.1rem;"><img src="assets/logo-light.png" alt="FontVault" class="logo-img logo-img-light" style="height:1.1rem;"></span>
       </div>
 
       <div class="auth-tabs">
