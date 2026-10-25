@@ -409,91 +409,19 @@ function setupStickyControls() {
   if (!bar || !section) return;
   stickyControlsInitialized = true;
 
-  function checkSticky(isInitial = false) {
-    if (typeof section.getBoundingClientRect !== "function") return;
-    const rect = section.getBoundingClientRect();
-    const nav = document.querySelector("header#navbar") || document.querySelector("header");
-    const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
-    const isCollapsed = nav ? nav.classList.contains("collapsed") : false;
-    const navHeight = isMobile ? 56 : (isCollapsed ? 48 : 64);
-
-    const isStickyNow = bar.classList.contains("is-sticky");
-    const barOffsetFromSection = bar.offsetTop || 0;
-    const barCurrentTop = rect.top + barOffsetFromSection;
-    const enterThreshold = navHeight + (isMobile ? 2 : 8);
-    const exitThreshold = navHeight + (isMobile ? 14 : 28);
-    const shouldBeSticky = isMobile ? (barCurrentTop <= enterThreshold) : (rect.top <= enterThreshold);
-    const shouldExitSticky = isMobile ? (barCurrentTop > exitThreshold) : (rect.top > exitThreshold);
-
-    if (!isStickyNow && shouldBeSticky) {
-      bar.classList.add("is-sticky");
-      if (!isMobile) {
-        if (isInitial) {
-          const slot1 = document.getElementById("sticky-slot-row1");
-          const cluster = document.getElementById("sticky-preview-options-cluster");
-          if (slot1 && cluster) {
-            slot1.appendChild(cluster);
-            currentStickySlotState = 'row1';
-          }
-          const previewInput = document.getElementById("global-preview-input");
-          if (previewInput) previewInput.placeholder = 'Type to preview fonts...';
-        } else {
-          transitionPreviewCluster('row1');
-        }
-      } else {
-        // Mobile: ensure cluster remains in row2
-        const slot2 = document.getElementById("sticky-slot-row2");
-        const cluster = document.getElementById("sticky-preview-options-cluster");
-        if (slot2 && cluster && cluster.parentElement !== slot2) {
-          slot2.appendChild(cluster);
-        }
-        currentStickySlotState = 'row2';
-        const previewInput = document.getElementById("global-preview-input");
-        if (previewInput) previewInput.placeholder = 'Type to preview fonts...';
-      }
-    } else if (isStickyNow && shouldExitSticky) {
-      bar.classList.remove("is-sticky");
-      if (!isMobile) {
-        if (isInitial) {
-          const slot2 = document.getElementById("sticky-slot-row2");
-          const cluster = document.getElementById("sticky-preview-options-cluster");
-          if (slot2 && cluster) {
-            slot2.appendChild(cluster);
-            currentStickySlotState = 'row2';
-          }
-          const previewInput = document.getElementById("global-preview-input");
-          if (previewInput) previewInput.placeholder = 'Type here to preview text across all fonts...';
-        } else {
-          transitionPreviewCluster('row2');
-        }
-      } else {
-        // Mobile: keep in row2
-        const slot2 = document.getElementById("sticky-slot-row2");
-        const cluster = document.getElementById("sticky-preview-options-cluster");
-        if (slot2 && cluster && cluster.parentElement !== slot2) {
-          slot2.appendChild(cluster);
-        }
-        currentStickySlotState = 'row2';
-        const previewInput = document.getElementById("global-preview-input");
-        if (previewInput) previewInput.placeholder = 'Type here to preview text across all fonts...';
-      }
-    }
+  // Filter section is non-sticky: ensure cluster remains in natural row2 slot
+  bar.classList.remove("is-sticky");
+  const slot2 = document.getElementById("sticky-slot-row2");
+  const cluster = document.getElementById("sticky-preview-options-cluster");
+  if (slot2 && cluster && cluster.parentElement !== slot2) {
+    slot2.appendChild(cluster);
   }
+  currentStickySlotState = 'row2';
 
-  window.addEventListener("scroll", () => checkSticky(false), { passive: true });
-  window.addEventListener("resize", () => {
-    const isMobile = window.innerWidth <= 1024;
-    if (isMobile && currentStickySlotState !== 'row2') {
-      const slot2 = document.getElementById("sticky-slot-row2");
-      const cluster = document.getElementById("sticky-preview-options-cluster");
-      if (slot2 && cluster && cluster.parentElement !== slot2) {
-        slot2.appendChild(cluster);
-        currentStickySlotState = 'row2';
-      }
-    }
-    checkSticky(false);
-  }, { passive: true });
-  checkSticky(true);
+  const previewInput = document.getElementById("global-preview-input");
+  if (previewInput) {
+    previewInput.placeholder = 'Type here to preview text across all fonts...';
+  }
 }
 
 function setupFilters() {
