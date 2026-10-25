@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Reveal Hero Section — Standalone Component</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       CODE REVEAL HERO — SELF-CONTAINED STYLES
+       ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0A0B0D;
+      color: #fff;
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Section Container ── */
+    .cr-hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      background-color: #0A0B0D;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .cr-hero.cr-active {
+      border-color: rgba(61, 220, 132, 0.22);
+      box-shadow: inset 0 0 28px rgba(61, 220, 132, 0.05);
+    }
+
+    /* ── Layer 1: Base Grid (~3% opacity) ── */
+    .cr-base-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      z-index: 0;
+    }
+
+    /* ── Layer 2: Code Layer (Masked by CSS radial gradient spotlight) ── */
+    .cr-code-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+      --x: 50%;
+      --y: 50%;
+      --r: 0px;
+      -webkit-mask-image: radial-gradient(
+        circle var(--r, 0px) at var(--x, 50%) var(--y, 50%),
+        black 0%,
+        rgba(0, 0, 0, 0.6) 45%,
+        transparent 100%
+      );
+      mask-image: radial-gradient(
+        circle var(--r, 0px) at var(--x, 50%) var(--y, 50%),
+        black 0%,
+        rgba(0, 0, 0, 0.6) 45%,
+        transparent 100%
+      );
+      will-change: mask-image, -webkit-mask-image, transform;
+    }
+
+    .cr-code-inner {
+      position: absolute;
+      inset: -80px;
+      overflow: hidden;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+      white-space: pre;
+      color: #ABB2BF;
+      animation: crCodeScroll 110s linear infinite;
+    }
+
+    @keyframes crCodeScroll {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-50%); }
+    }
+
+    /* Syntax Tokens */
+    .token-kw  { color: #7C9CFF; font-weight: 500; }  /* keywords */
+    .token-str { color: #7EE0A3; }                    /* strings */
+    .token-fn  { color: #FFC66D; }                    /* functions */
+    .token-cm  { color: #5C6370; font-style: italic; }/* comments */
+    .token-op  { color: #8B93A1; }                    /* punctuation/operators */
+    .token-num { color: #E5C07B; }                    /* numbers */
+    .token-typ { color: #C678DD; }                    /* types/classes */
+    .token-var { color: #ABB2BF; }                    /* variables */
+
+    /* ── Layer 3: Secondary Halo Glow (electric green #3DDC84 @ 12%, 300px) ── */
+    .cr-halo-glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 2;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(61, 220, 132, 0.12) 0%, transparent 70%);
+      filter: blur(28px);
+      opacity: 0;
+      will-change: left, top, opacity;
+      transition: opacity 0.4s ease-out;
+    }
+
+    .cr-hero.cr-active .cr-halo-glow {
+      opacity: 1;
+    }
+
+    /* ── Layer 4: Content Layer (z-index 10, pointer events only on button) ── */
+    .cr-content {
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+      max-width: 840px;
+      margin: 0 auto;
+    }
+
+    .cr-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #3DDC84;
+      margin-bottom: 1.5rem;
+    }
+
+    .cr-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3DDC84;
+      box-shadow: 0 0 10px #3DDC84;
+    }
+
+    .cr-headline {
+      font-size: clamp(48px, 7.5vw, 88px);
+      font-weight: 700;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      color: #FFFFFF;
+      margin-bottom: 1.5rem;
+    }
+
+    .cr-subline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(14px, 2vw, 16px);
+      line-height: 1.65;
+      color: #8A8F98;
+      max-width: 580px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .cr-button {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 14px 28px;
+      background: #FFFFFF;
+      color: #0A0B0D;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .cr-button:hover {
+      background: #3DDC84;
+      color: #0A0B0D;
+      transform: translateY(-2px);
+      box-shadow: 0 0 28px rgba(61, 220, 132, 0.4);
+    }
+
+    /* ── Responsive & Accessibility ── */
+    @media (max-width: 768px) {
+      .cr-code-inner {
+        font-size: 11px;
+        line-height: 1.6;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cr-code-inner { animation: none !important; }
+      .cr-code-layer {
+        --r: 180px !important;
+        --x: 50% !important;
+        --y: 50% !important;
+      }
+      .cr-halo-glow {
+        opacity: 0.6 !important;
+        left: 50% !important;
+        top: 50% !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       HERO COMPONENT
+       ============================================================ -->
+  <section class="cr-hero" id="cr-hero">
+
+    <!-- 1. Base grid layer -->
+    <div class="cr-base-grid" aria-hidden="true"></div>
+
+    <!-- 2. Code reveal layer (masked by cursor spotlight) -->
+    <div class="cr-code-layer" id="cr-code-layer" aria-hidden="true">
+      <div class="cr-code-inner" id="cr-code-inner">
+<span class="token-cm">// ── Code Reveal Engine ──────────────────────────────────────</span>
+<span class="token-kw">import</span> <span class="token-var">React</span><span class="token-op">,</span> <span class="token-op">{</span> <span class="token-var">useState</span><span class="token-op">,</span> <span class="token-var">useEffect</span><span class="token-op">,</span> <span class="token-var">useRef</span><span class="token-op">,</span> <span class="token-var">useCallback</span> <span class="token-op">}</span> <span class="token-kw">from</span> <span class="token-str">'react'</span><span class="token-op">;</span>
+<span class="token-kw">import</span> <span class="token-op">{</span> <span class="token-typ">SpotlightMask</span><span class="token-op">,</span> <span class="token-typ">HaloLayer</span><span class="token-op">,</span> <span class="token-typ">Lissajous</span> <span class="token-op">}</span> <span class="token-kw">from</span> <span class="token-str">'@/lib/fx'</span><span class="token-op">;</span>
+
+<span class="token-kw">interface</span> <span class="token-typ">SpotlightConfig</span> <span class="token-op">{</span>
+  <span class="token-var">radiusDesktop</span><span class="token-op">:</span> <span class="token-typ">number</span><span class="token-op">;</span>
+  <span class="token-var">radiusMobile</span><span class="token-op">:</span> <span class="token-typ">number</span><span class="token-op">;</span>
+  <span class="token-var">lerpFactor</span><span class="token-op">:</span> <span class="token-typ">number</span><span class="token-op">;</span>
+  <span class="token-var">parallaxMax</span><span class="token-op">:</span> <span class="token-typ">number</span><span class="token-op">;</span>
+  <span class="token-var">accentColor</span><span class="token-op">:</span> <span class="token-typ">string</span><span class="token-op">;</span>
+<span class="token-op">}</span>
+
+<span class="token-kw">const</span> <span class="token-fn">config</span><span class="token-op">:</span> <span class="token-typ">SpotlightConfig</span> <span class="token-op">=</span> <span class="token-op">{</span>
+  <span class="token-var">radiusDesktop</span><span class="token-op">:</span> <span class="token-num">180</span><span class="token-op">,</span>
+  <span class="token-var">radiusMobile</span><span class="token-op">:</span> <span class="token-num">120</span><span class="token-op">,</span>
+  <span class="token-var">lerpFactor</span><span class="token-op">:</span> <span class="token-num">0.12</span><span class="token-op">,</span>
+  <span class="token-var">parallaxMax</span><span class="token-op">:</span> <span class="token-num">8</span><span class="token-op">,</span>
+  <span class="token-var">accentColor</span><span class="token-op">:</span> <span class="token-str">'#3DDC84'</span><span class="token-op">,</span>
+<span class="token-op">};</span>
+
+<span class="token-kw">export function</span> <span class="token-fn">useSpotlight</span><span class="token-op">(</span><span class="token-var">ref</span><span class="token-op">:</span> <span class="token-typ">React.RefObject</span><span class="token-op">&lt;</span><span class="token-typ">HTMLElement</span><span class="token-op">&gt;) {</span>
+  <span class="token-kw">const</span> <span class="token-op">[</span><span class="token-var">coords</span><span class="token-op">,</span> <span class="token-fn">setCoords</span><span class="token-op">] =</span> <span class="token-fn">useState</span><span class="token-op">({</span> <span class="token-var">x</span><span class="token-op">:</span> <span class="token-num">0</span><span class="token-op">,</span> <span class="token-var">y</span><span class="token-op">:</span> <span class="token-num">0</span> <span class="token-op">});</span>
+  <span class="token-kw">const</span> <span class="token-var">target</span> <span class="token-op">=</span> <span class="token-fn">useRef</span><span class="token-op">({</span> <span class="token-var">x</span><span class="token-op">:</span> <span class="token-num">0</span><span class="token-op">,</span> <span class="token-var">y</span><span class="token-op">:</span> <span class="token-num">0</span> <span class="token-op">});</span>
+
+  <span class="token-fn">useEffect</span><span class="token-op">(() =&gt; {</span>
+    <span class="token-kw">const</span> <span class="token-var">el</span> <span class="token-op">=</span> <span class="token-var">ref</span><span class="token-op">.</span><span class="token-var">current</span><span class="token-op">;</span>
+    <span class="token-kw">if</span> <span class="token-op">(!</span><span class="token-var">el</span><span class="token-op">)</span> <span class="token-kw">return</span><span class="token-op">;</span>
+
+    <span class="token-kw">const</span> <span class="token-fn">handleMove</span> <span class="token-op">= (</span><span class="token-var">e</span><span class="token-op">:</span> <span class="token-typ">MouseEvent</span><span class="token-op">) =&gt; {</span>
+      <span class="token-kw">const</span> <span class="token-var">rect</span> <span class="token-op">=</span> <span class="token-var">el</span><span class="token-op">.</span><span class="token-fn">getBoundingClientRect</span><span class="token-op">();</span>
+      <span class="token-var">target</span><span class="token-op">.</span><span class="token-var">current</span> <span class="token-op">= {</span>
+        <span class="token-var">x</span><span class="token-op">:</span> <span class="token-var">e</span><span class="token-op">.</span><span class="token-var">clientX</span> <span class="token-op">-</span> <span class="token-var">rect</span><span class="token-op">.</span><span class="token-var">left</span><span class="token-op">,</span>
+        <span class="token-var">y</span><span class="token-op">:</span> <span class="token-var">e</span><span class="token-op">.</span><span class="token-var">clientY</span> <span class="token-op">-</span> <span class="token-var">rect</span><span class="token-op">.</span><span class="token-var">top</span><span class="token-op">,</span>
+      <span class="token-op">};</span>
+    <span class="token-op">};</span>
+
+    <span class="token-var">el</span><span class="token-op">.</span><span class="token-fn">addEventListener</span><span class="token-op">(</span><span class="token-str">'mousemove'</span><span class="token-op">,</span> <span class="token-var">handleMove</span><span class="token-op">, {</span> <span class="token-var">passive</span><span class="token-op">:</span> <span class="token-kw">true</span> <span class="token-op">});</span>
+    <span class="token-kw">return</span> <span class="token-op">() =&gt;</span> <span class="token-var">el</span><span class="token-op">.</span><span class="token-fn">removeEventListener</span><span class="token-op">(</span><span class="token-str">'mousemove'</span><span class="token-op">,</span> <span class="token-var">handleMove</span><span class="token-op">);</span>
+  <span class="token-op">}, [</span><span class="token-var">ref</span><span class="token-op">]);</span>
+
+  <span class="token-kw">return</span> <span class="token-var">coords</span><span class="token-op">;</span>
+<span class="token-op">}</span>
+
+<span class="token-cm">/* ── CSS Mask Transition Definition ────────────────────────── */</span>
+<span class="token-kw">export const</span> <span class="token-var">maskStyles</span> <span class="token-op">= {</span>
+  <span class="token-var">WebkitMaskImage</span><span class="token-op">:</span>
+    <span class="token-str">'radial-gradient(circle var(--r) at var(--x) var(--y), black 0%, rgba(0,0,0,0.6) 45%, transparent 100%)'</span><span class="token-op">,</span>
+  <span class="token-var">maskImage</span><span class="token-op">:</span>
+    <span class="token-str">'radial-gradient(circle var(--r) at var(--x) var(--y), black 0%, rgba(0,0,0,0.6) 45%, transparent 100%)'</span><span class="token-op">,</span>
+<span class="token-op">};</span>
+
+<span class="token-cm">// ── Lissajous Auto-loop for Touch Devices ───────────────────</span>
+<span class="token-kw">function</span> <span class="token-fn">lissajousPoint</span><span class="token-op">(</span><span class="token-var">t</span><span class="token-op">:</span> <span class="token-typ">number</span><span class="token-op">,</span> <span class="token-var">w</span><span class="token-op">:</span> <span class="token-typ">number</span><span class="token-op">,</span> <span class="token-var">h</span><span class="token-op">:</span> <span class="token-typ">number</span><span class="token-op">) {</span>
+  <span class="token-kw">return</span> <span class="token-op">{</span>
+    <span class="token-var">x</span><span class="token-op">:</span> <span class="token-var">w</span> <span class="token-op">* (</span><span class="token-num">0.5</span> <span class="token-op">+</span> <span class="token-num">0.36</span> <span class="token-op">*</span> <span class="token-typ">Math</span><span class="token-op">.</span><span class="token-fn">sin</span><span class="token-op">(</span><span class="token-num">2.2</span> <span class="token-op">*</span> <span class="token-var">t</span><span class="token-op">)),</span>
+    <span class="token-var">y</span><span class="token-op">:</span> <span class="token-var">h</span> <span class="token-op">* (</span><span class="token-num">0.5</span> <span class="token-op">+</span> <span class="token-num">0.30</span> <span class="token-op">*</span> <span class="token-typ">Math</span><span class="token-op">.</span><span class="token-fn">sin</span><span class="token-op">(</span><span class="token-num">3.0</span> <span class="token-op">*</span> <span class="token-var">t</span> <span class="token-op">+</span> <span class="token-num">1</span><span class="token-op">)),</span>
+  <span class="token-op">};</span>
+<span class="token-op">}</span>
+      </div>
+    </div>
+
+    <!-- 3. Secondary halo glow -->
+    <div class="cr-halo-glow" id="cr-halo-glow" aria-hidden="true"></div>
+
+    <!-- 4. Content layer (z-10, pointer events only on button) -->
+    <div class="cr-content">
+      <div class="cr-eyebrow">Interactive Source Terminal</div>
+      <h1 class="cr-headline">Under The Surface Lies The Code.</h1>
+      <p class="cr-subline">Move your cursor over the terminal to illuminate the source code hidden beneath.</p>
+      <a href="#explore" class="cr-button">
+        <span>Explore Architecture</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       POINTER TRACKING + LERP + TOUCH SCRIPT
+       ============================================================ -->
+  <script>
+    (function initCodeReveal() {
+      const hero  = document.getElementById('cr-hero');
+      const layer = document.getElementById('cr-code-layer');
+      const halo  = document.getElementById('cr-halo-glow');
+      if (!hero || !layer || !halo) return;
+
+      // ── Config
+      const LERP        = 0.12;      // linear interpolation factor (~0.12)
+      const R_DESKTOP   = 180;       // spotlight radius (px)
+      const R_MOBILE    = 120;       // on small screens
+      const PARALLAX    = 8;         // parallax shift (px, opposite to cursor)
+      const ENTER_MS    = 400;       // animate radius 0 -> 180 over 400ms
+      const LEAVE_MS    = 500;       // shrink back to 0 over 500ms
+
+      // ── State
+      let cx = 0, cy = 0;           // current lerped coordinates
+      let tx = 0, ty = 0;           // target coordinates
+      let cr = 0, tr = 0;           // current radius, target radius
+      let radiusStartTime = 0;
+      let radiusStartVal = 0;
+      let radiusDuration = ENTER_MS;
+      let isRadiusAnimating = false;
+      let rafId = null;
+      let isTouch = false;
+      let lissT = 0;                // Lissajous parameter
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const isMobile = () => window.innerWidth <= 768;
+      const getMaxRadius = () => isMobile() ? R_MOBILE : R_DESKTOP;
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function apply() {
+        layer.style.setProperty('--x', cx.toFixed(1) + 'px');
+        layer.style.setProperty('--y', cy.toFixed(1) + 'px');
+        layer.style.setProperty('--r', cr.toFixed(1) + 'px');
+
+        halo.style.left = cx.toFixed(1) + 'px';
+        halo.style.top  = cy.toFixed(1) + 'px';
+
+        const rect = hero.getBoundingClientRect();
+        const nx = (rect.width > 0 ? (cx / rect.width - 0.5) * 2 : 0);
+        const ny = (rect.height > 0 ? (cy / rect.height - 0.5) * 2 : 0);
+        layer.style.transform = `translate(${(-nx * PARALLAX).toFixed(2)}px, ${(-ny * PARALLAX).toFixed(2)}px)`;
+      }
+
+      function tick(timestamp) {
+        if (reducedMotion) {
+          const rect = hero.getBoundingClientRect();
+          cx = rect.width / 2;
+          cy = rect.height / 2;
+          cr = getMaxRadius();
+          apply();
+          return;
+        }
+
+        if (isTouch) {
+          lissT += 0.0035;
+          const rect = hero.getBoundingClientRect();
+          tx = rect.width  * (0.5 + 0.36 * Math.sin(2.2 * lissT));
+          ty = rect.height * (0.5 + 0.30 * Math.sin(3.0 * lissT + 1));
+        }
+
+        cx += (tx - cx) * LERP;
+        cy += (ty - cy) * LERP;
+
+        if (isRadiusAnimating) {
+          const elapsed = timestamp - radiusStartTime;
+          const progress = Math.min(1, Math.max(0, elapsed / radiusDuration));
+          cr = radiusStartVal + (tr - radiusStartVal) * easeOutCubic(progress);
+          if (progress >= 1) {
+            isRadiusAnimating = false;
+            cr = tr;
+          }
+        } else {
+          cr += (tr - cr) * LERP;
+        }
+
+        apply();
+
+        if (tr > 0 || cr > 0.5 || isTouch) {
+          rafId = requestAnimationFrame(tick);
+        } else {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+          hero.classList.remove('cr-active');
+        }
+      }
+
+      function startRadiusAnimation(targetR, duration) {
+        radiusStartTime = performance.now();
+        radiusStartVal = cr;
+        tr = targetR;
+        radiusDuration = duration;
+        isRadiusAnimating = true;
+        if (!rafId) {
+          rafId = requestAnimationFrame(tick);
+        }
+      }
+
+      function onMouseMove(e) {
+        const rect = hero.getBoundingClientRect();
+        tx = e.clientX - rect.left;
+        ty = e.clientY - rect.top;
+      }
+
+      function onMouseEnter(e) {
+        const rect = hero.getBoundingClientRect();
+        tx = e.clientX - rect.left;
+        ty = e.clientY - rect.top;
+        if (!cx && !cy) {
+          cx = tx;
+          cy = ty;
+        }
+        hero.classList.add('cr-active');
+        startRadiusAnimation(getMaxRadius(), ENTER_MS);
+      }
+
+      function onMouseLeave() {
+        startRadiusAnimation(0, LEAVE_MS);
+      }
+
+      if (reducedMotion) {
+        const rect = hero.getBoundingClientRect();
+        cx = tx = rect.width / 2;
+        cy = ty = rect.height / 2;
+        cr = tr = getMaxRadius();
+        apply();
+        hero.classList.add('cr-active');
+      } else {
+        const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (hasHover) {
+          hero.addEventListener('mousemove', onMouseMove, { passive: true });
+          hero.addEventListener('mouseenter', onMouseEnter, { passive: true });
+          hero.addEventListener('mouseleave', onMouseLeave, { passive: true });
+        } else {
+          isTouch = true;
+          hero.classList.add('cr-active');
+          tr = getMaxRadius() * 0.75;
+          cr = tr;
+          rafId = requestAnimationFrame(tick);
+        }
+      }
+
+      window.addEventListener('resize', () => {
+        if (reducedMotion) {
+          const rect = hero.getBoundingClientRect();
+          cx = tx = rect.width / 2;
+          cy = ty = rect.height / 2;
+          cr = tr = getMaxRadius();
+          apply();
+        }
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>

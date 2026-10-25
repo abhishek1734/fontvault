@@ -2345,3 +2345,179 @@ if (document.readyState === "loading") {
   // Small delay to ensure all layout is computed
   setTimeout(setupFaqAccordion, 50);
 }
+
+
+// ─────────────────────────────────────────────────────────────────
+//  HERO CODE REVEAL — spotlight tracking + lerp + Lissajous touch
+// ─────────────────────────────────────────────────────────────────
+(function initHeroCodeReveal() {
+  const hero  = document.getElementById('hero');
+  const layer = document.getElementById('hero-code-layer');
+  const halo  = document.getElementById('hero-code-halo');
+  if (!hero || !layer || !halo) return;
+
+  // ── Interaction Config (matching prompt specs)
+  const LERP        = 0.12;      // linear interpolation factor (~0.12)
+  const R_DESKTOP   = 180;       // spotlight radius on desktop (px)
+  const R_MOBILE    = 120;       // spotlight radius on mobile (px)
+  const PARALLAX    = 8;         // parallax shift (px, up to 8px opposite cursor)
+  const ENTER_MS    = 400;       // animate radius 0 -> 180 over 400ms (ease-out)
+  const LEAVE_MS    = 500;       // shrink back to 0 over 500ms
+
+  // ── State
+  let cx = 0, cy = 0;           // current lerped coordinates
+  let tx = 0, ty = 0;           // target coordinates
+  let cr = 0, tr = 0;           // current radius, target radius
+  let radiusStartTime = 0;
+  let radiusStartVal = 0;
+  let radiusDuration = ENTER_MS;
+  let isRadiusAnimating = false;
+  let rafId = null;
+  let isTouch = false;
+  let lissT = 0;                // Lissajous parameter
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const isMobile = () => window.innerWidth <= 768;
+  const getMaxRadius = () => isMobile() ? R_MOBILE : R_DESKTOP;
+
+  // Cubic ease-out
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  // Apply CSS variables directly to avoid unnecessary reflows
+  function apply() {
+    layer.style.setProperty('--x', cx.toFixed(1) + 'px');
+    layer.style.setProperty('--y', cy.toFixed(1) + 'px');
+    layer.style.setProperty('--r', cr.toFixed(1) + 'px');
+
+    // Secondary halo position
+    halo.style.left = cx.toFixed(1) + 'px';
+    halo.style.top  = cy.toFixed(1) + 'px';
+
+    // Slight parallax: translate code layer opposite cursor direction
+    const rect = hero.getBoundingClientRect();
+    const nx = (rect.width > 0 ? (cx / rect.width - 0.5) * 2 : 0);
+    const ny = (rect.height > 0 ? (cy / rect.height - 0.5) * 2 : 0);
+    const px = -nx * PARALLAX;
+    const py = -ny * PARALLAX;
+    layer.style.transform = `translate(${px.toFixed(2)}px, ${py.toFixed(2)}px)`;
+  }
+
+  // Main animation frame loop
+  function tick(timestamp) {
+    if (reducedMotion) {
+      const rect = hero.getBoundingClientRect();
+      cx = rect.width / 2;
+      cy = rect.height / 2;
+      cr = getMaxRadius();
+      apply();
+      return;
+    }
+
+    if (isTouch) {
+      // Touch devices: slow automatic loop along a Lissajous curve
+      lissT += 0.0035;
+      const rect = hero.getBoundingClientRect();
+      tx = rect.width  * (0.5 + 0.36 * Math.sin(2.2 * lissT));
+      ty = rect.height * (0.5 + 0.30 * Math.sin(3.0 * lissT + 1));
+    }
+
+    // Lerp coordinate positions
+    cx += (tx - cx) * LERP;
+    cy += (ty - cy) * LERP;
+
+    // Animate radius with duration + easing
+    if (isRadiusAnimating) {
+      const elapsed = timestamp - radiusStartTime;
+      const progress = Math.min(1, Math.max(0, elapsed / radiusDuration));
+      const eased = easeOutCubic(progress);
+      cr = radiusStartVal + (tr - radiusStartVal) * eased;
+      if (progress >= 1) {
+        isRadiusAnimating = false;
+        cr = tr;
+      }
+    } else {
+      cr += (tr - cr) * LERP;
+    }
+
+    apply();
+
+    // Keep RAF alive if active or radius > 0.5
+    if (tr > 0 || cr > 0.5 || isTouch) {
+      rafId = requestAnimationFrame(tick);
+    } else {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+      hero.classList.remove('cr-active');
+    }
+  }
+
+  function startRadiusAnimation(targetR, duration) {
+    radiusStartTime = performance.now();
+    radiusStartVal = cr;
+    tr = targetR;
+    radiusDuration = duration;
+    isRadiusAnimating = true;
+    if (!rafId) {
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  // Pointer events
+  function onMouseMove(e) {
+    const rect = hero.getBoundingClientRect();
+    tx = e.clientX - rect.left;
+    ty = e.clientY - rect.top;
+  }
+
+  function onMouseEnter(e) {
+    const rect = hero.getBoundingClientRect();
+    tx = e.clientX - rect.left;
+    ty = e.clientY - rect.top;
+    if (!cx && !cy) {
+      cx = tx;
+      cy = ty;
+    }
+    hero.classList.add('cr-active');
+    startRadiusAnimation(getMaxRadius(), ENTER_MS);
+  }
+
+  function onMouseLeave() {
+    startRadiusAnimation(0, LEAVE_MS);
+  }
+
+  // Initialize
+  if (reducedMotion) {
+    const rect = hero.getBoundingClientRect();
+    cx = tx = rect.width / 2;
+    cy = ty = rect.height / 2;
+    cr = tr = getMaxRadius();
+    apply();
+    hero.classList.add('cr-active');
+  } else {
+    const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (hasHover) {
+      hero.addEventListener('mousemove', onMouseMove, { passive: true });
+      hero.addEventListener('mouseenter', onMouseEnter, { passive: true });
+      hero.addEventListener('mouseleave', onMouseLeave, { passive: true });
+    } else {
+      // Touch device: start Lissajous loop
+      isTouch = true;
+      hero.classList.add('cr-active');
+      tr = getMaxRadius() * 0.75;
+      cr = tr;
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    if (reducedMotion) {
+      const rect = hero.getBoundingClientRect();
+      cx = tx = rect.width / 2;
+      cy = ty = rect.height / 2;
+      cr = tr = getMaxRadius();
+      apply();
+    }
+  }, { passive: true });
+})();

@@ -31,7 +31,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Space+Grotesk:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&family=Lora:ital,wght@0,400;1,400;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Space+Grotesk:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&family=Lora:ital,wght@0,400;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css?v=6.2">
   <script src="seo.js?v=1.0"></script>
@@ -139,6 +139,337 @@
 
   <!-- HERO SECTION — Liquid Glass Aurora -->
   <section class="hero" id="hero">
+    <!-- Layer 0: Subtle 1px grid on near-black (#0A0B0D) -->
+    <div class="hero-base-grid" aria-hidden="true"></div>
+    <!-- ═══════════════════════════════════════════════════
+         CODE REVEAL BACKGROUND — interactive spotlight
+         ═══════════════════════════════════════════════════ -->
+
+    <!-- Layer 1: code layer (masked by cursor spotlight) -->
+    <div class="hero-code-layer" id="hero-code-layer" aria-hidden="true">
+      <div class="hero-code-inner" id="hero-code-inner"><span class="hcc">// FontVault — typography discovery engine</span>
+<span class="hck">import</span> <span class="hcv">React</span><span class="hcp">,</span> <span class="hcp">{</span> <span class="hcv">useState</span><span class="hcp">,</span> <span class="hcv">useEffect</span><span class="hcp">,</span> <span class="hcv">useRef</span><span class="hcp">,</span> <span class="hcv">useCallback</span> <span class="hcp">}</span> <span class="hck">from</span> <span class="hcs">'react'</span><span class="hcp">;</span>
+<span class="hck">import</span> <span class="hcp">{</span> <span class="hco">FontCard</span><span class="hcp">,</span> <span class="hco">FontPreview</span><span class="hcp">,</span> <span class="hco">SearchBar</span> <span class="hcp">}</span> <span class="hck">from</span> <span class="hcs">'@/components/ui'</span><span class="hcp">;</span>
+<span class="hck">import</span> <span class="hck">type</span> <span class="hcp">{</span> <span class="hco">Font</span><span class="hcp">,</span> <span class="hco">FontCategory</span><span class="hcp">,</span> <span class="hco">SortOrder</span> <span class="hcp">}</span> <span class="hck">from</span> <span class="hcs">'@/lib/types'</span><span class="hcp">;</span>
+
+<span class="hcc">// ── Type definitions ──────────────────────────────────────</span>
+<span class="hck">interface</span> <span class="hco">FontVaultConfig</span> <span class="hcp">{</span>
+  <span class="hcv">apiEndpoint</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">;</span>
+  <span class="hcv">previewText</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">;</span>
+  <span class="hcv">maxResults</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">;</span>
+  <span class="hcv">enablePairing</span><span class="hcp">:</span> <span class="hco">boolean</span><span class="hcp">;</span>
+  <span class="hcv">theme</span><span class="hcp">:</span> <span class="hcs">'light'</span> <span class="hcp">|</span> <span class="hcs">'dark'</span><span class="hcp">;</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── Font weight utilities ──────────────────────────────────</span>
+<span class="hck">const</span> <span class="hcf">getWeightLabel</span> <span class="hcp">=</span> <span class="hcp">(</span><span class="hcv">weight</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">):</span> <span class="hco">string</span> <span class="hcp">=&gt;</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">labels</span><span class="hcp">:</span> <span class="hco">Record</span><span class="hcp">&lt;</span><span class="hco">number</span><span class="hcp">,</span> <span class="hco">string</span><span class="hcp">&gt;</span> <span class="hcp">=</span> <span class="hcp">{</span>
+    <span class="hcn">100</span><span class="hcp">:</span> <span class="hcs">'Thin'</span><span class="hcp">,</span> <span class="hcn">200</span><span class="hcp">:</span> <span class="hcs">'ExtraLight'</span><span class="hcp">,</span>
+    <span class="hcn">300</span><span class="hcp">:</span> <span class="hcs">'Light'</span><span class="hcp">,</span> <span class="hcn">400</span><span class="hcp">:</span> <span class="hcs">'Regular'</span><span class="hcp">,</span>
+    <span class="hcn">500</span><span class="hcp">:</span> <span class="hcs">'Medium'</span><span class="hcp">,</span> <span class="hcn">600</span><span class="hcp">:</span> <span class="hcs">'SemiBold'</span><span class="hcp">,</span>
+    <span class="hcn">700</span><span class="hcp">:</span> <span class="hcs">'Bold'</span><span class="hcp">,</span> <span class="hcn">800</span><span class="hcp">:</span> <span class="hcs">'ExtraBold'</span><span class="hcp">,</span>
+    <span class="hcn">900</span><span class="hcp">:</span> <span class="hcs">'Black'</span><span class="hcp">,</span>
+  <span class="hcp">};</span>
+  <span class="hck">return</span> <span class="hcv">labels</span><span class="hcp">[</span><span class="hcv">weight</span><span class="hcp">]</span> <span class="hcp">??</span> <span class="hcs">`w$<span class="hcp">{</span><span class="hcv">weight</span><span class="hcp">}</span>`</span><span class="hcp">;</span>
+<span class="hcp">};</span>
+
+<span class="hcc">// ── Levenshtein distance for fuzzy search ─────────────────</span>
+<span class="hck">function</span> <span class="hcf">levenshtein</span><span class="hcp">(</span><span class="hcv">a</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">,</span> <span class="hcv">b</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">):</span> <span class="hco">number</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">dp</span> <span class="hcp">=</span> <span class="hco">Array</span><span class="hcp">.</span><span class="hcf">from</span><span class="hcp">(</span><span class="hcp">{</span> <span class="hcv">length</span><span class="hcp">:</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcv">length</span> <span class="hcp">+</span> <span class="hcn">1</span> <span class="hcp">},</span>
+    <span class="hcp">(</span><span class="hcv">_</span><span class="hcp">,</span> <span class="hcv">i</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hco">Array</span><span class="hcp">.</span><span class="hcf">from</span><span class="hcp">(</span><span class="hcp">{</span> <span class="hcv">length</span><span class="hcp">:</span> <span class="hcv">b</span><span class="hcp">.</span><span class="hcv">length</span> <span class="hcp">+</span> <span class="hcn">1</span> <span class="hcp">},</span>
+      <span class="hcp">(</span><span class="hcv">_</span><span class="hcp">,</span> <span class="hcv">j</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hcv">i</span> <span class="hcp">===</span> <span class="hcn">0</span> <span class="hcp">?</span> <span class="hcv">j</span> <span class="hcp">:</span> <span class="hcv">j</span> <span class="hcp">===</span> <span class="hcn">0</span> <span class="hcp">?</span> <span class="hcv">i</span> <span class="hcp">:</span> <span class="hcn">0</span><span class="hcp">));</span>
+  <span class="hck">for</span> <span class="hcp">(</span><span class="hck">let</span> <span class="hcv">i</span> <span class="hcp">=</span> <span class="hcn">1</span><span class="hcp">;</span> <span class="hcv">i</span> <span class="hcp">&lt;=</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcv">length</span><span class="hcp">;</span> <span class="hcv">i</span><span class="hcp">++)</span>
+    <span class="hck">for</span> <span class="hcp">(</span><span class="hck">let</span> <span class="hcv">j</span> <span class="hcp">=</span> <span class="hcn">1</span><span class="hcp">;</span> <span class="hcv">j</span> <span class="hcp">&lt;=</span> <span class="hcv">b</span><span class="hcp">.</span><span class="hcv">length</span><span class="hcp">;</span> <span class="hcv">j</span><span class="hcp">++)</span>
+      <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcv">a</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">]</span> <span class="hcp">===</span> <span class="hcv">b</span><span class="hcp">[</span><span class="hcv">j</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">]</span>
+        <span class="hcp">?</span> <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">]</span>
+        <span class="hcp">:</span> <span class="hcn">1</span> <span class="hcp">+</span> <span class="hco">Math</span><span class="hcp">.</span><span class="hcf">min</span><span class="hcp">(</span><span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">],</span> <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">],</span> <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">]);</span>
+  <span class="hck">return</span> <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">a</span><span class="hcp">.</span><span class="hcv">length</span><span class="hcp">][</span><span class="hcv">b</span><span class="hcp">.</span><span class="hcv">length</span><span class="hcp">];</span>
+<span class="hcp">}</span>
+
+<span class="hcc">/* ── CSS: Font card component ─────────────────────────── */</span>
+<span class="hcp">.</span><span class="hcf">font-card</span> <span class="hcp">{</span>
+  <span class="hck">display</span><span class="hcp">:</span> <span class="hcs">grid</span><span class="hcp">;</span>
+  <span class="hck">grid-template-rows</span><span class="hcp">:</span> <span class="hcf">auto</span> <span class="hcn">1fr</span> <span class="hcf">auto</span><span class="hcp">;</span>
+  <span class="hck">border</span><span class="hcp">:</span> <span class="hcn">1px</span> <span class="hcs">solid</span> <span class="hck">var</span><span class="hcp">(</span><span class="hcv">--border-color</span><span class="hcp">);</span>
+  <span class="hck">border-radius</span><span class="hcp">:</span> <span class="hcn">12px</span><span class="hcp">;</span>
+  <span class="hck">background</span><span class="hcp">:</span> <span class="hck">var</span><span class="hcp">(</span><span class="hcv">--card-bg</span><span class="hcp">);</span>
+  <span class="hck">transition</span><span class="hcp">:</span> <span class="hcv">transform</span> <span class="hcn">0.22s</span><span class="hcp">,</span> <span class="hcv">box-shadow</span> <span class="hcn">0.22s</span><span class="hcp">;</span>
+  <span class="hck">overflow</span><span class="hcp">:</span> <span class="hcs">hidden</span><span class="hcp">;</span>
+<span class="hcp">}</span>
+<span class="hcp">.</span><span class="hcf">font-card</span><span class="hcp">:</span><span class="hcf">hover</span> <span class="hcp">{</span>
+  <span class="hck">transform</span><span class="hcp">:</span> <span class="hcf">translateY</span><span class="hcp">(</span><span class="hcn">-3px</span><span class="hcp">);</span>
+  <span class="hck">box-shadow</span><span class="hcp">:</span> <span class="hcn">0</span> <span class="hcn">12px</span> <span class="hcn">40px</span> <span class="hcf">rgba</span><span class="hcp">(</span><span class="hcn">0</span><span class="hcp">,</span><span class="hcn">0</span><span class="hcp">,</span><span class="hcn">0</span><span class="hcp">,</span><span class="hcn">0.12</span><span class="hcp">);</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── FontCard React component ────────────────────────────</span>
+<span class="hck">export function</span> <span class="hcf">FontCard</span><span class="hcp">({</span>
+  <span class="hcv">font</span><span class="hcp">,</span> <span class="hcv">previewText</span><span class="hcp">,</span> <span class="hcv">onSelect</span><span class="hcp">,</span> <span class="hcv">isFavorited</span><span class="hcp">,</span>
+<span class="hcp">}:</span> <span class="hcp">{</span>
+  <span class="hcv">font</span><span class="hcp">:</span> <span class="hco">Font</span><span class="hcp">;</span>
+  <span class="hcv">previewText</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">;</span>
+  <span class="hcv">onSelect</span><span class="hcp">:</span> <span class="hcp">(</span><span class="hcv">id</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hco">void</span><span class="hcp">;</span>
+  <span class="hcv">isFavorited</span><span class="hcp">:</span> <span class="hco">boolean</span><span class="hcp">;</span>
+<span class="hcp">})</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">ref</span> <span class="hcp">=</span> <span class="hcf">useRef</span><span class="hcp">&lt;</span><span class="hco">HTMLDivElement</span><span class="hcp">&gt;(</span><span class="hck">null</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcp">[</span><span class="hcv">loaded</span><span class="hcp">,</span> <span class="hcv">setLoaded</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcf">useState</span><span class="hcp">(</span><span class="hck">false</span><span class="hcp">);</span>
+
+  <span class="hcf">useEffect</span><span class="hcp">(()</span> <span class="hcp">=&gt;</span> <span class="hcp">{</span>
+    <span class="hck">const</span> <span class="hcv">el</span> <span class="hcp">=</span> <span class="hcv">ref</span><span class="hcp">.</span><span class="hcv">current</span><span class="hcp">;</span>
+    <span class="hck">if</span> <span class="hcp">(!</span><span class="hcv">el</span><span class="hcp">)</span> <span class="hck">return</span><span class="hcp">;</span>
+    <span class="hck">const</span> <span class="hcv">obs</span> <span class="hcp">=</span> <span class="hck">new</span> <span class="hco">IntersectionObserver</span><span class="hcp">(([</span><span class="hcv">e</span><span class="hcp">])</span> <span class="hcp">=&gt;</span> <span class="hcp">{</span>
+      <span class="hck">if</span> <span class="hcp">(</span><span class="hcv">e</span><span class="hcp">.</span><span class="hcv">isIntersecting</span><span class="hcp">)</span> <span class="hcp">{</span> <span class="hcf">setLoaded</span><span class="hcp">(</span><span class="hck">true</span><span class="hcp">);</span> <span class="hcv">obs</span><span class="hcp">.</span><span class="hcf">disconnect</span><span class="hcp">();</span> <span class="hcp">}</span>
+    <span class="hcp">},</span> <span class="hcp">{</span> <span class="hcv">threshold</span><span class="hcp">:</span> <span class="hcn">0.1</span> <span class="hcp">});</span>
+    <span class="hcv">obs</span><span class="hcp">.</span><span class="hcf">observe</span><span class="hcp">(</span><span class="hcv">el</span><span class="hcp">);</span>
+    <span class="hck">return</span> <span class="hcp">()</span> <span class="hcp">=&gt;</span> <span class="hcv">obs</span><span class="hcp">.</span><span class="hcf">disconnect</span><span class="hcp">();</span>
+  <span class="hcp">},</span> <span class="hcp">[]);</span>
+
+  <span class="hck">return</span> <span class="hcp">(</span>
+    <span class="hcp">&lt;</span><span class="hco">div</span>
+      <span class="hcv">ref</span><span class="hcp">={</span><span class="hcv">ref</span><span class="hcp">}</span>
+      <span class="hcv">className</span><span class="hcp">=</span><span class="hcs">"font-card"</span>
+      <span class="hcv">role</span><span class="hcp">=</span><span class="hcs">"button"</span>
+      <span class="hcv">tabIndex</span><span class="hcp">={</span><span class="hcn">0</span><span class="hcp">}</span>
+      <span class="hcv">onClick</span><span class="hcp">={</span><span class="hcp">()</span> <span class="hcp">=&gt;</span> <span class="hcf">onSelect</span><span class="hcp">(</span><span class="hcv">font</span><span class="hcp">.</span><span class="hcv">id</span><span class="hcp">)}</span>
+    <span class="hcp">&gt;</span>
+      <span class="hcp">&lt;</span><span class="hco">div</span> <span class="hcv">className</span><span class="hcp">=</span><span class="hcs">"font-card__preview"</span><span class="hcp">&gt;</span>
+        <span class="hcp">{</span><span class="hcv">loaded</span> <span class="hcp">&amp;&amp;</span>
+          <span class="hcp">&lt;</span><span class="hco">span</span> <span class="hcv">style</span><span class="hcp">={{</span> <span class="hcv">fontFamily</span><span class="hcp">:</span> <span class="hcv">font</span><span class="hcp">.</span><span class="hcv">cssFamily</span> <span class="hcp">}}</span><span class="hcp">&gt;</span>
+            <span class="hcp">{</span><span class="hcv">previewText</span><span class="hcp">}</span>
+          <span class="hcp">&lt;/</span><span class="hco">span</span><span class="hcp">&gt;</span>
+        <span class="hcp">}</span>
+      <span class="hcp">&lt;/</span><span class="hco">div</span><span class="hcp">&gt;</span>
+    <span class="hcp">&lt;/</span><span class="hco">div</span><span class="hcp">&gt;</span>
+  <span class="hcp">);</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── useFontSearch hook ────────────────────────────────────</span>
+<span class="hck">export function</span> <span class="hcf">useFontSearch</span><span class="hcp">(</span><span class="hcv">fonts</span><span class="hcp">:</span> <span class="hco">Font</span><span class="hcp">[])</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcp">[</span><span class="hcv">query</span><span class="hcp">,</span> <span class="hcv">setQuery</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcf">useState</span><span class="hcp">(</span><span class="hcs">''</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcp">[</span><span class="hcv">category</span><span class="hcp">,</span> <span class="hcv">setCategory</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcf">useState</span><span class="hcp">&lt;</span><span class="hco">FontCategory</span><span class="hcp">&gt;(</span><span class="hcs">'all'</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcp">[</span><span class="hcv">sort</span><span class="hcp">,</span> <span class="hcv">setSort</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcf">useState</span><span class="hcp">&lt;</span><span class="hco">SortOrder</span><span class="hcp">&gt;(</span><span class="hcs">'popular'</span><span class="hcp">);</span>
+
+  <span class="hck">const</span> <span class="hcv">results</span> <span class="hcp">=</span> <span class="hcf">useMemo</span><span class="hcp">(()</span> <span class="hcp">=&gt;</span> <span class="hcp">{</span>
+    <span class="hck">let</span> <span class="hcv">out</span> <span class="hcp">=</span> <span class="hcp">[...</span><span class="hcv">fonts</span><span class="hcp">];</span>
+    <span class="hck">if</span> <span class="hcp">(</span><span class="hcv">category</span> <span class="hcp">!==</span> <span class="hcs">'all'</span><span class="hcp">)</span>
+      <span class="hcv">out</span> <span class="hcp">=</span> <span class="hcv">out</span><span class="hcp">.</span><span class="hcf">filter</span><span class="hcp">(</span><span class="hcv">f</span> <span class="hcp">=&gt;</span> <span class="hcv">f</span><span class="hcp">.</span><span class="hcv">category</span> <span class="hcp">===</span> <span class="hcv">category</span><span class="hcp">);</span>
+    <span class="hck">if</span> <span class="hcp">(</span><span class="hcv">query</span><span class="hcp">.</span><span class="hcv">trim</span><span class="hcp">())</span>
+      <span class="hcv">out</span> <span class="hcp">=</span> <span class="hcv">out</span><span class="hcp">.</span><span class="hcf">filter</span><span class="hcp">(</span><span class="hcv">f</span> <span class="hcp">=&gt;</span>
+        <span class="hcv">f</span><span class="hcp">.</span><span class="hcv">name</span><span class="hcp">.</span><span class="hcf">toLowerCase</span><span class="hcp">().</span><span class="hcf">includes</span><span class="hcp">(</span><span class="hcv">query</span><span class="hcp">.</span><span class="hcf">toLowerCase</span><span class="hcp">())</span>
+      <span class="hcp">);</span>
+    <span class="hck">return</span> <span class="hcv">out</span><span class="hcp">.</span><span class="hcf">sort</span><span class="hcp">((</span><span class="hcv">a</span><span class="hcp">,</span> <span class="hcv">b</span><span class="hcp">)</span> <span class="hcp">=&gt;</span>
+      <span class="hcv">sort</span> <span class="hcp">===</span> <span class="hcs">'alpha'</span>
+        <span class="hcp">?</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcv">name</span><span class="hcp">.</span><span class="hcf">localeCompare</span><span class="hcp">(</span><span class="hcv">b</span><span class="hcp">.</span><span class="hcv">name</span><span class="hcp">)</span>
+        <span class="hcp">:</span> <span class="hcv">b</span><span class="hcp">.</span><span class="hcv">popularity</span> <span class="hcp">-</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcv">popularity</span>
+    <span class="hcp">);</span>
+  <span class="hcp">},</span> <span class="hcp">[</span><span class="hcv">fonts</span><span class="hcp">,</span> <span class="hcv">query</span><span class="hcp">,</span> <span class="hcv">category</span><span class="hcp">,</span> <span class="hcv">sort</span><span class="hcp">]);</span>
+
+  <span class="hck">return</span> <span class="hcp">{</span> <span class="hcv">query</span><span class="hcp">,</span> <span class="hcv">setQuery</span><span class="hcp">,</span> <span class="hcv">category</span><span class="hcp">,</span> <span class="hcv">setCategory</span><span class="hcp">,</span> <span class="hcv">sort</span><span class="hcp">,</span> <span class="hcv">setSort</span><span class="hcp">,</span> <span class="hcv">results</span> <span class="hcp">};</span>
+<span class="hcp">}</span>
+
+<span class="hcc">/* ── Keyframes: card entrance ─────────────────────────── */</span>
+<span class="hcf">@keyframes</span> <span class="hcv">cardEntrance</span> <span class="hcp">{</span>
+  <span class="hck">from</span> <span class="hcp">{</span> <span class="hck">opacity</span><span class="hcp">:</span> <span class="hcn">0</span><span class="hcp">;</span> <span class="hck">transform</span><span class="hcp">:</span> <span class="hcf">translateY</span><span class="hcp">(</span><span class="hcn">16px</span><span class="hcp">);</span> <span class="hcp">}</span>
+  <span class="hck">to</span>   <span class="hcp">{</span> <span class="hck">opacity</span><span class="hcp">:</span> <span class="hcn">1</span><span class="hcp">;</span> <span class="hck">transform</span><span class="hcp">:</span> <span class="hcf">translateY</span><span class="hcp">(</span><span class="hcn">0</span><span class="hcp">);</span> <span class="hcp">}</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── Font detail page: specimen renderer ───────────────────</span>
+<span class="hck">async function</span> <span class="hcf">renderSpecimen</span><span class="hcp">(</span>
+  <span class="hcv">fontId</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">,</span>
+  <span class="hcv">canvas</span><span class="hcp">:</span> <span class="hco">HTMLCanvasElement</span><span class="hcp">,</span>
+  <span class="hcv">opts</span><span class="hcp">:</span> <span class="hcp">{</span> <span class="hcv">size</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">;</span> <span class="hcv">text</span><span class="hcp">:</span> <span class="hco">string</span> <span class="hcp">}</span>
+<span class="hcp">):</span> <span class="hco">Promise</span><span class="hcp">&lt;</span><span class="hco">void</span><span class="hcp">&gt;</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">ctx</span> <span class="hcp">=</span> <span class="hcv">canvas</span><span class="hcp">.</span><span class="hcf">getContext</span><span class="hcp">(</span><span class="hcs">'2d'</span><span class="hcp">);</span>
+  <span class="hck">if</span> <span class="hcp">(!</span><span class="hcv">ctx</span><span class="hcp">)</span> <span class="hck">return</span><span class="hcp">;</span>
+  <span class="hck">await</span> <span class="hcf">loadFont</span><span class="hcp">(</span><span class="hcv">fontId</span><span class="hcp">);</span>
+  <span class="hcv">ctx</span><span class="hcp">.</span><span class="hcv">clearRect</span><span class="hcp">(</span><span class="hcn">0</span><span class="hcp">,</span> <span class="hcn">0</span><span class="hcp">,</span> <span class="hcv">canvas</span><span class="hcp">.</span><span class="hcv">width</span><span class="hcp">,</span> <span class="hcv">canvas</span><span class="hcp">.</span><span class="hcv">height</span><span class="hcp">);</span>
+  <span class="hcv">ctx</span><span class="hcp">.</span><span class="hcv">font</span> <span class="hcp">=</span> <span class="hcs">`$<span class="hcp">{</span><span class="hcv">opts</span><span class="hcp">.</span><span class="hcv">size</span><span class="hcp">}</span>px '$<span class="hcp">{</span><span class="hcv">fontId</span><span class="hcp">}</span>'`</span><span class="hcp">;</span>
+  <span class="hcv">ctx</span><span class="hcp">.</span><span class="hcv">fillStyle</span> <span class="hcp">=</span> <span class="hcs">'currentColor'</span><span class="hcp">;</span>
+  <span class="hcv">ctx</span><span class="hcp">.</span><span class="hcf">fillText</span><span class="hcp">(</span><span class="hcv">opts</span><span class="hcp">.</span><span class="hcv">text</span><span class="hcp">,</span> <span class="hcn">24</span><span class="hcp">,</span> <span class="hcv">opts</span><span class="hcp">.</span><span class="hcv">size</span> <span class="hcp">+</span> <span class="hcn">24</span><span class="hcp">);</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── Pairing engine: cosine similarity on embeddings ───────</span>
+<span class="hck">function</span> <span class="hcf">cosineSimilarity</span><span class="hcp">(</span><span class="hcv">a</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">[],</span> <span class="hcv">b</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">[]):</span> <span class="hco">number</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">dot</span> <span class="hcp">=</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcf">reduce</span><span class="hcp">((</span><span class="hcv">s</span><span class="hcp">,</span> <span class="hcv">v</span><span class="hcp">,</span> <span class="hcv">i</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hcv">s</span> <span class="hcp">+</span> <span class="hcv">v</span> <span class="hcp">*</span> <span class="hcv">b</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">],</span> <span class="hcn">0</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcv">mag</span> <span class="hcp">=</span> <span class="hcp">(</span><span class="hcv">v</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">[])</span> <span class="hcp">=&gt;</span>
+    <span class="hco">Math</span><span class="hcp">.</span><span class="hcf">sqrt</span><span class="hcp">(</span><span class="hcv">v</span><span class="hcp">.</span><span class="hcf">reduce</span><span class="hcp">((</span><span class="hcv">s</span><span class="hcp">,</span> <span class="hcv">x</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hcv">s</span> <span class="hcp">+</span> <span class="hcv">x</span> <span class="hcp">*</span> <span class="hcv">x</span><span class="hcp">,</span> <span class="hcn">0</span><span class="hcp">));</span>
+  <span class="hck">return</span> <span class="hcv">dot</span> <span class="hcp">/</span> <span class="hcp">(</span><span class="hcf">mag</span><span class="hcp">(</span><span class="hcv">a</span><span class="hcp">)</span> <span class="hcp">*</span> <span class="hcf">mag</span><span class="hcp">(</span><span class="hcv">b</span><span class="hcp">));</span>
+<span class="hcp">}</span>
+
+<span class="hcc">/* ── API route: /api/fonts/search ─────────────────────── */</span>
+<span class="hck">export async function</span> <span class="hcf">GET</span><span class="hcp">(</span><span class="hcv">req</span><span class="hcp">:</span> <span class="hco">NextRequest</span><span class="hcp">)</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcp">{</span> <span class="hcv">searchParams</span> <span class="hcp">}</span> <span class="hcp">=</span> <span class="hck">new</span> <span class="hco">URL</span><span class="hcp">(</span><span class="hcv">req</span><span class="hcp">.</span><span class="hcv">url</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcv">q</span>    <span class="hcp">=</span> <span class="hcv">searchParams</span><span class="hcp">.</span><span class="hcf">get</span><span class="hcp">(</span><span class="hcs">'q'</span><span class="hcp">)</span> <span class="hcp">??</span> <span class="hcs">''</span><span class="hcp">;</span>
+  <span class="hck">const</span> <span class="hcv">cat</span>  <span class="hcp">=</span> <span class="hcv">searchParams</span><span class="hcp">.</span><span class="hcf">get</span><span class="hcp">(</span><span class="hcs">'cat'</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcv">page</span> <span class="hcp">=</span> <span class="hco">Number</span><span class="hcp">(</span><span class="hcv">searchParams</span><span class="hcp">.</span><span class="hcf">get</span><span class="hcp">(</span><span class="hcs">'page'</span><span class="hcp">)</span> <span class="hcp">??</span> <span class="hcn">1</span><span class="hcp">);</span>
+
+  <span class="hck">const</span> <span class="hcv">fonts</span> <span class="hcp">=</span> <span class="hck">await</span> <span class="hcf">searchFonts</span><span class="hcp">(</span><span class="hcp">{</span> <span class="hcv">q</span><span class="hcp">,</span> <span class="hcv">cat</span><span class="hcp">,</span> <span class="hcv">page</span> <span class="hcp">});</span>
+  <span class="hck">return</span> <span class="hco">NextResponse</span><span class="hcp">.</span><span class="hcf">json</span><span class="hcp">(</span><span class="hcp">{</span> <span class="hcv">fonts</span><span class="hcp">,</span> <span class="hcv">total</span><span class="hcp">:</span> <span class="hcv">fonts</span><span class="hcp">.</span><span class="hcv">length</span> <span class="hcp">});</span>
+<span class="hcp">}</span>
+<span class="hcc">// FontVault — typography discovery engine</span>
+<span class="hck">import</span> <span class="hcv">React</span><span class="hcp">,</span> <span class="hcp">{</span> <span class="hcv">useState</span><span class="hcp">,</span> <span class="hcv">useEffect</span><span class="hcp">,</span> <span class="hcv">useRef</span><span class="hcp">,</span> <span class="hcv">useCallback</span> <span class="hcp">}</span> <span class="hck">from</span> <span class="hcs">'react'</span><span class="hcp">;</span>
+<span class="hck">import</span> <span class="hcp">{</span> <span class="hco">FontCard</span><span class="hcp">,</span> <span class="hco">FontPreview</span><span class="hcp">,</span> <span class="hco">SearchBar</span> <span class="hcp">}</span> <span class="hck">from</span> <span class="hcs">'@/components/ui'</span><span class="hcp">;</span>
+<span class="hck">import</span> <span class="hck">type</span> <span class="hcp">{</span> <span class="hco">Font</span><span class="hcp">,</span> <span class="hco">FontCategory</span><span class="hcp">,</span> <span class="hco">SortOrder</span> <span class="hcp">}</span> <span class="hck">from</span> <span class="hcs">'@/lib/types'</span><span class="hcp">;</span>
+
+<span class="hcc">// ── Type definitions ──────────────────────────────────────</span>
+<span class="hck">interface</span> <span class="hco">FontVaultConfig</span> <span class="hcp">{</span>
+  <span class="hcv">apiEndpoint</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">;</span>
+  <span class="hcv">previewText</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">;</span>
+  <span class="hcv">maxResults</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">;</span>
+  <span class="hcv">enablePairing</span><span class="hcp">:</span> <span class="hco">boolean</span><span class="hcp">;</span>
+  <span class="hcv">theme</span><span class="hcp">:</span> <span class="hcs">'light'</span> <span class="hcp">|</span> <span class="hcs">'dark'</span><span class="hcp">;</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── Font weight utilities ──────────────────────────────────</span>
+<span class="hck">const</span> <span class="hcf">getWeightLabel</span> <span class="hcp">=</span> <span class="hcp">(</span><span class="hcv">weight</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">):</span> <span class="hco">string</span> <span class="hcp">=&gt;</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">labels</span><span class="hcp">:</span> <span class="hco">Record</span><span class="hcp">&lt;</span><span class="hco">number</span><span class="hcp">,</span> <span class="hco">string</span><span class="hcp">&gt;</span> <span class="hcp">=</span> <span class="hcp">{</span>
+    <span class="hcn">100</span><span class="hcp">:</span> <span class="hcs">'Thin'</span><span class="hcp">,</span> <span class="hcn">200</span><span class="hcp">:</span> <span class="hcs">'ExtraLight'</span><span class="hcp">,</span>
+    <span class="hcn">300</span><span class="hcp">:</span> <span class="hcs">'Light'</span><span class="hcp">,</span> <span class="hcn">400</span><span class="hcp">:</span> <span class="hcs">'Regular'</span><span class="hcp">,</span>
+    <span class="hcn">500</span><span class="hcp">:</span> <span class="hcs">'Medium'</span><span class="hcp">,</span> <span class="hcn">600</span><span class="hcp">:</span> <span class="hcs">'SemiBold'</span><span class="hcp">,</span>
+    <span class="hcn">700</span><span class="hcp">:</span> <span class="hcs">'Bold'</span><span class="hcp">,</span> <span class="hcn">800</span><span class="hcp">:</span> <span class="hcs">'ExtraBold'</span><span class="hcp">,</span>
+    <span class="hcn">900</span><span class="hcp">:</span> <span class="hcs">'Black'</span><span class="hcp">,</span>
+  <span class="hcp">};</span>
+  <span class="hck">return</span> <span class="hcv">labels</span><span class="hcp">[</span><span class="hcv">weight</span><span class="hcp">]</span> <span class="hcp">??</span> <span class="hcs">`w$<span class="hcp">{</span><span class="hcv">weight</span><span class="hcp">}</span>`</span><span class="hcp">;</span>
+<span class="hcp">};</span>
+
+<span class="hcc">// ── Levenshtein distance for fuzzy search ─────────────────</span>
+<span class="hck">function</span> <span class="hcf">levenshtein</span><span class="hcp">(</span><span class="hcv">a</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">,</span> <span class="hcv">b</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">):</span> <span class="hco">number</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">dp</span> <span class="hcp">=</span> <span class="hco">Array</span><span class="hcp">.</span><span class="hcf">from</span><span class="hcp">(</span><span class="hcp">{</span> <span class="hcv">length</span><span class="hcp">:</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcv">length</span> <span class="hcp">+</span> <span class="hcn">1</span> <span class="hcp">},</span>
+    <span class="hcp">(</span><span class="hcv">_</span><span class="hcp">,</span> <span class="hcv">i</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hco">Array</span><span class="hcp">.</span><span class="hcf">from</span><span class="hcp">(</span><span class="hcp">{</span> <span class="hcv">length</span><span class="hcp">:</span> <span class="hcv">b</span><span class="hcp">.</span><span class="hcv">length</span> <span class="hcp">+</span> <span class="hcn">1</span> <span class="hcp">},</span>
+      <span class="hcp">(</span><span class="hcv">_</span><span class="hcp">,</span> <span class="hcv">j</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hcv">i</span> <span class="hcp">===</span> <span class="hcn">0</span> <span class="hcp">?</span> <span class="hcv">j</span> <span class="hcp">:</span> <span class="hcv">j</span> <span class="hcp">===</span> <span class="hcn">0</span> <span class="hcp">?</span> <span class="hcv">i</span> <span class="hcp">:</span> <span class="hcn">0</span><span class="hcp">));</span>
+  <span class="hck">for</span> <span class="hcp">(</span><span class="hck">let</span> <span class="hcv">i</span> <span class="hcp">=</span> <span class="hcn">1</span><span class="hcp">;</span> <span class="hcv">i</span> <span class="hcp">&lt;=</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcv">length</span><span class="hcp">;</span> <span class="hcv">i</span><span class="hcp">++)</span>
+    <span class="hck">for</span> <span class="hcp">(</span><span class="hck">let</span> <span class="hcv">j</span> <span class="hcp">=</span> <span class="hcn">1</span><span class="hcp">;</span> <span class="hcv">j</span> <span class="hcp">&lt;=</span> <span class="hcv">b</span><span class="hcp">.</span><span class="hcv">length</span><span class="hcp">;</span> <span class="hcv">j</span><span class="hcp">++)</span>
+      <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcv">a</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">]</span> <span class="hcp">===</span> <span class="hcv">b</span><span class="hcp">[</span><span class="hcv">j</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">]</span>
+        <span class="hcp">?</span> <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">]</span>
+        <span class="hcp">:</span> <span class="hcn">1</span> <span class="hcp">+</span> <span class="hco">Math</span><span class="hcp">.</span><span class="hcf">min</span><span class="hcp">(</span><span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">],</span> <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">],</span> <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">][</span><span class="hcv">j</span><span class="hcp">-</span><span class="hcn">1</span><span class="hcp">]);</span>
+  <span class="hck">return</span> <span class="hcv">dp</span><span class="hcp">[</span><span class="hcv">a</span><span class="hcp">.</span><span class="hcv">length</span><span class="hcp">][</span><span class="hcv">b</span><span class="hcp">.</span><span class="hcv">length</span><span class="hcp">];</span>
+<span class="hcp">}</span>
+
+<span class="hcc">/* ── CSS: Font card component ─────────────────────────── */</span>
+<span class="hcp">.</span><span class="hcf">font-card</span> <span class="hcp">{</span>
+  <span class="hck">display</span><span class="hcp">:</span> <span class="hcs">grid</span><span class="hcp">;</span>
+  <span class="hck">grid-template-rows</span><span class="hcp">:</span> <span class="hcf">auto</span> <span class="hcn">1fr</span> <span class="hcf">auto</span><span class="hcp">;</span>
+  <span class="hck">border</span><span class="hcp">:</span> <span class="hcn">1px</span> <span class="hcs">solid</span> <span class="hck">var</span><span class="hcp">(</span><span class="hcv">--border-color</span><span class="hcp">);</span>
+  <span class="hck">border-radius</span><span class="hcp">:</span> <span class="hcn">12px</span><span class="hcp">;</span>
+  <span class="hck">background</span><span class="hcp">:</span> <span class="hck">var</span><span class="hcp">(</span><span class="hcv">--card-bg</span><span class="hcp">);</span>
+  <span class="hck">transition</span><span class="hcp">:</span> <span class="hcv">transform</span> <span class="hcn">0.22s</span><span class="hcp">,</span> <span class="hcv">box-shadow</span> <span class="hcn">0.22s</span><span class="hcp">;</span>
+  <span class="hck">overflow</span><span class="hcp">:</span> <span class="hcs">hidden</span><span class="hcp">;</span>
+<span class="hcp">}</span>
+<span class="hcp">.</span><span class="hcf">font-card</span><span class="hcp">:</span><span class="hcf">hover</span> <span class="hcp">{</span>
+  <span class="hck">transform</span><span class="hcp">:</span> <span class="hcf">translateY</span><span class="hcp">(</span><span class="hcn">-3px</span><span class="hcp">);</span>
+  <span class="hck">box-shadow</span><span class="hcp">:</span> <span class="hcn">0</span> <span class="hcn">12px</span> <span class="hcn">40px</span> <span class="hcf">rgba</span><span class="hcp">(</span><span class="hcn">0</span><span class="hcp">,</span><span class="hcn">0</span><span class="hcp">,</span><span class="hcn">0</span><span class="hcp">,</span><span class="hcn">0.12</span><span class="hcp">);</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── FontCard React component ────────────────────────────</span>
+<span class="hck">export function</span> <span class="hcf">FontCard</span><span class="hcp">({</span>
+  <span class="hcv">font</span><span class="hcp">,</span> <span class="hcv">previewText</span><span class="hcp">,</span> <span class="hcv">onSelect</span><span class="hcp">,</span> <span class="hcv">isFavorited</span><span class="hcp">,</span>
+<span class="hcp">}:</span> <span class="hcp">{</span>
+  <span class="hcv">font</span><span class="hcp">:</span> <span class="hco">Font</span><span class="hcp">;</span>
+  <span class="hcv">previewText</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">;</span>
+  <span class="hcv">onSelect</span><span class="hcp">:</span> <span class="hcp">(</span><span class="hcv">id</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hco">void</span><span class="hcp">;</span>
+  <span class="hcv">isFavorited</span><span class="hcp">:</span> <span class="hco">boolean</span><span class="hcp">;</span>
+<span class="hcp">})</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">ref</span> <span class="hcp">=</span> <span class="hcf">useRef</span><span class="hcp">&lt;</span><span class="hco">HTMLDivElement</span><span class="hcp">&gt;(</span><span class="hck">null</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcp">[</span><span class="hcv">loaded</span><span class="hcp">,</span> <span class="hcv">setLoaded</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcf">useState</span><span class="hcp">(</span><span class="hck">false</span><span class="hcp">);</span>
+
+  <span class="hcf">useEffect</span><span class="hcp">(()</span> <span class="hcp">=&gt;</span> <span class="hcp">{</span>
+    <span class="hck">const</span> <span class="hcv">el</span> <span class="hcp">=</span> <span class="hcv">ref</span><span class="hcp">.</span><span class="hcv">current</span><span class="hcp">;</span>
+    <span class="hck">if</span> <span class="hcp">(!</span><span class="hcv">el</span><span class="hcp">)</span> <span class="hck">return</span><span class="hcp">;</span>
+    <span class="hck">const</span> <span class="hcv">obs</span> <span class="hcp">=</span> <span class="hck">new</span> <span class="hco">IntersectionObserver</span><span class="hcp">(([</span><span class="hcv">e</span><span class="hcp">])</span> <span class="hcp">=&gt;</span> <span class="hcp">{</span>
+      <span class="hck">if</span> <span class="hcp">(</span><span class="hcv">e</span><span class="hcp">.</span><span class="hcv">isIntersecting</span><span class="hcp">)</span> <span class="hcp">{</span> <span class="hcf">setLoaded</span><span class="hcp">(</span><span class="hck">true</span><span class="hcp">);</span> <span class="hcv">obs</span><span class="hcp">.</span><span class="hcf">disconnect</span><span class="hcp">();</span> <span class="hcp">}</span>
+    <span class="hcp">},</span> <span class="hcp">{</span> <span class="hcv">threshold</span><span class="hcp">:</span> <span class="hcn">0.1</span> <span class="hcp">});</span>
+    <span class="hcv">obs</span><span class="hcp">.</span><span class="hcf">observe</span><span class="hcp">(</span><span class="hcv">el</span><span class="hcp">);</span>
+    <span class="hck">return</span> <span class="hcp">()</span> <span class="hcp">=&gt;</span> <span class="hcv">obs</span><span class="hcp">.</span><span class="hcf">disconnect</span><span class="hcp">();</span>
+  <span class="hcp">},</span> <span class="hcp">[]);</span>
+
+  <span class="hck">return</span> <span class="hcp">(</span>
+    <span class="hcp">&lt;</span><span class="hco">div</span>
+      <span class="hcv">ref</span><span class="hcp">={</span><span class="hcv">ref</span><span class="hcp">}</span>
+      <span class="hcv">className</span><span class="hcp">=</span><span class="hcs">"font-card"</span>
+      <span class="hcv">role</span><span class="hcp">=</span><span class="hcs">"button"</span>
+      <span class="hcv">tabIndex</span><span class="hcp">={</span><span class="hcn">0</span><span class="hcp">}</span>
+      <span class="hcv">onClick</span><span class="hcp">={</span><span class="hcp">()</span> <span class="hcp">=&gt;</span> <span class="hcf">onSelect</span><span class="hcp">(</span><span class="hcv">font</span><span class="hcp">.</span><span class="hcv">id</span><span class="hcp">)}</span>
+    <span class="hcp">&gt;</span>
+      <span class="hcp">&lt;</span><span class="hco">div</span> <span class="hcv">className</span><span class="hcp">=</span><span class="hcs">"font-card__preview"</span><span class="hcp">&gt;</span>
+        <span class="hcp">{</span><span class="hcv">loaded</span> <span class="hcp">&amp;&amp;</span>
+          <span class="hcp">&lt;</span><span class="hco">span</span> <span class="hcv">style</span><span class="hcp">={{</span> <span class="hcv">fontFamily</span><span class="hcp">:</span> <span class="hcv">font</span><span class="hcp">.</span><span class="hcv">cssFamily</span> <span class="hcp">}}</span><span class="hcp">&gt;</span>
+            <span class="hcp">{</span><span class="hcv">previewText</span><span class="hcp">}</span>
+          <span class="hcp">&lt;/</span><span class="hco">span</span><span class="hcp">&gt;</span>
+        <span class="hcp">}</span>
+      <span class="hcp">&lt;/</span><span class="hco">div</span><span class="hcp">&gt;</span>
+    <span class="hcp">&lt;/</span><span class="hco">div</span><span class="hcp">&gt;</span>
+  <span class="hcp">);</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── useFontSearch hook ────────────────────────────────────</span>
+<span class="hck">export function</span> <span class="hcf">useFontSearch</span><span class="hcp">(</span><span class="hcv">fonts</span><span class="hcp">:</span> <span class="hco">Font</span><span class="hcp">[])</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcp">[</span><span class="hcv">query</span><span class="hcp">,</span> <span class="hcv">setQuery</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcf">useState</span><span class="hcp">(</span><span class="hcs">''</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcp">[</span><span class="hcv">category</span><span class="hcp">,</span> <span class="hcv">setCategory</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcf">useState</span><span class="hcp">&lt;</span><span class="hco">FontCategory</span><span class="hcp">&gt;(</span><span class="hcs">'all'</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcp">[</span><span class="hcv">sort</span><span class="hcp">,</span> <span class="hcv">setSort</span><span class="hcp">]</span> <span class="hcp">=</span> <span class="hcf">useState</span><span class="hcp">&lt;</span><span class="hco">SortOrder</span><span class="hcp">&gt;(</span><span class="hcs">'popular'</span><span class="hcp">);</span>
+
+  <span class="hck">const</span> <span class="hcv">results</span> <span class="hcp">=</span> <span class="hcf">useMemo</span><span class="hcp">(()</span> <span class="hcp">=&gt;</span> <span class="hcp">{</span>
+    <span class="hck">let</span> <span class="hcv">out</span> <span class="hcp">=</span> <span class="hcp">[...</span><span class="hcv">fonts</span><span class="hcp">];</span>
+    <span class="hck">if</span> <span class="hcp">(</span><span class="hcv">category</span> <span class="hcp">!==</span> <span class="hcs">'all'</span><span class="hcp">)</span>
+      <span class="hcv">out</span> <span class="hcp">=</span> <span class="hcv">out</span><span class="hcp">.</span><span class="hcf">filter</span><span class="hcp">(</span><span class="hcv">f</span> <span class="hcp">=&gt;</span> <span class="hcv">f</span><span class="hcp">.</span><span class="hcv">category</span> <span class="hcp">===</span> <span class="hcv">category</span><span class="hcp">);</span>
+    <span class="hck">if</span> <span class="hcp">(</span><span class="hcv">query</span><span class="hcp">.</span><span class="hcv">trim</span><span class="hcp">())</span>
+      <span class="hcv">out</span> <span class="hcp">=</span> <span class="hcv">out</span><span class="hcp">.</span><span class="hcf">filter</span><span class="hcp">(</span><span class="hcv">f</span> <span class="hcp">=&gt;</span>
+        <span class="hcv">f</span><span class="hcp">.</span><span class="hcv">name</span><span class="hcp">.</span><span class="hcf">toLowerCase</span><span class="hcp">().</span><span class="hcf">includes</span><span class="hcp">(</span><span class="hcv">query</span><span class="hcp">.</span><span class="hcf">toLowerCase</span><span class="hcp">())</span>
+      <span class="hcp">);</span>
+    <span class="hck">return</span> <span class="hcv">out</span><span class="hcp">.</span><span class="hcf">sort</span><span class="hcp">((</span><span class="hcv">a</span><span class="hcp">,</span> <span class="hcv">b</span><span class="hcp">)</span> <span class="hcp">=&gt;</span>
+      <span class="hcv">sort</span> <span class="hcp">===</span> <span class="hcs">'alpha'</span>
+        <span class="hcp">?</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcv">name</span><span class="hcp">.</span><span class="hcf">localeCompare</span><span class="hcp">(</span><span class="hcv">b</span><span class="hcp">.</span><span class="hcv">name</span><span class="hcp">)</span>
+        <span class="hcp">:</span> <span class="hcv">b</span><span class="hcp">.</span><span class="hcv">popularity</span> <span class="hcp">-</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcv">popularity</span>
+    <span class="hcp">);</span>
+  <span class="hcp">},</span> <span class="hcp">[</span><span class="hcv">fonts</span><span class="hcp">,</span> <span class="hcv">query</span><span class="hcp">,</span> <span class="hcv">category</span><span class="hcp">,</span> <span class="hcv">sort</span><span class="hcp">]);</span>
+
+  <span class="hck">return</span> <span class="hcp">{</span> <span class="hcv">query</span><span class="hcp">,</span> <span class="hcv">setQuery</span><span class="hcp">,</span> <span class="hcv">category</span><span class="hcp">,</span> <span class="hcv">setCategory</span><span class="hcp">,</span> <span class="hcv">sort</span><span class="hcp">,</span> <span class="hcv">setSort</span><span class="hcp">,</span> <span class="hcv">results</span> <span class="hcp">};</span>
+<span class="hcp">}</span>
+
+<span class="hcc">/* ── Keyframes: card entrance ─────────────────────────── */</span>
+<span class="hcf">@keyframes</span> <span class="hcv">cardEntrance</span> <span class="hcp">{</span>
+  <span class="hck">from</span> <span class="hcp">{</span> <span class="hck">opacity</span><span class="hcp">:</span> <span class="hcn">0</span><span class="hcp">;</span> <span class="hck">transform</span><span class="hcp">:</span> <span class="hcf">translateY</span><span class="hcp">(</span><span class="hcn">16px</span><span class="hcp">);</span> <span class="hcp">}</span>
+  <span class="hck">to</span>   <span class="hcp">{</span> <span class="hck">opacity</span><span class="hcp">:</span> <span class="hcn">1</span><span class="hcp">;</span> <span class="hck">transform</span><span class="hcp">:</span> <span class="hcf">translateY</span><span class="hcp">(</span><span class="hcn">0</span><span class="hcp">);</span> <span class="hcp">}</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── Font detail page: specimen renderer ───────────────────</span>
+<span class="hck">async function</span> <span class="hcf">renderSpecimen</span><span class="hcp">(</span>
+  <span class="hcv">fontId</span><span class="hcp">:</span> <span class="hco">string</span><span class="hcp">,</span>
+  <span class="hcv">canvas</span><span class="hcp">:</span> <span class="hco">HTMLCanvasElement</span><span class="hcp">,</span>
+  <span class="hcv">opts</span><span class="hcp">:</span> <span class="hcp">{</span> <span class="hcv">size</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">;</span> <span class="hcv">text</span><span class="hcp">:</span> <span class="hco">string</span> <span class="hcp">}</span>
+<span class="hcp">):</span> <span class="hco">Promise</span><span class="hcp">&lt;</span><span class="hco">void</span><span class="hcp">&gt;</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">ctx</span> <span class="hcp">=</span> <span class="hcv">canvas</span><span class="hcp">.</span><span class="hcf">getContext</span><span class="hcp">(</span><span class="hcs">'2d'</span><span class="hcp">);</span>
+  <span class="hck">if</span> <span class="hcp">(!</span><span class="hcv">ctx</span><span class="hcp">)</span> <span class="hck">return</span><span class="hcp">;</span>
+  <span class="hck">await</span> <span class="hcf">loadFont</span><span class="hcp">(</span><span class="hcv">fontId</span><span class="hcp">);</span>
+  <span class="hcv">ctx</span><span class="hcp">.</span><span class="hcv">clearRect</span><span class="hcp">(</span><span class="hcn">0</span><span class="hcp">,</span> <span class="hcn">0</span><span class="hcp">,</span> <span class="hcv">canvas</span><span class="hcp">.</span><span class="hcv">width</span><span class="hcp">,</span> <span class="hcv">canvas</span><span class="hcp">.</span><span class="hcv">height</span><span class="hcp">);</span>
+  <span class="hcv">ctx</span><span class="hcp">.</span><span class="hcv">font</span> <span class="hcp">=</span> <span class="hcs">`$<span class="hcp">{</span><span class="hcv">opts</span><span class="hcp">.</span><span class="hcv">size</span><span class="hcp">}</span>px '$<span class="hcp">{</span><span class="hcv">fontId</span><span class="hcp">}</span>'`</span><span class="hcp">;</span>
+  <span class="hcv">ctx</span><span class="hcp">.</span><span class="hcv">fillStyle</span> <span class="hcp">=</span> <span class="hcs">'currentColor'</span><span class="hcp">;</span>
+  <span class="hcv">ctx</span><span class="hcp">.</span><span class="hcf">fillText</span><span class="hcp">(</span><span class="hcv">opts</span><span class="hcp">.</span><span class="hcv">text</span><span class="hcp">,</span> <span class="hcn">24</span><span class="hcp">,</span> <span class="hcv">opts</span><span class="hcp">.</span><span class="hcv">size</span> <span class="hcp">+</span> <span class="hcn">24</span><span class="hcp">);</span>
+<span class="hcp">}</span>
+
+<span class="hcc">// ── Pairing engine: cosine similarity on embeddings ───────</span>
+<span class="hck">function</span> <span class="hcf">cosineSimilarity</span><span class="hcp">(</span><span class="hcv">a</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">[],</span> <span class="hcv">b</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">[]):</span> <span class="hco">number</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcv">dot</span> <span class="hcp">=</span> <span class="hcv">a</span><span class="hcp">.</span><span class="hcf">reduce</span><span class="hcp">((</span><span class="hcv">s</span><span class="hcp">,</span> <span class="hcv">v</span><span class="hcp">,</span> <span class="hcv">i</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hcv">s</span> <span class="hcp">+</span> <span class="hcv">v</span> <span class="hcp">*</span> <span class="hcv">b</span><span class="hcp">[</span><span class="hcv">i</span><span class="hcp">],</span> <span class="hcn">0</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcv">mag</span> <span class="hcp">=</span> <span class="hcp">(</span><span class="hcv">v</span><span class="hcp">:</span> <span class="hco">number</span><span class="hcp">[])</span> <span class="hcp">=&gt;</span>
+    <span class="hco">Math</span><span class="hcp">.</span><span class="hcf">sqrt</span><span class="hcp">(</span><span class="hcv">v</span><span class="hcp">.</span><span class="hcf">reduce</span><span class="hcp">((</span><span class="hcv">s</span><span class="hcp">,</span> <span class="hcv">x</span><span class="hcp">)</span> <span class="hcp">=&gt;</span> <span class="hcv">s</span> <span class="hcp">+</span> <span class="hcv">x</span> <span class="hcp">*</span> <span class="hcv">x</span><span class="hcp">,</span> <span class="hcn">0</span><span class="hcp">));</span>
+  <span class="hck">return</span> <span class="hcv">dot</span> <span class="hcp">/</span> <span class="hcp">(</span><span class="hcf">mag</span><span class="hcp">(</span><span class="hcv">a</span><span class="hcp">)</span> <span class="hcp">*</span> <span class="hcf">mag</span><span class="hcp">(</span><span class="hcv">b</span><span class="hcp">));</span>
+<span class="hcp">}</span>
+
+<span class="hcc">/* ── API route: /api/fonts/search ─────────────────────── */</span>
+<span class="hck">export async function</span> <span class="hcf">GET</span><span class="hcp">(</span><span class="hcv">req</span><span class="hcp">:</span> <span class="hco">NextRequest</span><span class="hcp">)</span> <span class="hcp">{</span>
+  <span class="hck">const</span> <span class="hcp">{</span> <span class="hcv">searchParams</span> <span class="hcp">}</span> <span class="hcp">=</span> <span class="hck">new</span> <span class="hco">URL</span><span class="hcp">(</span><span class="hcv">req</span><span class="hcp">.</span><span class="hcv">url</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcv">q</span>    <span class="hcp">=</span> <span class="hcv">searchParams</span><span class="hcp">.</span><span class="hcf">get</span><span class="hcp">(</span><span class="hcs">'q'</span><span class="hcp">)</span> <span class="hcp">??</span> <span class="hcs">''</span><span class="hcp">;</span>
+  <span class="hck">const</span> <span class="hcv">cat</span>  <span class="hcp">=</span> <span class="hcv">searchParams</span><span class="hcp">.</span><span class="hcf">get</span><span class="hcp">(</span><span class="hcs">'cat'</span><span class="hcp">);</span>
+  <span class="hck">const</span> <span class="hcv">page</span> <span class="hcp">=</span> <span class="hco">Number</span><span class="hcp">(</span><span class="hcv">searchParams</span><span class="hcp">.</span><span class="hcf">get</span><span class="hcp">(</span><span class="hcs">'page'</span><span class="hcp">)</span> <span class="hcp">??</span> <span class="hcn">1</span><span class="hcp">);</span>
+
+  <span class="hck">const</span> <span class="hcv">fonts</span> <span class="hcp">=</span> <span class="hck">await</span> <span class="hcf">searchFonts</span><span class="hcp">(</span><span class="hcp">{</span> <span class="hcv">q</span><span class="hcp">,</span> <span class="hcv">cat</span><span class="hcp">,</span> <span class="hcv">page</span> <span class="hcp">});</span>
+  <span class="hck">return</span> <span class="hco">NextResponse</span><span class="hcp">.</span><span class="hcf">json</span><span class="hcp">(</span><span class="hcp">{</span> <span class="hcv">fonts</span><span class="hcp">,</span> <span class="hcv">total</span><span class="hcp">:</span> <span class="hcv">fonts</span><span class="hcp">.</span><span class="hcv">length</span> <span class="hcp">});</span>
+<span class="hcp">}</span>
+</div>
+    </div>
+
+    <!-- Layer 2: accent halo glow (follows cursor) -->
+    <div class="hero-code-halo" id="hero-code-halo" aria-hidden="true"></div>
+
+
     <!-- Hero content -->
     <div class="hero-content">
       <div class="hero-eyebrow">Free &amp; Open-Source Typefaces</div>

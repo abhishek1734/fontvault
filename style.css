@@ -7299,3 +7299,141 @@ html, body {
     pointer-events: auto !important;
   }
 }
+
+
+/* ============================================================
+   HERO CODE REVEAL — Interactive Spotlight Background
+   ============================================================ */
+
+/* ── Base Layer: 1px subtle grid at ~3% opacity on #0A0B0D ── */
+.hero-base-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  z-index: 0;
+}
+
+/* ── Code layer hidden beneath CSS mask spotlight ── */
+.hero-code-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  --x: 50%;
+  --y: 50%;
+  --r: 0px;
+  -webkit-mask-image: radial-gradient(
+    circle var(--r, 0px) at var(--x, 50%) var(--y, 50%),
+    black 0%,
+    rgba(0, 0, 0, 0.6) 45%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--r, 0px) at var(--x, 50%) var(--y, 50%),
+    black 0%,
+    rgba(0, 0, 0, 0.6) 45%,
+    transparent 100%
+  );
+  will-change: mask-image, -webkit-mask-image, transform;
+}
+
+.hero-code-inner {
+  position: absolute;
+  inset: -80px;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  white-space: pre;
+  color: #abb2bf;
+  animation: heroCodeScroll 110s linear infinite;
+}
+
+@keyframes heroCodeScroll {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
+/* Syntax token colors matching prompt spec */
+.hck { color: #7C9CFF; font-weight: 500; }   /* keywords */
+.hcs { color: #7EE0A3; }                     /* strings */
+.hcf { color: #FFC66D; }                     /* functions */
+.hcc { color: #5C6370; font-style: italic; } /* comments */
+.hcp { color: #8B93A1; }                     /* punctuation */
+.hcn { color: #E5C07B; }                     /* numbers */
+.hco { color: #C678DD; }                     /* classes/types */
+.hcv { color: #ABB2BF; }                     /* variables/props */
+
+/* ── Secondary halo glow: 300px blurred radial gradient (electric green #3DDC84 @ 12%) ── */
+.hero-code-halo {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(61, 220, 132, 0.12) 0%, transparent 70%);
+  filter: blur(28px);
+  opacity: 0;
+  will-change: left, top, opacity;
+  transition: opacity 0.4s ease-out;
+}
+.hero.cr-active .hero-code-halo {
+  opacity: 1;
+}
+
+/* ── Border glow on hover: 1px border that brightens when hovered ── */
+.hero {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.hero.cr-active {
+  border-color: rgba(61, 220, 132, 0.22) !important;
+  box-shadow: inset 0 0 24px rgba(61, 220, 132, 0.05) !important;
+}
+
+/* ── Content layer (z-index 10, pointer events only on interactive elements) ── */
+.hero-content {
+  position: relative;
+  z-index: 10 !important;
+  pointer-events: none;
+}
+.hero-content a,
+.hero-content button,
+.scroll-indicator {
+  pointer-events: auto;
+}
+
+/* ── Responsive adjustments ── */
+@media (max-width: 768px) {
+  .hero-code-inner {
+    font-size: 11px;
+    line-height: 1.6;
+  }
+}
+
+/* ── Reduced motion: static spotlight at center, no lerp/scroll ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-code-inner { animation: none !important; }
+  .hero-code-layer {
+    --r: 180px !important;
+    --x: 50% !important;
+    --y: 50% !important;
+  }
+  .hero-code-halo {
+    opacity: 0.6 !important;
+    left: 50% !important;
+    top: 50% !important;
+  }
+}
