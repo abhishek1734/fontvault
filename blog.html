@@ -23,7 +23,7 @@
   <meta name="twitter:image" content="https://fontvault.vercel.app/assets/branding.png">
 
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=6.8">
+  <link rel="stylesheet" href="style.css?v=8.0">
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
   <script src="blog-data.js?v=1.0"></script>
@@ -100,6 +100,40 @@
       }
     }
   </style>
+  <!-- CRITICAL LOGO & NAVBAR STYLES (prevents cache flash) -->
+  <style>
+    header#navbar {
+      background-color: rgba(10, 11, 13, 0.94) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
+      color: #fff !important;
+    }
+    header#navbar .logo-img-light {
+      display: block !important;
+      height: 32px !important;
+      width: auto !important;
+      object-fit: contain !important;
+    }
+    header#navbar .logo-img-dark {
+      display: none !important;
+    }
+    footer {
+      background-color: #0A0B0D !important;
+      color: #f0efec !important;
+    }
+    footer .logo-img-light {
+      display: block !important;
+      height: 36px !important;
+      width: auto !important;
+      object-fit: contain !important;
+    }
+    footer .logo-img-dark {
+      display: none !important;
+    }
+    @media (max-width: 768px) {
+      header#navbar .logo-img-light { height: 24px !important; }
+      footer .logo-img-light { height: 28px !important; }
+    }
+  </style>
 </head>
 <body>
 
@@ -108,7 +142,10 @@
 
   <!-- NAVIGATION BAR -->
   <header id="navbar" role="banner">
-    <a href="index.html" class="logo logo-link"><img src="assets/logo-dark.png" alt="FontVault" class="logo-img logo-img-dark"><img src="assets/logo-light.png" alt="FontVault" class="logo-img logo-img-light"></a>
+    <a href="index.html" class="logo logo-link" aria-label="FontVault Homepage">
+      <img src="assets/logo-light.png" alt="FontVault" class="logo-img logo-img-light" onerror="this.onerror=null;this.src='logo-light.png';">
+      <img src="assets/logo-dark.png" alt="FontVault" class="logo-img logo-img-dark" onerror="this.onerror=null;this.src='logo-dark.png';">
+    </a>
     <div class="nav-actions">
       <div class="search-container" id="search-container" role="search">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -201,7 +238,10 @@
   <footer role="contentinfo">
     <div class="footer-content">
       <div class="footer-branding">
-        <a href="index.html" class="logo logo-link"><img src="assets/logo-dark.png" alt="FontVault" class="logo-img logo-img-dark"><img src="assets/logo-light.png" alt="FontVault" class="logo-img logo-img-light"></a>
+        <a href="index.html" class="logo logo-link" aria-label="FontVault Homepage">
+        <img src="assets/logo-light.png" alt="FontVault" class="logo-img logo-img-light" onerror="this.onerror=null;this.src='logo-light.png';">
+        <img src="assets/logo-dark.png" alt="FontVault" class="logo-img logo-img-dark" onerror="this.onerror=null;this.src='logo-dark.png';">
+      </a>
         <p style="margin-top: 1rem;">A free font discovery tool to search, compare, and pair open-source typefaces across real layouts.</p>
         <div style="margin-top: 1.25rem;">
           <a href="mailto:support@fontvault.com" class="footer-support-btn" onclick="openContactSupport(event)">

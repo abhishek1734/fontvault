@@ -106,10 +106,11 @@ header#navbar {
   width: 100% !important;
   max-width: 100vw !important;
   z-index: 1000 !important;
-  background-color: rgba(255, 255, 255, 0.96) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border-bottom: 1px solid var(--border-grey) !important;
+  background-color: rgba(10, 11, 13, 0.94) !important;
+  background: rgba(10, 11, 13, 0.94) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09) !important;
   height: 64px;
   display: flex;
   align-items: center;
@@ -117,24 +118,28 @@ header#navbar {
   padding: 0 0 0 1.5rem;
   margin: 0 !important;
   box-sizing: border-box !important;
+  color: #ffffff !important;
   transition: background-color 0.3s ease, border-color 0.3s ease, height 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
 }
 
 [data-theme="dark"] header,
 [data-theme="dark"] header#navbar {
-  background-color: rgba(13, 13, 13, 0.96) !important;
-  border-bottom-color: #2A2A2A !important;
+  background-color: rgba(10, 11, 13, 0.96) !important;
+  background: rgba(10, 11, 13, 0.96) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.09) !important;
 }
 
 header.collapsed,
 header#navbar.collapsed {
   height: 48px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  background-color: rgba(10, 11, 13, 0.98) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
 }
 
 [data-theme="dark"] header.collapsed,
 [data-theme="dark"] header#navbar.collapsed {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  background-color: rgba(10, 11, 13, 0.98) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
 }
 
 .logo {
@@ -2087,7 +2092,7 @@ footer {
 [data-theme="dark"] .tab-btn.active { color:#F0F0F0; }
 [data-theme="dark"] .info-item { border-color:#2A2A2A; }
 [data-theme="dark"] .detail-cta-panel { background:#1A1A1A; border-color:#2A2A2A; }
-[data-theme="dark"] footer { background: var(--off-white); border-color: var(--border-grey); }
+[data-theme="dark"] footer { background: #0A0B0D !important; border-color: rgba(255, 255, 255, 0.08) !important; }
 [data-theme="dark"] .footer-bottom { border-color: var(--border-grey); }
 [data-theme="dark"] .sidebar-filters-header h3 { color:#F0F0F0; }
 [data-theme="dark"] #search-input { color:#F0F0F0; }
@@ -7435,5 +7440,158 @@ html, body {
     opacity: 0.6 !important;
     left: 50% !important;
     top: 50% !important;
+  }
+}
+
+/* ============================================================
+   NAVBAR & FOOTER DARK AESTHETIC & THEME-AWARE LOGOS (v8.0)
+   ============================================================ */
+
+/* ── Navbar Items: always crisp white on dark navbar ── */
+header#navbar .nav-actions .nav-link,
+header#navbar .nav-actions .nav-btn {
+  color: rgba(255, 255, 255, 0.85) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.09) !important;
+  background: transparent !important;
+}
+header#navbar .nav-actions .nav-link:hover,
+header#navbar .nav-actions .nav-btn:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+header#navbar #submit-font-nav-btn {
+  color: #3DDC84 !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+
+header#navbar #vault-btn {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+header#navbar .search-container {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.09) !important;
+}
+header#navbar #search-input {
+  color: #ffffff !important;
+}
+header#navbar #search-input::placeholder {
+  color: rgba(255, 255, 255, 0.42) !important;
+}
+header#navbar .search-container svg {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+header#navbar #dark-toggle {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+header#navbar .hamburger-line {
+  background-color: #ffffff !important;
+}
+header#navbar .mobile-search-toggle-btn {
+  color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ── Logo Image Rules ── */
+.logo-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  text-decoration: none !important;
+  line-height: 1 !important;
+}
+
+/* In dark navbar: show white logo, hide dark logo */
+header#navbar .logo-img-light {
+  display: block !important;
+  height: 32px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+header#navbar .logo-img-dark {
+  display: none !important;
+}
+
+/* ── Footer Overhaul: dark aesthetic matching FontVault ── */
+footer {
+  background-color: #0A0B0D !important;
+  background: #0A0B0D !important;
+  color: #f0efec !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 5rem 2rem 2.5rem !important;
+}
+
+.footer-content {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.footer-branding p,
+.footer-newsletter p,
+.footer-links a,
+.footer-bottom {
+  color: #8A8F98 !important;
+}
+
+.footer-links h4,
+.footer-newsletter h4 {
+  color: #ffffff !important;
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0.12em !important;
+}
+
+.footer-links a:hover {
+  color: #3DDC84 !important;
+}
+
+.footer-support-btn {
+  color: #f0efec !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+.footer-support-btn:hover {
+  border-color: #3DDC84 !important;
+  color: #3DDC84 !important;
+}
+
+.newsletter-form input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+.newsletter-form input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+.newsletter-form button {
+  background: #ffffff !important;
+  color: #0A0B0D !important;
+}
+.newsletter-form button:hover {
+  background: #3DDC84 !important;
+}
+
+/* Footer Logo: show white logo on dark footer */
+footer .logo-img-light {
+  display: block !important;
+  height: 36px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  margin-bottom: 0.5rem !important;
+}
+footer .logo-img-dark {
+  display: none !important;
+}
+
+/* Mobile responsive sizes */
+@media (max-width: 768px) {
+  header#navbar .logo-img-light {
+    height: 24px !important;
+  }
+  footer .logo-img-light {
+    height: 28px !important;
+  }
+  header#navbar {
+    padding: 0 1rem !important;
   }
 }
