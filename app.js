@@ -1499,6 +1499,64 @@ function setupCollectionCards() {
 //  EVENT LISTENERS
 // ─────────────────────────────────────────────────
 function setupEventListeners() {
+
+  // ── NEW HERO SEARCH INTEGRATION (v13.0) ─────────────────────────
+  const heroSearchInput = document.getElementById("hero-search-input");
+  const heroSearchForm = document.getElementById("hero-search-form");
+  if (heroSearchInput) {
+    const triggerSearch = (e) => {
+      if (e) e.preventDefault();
+      const val = heroSearchInput.value.trim();
+      const mainSearchInput = document.getElementById("search-input");
+      if (mainSearchInput) {
+        mainSearchInput.value = val;
+      }
+      if (typeof currentFilters !== "undefined") {
+        currentFilters.search = val;
+      }
+      if (typeof filterFonts === "function") {
+        filterFonts();
+      }
+      const fontTarget = document.getElementById("font-library-section") || document.getElementById("main-content");
+      if (fontTarget) {
+        fontTarget.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
+    if (heroSearchForm) {
+      heroSearchForm.addEventListener("submit", triggerSearch);
+    }
+
+    heroSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        triggerSearch(e);
+      }
+    });
+
+    heroSearchInput.addEventListener("input", (e) => {
+      const val = e.target.value.trim();
+      if (typeof currentFilters !== "undefined") {
+        currentFilters.search = val;
+      }
+      if (typeof filterFonts === "function") {
+        filterFonts();
+      }
+    });
+  }
+
+  // Favourites buttons -> open vault / saved fonts
+  const favBtns = [document.getElementById("vault-btn"), document.getElementById("mobile-favourites-btn")];
+  favBtns.forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (typeof openAuthModal === "function") {
+          openAuthModal();
+        }
+      });
+    }
+  });
+
   const vaultBtn = document.getElementById("vault-btn");
   if (vaultBtn) {
     vaultBtn.addEventListener("click", () => {
