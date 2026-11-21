@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Space+Grotesk:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&family=Lora:ital,wght@0,400;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" href="style.css?v=16.2">
+  <link rel="stylesheet" href="style.css?v=16.3">
   <script src="seo.js?v=1.0"></script>
   <script src="analytics.js?v=1.0"></script>
   <script>
@@ -764,6 +764,26 @@
       </div>
     </div>
   </section>
+  <!-- NEWSLETTER SECTION (Substack Embed) -->
+  <section class="newsletter-section" id="newsletter-section" aria-label="FontVault Newsletter">
+    <div class="newsletter-container">
+      <div class="newsletter-card">
+        <div class="newsletter-header">
+          <div class="newsletter-badge">
+            <span class="newsletter-badge-dot"></span>
+            <span>WEEKLY TYPE DIGEST</span>
+          </div>
+          <h2 class="newsletter-title">Subscribe to <span class="newsletter-accent">FontVault</span> on Substack</h2>
+          <p class="newsletter-desc">
+            Discover curated free &amp; open-source typography, pairing breakdowns, and typographic design inspiration delivered straight to your inbox.
+          </p>
+        </div>
+        <div class="newsletter-embed-wrapper">
+          <iframe src="https://fontvault.substack.com/embed" width="480" height="320" style="border: 1px solid #EEE; background: white" frameborder="0" scrolling="no" title="FontVault Substack Newsletter"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
   </main>
 
   <!-- FOOTER -->
@@ -788,6 +808,7 @@
           <li><a href="#main-content" id="footer-browse-link">Browse Fonts</a></li>
           <li><a href="font-pairing.html">Font Pairing</a></li>
           <li><a href="collections.html">Collections</a></li>
+          <li><a href="#newsletter-section">Newsletter</a></li>
           <li><a href="mailto:support@fontvault.com" onclick="openContactSupport(event)">Help &amp; Support</a></li>
         </ul>
       </div>
@@ -870,7 +891,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="fonts.js?v=6.6"></script>
   <script src="shared.js?v=6.6"></script>
-  <script src="app.js?v=16.0"></script>
+  <script src="app.js?v=16.1"></script>
   <!-- SCROLL TO TOP SCRIPT -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {

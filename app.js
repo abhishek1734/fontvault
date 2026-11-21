@@ -1652,6 +1652,32 @@ function setupEventListeners() {
     }
   });
 
+  // Newsletter nav links -> smooth scroll to newsletter section
+  const navNewsletterBtn = document.getElementById("nav-newsletter-btn");
+  const mobileNewsletterBtn = document.getElementById("mobile-newsletter-btn");
+  [navNewsletterBtn, mobileNewsletterBtn].forEach(btn => {
+    if (btn) {
+      btn.addEventListener("click", (e) => {
+        const target = document.getElementById("newsletter-section");
+        if (target) {
+          e.preventDefault();
+          const mobileMenu = document.getElementById("mobile-menu");
+          const hamburger = document.getElementById("hamburger-btn");
+          if (mobileMenu && mobileMenu.classList.contains("is-open")) {
+            mobileMenu.classList.remove("is-open");
+            if (hamburger) hamburger.setAttribute("aria-expanded", "false");
+          }
+          const navHeight = 72;
+          const targetTop = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+          window.scrollTo({
+            top: Math.max(0, targetTop),
+            behavior: "smooth"
+          });
+        }
+      });
+    }
+  });
+
   const vaultBtn = document.getElementById("vault-btn");
   if (vaultBtn) {
     vaultBtn.addEventListener("click", () => {

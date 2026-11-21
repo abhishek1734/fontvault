@@ -8740,3 +8740,117 @@ header, header#navbar {
   background: #00f0ce !important;
   box-shadow: 0 0 20px rgba(3, 203, 174, 0.5) !important;
 }
+
+/* ============================================================
+   NEWSLETTER SECTION (Substack Embed)
+   ============================================================ */
+.newsletter-section {
+  position: relative !important;
+  padding: 80px 24px !important;
+  background-color: #020202 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-sizing: border-box !important;
+}
+
+.newsletter-container {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.newsletter-card {
+  background: linear-gradient(180deg, #0e1017 0%, #08090c 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-radius: 20px !important;
+  padding: 48px 32px !important;
+  text-align: center !important;
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+.newsletter-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: rgba(3, 203, 174, 0.1) !important;
+  border: 1px solid rgba(3, 203, 174, 0.25) !important;
+  border-radius: 999px !important;
+  padding: 5px 14px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.12em !important;
+  color: #03CBAE !important;
+  text-transform: uppercase !important;
+  margin-bottom: 18px !important;
+  font-family: var(--font-body), 'DM Sans', sans-serif !important;
+}
+
+.newsletter-badge-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background-color: #03CBAE !important;
+  box-shadow: 0 0 8px #03CBAE !important;
+  display: inline-block !important;
+  animation: pulseLiveDot 2s ease-in-out infinite !important;
+}
+
+.newsletter-title {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: clamp(30px, 4.8vw, 46px) !important;
+  line-height: 1.12 !important;
+  font-weight: 400 !important;
+  color: #ffffff !important;
+  margin: 0 0 12px 0 !important;
+}
+
+.newsletter-accent {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-style: italic !important;
+  color: #03CBAE !important;
+}
+
+.newsletter-desc {
+  font-family: var(--font-body), 'DM Sans', sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  max-width: 520px !important;
+  margin: 0 auto 30px auto !important;
+}
+
+.newsletter-embed-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.newsletter-embed-wrapper iframe {
+  max-width: 100% !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+@media (max-width: 768px) {
+  .newsletter-section {
+    padding: 50px 16px !important;
+  }
+  .newsletter-card {
+    padding: 32px 16px !important;
+    border-radius: 16px !important;
+  }
+  .newsletter-desc {
+    font-size: 13px !important;
+    margin-bottom: 22px !important;
+  }
+  .newsletter-embed-wrapper iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
