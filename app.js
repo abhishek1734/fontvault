@@ -1500,49 +1500,107 @@ function setupCollectionCards() {
 // ─────────────────────────────────────────────────
 function setupEventListeners() {
 
-  // ── NEW HERO SEARCH INTEGRATION (v13.0) ─────────────────────────
+  // ── HERO & MOBILE SEARCH INTEGRATION (v14.0 FIXED) ───────────────
   const heroSearchInput = document.getElementById("hero-search-input");
   const heroSearchForm = document.getElementById("hero-search-form");
-  if (heroSearchInput) {
-    const triggerSearch = (e) => {
-      if (e) e.preventDefault();
-      const val = heroSearchInput.value.trim();
-      const mainSearchInput = document.getElementById("search-input");
-      if (mainSearchInput) {
-        mainSearchInput.value = val;
-      }
-      if (typeof currentFilters !== "undefined") {
-        currentFilters.search = val;
-      }
-      if (typeof filterFonts === "function") {
-        filterFonts();
-      }
-      const fontTarget = document.getElementById("font-library-section") || document.getElementById("main-content");
-      if (fontTarget) {
-        fontTarget.scrollIntoView({ behavior: "smooth" });
-      }
-    };
+  const mobileSearchInput = document.getElementById("mobile-search-input");
 
-    if (heroSearchForm) {
-      heroSearchForm.addEventListener("submit", triggerSearch);
+  function performSearchQuery(query, autoScroll) {
+    const cleanQuery = (query || "").trim();
+    window.searchQuery = cleanQuery;
+    if (el.searchInput) {
+      el.searchInput.value = cleanQuery;
     }
+    renderGrid(true);
+    updateActiveFilterTags();
+    updateCategoryCounts();
+
+    if (autoScroll) {
+      const fontTarget = document.getElementById("font-library-section") || el.fontGrid || document.getElementById("main-content");
+      if (fontTarget) {
+        fontTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }
+
+  if (heroSearchInput) {
+    heroSearchInput.addEventListener("input", (e) => {
+      performSearchQuery(e.target.value, false);
+    });
 
     heroSearchInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
-        triggerSearch(e);
-      }
-    });
-
-    heroSearchInput.addEventListener("input", (e) => {
-      const val = e.target.value.trim();
-      if (typeof currentFilters !== "undefined") {
-        currentFilters.search = val;
-      }
-      if (typeof filterFonts === "function") {
-        filterFonts();
+        e.preventDefault();
+        performSearchQuery(heroSearchInput.value, true);
       }
     });
   }
+
+  if (heroSearchForm) {
+    heroSearchForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const val = heroSearchInput ? heroSearchInput.value : "";
+      performSearchQuery(val, true);
+    });
+  }
+
+  if (mobileSearchInput) {
+    mobileSearchInput.addEventListener("input", (e) => {
+      performSearchQuery(e.target.value, false);
+    });
+    mobileSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        performSearchQuery(mobileSearchInput.value, true);
+      }
+    });
+  }
+
+  // ── MEGA MENU INTERACTIVE CATEGORY FILTERING ───────────────────────
+  document.querySelectorAll(".mega-category-card").forEach(card => {
+    card.addEventListener("click", (e) => {
+      e.preventDefault();
+      const cat = card.dataset.category;
+      if (cat === "all") {
+        activeFilters["Style"] = null;
+        activeFilters["Favorites"] = false;
+      } else {
+        activeFilters["Style"] = cat;
+        activeFilters["Favorites"] = false;
+      }
+      window.searchQuery = "";
+      if (heroSearchInput) heroSearchInput.value = "";
+      if (el.searchInput) el.searchInput.value = "";
+
+      renderGrid(true);
+      updateActiveFilterTags();
+      updateCategoryCounts();
+
+      const fontTarget = document.getElementById("font-library-section") || el.fontGrid || document.getElementById("main-content");
+      if (fontTarget) {
+        fontTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  });
+
+  document.querySelectorAll(".mega-mood-tag").forEach(tag => {
+    tag.addEventListener("click", (e) => {
+      e.preventDefault();
+      const mood = tag.dataset.mood;
+      if (mood) {
+        activeFilters["Mood"] = new Set([mood]);
+        activeFilters["Favorites"] = false;
+        renderGrid(true);
+        updateActiveFilterTags();
+        updateCategoryCounts();
+
+        const fontTarget = document.getElementById("font-library-section") || el.fontGrid || document.getElementById("main-content");
+        if (fontTarget) {
+          fontTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    });
+  });
 
   // Favourites buttons -> open vault / saved fonts
   const favBtns = [document.getElementById("vault-btn"), document.getElementById("mobile-favourites-btn")];
