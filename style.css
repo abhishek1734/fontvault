@@ -8135,43 +8135,34 @@ header, header#navbar {
 
 
 /* ============================================================
-   HERO REFINEMENT v14.0 (Instrument Serif, BG Texture, Mega Menu)
+   HERO REFINEMENT (Viewport-Height Responsive System)
    ============================================================ */
 
-/* ── Hero Headline: Instrument Serif ── */
-.hero-headline-fraunces {
-  font-family: 'Instrument Serif', Georgia, serif !important;
-  font-size: clamp(56px, 7.8vw, 96px) !important;
-  line-height: 1.03 !important;
-  font-weight: 400 !important;
-  letter-spacing: -0.015em !important;
-  color: #ffffff !important;
-  margin: 0 0 28px 0 !important;
-  text-align: center !important;
+:root {
+  --nav-h: 72px;
+}
+@media (max-width: 1024px) {
+  :root {
+    --nav-h: 56px;
+  }
 }
 
-.hero-creative-accent {
-  font-family: 'Instrument Serif', Georgia, serif !important;
-  font-style: italic !important;
-  color: #03CBAE !important;
-  font-weight: 400 !important;
-  letter-spacing: -0.01em !important;
-  display: inline-block !important;
-}
-
-/* ── Hero Section Background Texture (15% Opacity) ── */
+/* ── Hero Container (Adapts fluidly to 100vh / 100dvh across any device) ── */
 .hero {
   position: relative !important;
   background-color: #000000 !important;
   background: #000000 !important;
   background-image: none !important;
-  min-height: calc(100vh - 72px) !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: calc(100vh - var(--nav-h, 72px)) !important;
+  min-height: calc(100dvh - var(--nav-h, 72px)) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
-  padding: 60px 24px 90px 24px !important;
+  padding: clamp(20px, 4.5vh, 64px) clamp(16px, 4vw, 32px) clamp(24px, 5.5vh, 76px) clamp(16px, 4vw, 32px) !important;
   overflow: visible !important;
   border: none !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
@@ -8197,10 +8188,188 @@ header, header#navbar {
   bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
-  height: 100px !important;
+  height: clamp(40px, 9vh, 90px) !important;
   background: linear-gradient(to bottom, transparent, #020202) !important;
   pointer-events: none !important;
   z-index: 2 !important;
+}
+
+/* ── Centered Hero Content Box ── */
+.hero-content {
+  position: relative !important;
+  z-index: 10 !important;
+  max-width: 860px !important;
+  width: 100% !important;
+  margin: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  pointer-events: auto !important;
+}
+
+/* ── Hero Headline: Instrument Serif with 2D Viewport-Responsive Typography ── */
+.hero-headline-fraunces {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: clamp(38px, min(7.6vw, 9.4vh, 9.4dvh), 96px) !important;
+  line-height: 1.02 !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.015em !important;
+  color: #ffffff !important;
+  margin: 0 0 clamp(12px, 2.8vh, 28px) 0 !important;
+  text-align: center !important;
+}
+
+.hero-creative-accent {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-style: italic !important;
+  color: #03CBAE !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em !important;
+  display: inline-block !important;
+}
+
+/* ── Hero Search Form (Responsive Height & Spacing) ── */
+.hero-search-form {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: min(500px, 92vw) !important;
+  margin: 0 auto clamp(12px, 2.5vh, 26px) auto !important;
+  box-sizing: border-box !important;
+}
+
+.hero-search-input {
+  width: 100% !important;
+  height: clamp(38px, 4.8vh, 46px) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 8px !important;
+  padding: 0 14px 0 42px !important;
+  color: #ffffff !important;
+  font-size: clamp(12.5px, 1.6vh, 13.5px) !important;
+  font-family: var(--font-body), 'DM Sans', sans-serif !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+}
+
+.hero-search-submit {
+  height: clamp(38px, 4.8vh, 46px) !important;
+  padding: 0 clamp(16px, 2.2vw, 24px) !important;
+  background: #03CBAE !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: #01241f !important;
+  font-weight: 600 !important;
+  font-size: clamp(12.5px, 1.6vh, 14px) !important;
+  font-family: var(--font-body), 'DM Sans', sans-serif !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── Hero Subtext (Viewport-Proportional) ── */
+.hero-subtext {
+  font-family: var(--font-body), 'DM Sans', sans-serif !important;
+  font-size: clamp(11.5px, 1.55vh, 13.5px) !important;
+  line-height: clamp(1.4, 1.6, 1.68) !important;
+  color: rgba(255, 255, 255, 0.44) !important;
+  max-width: min(580px, 92vw) !important;
+  margin: 0 auto !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+}
+
+/* ── Viewport Height Specific Media Queries ── */
+
+/* Compact viewport height (Laptops 1366x768 / 1440x900 or split-screen windows) */
+@media (max-height: 760px) {
+  .hero {
+    padding-top: clamp(16px, 3vh, 32px) !important;
+    padding-bottom: clamp(20px, 4vh, 40px) !important;
+  }
+  .hero-headline-fraunces {
+    font-size: clamp(34px, 8.2vh, 68px) !important;
+    margin-bottom: clamp(10px, 2.2vh, 18px) !important;
+  }
+  .hero-search-form {
+    margin-bottom: clamp(10px, 2vh, 18px) !important;
+  }
+}
+
+/* Very short viewport height (landscape phones, tablets, or small windows) */
+@media (max-height: 600px) {
+  .hero {
+    padding-top: 12px !important;
+    padding-bottom: 16px !important;
+  }
+  .hero-headline-fraunces {
+    font-size: clamp(28px, 7.5vh, 46px) !important;
+    margin-bottom: 8px !important;
+  }
+  .hero-search-form {
+    margin-bottom: 8px !important;
+  }
+  .hero-search-input,
+  .hero-search-submit {
+    height: 36px !important;
+  }
+  .hero-subtext {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    max-width: 480px !important;
+  }
+}
+
+/* Tall displays (1080p, 1440p, 4K monitors) */
+@media (min-height: 950px) {
+  .hero {
+    padding-top: clamp(40px, 5.5vh, 76px) !important;
+    padding-bottom: clamp(60px, 7.5vh, 96px) !important;
+  }
+  .hero-headline-fraunces {
+    font-size: clamp(76px, min(8vw, 9.6vh), 104px) !important;
+    margin-bottom: clamp(24px, 3vh, 36px) !important;
+  }
+  .hero-search-form {
+    margin-bottom: clamp(22px, 3vh, 32px) !important;
+  }
+  .hero-subtext {
+    font-size: 14px !important;
+  }
+}
+
+/* Mobile Devices (Narrow Width) */
+@media (max-width: 768px) {
+  .hero {
+    min-height: calc(100vh - 56px) !important;
+    min-height: calc(100dvh - 56px) !important;
+    padding: clamp(16px, 3.5vh, 36px) 16px clamp(20px, 4.5vh, 44px) 16px !important;
+  }
+  .hero-headline-fraunces {
+    font-size: clamp(32px, min(10vw, 7.6vh), 52px) !important;
+    margin-bottom: clamp(12px, 2.2vh, 20px) !important;
+  }
+  .hero-search-form {
+    flex-direction: row !important;
+    gap: 6px !important;
+    max-width: 100% !important;
+    margin-bottom: clamp(12px, 2.2vh, 18px) !important;
+  }
+  .hero-search-submit {
+    padding: 0 16px !important;
+  }
+  .hero-subtext {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    padding: 0 8px !important;
+  }
 }
 
 /* ── Categories Mega Menu ── */
