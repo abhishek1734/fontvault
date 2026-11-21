@@ -7919,15 +7919,20 @@ header, header#navbar {
 }
 
 .nav-pill-favourites {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 8px !important;
+  background-color: #0A0A0A !important;
+  background: #0A0A0A !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
   color: #ffffff !important;
   padding: 8px 16px !important;
   font-weight: 400 !important;
+  transition: all 0.2s ease !important;
 }
 .nav-pill-favourites:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  background-color: #101010 !important;
+  background: #101010 !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  color: #ffffff !important;
 }
 
 .nav-pill-newsletter {
@@ -8455,4 +8460,60 @@ header, header#navbar {
   .nav-mega-dropdown {
     display: none !important;
   }
+}
+
+
+/* ============================================================
+   FAVOURITES BUTTON & MEGA MENU REFINEMENT (v15.0)
+   ============================================================ */
+
+/* ── Favourites Button (Corner radius 8px, #0A0A0A -> #101010) ── */
+.nav-pill-favourites,
+#vault-btn.nav-pill-favourites {
+  border-radius: 8px !important;
+  background-color: #0A0A0A !important;
+  background: #0A0A0A !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  padding: 8px 16px !important;
+  font-weight: 400 !important;
+  transition: background-color 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.15s ease !important;
+}
+
+.nav-pill-favourites:hover,
+#vault-btn.nav-pill-favourites:hover {
+  background-color: #101010 !important;
+  background: #101010 !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  color: #ffffff !important;
+}
+
+/* ── Refined 2-Column Mega Menu (Focused on Categories & Opaque) ── */
+.mega-menu-overlay {
+  width: 550px !important;
+  max-width: calc(100vw - 32px) !important;
+  background: #090A0D !important;
+  background-color: #090A0D !important;
+  backdrop-filter: blur(32px) !important;
+  -webkit-backdrop-filter: blur(32px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  border-radius: 14px !important;
+  padding: 20px 22px !important;
+  box-shadow: 0 24px 60px -8px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 35px rgba(3, 203, 174, 0.06) !important;
+}
+
+.mega-menu-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 16px !important;
+}
+
+/* ── Search Submit Active State & Animation ── */
+.hero-search-submit {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.hero-search-submit.is-searching {
+  transform: scale(0.96) !important;
+  background: #00f0ce !important;
+  box-shadow: 0 0 20px rgba(3, 203, 174, 0.5) !important;
 }
