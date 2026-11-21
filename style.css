@@ -8159,14 +8159,12 @@ header, header#navbar {
   display: inline-block !important;
 }
 
-/* ── Hero Section Background Texture ── */
+/* ── Hero Section Background Texture (15% Opacity) ── */
 .hero {
   position: relative !important;
   background-color: #000000 !important;
-  background-image: url('hero-bg.jpg') !important;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
+  background: #000000 !important;
+  background-image: none !important;
   min-height: calc(100vh - 72px) !important;
   display: flex !important;
   flex-direction: column !important;
@@ -8177,6 +8175,19 @@ header, header#navbar {
   overflow: visible !important;
   border: none !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.hero::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background-image: url('hero-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  opacity: 0.15 !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
 }
 
 /* Subtle bottom fade so background seamlessly transitions into library */
