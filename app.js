@@ -1609,6 +1609,36 @@ function setupEventListeners() {
     });
   });
 
+  document.querySelectorAll(".mega-mood-tag").forEach(tag => {
+    tag.addEventListener("click", (e) => {
+      e.preventDefault();
+      const mood = tag.dataset.mood;
+      if (mood) {
+        activeFilters["Mood"] = new Set([mood]);
+        activeFilters["Favorites"] = false;
+        window.searchQuery = "";
+        if (heroSearchInput) heroSearchInput.value = "";
+        if (el.searchInput) el.searchInput.value = "";
+
+        renderGrid(true);
+        updateActiveFilterTags();
+        updateCategoryCounts();
+
+        setTimeout(() => {
+          const fontTarget = document.getElementById("font-library-section") || el.fontGrid || document.getElementById("main-content");
+          if (fontTarget) {
+            const navHeight = 72;
+            const targetTop = fontTarget.getBoundingClientRect().top + window.pageYOffset - navHeight;
+            window.scrollTo({
+              top: Math.max(0, targetTop),
+              behavior: "smooth"
+            });
+          }
+        }, 150);
+      }
+    });
+  });
+
   // Favourites buttons -> open vault / saved fonts
   const favBtns = [document.getElementById("vault-btn"), document.getElementById("mobile-favourites-btn")];
   favBtns.forEach(btn => {
