@@ -8854,3 +8854,158 @@ header, header#navbar {
     max-width: 100% !important;
   }
 }
+
+/* ============================================================
+   NEWSLETTER SUBSCRIPTION MODAL POPUP
+   ============================================================ */
+.newsletter-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.78) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 2500 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: opacity 0.25s ease, visibility 0.25s ease !important;
+  box-sizing: border-box !important;
+}
+
+.newsletter-modal-overlay.visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.newsletter-modal-container {
+  width: 100% !important;
+  max-width: 540px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.newsletter-modal {
+  position: relative !important;
+  width: 100% !important;
+  background: #0B0D12 !important;
+  background: linear-gradient(180deg, #10131B 0%, #080A0E 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 20px !important;
+  padding: 36px 28px 28px 28px !important;
+  text-align: center !important;
+  box-shadow: 0 32px 80px -10px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 40px rgba(3, 203, 174, 0.1) !important;
+  transform: translateY(20px) scale(0.96) !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.newsletter-modal-overlay.visible .newsletter-modal {
+  transform: translateY(0) scale(1) !important;
+}
+
+.newsletter-modal-close {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  padding: 0 !important;
+  z-index: 10 !important;
+}
+
+.newsletter-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+  transform: rotate(90deg) !important;
+}
+
+.newsletter-modal-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  background: rgba(3, 203, 174, 0.1) !important;
+  border: 1px solid rgba(3, 203, 174, 0.25) !important;
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.12em !important;
+  color: #03CBAE !important;
+  text-transform: uppercase !important;
+  margin-bottom: 14px !important;
+  font-family: var(--font-body), 'DM Sans', sans-serif !important;
+}
+
+.newsletter-modal-title {
+  font-family: 'Instrument Serif', Georgia, serif !important;
+  font-size: clamp(26px, 4.5vw, 36px) !important;
+  line-height: 1.15 !important;
+  font-weight: 400 !important;
+  color: #ffffff !important;
+  margin: 0 0 8px 0 !important;
+}
+
+.newsletter-modal-desc {
+  font-family: var(--font-body), 'DM Sans', sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  max-width: 440px !important;
+  margin: 0 auto 20px auto !important;
+}
+
+.newsletter-modal-embed {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
+  box-sizing: border-box !important;
+}
+
+.newsletter-modal-embed iframe {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 320px !important;
+  border: none !important;
+  display: block !important;
+}
+
+.newsletter-modal-footer-note {
+  font-family: var(--font-body), 'DM Sans', sans-serif !important;
+  font-size: 11px !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+  margin: 14px 0 0 0 !important;
+}
+
+@media (max-width: 520px) {
+  .newsletter-modal {
+    padding: 30px 18px 20px 18px !important;
+    border-radius: 16px !important;
+  }
+  .newsletter-modal-desc {
+    font-size: 12px !important;
+    margin-bottom: 16px !important;
+  }
+}

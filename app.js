@@ -1652,30 +1652,62 @@ function setupEventListeners() {
     }
   });
 
-  // Newsletter nav links -> smooth scroll to newsletter section
+  // ── Newsletter Modal Handlers (Substack Embed Popup) ──
+  const newsletterOverlay = document.getElementById("newsletter-modal-overlay");
+  const newsletterCloseBtn = document.getElementById("newsletter-modal-close");
+
+  window.openNewsletterModal = function() {
+    if (!newsletterOverlay) return;
+    newsletterOverlay.classList.add("visible");
+    newsletterOverlay.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  };
+
+  window.closeNewsletterModal = function() {
+    if (!newsletterOverlay) return;
+    newsletterOverlay.classList.remove("visible");
+    newsletterOverlay.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  };
+
+  if (newsletterCloseBtn) {
+    newsletterCloseBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.closeNewsletterModal();
+    });
+  }
+
+  if (newsletterOverlay) {
+    newsletterOverlay.addEventListener("click", (e) => {
+      if (e.target === newsletterOverlay) {
+        window.closeNewsletterModal();
+      }
+    });
+  }
+
+  // Open modal when clicking Newsletter in navbar, mobile menu, or any newsletter link
   const navNewsletterBtn = document.getElementById("nav-newsletter-btn");
   const mobileNewsletterBtn = document.getElementById("mobile-newsletter-btn");
   [navNewsletterBtn, mobileNewsletterBtn].forEach(btn => {
     if (btn) {
       btn.addEventListener("click", (e) => {
-        const target = document.getElementById("newsletter-section");
-        if (target) {
-          e.preventDefault();
-          const mobileMenu = document.getElementById("mobile-menu");
-          const hamburger = document.getElementById("hamburger-btn");
-          if (mobileMenu && mobileMenu.classList.contains("is-open")) {
-            mobileMenu.classList.remove("is-open");
-            if (hamburger) hamburger.setAttribute("aria-expanded", "false");
-          }
-          const navHeight = 72;
-          const targetTop = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
-          window.scrollTo({
-            top: Math.max(0, targetTop),
-            behavior: "smooth"
-          });
+        e.preventDefault();
+        const mobileMenu = document.getElementById("mobile-menu");
+        const hamburger = document.getElementById("hamburger-btn");
+        if (mobileMenu && mobileMenu.classList.contains("is-open")) {
+          mobileMenu.classList.remove("is-open");
+          if (hamburger) hamburger.setAttribute("aria-expanded", "false");
         }
+        window.openNewsletterModal();
       });
     }
+  });
+
+  document.querySelectorAll('a[href="#newsletter-modal"], a[href="#newsletter-section"].open-modal').forEach(a => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.openNewsletterModal();
+    });
   });
 
   const vaultBtn = document.getElementById("vault-btn");
@@ -1875,8 +1907,11 @@ function setupEventListeners() {
   // Keyboard: Escape closes all modals/panels
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") {
+      const newsletterOverlay = document.getElementById("newsletter-modal-overlay");
       const authOverlay = document.getElementById("auth-overlay");
-      if (authOverlay?.classList.contains("visible")) {
+      if (newsletterOverlay?.classList.contains("visible")) {
+        window.closeNewsletterModal();
+      } else if (authOverlay?.classList.contains("visible")) {
         authOverlay.classList.remove("visible");
         document.body.style.overflow = "";
       }
