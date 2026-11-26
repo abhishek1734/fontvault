@@ -290,6 +290,15 @@ function renderActiveTags() {
   });
 }
 
+function updateActiveFilterTags() {
+  if (typeof renderActiveTags === "function") renderActiveTags();
+  if (typeof updateClearButtonVisibility === "function") updateClearButtonVisibility();
+}
+
+function updateCategoryCounts() {
+  if (typeof setupFilters === "function") setupFilters();
+}
+
 function updateClearButtonVisibility() {
   const selProviders = getSelectedProviders();
   const selMoods = getSelectedMoods();
@@ -482,7 +491,7 @@ function setupFilters() {
       } else if (cat.id === "saved") {
         isActive = Boolean(activeFilters["Favorites"]);
       } else {
-        isActive = activeFilters["Style"] === cat.id && !activeFilters["Favorites"];
+        isActive = Boolean(activeFilters["Style"] && activeFilters["Style"].toLowerCase() === cat.id.toLowerCase() && !activeFilters["Favorites"]);
       }
 
       if (isActive) pill.classList.add("active");
@@ -492,7 +501,33 @@ function setupFilters() {
         <span class="cat-pill-count">${cat.count}</span>
       `;
 
+      // Live filter on hover for category pills (50ms debounce)
+      let pillHoverTimer = null;
+      pill.addEventListener("mouseenter", () => {
+        clearTimeout(pillHoverTimer);
+        pillHoverTimer = setTimeout(() => {
+          if (cat.id === "all") {
+            activeFilters["Style"] = null;
+            activeFilters["Favorites"] = false;
+          } else if (cat.id === "saved") {
+            activeFilters["Favorites"] = true;
+            activeFilters["Style"] = null;
+          } else {
+            activeFilters["Favorites"] = false;
+            activeFilters["Style"] = cat.id;
+          }
+          const vaultBtn = document.getElementById("vault-btn");
+          if (vaultBtn) vaultBtn.classList.toggle("active", Boolean(activeFilters["Favorites"]));
+          setupFilters();
+          renderGrid();
+        }, 50);
+      });
+      pill.addEventListener("mouseleave", () => {
+        clearTimeout(pillHoverTimer);
+      });
+
       pill.addEventListener("click", () => {
+        clearTimeout(pillHoverTimer);
         if (cat.id === "all") {
           activeFilters["Style"] = null;
           activeFilters["Favorites"] = false;
@@ -501,7 +536,7 @@ function setupFilters() {
           activeFilters["Style"] = null;
         } else {
           activeFilters["Favorites"] = false;
-          activeFilters["Style"] = activeFilters["Style"] === cat.id ? null : cat.id;
+          activeFilters["Style"] = (activeFilters["Style"] && activeFilters["Style"].toLowerCase() === cat.id.toLowerCase()) ? null : cat.id;
         }
         const vaultBtn = document.getElementById("vault-btn");
         if (vaultBtn) vaultBtn.classList.toggle("active", Boolean(activeFilters["Favorites"]));
@@ -512,6 +547,18 @@ function setupFilters() {
       catContainer.appendChild(pill);
     });
   }
+
+  // Synchronize active highlight on mega menu cards
+  document.querySelectorAll(".mega-category-card").forEach(c => {
+    const cardCat = c.dataset.category;
+    let isAct = false;
+    if (cardCat === "all") {
+      isAct = !activeFilters["Style"] && !activeFilters["Favorites"];
+    } else {
+      isAct = Boolean(activeFilters["Style"] && cardCat && activeFilters["Style"].toLowerCase() === cardCat.toLowerCase() && !activeFilters["Favorites"]);
+    }
+    c.classList.toggle("active", isAct);
+  });
 
   // 3. Populate MULTI-SELECT Provider Dropdown
   const provMenu = document.getElementById("provider-dropdown-menu");
@@ -786,7 +833,7 @@ function getFilteredFonts() {
         if (font.availability !== activeFilters["Availability"]) return false;
       }
     }
-    if (activeFilters["Style"] && font.style !== activeFilters["Style"]) return false;
+    if (activeFilters["Style"] && (!font.style || font.style.trim().toLowerCase() !== activeFilters["Style"].trim().toLowerCase())) return false;
 
     const selMoods = getSelectedMoods();
     if (selMoods.size > 0 && (!font.mood || !selMoods.has(font.mood))) return false;
@@ -1574,27 +1621,34 @@ function setupEventListeners() {
     });
   }
 
-  // ── MEGA MENU INTERACTIVE CATEGORY FILTERING ───────────────────────
-  document.querySelectorAll(".mega-category-card").forEach(card => {
-    card.addEventListener("click", (e) => {
-      e.preventDefault();
-      const cat = card.dataset.category;
-      if (cat === "all") {
-        activeFilters["Style"] = null;
-        activeFilters["Favorites"] = false;
-      } else {
-        activeFilters["Style"] = cat;
-        activeFilters["Favorites"] = false;
+  // ── MEGA MENU INTERACTIVE CATEGORY FILTERING (HOVER & CLICK) ───────
+  let megaCategoryHoverTimer = null;
+  const megaDropdown = document.getElementById("categories-dropdown");
+
+  function applyMegaCategorySelection(cat, shouldScroll = false) {
+    const normCat = (cat === "all" || !cat) ? null : cat;
+    activeFilters["Style"] = normCat;
+    activeFilters["Favorites"] = false;
+    window.searchQuery = "";
+    if (heroSearchInput) heroSearchInput.value = "";
+    if (el.searchInput) el.searchInput.value = "";
+
+    setupFilters();
+    renderGrid(true);
+    renderActiveTags();
+    updateClearButtonVisibility();
+
+    // Visual active state on mega menu cards
+    document.querySelectorAll(".mega-category-card").forEach(c => {
+      const isThis = normCat ? (c.dataset.category && c.dataset.category.toLowerCase() === normCat.toLowerCase()) : (c.dataset.category === "all");
+      c.classList.toggle("active", Boolean(isThis));
+    });
+
+    if (shouldScroll) {
+      if (megaDropdown) {
+        megaDropdown.classList.add("is-closed");
+        megaDropdown.classList.remove("is-open");
       }
-      window.searchQuery = "";
-      if (heroSearchInput) heroSearchInput.value = "";
-      if (el.searchInput) el.searchInput.value = "";
-
-      renderGrid(true);
-      updateActiveFilterTags();
-      updateCategoryCounts();
-
-      // Smooth scroll to font results
       setTimeout(() => {
         const fontTarget = document.getElementById("font-library-section") || el.fontGrid || document.getElementById("main-content");
         if (fontTarget) {
@@ -1605,25 +1659,61 @@ function setupEventListeners() {
             behavior: "smooth"
           });
         }
-      }, 150);
+      }, 100);
+    }
+  }
+
+  if (megaDropdown) {
+    megaDropdown.addEventListener("mouseleave", () => {
+      clearTimeout(megaCategoryHoverTimer);
+      megaDropdown.classList.remove("is-closed");
+    });
+  }
+
+  document.querySelectorAll(".mega-category-card").forEach(card => {
+    // Instant live filter on hover
+    card.addEventListener("mouseenter", () => {
+      clearTimeout(megaCategoryHoverTimer);
+      megaCategoryHoverTimer = setTimeout(() => {
+        const cat = card.dataset.category;
+        applyMegaCategorySelection(cat, false);
+      }, 40);
+    });
+
+    // Filter and smooth scroll to results on click
+    card.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearTimeout(megaCategoryHoverTimer);
+      const cat = card.dataset.category;
+      applyMegaCategorySelection(cat, true);
     });
   });
 
-  document.querySelectorAll(".mega-mood-tag").forEach(tag => {
-    tag.addEventListener("click", (e) => {
-      e.preventDefault();
-      const mood = tag.dataset.mood;
-      if (mood) {
-        activeFilters["Mood"] = new Set([mood]);
-        activeFilters["Favorites"] = false;
-        window.searchQuery = "";
-        if (heroSearchInput) heroSearchInput.value = "";
-        if (el.searchInput) el.searchInput.value = "";
+  // Curated Moods Filtering (Hover & Click)
+  let megaMoodHoverTimer = null;
+  function applyMegaMoodSelection(mood, shouldScroll = false) {
+    if (mood) {
+      activeFilters["Mood"] = new Set([mood]);
+      activeFilters["Style"] = null;
+      activeFilters["Favorites"] = false;
+      window.searchQuery = "";
+      if (heroSearchInput) heroSearchInput.value = "";
+      if (el.searchInput) el.searchInput.value = "";
 
-        renderGrid(true);
-        updateActiveFilterTags();
-        updateCategoryCounts();
+      setupFilters();
+      renderGrid(true);
+      renderActiveTags();
+      updateClearButtonVisibility();
 
+      document.querySelectorAll(".mega-mood-tag").forEach(t => {
+        t.classList.toggle("active", t.dataset.mood === mood);
+      });
+
+      if (shouldScroll) {
+        if (megaDropdown) {
+          megaDropdown.classList.add("is-closed");
+          megaDropdown.classList.remove("is-open");
+        }
         setTimeout(() => {
           const fontTarget = document.getElementById("font-library-section") || el.fontGrid || document.getElementById("main-content");
           if (fontTarget) {
@@ -1634,8 +1724,23 @@ function setupEventListeners() {
               behavior: "smooth"
             });
           }
-        }, 150);
+        }, 100);
       }
+    }
+  }
+
+  document.querySelectorAll(".mega-mood-tag").forEach(tag => {
+    tag.addEventListener("mouseenter", () => {
+      clearTimeout(megaMoodHoverTimer);
+      megaMoodHoverTimer = setTimeout(() => {
+        applyMegaMoodSelection(tag.dataset.mood, false);
+      }, 40);
+    });
+
+    tag.addEventListener("click", (e) => {
+      e.preventDefault();
+      clearTimeout(megaMoodHoverTimer);
+      applyMegaMoodSelection(tag.dataset.mood, true);
     });
   });
 

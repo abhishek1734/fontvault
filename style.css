@@ -8441,6 +8441,18 @@ header, header#navbar {
   transform: translateX(-50%) translateY(0) !important;
 }
 
+.nav-mega-dropdown.is-closed .mega-menu-overlay {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateX(-50%) translateY(8px) !important;
+}
+
+.nav-mega-dropdown.is-closed .dropdown-chevron-icon {
+  transform: rotate(0deg) !important;
+  opacity: 0.6 !important;
+}
+
 .mega-menu-inner {
   width: 100% !important;
   box-sizing: border-box !important;
@@ -8514,6 +8526,27 @@ header, header#navbar {
   background: rgba(3, 203, 174, 0.15) !important;
   border-color: rgba(3, 203, 174, 0.35) !important;
   color: #00e6c5 !important;
+}
+
+.mega-category-card.active {
+  background: rgba(3, 203, 174, 0.12) !important;
+  border-color: rgba(3, 203, 174, 0.35) !important;
+}
+
+.mega-category-card.active .mega-sample-glyph {
+  background: rgba(3, 203, 174, 0.22) !important;
+  border-color: rgba(3, 203, 174, 0.6) !important;
+  color: #03CBAE !important;
+}
+
+.mega-category-card.active .mega-card-title {
+  color: #03CBAE !important;
+}
+
+.mega-mood-tag.active {
+  background: #03CBAE !important;
+  color: #050608 !important;
+  border-color: #03CBAE !important;
 }
 
 .mega-sample-glyph.serif-font { font-family: 'Instrument Serif', Georgia, serif !important; font-size: 22px !important; }
